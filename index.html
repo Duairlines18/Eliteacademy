@@ -257,30 +257,21 @@
   .referral h3{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:0 0 .4rem}
   .referral p{color:var(--sage);margin:0;max-width:64ch}
 
-  /* ---------- questionnaire ---------- */
-  .form-wrap{max-width:760px;margin-inline:auto}
-  .field-grid{display:grid;gap:1.1rem}
-  @media(min-width:640px){ .field-grid{grid-template-columns:1fr 1fr} }
-  .field{display:flex;flex-direction:column;gap:.4rem}
-  .field.full{grid-column:1/-1}
-  .field label{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sage)}
-  .field label .req{color:var(--gold)}
-  .field input,.field select,.field textarea{
-    background:var(--ink);border:1px solid var(--hair-soft);border-radius:3px;
-    color:var(--cream);font-family:var(--sans);font-size:.95rem;padding:.8rem .9rem;
-    transition:border-color .2s ease;
-  }
-  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold)}
-  .field textarea{resize:vertical;min-height:96px}
-  .field select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 14px) 55%;background-size:6px 6px,6px 6px;background-repeat:no-repeat}
-  .form-actions{margin-top:1.8rem;display:flex;justify-content:center}
-  .form-note{text-align:center;color:var(--sage-dim);font-size:.8rem;margin-top:1rem}
-  .form-success{
-    display:none;text-align:center;padding:2.5rem;border:1px solid var(--gold);border-radius:5px;background:var(--green-2);
-  }
-  .form-success h3{font-family:var(--serif);color:var(--gold-soft);font-size:1.6rem;margin:0 0 .6rem}
-  .form-success p{color:var(--sage);margin:0}
-
+  /* ---------- get started / contact ---------- */
+  .contact-card{max-width:600px;margin:2.6rem auto 0;background:var(--green-2);border:1px solid var(--hair);border-radius:6px;padding:clamp(1.6rem,4vw,2.6rem)}
+  .contact-rows{display:grid}
+  .contact-row{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--hair-soft)}
+  .contact-row:last-child{border-bottom:0}
+  .contact-row .cl{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+  .contact-row a{font-family:var(--serif);font-size:1.15rem;color:var(--cream);transition:color .2s}
+  .contact-row a:hover{color:var(--gold-soft)}
+  .contact-note{color:var(--sage);font-size:.9rem;font-style:italic;text-align:center;margin:1.3rem 0 0}
+  .contact-actions{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:1.7rem}
+  .contact-actions .btn{flex:1 1 auto;justify-content:center;min-width:150px}
+  .contact-followup{text-align:center;max-width:52ch;margin:2.2rem auto 0}
+  .contact-followup .cf-head{font-family:var(--serif);font-style:italic;color:var(--gold-soft);font-size:1.15rem;margin:0 0 .4rem}
+  .contact-followup p{color:var(--sage);margin:0}
+  @media(max-width:520px){ .contact-actions .btn{flex:1 1 100%} }
   /* ---------- footer ---------- */
   footer{background:var(--ink);border-top:1px solid var(--hair)}
   .foot{display:grid;gap:2rem;padding-block:clamp(3rem,6vw,4.5rem)}
@@ -491,33 +482,30 @@
   </div>
 </section>
 
-<!-- ================= START YOUR JOURNEY ================= -->
+<!-- ================= GET STARTED / CONTACT ================= -->
 <section class="section" id="start" style="background:var(--ink)">
   <div class="wrap">
-    <p class="eyebrow center reveal">Start your athlete's journey</p>
-    <h2 class="head center reveal">Two simple ways to <span class="accent">begin</span></h2>
+    <p class="eyebrow center reveal">Get started</p>
+    <h2 class="head center reveal">Ready to get <span class="accent">started</span>?</h2>
+    <p class="lede center reveal">Every athlete's journey is different. If you think DU Airlines Elite Academy is the right fit, reach out directly and we'll discuss your athlete's goals and recommend the best starting point.</p>
 
-    <div class="paths reveal" style="margin-top:2.5rem">
-      <div class="path">
-        <h3>I'm ready to get started</h3>
-        <ol class="steps">
-          <li>Choose a coaching pathway</li>
-          <li>Complete the athlete questionnaire</li>
-          <li>Receive confirmation</li>
-          <li>Begin training</li>
-        </ol>
-        <a class="btn btn-primary" href="#questionnaire">Complete the questionnaire</a>
+    <div class="contact-card reveal">
+      <div class="contact-rows">
+        <div class="contact-row"><span class="cl">Call</span><a href="tel:+18172717896">(817) 271-7896</a></div>
+        <div class="contact-row"><span class="cl">Text</span><a href="sms:+18172717896">(817) 271-7896</a></div>
+        <div class="contact-row"><span class="cl">Email</span><a href="mailto:duchenge28@gmail.com">duchenge28@gmail.com</a></div>
       </div>
-      <div class="path">
-        <h3>I'd like to speak first</h3>
-        <ol class="steps">
-          <li>Book a 10–15 minute consultation</li>
-          <li>Discuss your athlete's goals</li>
-          <li>Receive a recommendation</li>
-          <li>Begin training</li>
-        </ol>
-        <a class="btn btn-ghost" href="#questionnaire">Request a consultation</a>
+      <p class="contact-note">If I'm coaching or training, leave a voicemail or send a text and I'll get back to you as soon as possible.</p>
+      <div class="contact-actions">
+        <a class="btn btn-primary" href="sms:+18172717896">Text Coach Du</a>
+        <a class="btn btn-ghost" href="tel:+18172717896">Call Coach Du</a>
+        <a class="btn btn-ghost" href="mailto:duchenge28@gmail.com">Email Coach Du</a>
       </div>
+    </div>
+
+    <div class="contact-followup reveal">
+      <p class="cf-head">Can't talk right now?</p>
+      <p>Leave a voicemail, send a text, or email me. I'll personally get back to you to discuss your athlete's goals.</p>
     </div>
   </div>
 </section>
@@ -530,68 +518,7 @@
         <h3>For coaches, clubs &amp; partners</h3>
         <p>DU Airlines complements the work you already do. Specialized speed and horizontal-jump coaching that supports your athletes between team practices, never a replacement for club or school programs. Refer an athlete with confidence.</p>
       </div>
-      <a class="btn btn-ghost" href="#questionnaire" style="white-space:nowrap">Refer an athlete</a>
-    </div>
-  </div>
-</section>
-
-<!-- ================= QUESTIONNAIRE ================= -->
-<section class="section" id="questionnaire">
-  <div class="wrap">
-    <p class="eyebrow center reveal">Athlete questionnaire</p>
-    <h2 class="head center reveal">Tell us about your <span class="accent">athlete</span></h2>
-    <p class="lede center reveal">Takes about 3–5 minutes. Coach Du reviews every submission personally.</p>
-
-    <div class="form-wrap reveal" style="margin-top:2.5rem">
-      <!--
-        WIRING: this form is front-end only right now.
-        To collect submissions, set the form's action to a Formspree endpoint
-        (https://formspree.io) or point it at an Airtable/CRM webhook, then remove
-        the e.preventDefault() line in the script below. Field "name" attributes
-        already map cleanly to Airtable columns.
-      -->
-      <form id="athlete-form" novalidate>
-        <div class="field-grid">
-          <div class="field"><label for="parent">Parent name <span class="req">*</span></label><input id="parent" name="parent_name" required autocomplete="name" /></div>
-          <div class="field"><label for="athlete">Athlete name <span class="req">*</span></label><input id="athlete" name="athlete_name" required /></div>
-          <div class="field"><label for="age">Athlete age <span class="req">*</span></label><input id="age" name="age" type="number" min="6" max="25" required /></div>
-          <div class="field"><label for="sport">Sport</label><input id="sport" name="sport" placeholder="Track, football, soccer…" /></div>
-          <div class="field"><label for="event">Primary event</label><input id="event" name="primary_event" placeholder="100m, long jump, triple jump…" /></div>
-          <div class="field">
-            <label for="level">Current level</label>
-            <select id="level" name="current_level">
-              <option value="">Select…</option>
-              <option>New to the event</option>
-              <option>Developing</option>
-              <option>Competitive (school/club)</option>
-              <option>Elite / collegiate track</option>
-            </select>
-          </div>
-          <div class="field full"><label for="goals">Goals</label><textarea id="goals" name="goals" placeholder="What is your athlete working toward this season?"></textarea></div>
-          <div class="field"><label for="club">Current school or club</label><input id="club" name="school_club" /></div>
-          <div class="field"><label for="injury">Previous injuries (if any)</label><input id="injury" name="injuries" /></div>
-          <div class="field"><label for="heard">How did you hear about us?</label><input id="heard" name="referral_source" placeholder="Coach, friend, social, search…" /></div>
-          <div class="field">
-            <label for="pathway">Preferred coaching pathway <span class="req">*</span></label>
-            <select id="pathway" name="pathway" required>
-              <option value="">Select…</option>
-              <option>Elite Performance Academy — $300/mo</option>
-              <option>Foundations Academy — $200/mo</option>
-              <option>Performance Evaluation — $60</option>
-              <option>Not sure yet — I'd like to speak first</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-primary" type="submit">Submit &amp; get started</button>
-        </div>
-        <p class="form-note">You'll receive a confirmation and next steps within 24 hours.</p>
-      </form>
-
-      <div class="form-success" id="form-success" role="status">
-        <h3>Received. Welcome to the Academy.</h3>
-        <p>Thank you. Coach Du will review your athlete's details and reach out within 24 hours with next steps.</p>
-      </div>
+      <a class="btn btn-ghost" href="#start" style="white-space:nowrap">Refer an athlete</a>
     </div>
   </div>
 </section>
@@ -634,15 +561,6 @@
   }, {threshold:.14, rootMargin:'0px 0px -8% 0px'});
   document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 
-  // questionnaire (front-end only) — remove preventDefault after wiring a real endpoint
-  var form = document.getElementById('athlete-form');
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    if(!form.checkValidity()){ form.reportValidity(); return; }
-    form.style.display = 'none';
-    document.getElementById('form-success').style.display = 'block';
-    document.getElementById('questionnaire').scrollIntoView({behavior:'smooth', block:'center'});
-  });
 </script>
 </body>
 </html>
