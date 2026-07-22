@@ -750,6 +750,15 @@
   }
 }
 
+
+.selected-path-field select{
+width:100%;
+padding:14px 15px;
+border:1px solid #cbd4ce;
+border-radius:11px;
+background:#fff;
+font:inherit;
+}
 </style>
 </head>
 <body>
@@ -1072,10 +1081,17 @@
 
 <div class="inquiry-grid">
 
+
 <div class="inquiry-field full selected-path-field">
 <label for="selected-path">Selected Coaching Path</label>
-<input id="selected-path" name="Selected Coaching Path" type="text" value="General Athlete Inquiry" readonly/>
+<select id="selected-path" name="Selected Coaching Path" required>
+  <option value="">Choose a coaching option</option>
+  <option value="Elite Performance Academy — $300/month">Elite Performance Academy — $300/month</option>
+  <option value="Foundations Academy — $200/month">Foundations Academy — $200/month</option>
+  <option value="Performance Evaluation — $60 one-time">Performance Evaluation — $60 one-time</option>
+</select>
 </div>
+
 
 <div class="inquiry-field">
 <label for="parent-name">Parent Full Name</label>
@@ -1274,7 +1290,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
   document.querySelectorAll('.package-choice').forEach(function(button){
     button.addEventListener('click', function(){
       if (selectedPath) {
-        selectedPath.value = button.dataset.package || 'General Athlete Inquiry';
+        selectedPath.value = button.dataset.package || '';
       }
 
       /* Allow the anchor to scroll naturally, then place the form field in view. */
