@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>DU Airlines Elite Academy — Speed, Movement &amp; Horizontal Jumps</title>
-<meta content="Elite youth speed, movement, explosiveness and horizontal-jump coaching for soccer, football and track &amp; field athletes across Dallas–Fort Worth." name="description"/>
+<title>DU Airlines Elite Performance Academy — Speed, Movement &amp; Horizontal Jumps</title>
+<meta content="Elite youth speed, movement, explosiveness and horizontal-jump coaching for soccer and track &amp; field athletes across Dallas–Fort Worth." name="description"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
@@ -759,6 +759,39 @@ border-radius:11px;
 background:#fff;
 font:inherit;
 }
+
+
+  /* ---------- club team development pathway ---------- */
+  .club-team-pathway{
+    margin:2.25rem 0 2.75rem;
+    padding:clamp(1.5rem,4vw,2.5rem);
+    background:linear-gradient(135deg,rgba(199,162,90,.12),rgba(20,50,34,.72));
+    border:1px solid rgba(199,162,90,.42);
+    border-radius:4px;
+    display:grid;
+    gap:1.5rem;
+    box-shadow:0 18px 55px rgba(0,0,0,.18);
+  }
+  .club-team-pathway .club-path-top{display:grid;gap:.9rem}
+  .club-team-pathway .club-path-kicker{color:var(--gold);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+  .club-team-pathway h3{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.35rem);line-height:1.1;margin:0;color:var(--cream)}
+  .club-team-pathway .club-price-row{display:flex;gap:1.2rem;align-items:flex-end;flex-wrap:wrap}
+  .club-team-pathway .club-price{font-family:var(--serif);font-size:2.35rem;color:var(--gold-soft);line-height:1}
+  .club-team-pathway .club-frequency{color:var(--sage);font-size:.95rem}
+  .club-team-pathway .club-path-content{display:grid;gap:1.4rem}
+  .club-team-pathway .club-path-content p{margin:0;color:var(--sage);max-width:66ch}
+  .club-team-pathway .club-feature-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem 1.5rem;margin:0;padding:0;list-style:none}
+  .club-team-pathway .club-feature-list li{position:relative;padding-left:1.1rem;color:var(--cream);font-size:.92rem}
+  .club-team-pathway .club-feature-list li::before{content:'•';position:absolute;left:0;color:var(--gold)}
+  .club-team-pathway .club-path-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+  .club-team-pathway .club-note{display:block;color:var(--sage-dim);font-size:.8rem;margin-top:.8rem}
+  .academy-offers-label{margin:0 0 1.4rem;padding-top:.4rem;color:var(--sage-dim);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;text-align:center}
+  @media(min-width:820px){
+    .club-team-pathway{grid-template-columns:.85fr 1.15fr;align-items:center}
+    .club-team-pathway .club-feature-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media(max-width:520px){.club-team-pathway .club-feature-list{grid-template-columns:1fr}}
+
 </style>
 
 <style>
@@ -1081,8 +1114,71 @@ font:inherit;
     text-align:center;
   }
   .specialty-note strong{color:var(--cream)}
+
+  /* ---------- DU Airlines Standard ---------- */
+  .standard-section{border-block:1px solid var(--hair);background:linear-gradient(180deg,var(--green),var(--green-2))}
+  .standard-values{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2.2rem;border-top:1px solid var(--hair);padding-top:1.4rem}
+  .standard-values div{display:grid;gap:.2rem}
+  .standard-values strong{font-family:var(--serif);font-size:1.08rem;color:var(--gold-soft)}
+  .standard-values span{font-size:.84rem;color:var(--sage)}
+  @media(max-width:760px){.standard-values{grid-template-columns:repeat(2,1fr)}}
+
+  /* ---------- Partnership CTA and inquiry ---------- */
+  .partnership-section{background:var(--green-2);border-top:1px solid var(--hair)}
+  .partnership-shell{max-width:900px}
+  .partnership-copy{text-align:center;display:grid;justify-items:center}
+  .partnership-copy .lede{margin-inline:auto}
+  .partnership-copy .btn{margin-top:1.6rem}
+  .partnership-form-wrap{margin-top:2rem}
+  .partnership-form-card{background:var(--ink);border:1px solid var(--hair);border-radius:6px;padding:clamp(1.4rem,4vw,2.4rem)}
+  .partnership-form-card h3{font-family:var(--serif);font-size:1.65rem;margin:.1rem 0 1.4rem}
+  .partnership-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .partnership-form-grid .full{grid-column:1/-1}
+  .partnership-form-grid textarea{resize:vertical;min-height:110px}
+  .contact-consent{display:flex;align-items:flex-start;gap:.65rem;color:var(--sage);font-size:.82rem;line-height:1.45}
+  .contact-consent input{margin-top:.25rem}
+  .form-status{min-height:1.5rem;text-align:center;color:var(--gold-soft);font-size:.9rem;margin:.9rem 0 0}
+  .honeypot{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0!important}
+  @media(max-width:680px){.partnership-form-grid{grid-template-columns:1fr}.partnership-form-grid .full{grid-column:auto}.partnership-form-card{padding:1.25rem}}
+
 </style>
 
+
+<style>
+/* Single-file club registration portal */
+.club-reg-portal{background:var(--green);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding-block:clamp(4rem,8vw,7rem)}
+.club-reg-shell{max-width:1040px;margin-inline:auto}
+.club-reg-hero{text-align:center;max-width:800px;margin:0 auto 2.4rem}
+.club-reg-hero h2{font-family:var(--serif);font-size:clamp(2rem,5vw,3.6rem);line-height:1.05;margin:.4rem 0 1rem}
+.club-reg-overview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--hair-soft);border-left:1px solid var(--hair-soft);margin:2rem 0}
+.club-reg-fact{padding:1rem;border-right:1px solid var(--hair-soft);border-bottom:1px solid var(--hair-soft);background:rgba(10,28,20,.35)}
+.club-reg-fact span{display:block;color:var(--sage-dim);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase}
+.club-reg-fact strong{display:block;color:var(--cream);margin-top:.2rem;font-size:.92rem}
+.club-reg-card{background:var(--ink);border:1px solid var(--hair);border-radius:6px;padding:clamp(1.25rem,4vw,2.3rem)}
+.club-reg-card h3{font-family:var(--serif);font-size:1.5rem;margin:0 0 .5rem;color:var(--gold-soft)}
+.club-reg-grid{display:grid;grid-template-columns:1fr;gap:1rem}
+.club-reg-field{display:grid;gap:.42rem}.club-reg-field.full{grid-column:1/-1}
+.club-reg-field label{font-size:.8rem;font-weight:600;color:var(--cream)}
+.club-reg-field input,.club-reg-field select{width:100%;background:#0b2016;color:var(--cream);border:1px solid rgba(255,255,255,.16);border-radius:3px;padding:.9rem;font:inherit}
+.club-reg-field input:focus,.club-reg-field select:focus{outline:2px solid rgba(199,162,90,.35);border-color:var(--gold)}
+.club-reg-section-title{font-family:var(--serif);color:var(--gold-soft);font-size:1.3rem;margin:2rem 0 1rem}
+.club-reg-preview{margin:1.25rem 0;padding:1rem;border-left:3px solid var(--gold);background:rgba(199,162,90,.08);color:var(--sage)}
+.club-reg-preview strong{color:var(--cream)}
+.club-payment-options{display:grid;gap:.8rem;margin-top:1rem}
+.club-pay-choice{display:flex;gap:.7rem;align-items:flex-start;padding:1rem;border:1px solid rgba(255,255,255,.13);background:rgba(15,39,28,.7);cursor:pointer}
+.club-pay-choice input{width:auto;margin-top:.25rem}.club-pay-choice small{color:var(--sage)}
+.club-payment-detail{display:none;margin-top:1rem;padding:1rem;border:1px solid var(--hair);background:rgba(199,162,90,.06)}
+.club-payment-detail.show{display:block}.club-payment-detail p{margin:.3rem 0;color:var(--sage)}.club-payment-detail strong{color:var(--cream)}
+.club-copy{margin-top:.7rem;background:transparent;color:var(--gold-soft);border:1px solid var(--hair);padding:.6rem .85rem;cursor:pointer;border-radius:2px}
+.club-consent{display:flex;gap:.7rem;align-items:flex-start;margin:1.4rem 0;color:var(--sage);font-size:.88rem}.club-consent input{width:auto;margin-top:.3rem}
+.club-submit-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}.club-form-status{color:var(--sage);font-size:.82rem}
+.club-confirmation{display:none;text-align:center;padding:clamp(2rem,6vw,4rem);border:1px solid var(--hair);background:var(--ink)}
+.club-confirmation.show{display:block}.club-confirmation h3{font-family:var(--serif);font-size:clamp(2rem,5vw,3rem);margin:.2rem 0 1rem}.club-confirmation p{color:var(--sage);max-width:650px;margin-inline:auto}
+.club-confirmation-summary{max-width:620px;margin:1.5rem auto;text-align:left;padding:1rem;border:1px solid var(--hair-soft);background:rgba(15,39,28,.6)}
+.club-confirmation-summary div{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-bottom:1px solid var(--hair-soft)}
+.club-confirmation-summary div:last-child{border-bottom:0}.club-confirmation-summary span{color:var(--sage)}
+@media(min-width:720px){.club-reg-overview{grid-template-columns:repeat(3,minmax(0,1fr))}.club-reg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.club-payment-options{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
 </head>
 <body id="top">
 <div id="home-view" class="site-view">
@@ -1091,10 +1187,10 @@ font:inherit;
 <!-- ================= TOP BAR ================= -->
 <header class="topbar">
   <div class="wrap row">
-    <a class="wordmark" href="#top">DU AIRLINES <b>ELITE</b> ACADEMY</a>
+    <a class="wordmark" href="#top">DU AIRLINES <b>ELITE</b> PERFORMANCE ACADEMY</a>
     <nav aria-label="Primary" class="topnav">
       <a href="#sports">Sport Pathways</a>
-      <a href="#families">Why Families Choose Du</a>
+      <a href="#families">The DU Airlines Standard</a>
       <a href="#stories">Athlete Stories</a>
       <a href="#partnerships">Partnerships</a>
     </nav>
@@ -1108,7 +1204,7 @@ font:inherit;
 <div class="wrap">
 <div class="hero-kicker">Speed <span>•</span> Movement <span>•</span> Explosiveness <span>•</span> Jumps</div>
 <h1 class="hero-title">Elite experience. <span class="accent">Youth-focused coaching.</span></h1>
-<p class="hero-sub">Developing faster, more explosive and more confident soccer, football and track &amp; field athletes through intentional, age-appropriate coaching.</p>
+<p class="hero-sub">Developing faster, more explosive and more confident soccer and track &amp; field athletes through intentional, age-appropriate coaching.</p>
 <div class="hero-actions">
 <a class="btn btn-primary" href="#sports">Start your athlete's journey</a>
 <a class="btn btn-ghost" href="#sports">Explore sports</a>
@@ -1134,7 +1230,7 @@ font:inherit;
 <section class="section-compact audience-band" id="sports">
   <div class="wrap">
     <p class="eyebrow center">Who We Develop</p>
-    <h2 class="head center">One standard. Three <span class="accent">sport pathways</span></h2>
+    <h2 class="head center">One standard. Two <span class="accent">development pathways</span></h2>
     <p class="lede center">Coach Du develops the physical qualities that help athletes express their sport more effectively—without replacing their team or position coach.</p>
 
     <div class="sport-grid" style="margin-top:2.3rem">
@@ -1143,13 +1239,6 @@ font:inherit;
         <h3>Faster, more complete movers</h3>
         <p>Helping soccer athletes accelerate faster, move more efficiently and compete with confidence.</p>
         <a class="btn btn-primary" href="#/soccer" data-route="soccer">Explore Soccer Development →</a>
-      </article>
-
-      <article class="sport-card reveal">
-        <div class="sport-tag">Football</div>
-        <h3>Explosiveness that transfers</h3>
-        <p>Building acceleration, reactive power and movement that carries directly onto the field.</p>
-        <a class="btn btn-ghost" href="#/football" data-route="football">Explore Football Development →</a>
       </article>
 
       <article class="sport-card reveal">
@@ -1162,27 +1251,17 @@ font:inherit;
   </div>
 </section>
 
-<!-- ================= WHY FAMILIES CHOOSE DU AIRLINES ================= -->
-<section class="section-compact" id="families">
+<!-- ================= THE DU AIRLINES STANDARD ================= -->
+<section class="section-compact standard-section" id="families">
   <div class="wrap">
-    <p class="eyebrow center">Why Families Choose Du Airlines</p>
-    <h2 class="head center">Coaching designed around <span class="accent">the athlete</span></h2>
-
-    <div class="family-grid">
-      <article class="family-card reveal">
-        <h3>Small Group Coaching</h3>
-        <p>Groups of 5–8 athletes create the energy of team training while preserving personalized coaching and technical feedback.</p>
-      </article>
-
-      <article class="family-card reveal">
-        <h3>Individual Development</h3>
-        <p>Every athlete follows a structured progression based on their sport, current ability and long-term goals.</p>
-      </article>
-
-      <article class="family-card reveal">
-        <h3>Measured Progress</h3>
-        <p>Video analysis, technical coaching and consistent feedback help athletes improve with purpose.</p>
-      </article>
+    <p class="eyebrow center">The DU Airlines Standard</p>
+    <h2 class="head center">Trust. Composure. Gratitude. <span class="accent">Execute.</span></h2>
+    <p class="lede center">Building confident athletes who stay composed, value the opportunity and execute with purpose.</p>
+    <div class="standard-values" aria-label="DU Airlines values">
+      <div><strong>Trust</strong><span>Believe in the work.</span></div>
+      <div><strong>Composure</strong><span>Stay present under pressure.</span></div>
+      <div><strong>Gratitude</strong><span>Respect the opportunity.</span></div>
+      <div><strong>Execute</strong><span>Apply what you have learned.</span></div>
     </div>
   </div>
 </section>
@@ -1226,33 +1305,49 @@ font:inherit;
 </div>
 </section>
 <!-- ================= PARTNERSHIPS ================= -->
-<section class="section" id="partnerships">
-<div class="wrap">
-<p class="eyebrow">For Teams, Clubs &amp; Schools</p>
-<h2 class="head">A trusted speed and movement resource for <span class="accent">your program</span></h2>
-<p class="lede">Du Airlines partners with clubs, schools and organizations to provide specialist speed development, movement coaching and athlete education.</p>
-<div class="partner-grid" style="margin-top:2rem">
-<article class="partner-card reveal">
-<h3>Performance Development</h3>
-<ul><li>Team speed sessions</li><li>Seasonal development blocks</li><li>Athlete evaluations</li><li>Coach collaboration</li></ul>
-</article>
-<article class="partner-card reveal">
-<h3>Clinics &amp; Education</h3>
-<ul><li>Camps</li><li>Specialist coaching</li><li>Parent education</li><li>Coach education</li></ul>
-</article>
-</div>
-<div class="partnership-cta">
-<a class="btn btn-primary" href="#start">Partner With Du Airlines</a>
-<a class="btn btn-ghost" href="mailto:coachdu@duairlineseliteacademy.com?subject=Du%20Airlines%20Partnership%20Inquiry">Contact Coach Du</a>
-</div>
-</div>
+<section class="section partnership-section" id="partnerships">
+  <div class="wrap partnership-shell">
+    <div class="partnership-copy">
+      <p class="eyebrow">For Clubs, Teams &amp; Schools</p>
+      <h2 class="head">Give your athletes a competitive <span class="accent">development advantage.</span></h2>
+      <p class="lede">Partner with DU Airlines for structured speed and movement development for soccer athletes, plus specialist horizontal jumps and selected event-specific coaching for track and field programs.</p>
+      <button class="btn btn-primary" id="openPartnershipForm" type="button" aria-expanded="false" aria-controls="partnershipInquiry">Partner With DU Airlines</button>
+    </div>
+
+    <div class="partnership-form-wrap" id="partnershipInquiry" hidden>
+      <div class="partnership-form-card">
+        <p class="eyebrow">Partnership Inquiry</p>
+        <h3>Start a partnership conversation</h3>
+        <form id="partnershipForm" action="/api/form-submit" method="POST" novalidate>
+          <input type="hidden" name="submission_type" value="Partnership Inquiry">
+          <input type="hidden" name="email_subject" value="New Partnership Inquiry">
+          <input type="hidden" name="submitted_at" class="submitted-at" value="">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" class="honeypot" aria-hidden="true">
+          <div class="partnership-form-grid">
+            <div class="soccer-field"><label for="partner-name">Full name</label><input id="partner-name" name="contact_name" type="text" autocomplete="name" required></div>
+            <div class="soccer-field"><label for="partner-org">Organization name</label><input id="partner-org" name="organization_name" type="text" required></div>
+            <div class="soccer-field"><label for="partner-role">Role or title</label><input id="partner-role" name="role_title" type="text" required></div>
+            <div class="soccer-field"><label for="partner-email">Email address</label><input id="partner-email" name="email" type="email" autocomplete="email" required></div>
+            <div class="soccer-field"><label for="partner-phone">Phone number</label><input id="partner-phone" name="phone" type="tel" autocomplete="tel" required></div>
+            <div class="soccer-field"><label for="partner-type">Organization type</label><select id="partner-type" name="organization_type" required><option value="">Select one</option><option>Soccer club</option><option>Track club</option><option>School</option><option>Team</option><option>Community organization</option><option>Other</option></select></div>
+            <div class="soccer-field full"><label for="partner-age">Age group or athletes served</label><input id="partner-age" name="athletes_served" type="text" required></div>
+            <div class="soccer-field full"><label for="partner-message">Short message</label><textarea id="partner-message" name="message" rows="4" required></textarea></div>
+            <div class="soccer-field full"><label for="partner-contact">Preferred contact method</label><select id="partner-contact" name="preferred_contact_method" required><option value="">Select one</option><option>Phone</option><option>Email</option><option>Text</option></select></div>
+            <label class="contact-consent full" id="textConsentWrap" hidden><input id="textConsent" name="text_contact_consent" type="checkbox" value="Yes"> <span>By selecting Text, I agree to receive direct communication regarding this partnership inquiry. Message and data rates may apply.</span></label>
+          </div>
+          <div class="soccer-form-submit"><button class="btn btn-primary" type="submit">Request a Partnership Conversation</button></div>
+          <p class="form-status" id="partnershipStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </div>
 </section>
 <!-- ================= FOOTER ================= -->
 <footer>
 <div class="wrap foot">
 <div>
 <div class="brand">DU Airlines <span>Elite</span> Performance Academy</div>
-<p>Elite speed, movement, explosiveness and horizontal-jump development for soccer, football and track &amp; field athletes across Dallas–Fort Worth.</p>
+<p>Elite speed, movement, explosiveness and horizontal-jump development for soccer and track &amp; field athletes across Dallas–Fort Worth.</p>
 </div>
 <div>
 <h5>Explore</h5>
@@ -1434,7 +1529,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div id="soccer-view" class="site-view" hidden>
   <header class="topbar">
     <div class="wrap row">
-      <a class="wordmark" href="#/" data-route="home">DU AIRLINES <b>ELITE</b> ACADEMY</a>
+      <a class="wordmark" href="#/" data-route="home">DU AIRLINES <b>ELITE</b> PERFORMANCE ACADEMY</a>
       <nav aria-label="Soccer page" class="topnav">
         <a href="#development">What Athletes Develop</a>
         <a href="#outcomes">Outcomes</a>
@@ -1510,6 +1605,39 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
     <h2 class="head center">Choose the pathway that fits <span class="accent">your athlete</span></h2>
     <p class="lede center">Every athlete receives the same coaching philosophy. The difference is simply the level of commitment.</p>
 
+    <article class="club-team-pathway reveal" aria-labelledby="club-team-title">
+      <div class="club-path-top">
+        <span class="club-path-kicker">Approved Partner Clubs &amp; Teams</span>
+        <h3 id="club-team-title">Club Team Development</h3>
+        <div class="club-price-row">
+          <span class="club-price">$100 <small style="font-family:var(--sans);font-size:.85rem;color:var(--sage);font-style:normal">per athlete</small></span>
+          <span class="club-frequency"><strong style="color:var(--cream)">4 Sessions</strong><br>Train once each week</span>
+        </div>
+      </div>
+      <div class="club-path-content">
+        <p>A four-week supplemental speed and movement program for athletes registering through an approved partner club or team.</p>
+        <ul class="club-feature-list">
+          <li>Four weekly sessions</li>
+          <li>Groups of 6–12 athletes</li>
+          <li>First-step acceleration</li>
+          <li>Sprint mechanics</li>
+          <li>Deceleration and body control</li>
+          <li>Change of direction</li>
+          <li>Running efficiency</li>
+          <li>Explosive movement</li>
+          <li>Technical coaching</li>
+        </ul>
+        <div>
+          <div class="club-path-actions">
+            <a class="btn btn-primary" href="#club-registration">Register With Your Club →</a>
+          </div>
+          <span class="club-note">Available only through approved partner clubs and confirmed team cohorts.</span>
+        </div>
+      </div>
+    </article>
+
+    <p class="academy-offers-label">Private Academy Offers</p>
+
     <div class="soccer-path-grid">
       <article class="soccer-card feature reveal">
         <div class="program-label">Elite Performance Academy</div>
@@ -1566,6 +1694,90 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </section>
 
 
+
+<section class="club-reg-portal" id="club-registration">
+  <div class="wrap club-reg-shell">
+    <div class="club-reg-hero">
+      <p class="eyebrow center">DU Airlines Club Development</p>
+      <h2>Four-Week Speed &amp; Movement Program</h2>
+      <p class="lede center">A supplemental development program designed to help youth soccer athletes improve acceleration, sprint mechanics, body control, movement efficiency and confidence alongside their existing club training.</p>
+    </div>
+
+    <div class="club-reg-overview" aria-label="Program overview">
+      <div class="club-reg-fact"><span>Program length</span><strong>Four weeks</strong></div>
+      <div class="club-reg-fact"><span>Frequency</span><strong>Once per week</strong></div>
+      <div class="club-reg-fact"><span>Total sessions</span><strong>Four</strong></div>
+      <div class="club-reg-fact"><span>Price</span><strong>$100 per athlete</strong></div>
+      <div class="club-reg-fact"><span>Group size</span><strong>6–12 athletes</strong></div>
+      <div class="club-reg-fact"><span>Session length</span><strong>60 minutes</strong></div>
+      <div class="club-reg-fact"><span>Club</span><strong>Selected during registration</strong></div>
+      <div class="club-reg-fact"><span>Team or cohort</span><strong>Selected during registration</strong></div>
+      <div class="club-reg-fact"><span>Coach</span><strong>Chengetayi “Coach Du” Mapaya</strong></div>
+    </div>
+
+    <div class="club-reg-card" id="clubRegistrationCard">
+      <p class="eyebrow">Partner-Club Registration</p>
+      <h3>Register your athlete</h3>
+      <p class="lede">This integrated preview demonstrates the complete parent journey. Confirmed club names, dates, time and location can be added when a cohort is approved.</p>
+      <div class="club-reg-preview"><strong>Director preview:</strong> Select “Partner Club Preview” and the demonstration cohort below to walk through the system. No online payment is processed; families pay manually through the selected channel.</div>
+
+      <form id="integratedClubForm" novalidate>
+        <input type="hidden" name="submission_type" value="Club Registration">
+        <input type="hidden" name="submission_date" id="clubSubmissionDate">
+        <h4 class="club-reg-section-title">Select Your Club</h4>
+        <div class="club-reg-grid">
+          <div class="club-reg-field"><label for="integratedClub">Club</label><select id="integratedClub" name="club" required><option value="">Select your club</option><option value="Partner Club Preview">Partner Club Preview</option></select></div>
+          <div class="club-reg-field"><label for="integratedCohort">Select Your Team or Training Cohort</label><select id="integratedCohort" name="cohort" required disabled><option value="">Select a club first</option></select></div>
+        </div>
+        <div class="club-reg-preview" id="integratedCohortDetails" hidden></div>
+
+        <h4 class="club-reg-section-title">Parent Information</h4>
+        <div class="club-reg-grid">
+          <div class="club-reg-field"><label for="clubParentName">Parent or guardian full name</label><input id="clubParentName" name="parent_name" required></div>
+          <div class="club-reg-field"><label for="clubParentEmail">Parent email address</label><input id="clubParentEmail" name="parent_email" type="email" required></div>
+          <div class="club-reg-field"><label for="clubParentPhone">Parent phone number</label><input id="clubParentPhone" name="parent_phone" type="tel" required></div>
+        </div>
+
+        <h4 class="club-reg-section-title">Athlete Information</h4>
+        <div class="club-reg-grid">
+          <div class="club-reg-field"><label for="clubAthleteName">Athlete full name</label><input id="clubAthleteName" name="athlete_name" required></div>
+          <div class="club-reg-field"><label for="clubAthleteAge">Athlete age</label><input id="clubAthleteAge" name="athlete_age" type="number" min="6" max="19" required></div>
+          <div class="club-reg-field"><label for="clubDob">Date of birth</label><input id="clubDob" name="date_of_birth" type="date" required></div>
+          <div class="club-reg-field"><label for="clubPosition">Primary soccer position</label><input id="clubPosition" name="primary_position" required></div>
+        </div>
+
+        <h4 class="club-reg-section-title">Choose Your Manual Payment Channel</h4>
+        <div class="club-payment-options">
+          <label class="club-pay-choice"><input type="radio" name="payment_method" value="Zelle" required><span><strong>Zelle</strong><br><small>Send $100 to Coach Du’s phone number.</small></span></label>
+          <label class="club-pay-choice"><input type="radio" name="payment_method" value="PayPal" required><span><strong>PayPal</strong><br><small>Send $100 to Coach Du’s PayPal email.</small></span></label>
+          <label class="club-pay-choice"><input type="radio" name="payment_method" value="Apple Pay" required><span><strong>Apple Pay</strong><br><small>Send $100 to Coach Du’s phone number.</small></span></label>
+        </div>
+
+        <div class="club-payment-detail" id="payDetailZelle"><strong>Pay $100 with Zelle</strong><p>Recipient phone: <strong>(817) 271-7896</strong></p><p>Required memo: <strong>Athlete’s full name + selected club</strong></p><button class="club-copy" type="button" data-copy="8172717896">Copy phone number</button></div>
+        <div class="club-payment-detail" id="payDetailPayPal"><strong>Pay $100 with PayPal</strong><p>PayPal email: <strong>duchenge28@gmail.com</strong></p><p>Required note: <strong>Athlete’s full name + selected club</strong></p><button class="club-copy" type="button" data-copy="duchenge28@gmail.com">Copy PayPal email</button></div>
+        <div class="club-payment-detail" id="payDetailApple"><strong>Pay $100 with Apple Pay</strong><p>Recipient phone: <strong>(817) 271-7896</strong></p><p>Required message: <strong>Athlete’s full name + selected club</strong></p><button class="club-copy" type="button" data-copy="8172717896">Copy phone number</button></div>
+
+        <div class="club-reg-grid" style="margin-top:1rem">
+          <div class="club-reg-field"><label for="clubPaymentSender">Name payment will be sent from</label><input id="clubPaymentSender" name="payment_sender_name" required></div>
+          <div class="club-reg-field"><label for="clubPaymentReference">Payment confirmation or reference number <span style="color:var(--sage);font-weight:400">(enter “pending” if paying after registration)</span></label><input id="clubPaymentReference" name="payment_reference" required></div>
+          <div class="club-reg-field full"><label for="clubTypedName">Typed parent or guardian name</label><input id="clubTypedName" name="typed_parent_name" required></div>
+        </div>
+
+        <label class="club-consent"><input type="checkbox" required><span>I confirm that the information provided is accurate and understand that registration is complete once the $100 payment has been received and verified.</span></label>
+        <div class="club-submit-row"><button class="btn btn-primary" id="clubSubmitButton" type="submit">Submit Registration</button><span class="club-form-status" id="clubFormStatus">Manual payment is verified separately by Coach Du.</span></div>
+      </form>
+    </div>
+
+    <div class="club-confirmation" id="clubConfirmation" aria-live="polite">
+      <p class="eyebrow center">Registration Received</p>
+      <h3>Thank you for registering your athlete.</h3>
+      <p>Your athlete’s place will be confirmed once the $100 payment has been received and verified. Complete schedule, location information and training expectations will be provided before the first session.</p>
+      <div class="club-confirmation-summary" id="clubConfirmationSummary"></div>
+      <a class="btn btn-primary" href="#home">View Main Website</a>
+    </div>
+  </div>
+</section>
+
 <section class="section-compact" id="soccer-form">
   <div class="wrap">
     <p class="eyebrow center">Soccer Registration</p>
@@ -1573,8 +1785,11 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
     <p class="lede center">Complete the form and Coach Du will follow up with availability and the best next step.</p>
 
     <div class="soccer-form-card">
-      <form id="soccerInquiryForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST">
-        <input type="hidden" name="_subject" value="New Soccer Coaching Inquiry — Du Airlines Elite Academy">
+      <form id="soccerInquiryForm" action="/api/form-submit" method="POST" novalidate>
+<input type="hidden" name="submission_type" value="Soccer Coaching Inquiry">
+<input type="hidden" name="submitted_at" class="submitted-at" value="">
+<input type="text" name="website" tabindex="-1" autocomplete="off" class="honeypot" aria-hidden="true">
+        <input type="hidden" name="_subject" value="New Soccer Coaching Inquiry — DU Airlines Elite Performance Academy">
         <input type="hidden" name="_captcha" value="false">
 
         <div class="soccer-form-grid">
@@ -1643,7 +1858,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div id="football-view" class="site-view" hidden>
   <header class="topbar">
     <div class="wrap row">
-      <a class="wordmark" href="#/" data-route="home">DU AIRLINES <b>ELITE</b> ACADEMY</a>
+      <a class="wordmark" href="#/" data-route="home">DU AIRLINES <b>ELITE</b> PERFORMANCE ACADEMY</a>
       <nav aria-label="Football page" class="topnav">
         <a href="#football-development">What Athletes Develop</a>
         <a href="#football-outcomes">Outcomes</a>
@@ -1783,8 +1998,11 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       <p class="lede center">Complete the form and Coach Du will follow up with availability and the best next step.</p>
 
       <div class="soccer-form-card">
-        <form id="footballInquiryForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST">
-          <input type="hidden" name="_subject" value="New Football Coaching Inquiry — Du Airlines Elite Academy">
+        <form id="footballInquiryForm" action="/api/form-submit" method="POST" novalidate>
+<input type="hidden" name="submission_type" value="Football Coaching Inquiry">
+<input type="hidden" name="submitted_at" class="submitted-at" value="">
+<input type="text" name="website" tabindex="-1" autocomplete="off" class="honeypot" aria-hidden="true">
+          <input type="hidden" name="_subject" value="New Football Coaching Inquiry — DU Airlines Elite Performance Academy">
           <input type="hidden" name="_captcha" value="false">
 
           <div class="soccer-form-grid">
@@ -1858,7 +2076,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div id="track-view" class="site-view" hidden>
   <header class="topbar">
     <div class="wrap row">
-      <a class="wordmark" href="#/" data-route="home">DU AIRLINES <b>ELITE</b> ACADEMY</a>
+      <a class="wordmark" href="#/" data-route="home">DU AIRLINES <b>ELITE</b> PERFORMANCE ACADEMY</a>
       <nav aria-label="Track and field page" class="topnav">
         <a href="#track-development">What Athletes Develop</a>
         <a href="#track-outcomes">Outcomes</a>
@@ -2001,8 +2219,11 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       <p class="lede center">Complete the form and Coach Du will follow up with availability and the best next step.</p>
 
       <div class="soccer-form-card">
-        <form id="trackInquiryForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST">
-          <input type="hidden" name="_subject" value="New Track & Field Coaching Inquiry — Du Airlines Elite Academy">
+        <form id="trackInquiryForm" action="/api/form-submit" method="POST" novalidate>
+<input type="hidden" name="submission_type" value="Track & Field Registration">
+<input type="hidden" name="submitted_at" class="submitted-at" value="">
+<input type="text" name="website" tabindex="-1" autocomplete="off" class="honeypot" aria-hidden="true">
+          <input type="hidden" name="_subject" value="New Track & Field Coaching Inquiry — DU Airlines Elite Performance Academy">
           <input type="hidden" name="_captcha" value="false">
 
           <div class="soccer-form-grid">
@@ -2100,12 +2321,12 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       }
 
       document.title = isSoccer
-        ? 'Soccer Performance Development — DU Airlines Elite Academy'
+        ? 'Soccer Performance Development — DU Airlines Elite Performance Academy'
         : isFootball
-          ? 'Football Speed Development — DU Airlines Elite Academy'
+          ? 'Football Speed Development — DU Airlines Elite Performance Academy'
           : isTrack
-            ? 'Track & Field Development — DU Airlines Elite Academy'
-            : 'DU Airlines Elite Academy — Speed, Movement & Horizontal Jumps';
+            ? 'Track & Field Development — DU Airlines Elite Performance Academy'
+            : 'DU Airlines Elite Performance Academy — Speed, Movement & Horizontal Jumps';
 
       const activeView = isSoccer ? soccerView : isFootball ? footballView : isTrack ? trackView : homeView;
       revealActiveView(activeView);
@@ -2116,7 +2337,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 
   function routeFromHash(){
     if (location.hash === '#/soccer') return 'soccer';
-    if (location.hash === '#/football') return 'football';
+    if (location.hash === '#/football') return 'home';
     if (location.hash === '#/track') return 'track';
     return 'home';
   }
@@ -2294,6 +2515,99 @@ document.addEventListener('click',function(e){
       window.scrollTo({top:y, behavior:'smooth'});
     }, 50);
   });
+})();
+</script>
+
+
+<script>
+(function(){
+  const openButton=document.getElementById('openPartnershipForm');
+  const panel=document.getElementById('partnershipInquiry');
+  if(openButton && panel){
+    openButton.addEventListener('click',function(){
+      const opening=panel.hasAttribute('hidden');
+      if(opening){panel.removeAttribute('hidden'); openButton.setAttribute('aria-expanded','true'); panel.scrollIntoView({behavior:'smooth',block:'start'});}
+      else{panel.setAttribute('hidden',''); openButton.setAttribute('aria-expanded','false');}
+    });
+  }
+
+  const method=document.getElementById('partner-contact');
+  const consentWrap=document.getElementById('textConsentWrap');
+  const consent=document.getElementById('textConsent');
+  if(method && consentWrap && consent){
+    method.addEventListener('change',function(){
+      const isText=method.value==='Text';
+      consentWrap.hidden=!isText;
+      consent.required=isText;
+      if(!isText) consent.checked=false;
+    });
+  }
+
+  document.querySelectorAll('form').forEach(function(form){
+    const stamp=form.querySelector('.submitted-at');
+    form.addEventListener('submit',function(event){
+      if(stamp) stamp.value=new Date().toISOString();
+      const honeypot=form.querySelector('input[name="website"]');
+      if(honeypot && honeypot.value){event.preventDefault(); return;}
+      if(!form.checkValidity()){
+        event.preventDefault(); form.reportValidity(); return;
+      }
+      const submit=form.querySelector('[type="submit"]');
+      if(submit && submit.dataset.submitting==='true'){event.preventDefault(); return;}
+      if(submit){submit.dataset.submitting='true'; submit.disabled=true; submit.dataset.originalText=submit.textContent; submit.textContent='Submitting…';}
+    });
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  const club=document.getElementById('integratedClub');
+  const cohort=document.getElementById('integratedCohort');
+  const details=document.getElementById('integratedCohortDetails');
+  const form=document.getElementById('integratedClubForm');
+  const card=document.getElementById('clubRegistrationCard');
+  const confirmation=document.getElementById('clubConfirmation');
+  const summary=document.getElementById('clubConfirmationSummary');
+  const status=document.getElementById('clubFormStatus');
+  const demo={name:'Demonstration Cohort — 4-Week Program',dates:'Four dates confirmed with the selected team',time:'Based on the confirmed team schedule',location:'Partner club training location',price:'$100 per athlete',status:'Preview'};
+  if(!club||!cohort||!form)return;
+  club.addEventListener('change',function(){
+    cohort.disabled=!club.value;
+    cohort.innerHTML=club.value?'<option value="">Select your team or training cohort</option><option value="Demonstration Cohort">Demonstration Cohort — Director Preview</option>':'<option value="">Select a club first</option>';
+    details.hidden=true;
+  });
+  cohort.addEventListener('change',function(){
+    if(!cohort.value){details.hidden=true;return;}
+    details.innerHTML='<strong>'+demo.name+'</strong><br>Training dates: '+demo.dates+'<br>Time: '+demo.time+'<br>Location: '+demo.location+'<br>Investment: '+demo.price+'<br>Status: '+demo.status;
+    details.hidden=false;
+  });
+  const paymentMap={Zelle:'payDetailZelle',PayPal:'payDetailPayPal','Apple Pay':'payDetailApple'};
+  document.querySelectorAll('#integratedClubForm input[name="payment_method"]').forEach(function(radio){
+    radio.addEventListener('change',function(){
+      Object.values(paymentMap).forEach(function(id){document.getElementById(id).classList.remove('show')});
+      document.getElementById(paymentMap[radio.value]).classList.add('show');
+    });
+  });
+  document.querySelectorAll('.club-copy').forEach(function(button){
+    button.addEventListener('click',async function(){
+      try{await navigator.clipboard.writeText(button.dataset.copy);button.textContent='Copied';setTimeout(function(){button.textContent=button.dataset.copy.includes('@')?'Copy PayPal email':'Copy phone number'},1400)}catch(e){button.textContent='Copy manually'}
+    });
+  });
+  form.addEventListener('submit',function(event){
+    event.preventDefault();
+    if(!form.checkValidity()){form.reportValidity();return;}
+    const data=Object.fromEntries(new FormData(form).entries());
+    data.submission_date=new Date().toLocaleString();
+    data.payment_status='Pending verification';
+    const records=JSON.parse(localStorage.getItem('duClubRegistrations')||'[]');records.push(data);localStorage.setItem('duClubRegistrations',JSON.stringify(records));
+    document.getElementById('clubSubmissionDate').value=data.submission_date;
+    summary.innerHTML='<div><span>Athlete</span><strong>'+escapeHtml(data.athlete_name)+'</strong></div><div><span>Club</span><strong>'+escapeHtml(data.club)+'</strong></div><div><span>Team/Cohort</span><strong>'+escapeHtml(data.cohort)+'</strong></div><div><span>Payment channel</span><strong>'+escapeHtml(data.payment_method)+'</strong></div><div><span>Payment status</span><strong>Pending verification</strong></div><div><span>Submitted</span><strong>'+escapeHtml(data.submission_date)+'</strong></div>';
+    card.style.display='none';confirmation.classList.add('show');confirmation.scrollIntoView({behavior:'smooth',block:'start'});
+    status.textContent='Registration saved.';
+  });
+  function escapeHtml(value){const div=document.createElement('div');div.textContent=value||'';return div.innerHTML}
 })();
 </script>
 
