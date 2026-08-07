@@ -1318,9 +1318,13 @@ font:inherit;
       <div class="partnership-form-card">
         <p class="eyebrow">Partnership Inquiry</p>
         <h3>Start a partnership conversation</h3>
-        <form id="partnershipForm" action="/api/form-submit" method="POST" novalidate>
+        <form id="partnershipForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST" novalidate>
           <input type="hidden" name="submission_type" value="Partnership Inquiry">
-          <input type="hidden" name="email_subject" value="New Partnership Inquiry">
+          <input type="hidden" name="_next" value="https://duairlineseliteacademy.com/?submitted=true">
+          <input type="hidden" name="_url" value="https://duairlineseliteacademy.com/">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_subject" value="New Partnership Inquiry — DU Airlines Elite Performance Academy">
           <input type="hidden" name="submitted_at" class="submitted-at" value="">
           <input type="text" name="website" tabindex="-1" autocomplete="off" class="honeypot" aria-hidden="true">
           <div class="partnership-form-grid">
@@ -1610,7 +1614,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
         <span class="club-path-kicker">Approved Partner Clubs &amp; Teams</span>
         <h3 id="club-team-title">Club Team Development</h3>
         <div class="club-price-row">
-          <span class="club-price">$100 <small style="font-family:var(--sans);font-size:.85rem;color:var(--sage);font-style:normal">per athlete</small></span>
+          <span class="club-price"><small style="font-family:var(--sans);font-size:.9rem;color:var(--gold-soft);font-style:normal">Club Partner Rate</small></span>
           <span class="club-frequency"><strong style="color:var(--cream)">4 Sessions</strong><br>Train once each week</span>
         </div>
       </div>
@@ -1707,7 +1711,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       <div class="club-reg-fact"><span>Program length</span><strong>Four weeks</strong></div>
       <div class="club-reg-fact"><span>Frequency</span><strong>Once per week</strong></div>
       <div class="club-reg-fact"><span>Total sessions</span><strong>Four</strong></div>
-      <div class="club-reg-fact"><span>Price</span><strong>$100 per athlete</strong></div>
+      <div class="club-reg-fact"><span>Pricing</span><strong>Confirmed with club</strong></div>
       <div class="club-reg-fact"><span>Group size</span><strong>6–12 athletes</strong></div>
       <div class="club-reg-fact"><span>Session length</span><strong>60 minutes</strong></div>
       <div class="club-reg-fact"><span>Club</span><strong>Selected during registration</strong></div>
@@ -1721,9 +1725,14 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       <p class="lede">This integrated preview demonstrates the complete parent journey. Confirmed club names, dates, time and location can be added when a cohort is approved.</p>
       <div class="club-reg-preview"><strong>Director preview:</strong> Select “Partner Club Preview” and the demonstration cohort below to walk through the system. No online payment is processed; families pay manually through the selected channel.</div>
 
-      <form id="integratedClubForm" novalidate>
+      <form id="integratedClubForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST" novalidate>
         <input type="hidden" name="submission_type" value="Club Registration">
+          <input type="hidden" name="_next" value="https://duairlineseliteacademy.com/?submitted=true">
+          <input type="hidden" name="_url" value="https://duairlineseliteacademy.com/">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="submission_date" id="clubSubmissionDate">
+        <input type="hidden" name="_subject" value="New Club Registration — DU Airlines Elite Performance Academy">
         <h4 class="club-reg-section-title">Select Your Club</h4>
         <div class="club-reg-grid">
           <div class="club-reg-field"><label for="integratedClub">Club</label><select id="integratedClub" name="club" required><option value="">Select your club</option><option value="Partner Club Preview">Partner Club Preview</option></select></div>
@@ -1734,7 +1743,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
         <h4 class="club-reg-section-title">Parent Information</h4>
         <div class="club-reg-grid">
           <div class="club-reg-field"><label for="clubParentName">Parent or guardian full name</label><input id="clubParentName" name="parent_name" required></div>
-          <div class="club-reg-field"><label for="clubParentEmail">Parent email address</label><input id="clubParentEmail" name="parent_email" type="email" required></div>
+          <div class="club-reg-field"><label for="clubParentEmail">Parent email address</label><input id="clubParentEmail" name="email" type="email" required></div>
           <div class="club-reg-field"><label for="clubParentPhone">Parent phone number</label><input id="clubParentPhone" name="parent_phone" type="tel" required></div>
         </div>
 
@@ -1748,14 +1757,14 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 
         <h4 class="club-reg-section-title">Choose Your Manual Payment Channel</h4>
         <div class="club-payment-options">
-          <label class="club-pay-choice"><input type="radio" name="payment_method" value="Zelle" required><span><strong>Zelle</strong><br><small>Send $100 to Coach Du’s phone number.</small></span></label>
-          <label class="club-pay-choice"><input type="radio" name="payment_method" value="PayPal" required><span><strong>PayPal</strong><br><small>Send $100 to Coach Du’s PayPal email.</small></span></label>
-          <label class="club-pay-choice"><input type="radio" name="payment_method" value="Apple Pay" required><span><strong>Apple Pay</strong><br><small>Send $100 to Coach Du’s phone number.</small></span></label>
+          <label class="club-pay-choice"><input type="radio" name="payment_method" value="Zelle" required><span><strong>Zelle</strong><br><small>Use the payment amount provided by Coach Du.</small></span></label>
+          <label class="club-pay-choice"><input type="radio" name="payment_method" value="PayPal" required><span><strong>PayPal</strong><br><small>Use the payment amount provided by Coach Du.</small></span></label>
+          <label class="club-pay-choice"><input type="radio" name="payment_method" value="Apple Pay" required><span><strong>Apple Pay</strong><br><small>Use the payment amount provided by Coach Du.</small></span></label>
         </div>
 
-        <div class="club-payment-detail" id="payDetailZelle"><strong>Pay $100 with Zelle</strong><p>Recipient phone: <strong>(817) 271-7896</strong></p><p>Required memo: <strong>Athlete’s full name + selected club</strong></p><button class="club-copy" type="button" data-copy="8172717896">Copy phone number</button></div>
-        <div class="club-payment-detail" id="payDetailPayPal"><strong>Pay $100 with PayPal</strong><p>PayPal email: <strong>duchenge28@gmail.com</strong></p><p>Required note: <strong>Athlete’s full name + selected club</strong></p><button class="club-copy" type="button" data-copy="duchenge28@gmail.com">Copy PayPal email</button></div>
-        <div class="club-payment-detail" id="payDetailApple"><strong>Pay $100 with Apple Pay</strong><p>Recipient phone: <strong>(817) 271-7896</strong></p><p>Required message: <strong>Athlete’s full name + selected club</strong></p><button class="club-copy" type="button" data-copy="8172717896">Copy phone number</button></div>
+        <div class="club-payment-detail" id="payDetailZelle"><strong>Pay with Zelle</strong><p>Recipient phone: <strong>(817) 271-7896</strong></p><p>Required memo: <strong>Athlete’s full name + selected club</strong></p><button class="club-copy" type="button" data-copy="8172717896">Copy phone number</button></div>
+        <div class="club-payment-detail" id="payDetailPayPal"><strong>Pay with PayPal</strong><p>PayPal email: <strong>duchenge28@gmail.com</strong></p><p>Required note: <strong>Athlete’s full name + selected club</strong></p><button class="club-copy" type="button" data-copy="duchenge28@gmail.com">Copy PayPal email</button></div>
+        <div class="club-payment-detail" id="payDetailApple"><strong>Pay with Apple Pay</strong><p>Recipient phone: <strong>(817) 271-7896</strong></p><p>Required message: <strong>Athlete’s full name + selected club</strong></p><button class="club-copy" type="button" data-copy="8172717896">Copy phone number</button></div>
 
         <div class="club-reg-grid" style="margin-top:1rem">
           <div class="club-reg-field"><label for="clubPaymentSender">Name payment will be sent from</label><input id="clubPaymentSender" name="payment_sender_name" required></div>
@@ -1763,7 +1772,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
           <div class="club-reg-field full"><label for="clubTypedName">Typed parent or guardian name</label><input id="clubTypedName" name="typed_parent_name" required></div>
         </div>
 
-        <label class="club-consent"><input type="checkbox" required><span>I confirm that the information provided is accurate and understand that registration is complete once the $100 payment has been received and verified.</span></label>
+        <label class="club-consent"><input type="checkbox" name="registration_consent" value="Yes" required><span>I confirm that the information provided is accurate and understand that registration is complete once the confirmed payment has been received and verified.</span></label>
         <div class="club-submit-row"><button class="btn btn-primary" id="clubSubmitButton" type="submit">Submit Registration</button><span class="club-form-status" id="clubFormStatus">Manual payment is verified separately by Coach Du.</span></div>
       </form>
     </div>
@@ -1771,7 +1780,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
     <div class="club-confirmation" id="clubConfirmation" aria-live="polite">
       <p class="eyebrow center">Registration Received</p>
       <h3>Thank you for registering your athlete.</h3>
-      <p>Your athlete’s place will be confirmed once the $100 payment has been received and verified. Complete schedule, location information and training expectations will be provided before the first session.</p>
+      <p>Your athlete’s place will be confirmed once the confirmed payment has been received and verified. Complete schedule, location information and training expectations will be provided before the first session.</p>
       <div class="club-confirmation-summary" id="clubConfirmationSummary"></div>
       <a class="btn btn-primary" href="#home">View Main Website</a>
     </div>
@@ -1785,12 +1794,15 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
     <p class="lede center">Complete the form and Coach Du will follow up with availability and the best next step.</p>
 
     <div class="soccer-form-card">
-      <form id="soccerInquiryForm" action="/api/form-submit" method="POST" novalidate>
+      <form id="soccerInquiryForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST" novalidate>
 <input type="hidden" name="submission_type" value="Soccer Coaching Inquiry">
+          <input type="hidden" name="_next" value="https://duairlineseliteacademy.com/?submitted=true">
+          <input type="hidden" name="_url" value="https://duairlineseliteacademy.com/">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
 <input type="hidden" name="submitted_at" class="submitted-at" value="">
 <input type="text" name="website" tabindex="-1" autocomplete="off" class="honeypot" aria-hidden="true">
         <input type="hidden" name="_subject" value="New Soccer Coaching Inquiry — DU Airlines Elite Performance Academy">
-        <input type="hidden" name="_captcha" value="false">
 
         <div class="soccer-form-grid">
           <div class="soccer-field">
@@ -1998,12 +2010,15 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       <p class="lede center">Complete the form and Coach Du will follow up with availability and the best next step.</p>
 
       <div class="soccer-form-card">
-        <form id="footballInquiryForm" action="/api/form-submit" method="POST" novalidate>
+        <form id="footballInquiryForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST" novalidate>
 <input type="hidden" name="submission_type" value="Football Coaching Inquiry">
+          <input type="hidden" name="_next" value="https://duairlineseliteacademy.com/?submitted=true">
+          <input type="hidden" name="_url" value="https://duairlineseliteacademy.com/">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
 <input type="hidden" name="submitted_at" class="submitted-at" value="">
 <input type="text" name="website" tabindex="-1" autocomplete="off" class="honeypot" aria-hidden="true">
           <input type="hidden" name="_subject" value="New Football Coaching Inquiry — DU Airlines Elite Performance Academy">
-          <input type="hidden" name="_captcha" value="false">
 
           <div class="soccer-form-grid">
             <div class="soccer-field">
@@ -2219,12 +2234,15 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       <p class="lede center">Complete the form and Coach Du will follow up with availability and the best next step.</p>
 
       <div class="soccer-form-card">
-        <form id="trackInquiryForm" action="/api/form-submit" method="POST" novalidate>
+        <form id="trackInquiryForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST" novalidate>
 <input type="hidden" name="submission_type" value="Track & Field Registration">
+          <input type="hidden" name="_next" value="https://duairlineseliteacademy.com/?submitted=true">
+          <input type="hidden" name="_url" value="https://duairlineseliteacademy.com/">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
 <input type="hidden" name="submitted_at" class="submitted-at" value="">
 <input type="text" name="website" tabindex="-1" autocomplete="off" class="honeypot" aria-hidden="true">
           <input type="hidden" name="_subject" value="New Track & Field Coaching Inquiry — DU Airlines Elite Performance Academy">
-          <input type="hidden" name="_captcha" value="false">
 
           <div class="soccer-form-grid">
             <div class="soccer-field">
@@ -2571,7 +2589,7 @@ document.addEventListener('click',function(e){
   const confirmation=document.getElementById('clubConfirmation');
   const summary=document.getElementById('clubConfirmationSummary');
   const status=document.getElementById('clubFormStatus');
-  const demo={name:'Demonstration Cohort — 4-Week Program',dates:'Four dates confirmed with the selected team',time:'Based on the confirmed team schedule',location:'Partner club training location',price:'$100 per athlete',status:'Preview'};
+  const demo={name:'Demonstration Cohort — 4-Week Program',dates:'Four dates confirmed with the selected team',time:'Based on the confirmed team schedule',location:'Partner club training location',price:'club partner rate',status:'Preview'};
   if(!club||!cohort||!form)return;
   club.addEventListener('change',function(){
     cohort.disabled=!club.value;
@@ -2596,16 +2614,9 @@ document.addEventListener('click',function(e){
     });
   });
   form.addEventListener('submit',function(event){
-    event.preventDefault();
-    if(!form.checkValidity()){form.reportValidity();return;}
-    const data=Object.fromEntries(new FormData(form).entries());
-    data.submission_date=new Date().toLocaleString();
-    data.payment_status='Pending verification';
-    const records=JSON.parse(localStorage.getItem('duClubRegistrations')||'[]');records.push(data);localStorage.setItem('duClubRegistrations',JSON.stringify(records));
-    document.getElementById('clubSubmissionDate').value=data.submission_date;
-    summary.innerHTML='<div><span>Athlete</span><strong>'+escapeHtml(data.athlete_name)+'</strong></div><div><span>Club</span><strong>'+escapeHtml(data.club)+'</strong></div><div><span>Team/Cohort</span><strong>'+escapeHtml(data.cohort)+'</strong></div><div><span>Payment channel</span><strong>'+escapeHtml(data.payment_method)+'</strong></div><div><span>Payment status</span><strong>Pending verification</strong></div><div><span>Submitted</span><strong>'+escapeHtml(data.submission_date)+'</strong></div>';
-    card.style.display='none';confirmation.classList.add('show');confirmation.scrollIntoView({behavior:'smooth',block:'start'});
-    status.textContent='Registration saved.';
+    if(!form.checkValidity()){event.preventDefault();form.reportValidity();return;}
+    document.getElementById('clubSubmissionDate').value=new Date().toISOString();
+    status.textContent='Submitting registration…';
   });
   function escapeHtml(value){const div=document.createElement('div');div.textContent=value||'';return div.innerHTML}
 })();
