@@ -153,7 +153,8 @@
   .creds-grid{
     display:grid;grid-template-columns:repeat(2,1fr);
   }
-  @media(min-width:760px){ .creds-grid{grid-template-columns:repeat(5,1fr)} }
+  @media(min-width:760px){ .creds-grid{grid-template-columns:repeat(3,1fr)} }
+  @media(min-width:1050px){ .creds-grid{grid-template-columns:repeat(4,1fr)} }
   .cred{
     text-align:center;padding:1.5rem 1rem;
     border-right:1px solid var(--hair-soft);border-bottom:1px solid var(--hair-soft);
@@ -1218,11 +1219,13 @@ font:inherit;
 <section aria-label="Credentials" class="creds">
 <div class="wrap" style="padding-inline:0">
 <div class="creds-grid">
-<div class="cred"><div class="num">2×</div><div class="lab">NCAA D1 Champion</div></div>
-<div class="cred"><div class="num">9×</div><div class="lab">All-American</div></div>
+<div class="cred"><div class="num">2×</div><div class="lab">NCAA Division I Champion</div></div>
 <div class="cred"><div class="num">TCU</div><div class="lab">Record Holder</div></div>
-<div class="cred"><div class="num">WC</div><div class="lab">World Finalist</div></div>
-<div class="cred"><div class="num">Pro</div><div class="lab">Int'l Athlete</div></div>
+<div class="cred"><div class="num">7×</div><div class="lab">World Championships Qualifier</div></div>
+<div class="cred"><div class="num">World</div><div class="lab">Championships Finalist</div></div>
+<div class="cred"><div class="num">Africa</div><div class="lab">Senior Silver Medalist</div></div>
+<div class="cred"><div class="num">Africa Jr.</div><div class="lab">Champion</div></div>
+<div class="cred"><div class="num">Africa Jr.</div><div class="lab">Championships Record Holder</div></div>
 </div>
 </div>
 </section>
@@ -2634,7 +2637,7 @@ document.addEventListener('click',function(e){
   const maximumCapacity=document.getElementById('clubMaximumCapacity');
   if(!club||!cohort||!form)return;
 
-  const locationPlaceholder='ADMINISTRATOR ACTION REQUIRED — add the verified Fever United field name and address before publishing.';
+  const feverUnitedLocation='St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092';
   const cohorts={
     preview:{
       value:'Demonstration Cohort',
@@ -2645,17 +2648,17 @@ document.addEventListener('click',function(e){
     },
     feverWed630:{
       value:'Fever United — Wednesday 6:30 PM Cohort',label:'Wednesday 6:30 PM Cohort — Open',name:'Fever United — Wednesday 6:30 PM Cohort',
-      session1:'Wednesday, September 9, 2026',session2:'Wednesday, September 16, 2026',time:'6:30–7:30 PM',location:locationPlaceholder,
+      session1:'Wednesday, September 9, 2026',session2:'Wednesday, September 16, 2026',time:'6:30–7:30 PM',location:feverUnitedLocation,
       price:'$24 total for both sessions',minimum:'8 paid athletes',maximum:'12 paid athletes',kind:'active',status:'Open'
     },
     feverFri530:{
       value:'Fever United — Friday 5:30 PM Cohort',label:'Friday 5:30 PM Cohort — Open',name:'Fever United — Friday 5:30 PM Cohort',
-      session1:'Friday, September 11, 2026',session2:'Friday, September 18, 2026',time:'5:30–6:30 PM',location:locationPlaceholder,
+      session1:'Friday, September 11, 2026',session2:'Friday, September 18, 2026',time:'5:30–6:30 PM',location:feverUnitedLocation,
       price:'$24 total for both sessions',minimum:'8 paid athletes',maximum:'12 paid athletes',kind:'active',status:'Open'
     },
     feverInterest:{
       value:'Fever United — Wednesday 5:30 PM Additional Cohort',label:'Additional Wednesday cohort — opening based on demand',name:'Fever United — Wednesday 5:30 PM Additional Cohort',
-      session1:'Potential: Wednesday, September 9, 2026',session2:'Potential: Wednesday, September 16, 2026',time:'Potential: 5:30–6:30 PM',location:locationPlaceholder,
+      session1:'Potential: Wednesday, September 9, 2026',session2:'Potential: Wednesday, September 16, 2026',time:'Potential: 5:30–6:30 PM',location:feverUnitedLocation,
       price:'$24 total for both sessions if activated',minimum:'8 paid athletes if activated',maximum:'12 paid athletes if activated',kind:'interest',status:'Opens based on demand'
     }
   };
