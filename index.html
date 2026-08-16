@@ -1181,6 +1181,240 @@ font:inherit;
 .club-confirmation-summary div:last-child{border-bottom:0}.club-confirmation-summary span{color:var(--sage)}
 @media(min-width:720px){.club-reg-overview{grid-template-columns:repeat(3,minmax(0,1fr))}.club-reg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.club-payment-options{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
+
+<style>
+/* ===== Focused mobile containment + club-registration UX pass ===== */
+html,
+body{
+  width:100%;
+  max-width:100%;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+  min-width:0;
+}
+
+img,
+video,
+svg,
+iframe{
+  max-width:100%;
+}
+
+.site-view,
+header,
+section,
+footer,
+.wrap,
+.club-reg-shell,
+.club-reg-card,
+.soccer-form-card,
+.club-team-pathway,
+.soccer-card,
+.outcome-card,
+.benefit{
+  max-width:100%;
+}
+
+.topbar .row{
+  min-width:0;
+}
+
+.wordmark{
+  min-width:0;
+  max-width:100%;
+}
+
+.btn{
+  max-width:100%;
+  white-space:normal;
+  text-align:center;
+  justify-content:center;
+}
+
+.club-reg-field,
+.soccer-field,
+.club-reg-grid > *,
+.soccer-form-grid > *,
+.soccer-path-grid > *,
+.outcomes-grid > *,
+.benefit-grid > *{
+  min-width:0;
+}
+
+.club-reg-field input,
+.club-reg-field select,
+.soccer-field input,
+.soccer-field select{
+  min-width:0;
+  max-width:100%;
+}
+
+.club-payment-next{
+  margin:1.35rem 0 1rem;
+  text-align:center;
+}
+
+.club-payment-next .btn{
+  width:100%;
+}
+
+.club-secure-note{
+  margin:.65rem 0 0;
+  color:var(--sage);
+  font-size:.82rem;
+}
+
+@media(max-width:699px){
+  .topbar .row{
+    height:auto;
+    min-height:58px;
+    padding-block:.6rem;
+    align-items:center;
+  }
+
+  .wordmark{
+    flex:1 1 auto;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    font-size:clamp(.56rem,2.4vw,.68rem);
+    line-height:1.25;
+    letter-spacing:clamp(.11em,1.8vw,.18em);
+  }
+
+  .top-cta{
+    flex:0 0 auto;
+    font-size:.68rem;
+    letter-spacing:.06em;
+  }
+
+  .sport-page-hero{
+    padding-block:clamp(4.4rem,16vw,6rem) clamp(3rem,10vw,4rem);
+  }
+
+  .sport-page-hero .hero-title{
+    width:100%;
+    max-width:100%;
+    margin-inline:auto;
+    font-size:clamp(2.05rem,10.5vw,3.25rem);
+    line-height:1.03;
+    letter-spacing:-.02em;
+    overflow-wrap:normal;
+    word-break:normal;
+  }
+
+  .sport-page-hero .hero-sub{
+    width:100%;
+    max-width:100%;
+    font-size:.96rem;
+  }
+
+  .hero-actions,
+  .section-actions,
+  .partner-actions,
+  .club-path-actions,
+  .soccer-form-submit{
+    width:100%;
+  }
+
+  .hero-actions .btn,
+  .section-actions .btn,
+  .partner-actions .btn,
+  .club-path-actions .btn,
+  .soccer-form-submit .btn{
+    width:100%;
+  }
+
+  .club-team-pathway,
+  .club-reg-card,
+  .soccer-form-card{
+    padding:1.2rem;
+  }
+
+  .club-reg-hero{
+    margin-bottom:1.6rem;
+  }
+
+  .club-reg-hero h2{
+    max-width:100%;
+    font-size:clamp(1.9rem,9.5vw,2.75rem);
+    overflow-wrap:normal;
+    word-break:normal;
+  }
+
+  .club-reg-preview,
+  .club-confirmation-summary strong,
+  .club-reg-field label,
+  .club-note,
+  .foot a{
+    overflow-wrap:anywhere;
+  }
+
+  .contact-row{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.25rem;
+  }
+
+  .contact-row a{
+    max-width:100%;
+    overflow-wrap:anywhere;
+  }
+
+  .contact-actions .btn{
+    min-width:0;
+  }
+
+  input,
+  select,
+  textarea,
+  button{
+    font-size:16px;
+  }
+}
+
+@media(max-width:430px){
+  .wrap{
+    padding-inline:clamp(1rem,4.5vw,1.25rem);
+  }
+
+  .club-team-pathway .club-feature-list,
+  .svc-list{
+    grid-template-columns:1fr;
+  }
+
+  .club-reg-card h3{
+    font-size:1.35rem;
+  }
+
+  .club-reg-section-title{
+    margin-top:1.6rem;
+  }
+}
+
+@media(max-width:340px){
+  .wordmark{
+    font-size:.54rem;
+    letter-spacing:.09em;
+  }
+
+  .top-cta{
+    font-size:.64rem;
+  }
+
+  .sport-page-hero .hero-title{
+    font-size:2rem;
+  }
+}
+</style>
+
 </head>
 <body id="top">
 <div id="home-view" class="site-view">
@@ -1637,7 +1871,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
         </ul>
         <div>
           <div class="club-path-actions">
-            <a class="btn btn-primary" href="#club-registration">Register With Your Club →</a>
+            <a class="btn btn-primary" href="#/club-registration" data-route="club-registration">Register With Your Club →</a>
           </div>
           <span class="club-note">Available only through approved partner clubs and confirmed team cohorts.</span>
         </div>
@@ -1702,117 +1936,6 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </section>
 
 
-
-<section class="club-reg-portal" id="club-registration">
-  <div class="wrap club-reg-shell">
-    <div class="club-reg-hero">
-      <p class="eyebrow center">DU Airlines Club Development</p>
-      <h2>Two-Week Supplemental Speed &amp; Movement Program</h2>
-      <p class="lede center">A focused two-week supplemental development program for youth soccer athletes registering through an approved partner club or team.</p>
-    </div>
-
-    <div class="club-reg-overview" aria-label="Program overview">
-      <div class="club-reg-fact"><span>Program length</span><strong>Two weeks</strong></div>
-      <div class="club-reg-fact"><span>Frequency</span><strong>Once per week</strong></div>
-      <div class="club-reg-fact"><span>Total sessions</span><strong>Two</strong></div>
-      <div class="club-reg-fact"><span>Pricing</span><strong>Confirmed with club</strong></div>
-      <div class="club-reg-fact"><span>Group size</span><strong>8–12 athletes</strong></div>
-      <div class="club-reg-fact"><span>General session length</span><strong>45–60 minutes</strong></div>
-      <div class="club-reg-fact"><span>Club</span><strong>Selected during registration</strong></div>
-      <div class="club-reg-fact"><span>Team or cohort</span><strong>Selected during registration</strong></div>
-      <div class="club-reg-fact"><span>Coach</span><strong>Chengetayi “Coach Du” Mapaya</strong></div>
-    </div>
-
-    <div class="club-reg-card" id="clubRegistrationCard">
-      <p class="eyebrow">Partner-Club Registration</p>
-      <h3>Register your athlete</h3>
-      <p class="lede">Select your approved club and cohort to view the exact dates, time, price and registration requirements.</p>
-
-      <form id="integratedClubForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST" novalidate>
-        <input type="hidden" name="submission_type" id="clubSubmissionType" value="Club Registration">
-        <input type="hidden" name="_next" id="clubNextUrl" value="https://duairlineseliteacademy.com/?submitted=club-active#/soccer">
-        <input type="hidden" name="_url" value="https://duairlineseliteacademy.com/">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_captcha" value="true">
-        <input type="hidden" name="_autoresponse" id="clubAutoresponse" value="">
-        <input type="hidden" name="submission_date" id="clubSubmissionDate">
-        <input type="hidden" name="_subject" id="clubSubject" value="New Club Registration — DU Airlines Elite Performance Academy">
-        <input type="hidden" name="registration_status" id="clubRegistrationStatus" value="Pending Verification">
-        <input type="hidden" name="payment_status" id="clubPaymentStatus" value="Pending Verification">
-        <input type="hidden" name="session_1" id="clubSession1" value="">
-        <input type="hidden" name="session_2" id="clubSession2" value="">
-        <input type="hidden" name="session_time" id="clubSessionTime" value="">
-        <input type="hidden" name="program_location" id="clubProgramLocation" value="">
-        <input type="hidden" name="total_price" id="clubTotalPrice" value="">
-        <input type="hidden" name="activation_minimum" id="clubActivationMinimum" value="">
-        <input type="hidden" name="maximum_capacity" id="clubMaximumCapacity" value="">
-
-        <h4 class="club-reg-section-title">Select Your Club</h4>
-        <div class="club-reg-grid">
-          <div class="club-reg-field">
-            <label for="integratedClub">Club</label>
-            <select id="integratedClub" name="club" required>
-              <option value="">Select your club</option>
-              <option value="Partner Club Preview">Partner Club Preview</option>
-              <option value="Fever United">Fever United</option>
-            </select>
-          </div>
-          <div class="club-reg-field">
-            <label for="integratedCohort">Cohort or time preference</label>
-            <select id="integratedCohort" name="cohort" required disabled><option value="">Select a club first</option></select>
-          </div>
-        </div>
-        <div class="club-reg-preview" id="integratedCohortDetails" hidden></div>
-
-        <h4 class="club-reg-section-title">Parent Information</h4>
-        <div class="club-reg-grid">
-          <div class="club-reg-field"><label for="clubParentName">Parent or guardian full name</label><input id="clubParentName" name="parent_name" required></div>
-          <div class="club-reg-field"><label for="clubParentEmail">Parent email address</label><input id="clubParentEmail" name="email" type="email" autocomplete="email" required></div>
-          <div class="club-reg-field"><label for="clubParentPhone">Parent phone number</label><input id="clubParentPhone" name="parent_phone" type="tel" autocomplete="tel" required></div>
-        </div>
-
-        <h4 class="club-reg-section-title">Athlete Information</h4>
-        <div class="club-reg-grid">
-          <div class="club-reg-field"><label for="clubAthleteName">Athlete full name</label><input id="clubAthleteName" name="athlete_name" required></div>
-          <div class="club-reg-field"><label for="clubAthleteAge">Athlete age</label><input id="clubAthleteAge" name="athlete_age" type="number" min="6" max="19" required></div>
-        </div>
-
-        <div id="clubPaymentSection">
-          <h4 class="club-reg-section-title">Choose Your Payment Method</h4>
-          <div class="club-reg-preview" id="clubPaymentNotice"><strong>$24 total includes both sessions.</strong><br>Please include the athlete’s full name in the payment note. Registration is confirmed only after payment has been received and verified.</div>
-          <div class="club-payment-options">
-            <label class="club-pay-choice"><input type="radio" name="payment_method" value="Zelle" required><span><strong>Zelle</strong><br><small>Manual transfer — $24 total for both sessions.</small></span></label>
-            <label class="club-pay-choice"><input type="radio" name="payment_method" value="Apple Cash" required><span><strong>Apple Cash</strong><br><small>Manual transfer — $24 total for both sessions.</small></span></label>
-            <label class="club-pay-choice"><input type="radio" name="payment_method" value="PayPal" required><span><strong>PayPal</strong><br><small>Manual transfer — $24 total for both sessions.</small></span></label>
-          </div>
-
-          <div class="club-payment-detail" id="payDetailZelle"><strong>Zelle — $24 total</strong><p>Send $24 to: <strong>(817) 271-7896</strong></p><p>$24 covers both sessions. Include the athlete’s full name in the payment note.</p><button class="club-copy" type="button" data-copy="8172717896" data-label="Copy phone number">Copy phone number</button></div>
-          <div class="club-payment-detail" id="payDetailApple"><strong>Apple Cash — $24 total</strong><p>Send $24 to: <strong>(817) 271-7896</strong></p><p>$24 covers both sessions. Include the athlete’s full name in the payment note.</p><button class="club-copy" type="button" data-copy="8172717896" data-label="Copy phone number">Copy phone number</button></div>
-          <div class="club-payment-detail" id="payDetailPayPal"><strong>PayPal — $24 total</strong><p>Send $24 to: <strong>duchenge28@gmail.com</strong></p><p>$24 covers both sessions. Include the athlete’s full name in the payment note.</p><button class="club-copy" type="button" data-copy="duchenge28@gmail.com" data-label="Copy PayPal email">Copy PayPal email</button></div>
-
-          <div class="club-reg-grid" style="margin-top:1rem">
-            <div class="club-reg-field"><label for="clubPaymentSender">Name payment will be sent from</label><input id="clubPaymentSender" name="payment_sender_name" required></div>
-          </div>
-        </div>
-
-        <div class="club-reg-grid" style="margin-top:1rem">
-          <div class="club-reg-field full"><label for="clubTypedName">Typed parent or guardian name</label><input id="clubTypedName" name="typed_parent_name" required></div>
-        </div>
-
-        <label class="club-consent"><input id="clubAgreement" type="checkbox" name="registration_consent" value="Yes" required><span id="clubAgreementText">I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for both sessions in the selected cohort. I understand that the cohort requires at least 8 paid athletes to proceed and is limited to 12 paid athletes. If the minimum is not reached, I may approve a transfer to another eligible cohort or receive a full refund. I understand that registration is confirmed only after payment has been received and verified.</span></label>
-        <div class="club-submit-row"><button class="btn btn-primary" id="clubSubmitButton" type="submit">Submit Registration</button><span class="club-form-status" id="clubFormStatus">Registration is pending until payment is received and verified.</span></div>
-      </form>
-    </div>
-
-    <div class="club-confirmation" id="clubConfirmation" aria-live="polite">
-      <p class="eyebrow center">Registration Received</p>
-      <h3 id="clubConfirmationTitle">Registration received.</h3>
-      <p id="clubConfirmationMessage">Your place is pending payment verification. You will receive an email containing your registration details and payment instructions.</p>
-      <div class="club-confirmation-summary" id="clubConfirmationSummary"></div>
-      <a class="btn btn-primary" href="#club-registration">Return to Club Registration</a>
-    </div>
-  </div>
-</section>
 
 <section class="section-compact" id="soccer-form">
   <div class="wrap">
@@ -1892,6 +2015,116 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </div>
 
 
+
+
+<div id="club-registration-view" class="site-view" hidden>
+  <header class="topbar">
+    <div class="wrap row">
+      <a class="wordmark" href="#/" data-route="home">DU AIRLINES <b>ELITE</b> PERFORMANCE ACADEMY</a>
+      <nav aria-label="Club registration page" class="topnav">
+        <a href="#/" data-route="home">Home</a>
+        <a href="#/soccer" data-route="soccer">Soccer Development</a>
+      </nav>
+      <a class="top-cta" href="#/soccer" data-route="soccer">← Soccer</a>
+    </div>
+  </header>
+
+<section class="club-reg-portal" id="club-registration">
+  <div class="wrap club-reg-shell">
+    <div class="club-reg-hero">
+      <p class="eyebrow center">Partner Club Registration</p>
+      <h2>Two-Week Supplemental Speed &amp; Movement Program</h2>
+      <p class="lede center">Select your approved club and cohort below to register your athlete.</p>
+    </div>
+
+    <div class="club-reg-card" id="clubRegistrationCard">
+      <p class="eyebrow">Partner-Club Registration</p>
+      <h3>Register your athlete</h3>
+      <p class="lede">Select your approved club and cohort to view the exact dates, time, price and registration requirements.</p>
+
+      <form id="integratedClubForm" action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" method="POST" novalidate>
+        <input type="hidden" name="submission_type" id="clubSubmissionType" value="Club Registration">
+        <input type="hidden" name="_next" id="clubNextUrl" value="https://duairlineseliteacademy.com/?submitted=club-active#/soccer">
+        <input type="hidden" name="_url" value="https://duairlineseliteacademy.com/">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="true">
+        <input type="hidden" name="_autoresponse" id="clubAutoresponse" value="">
+        <input type="hidden" name="submission_date" id="clubSubmissionDate">
+        <input type="hidden" name="_subject" id="clubSubject" value="New Club Registration — DU Airlines Elite Performance Academy">
+        <input type="hidden" name="registration_status" id="clubRegistrationStatus" value="Pending Verification">
+        <input type="hidden" name="payment_status" id="clubPaymentStatus" value="Pending Payment">
+        <input type="hidden" name="payment_method" id="clubPaymentMethod" value="Stripe">
+        <input type="hidden" name="payment_link" id="clubPaymentLink" value="">
+        <input type="hidden" name="session_1" id="clubSession1" value="">
+        <input type="hidden" name="session_2" id="clubSession2" value="">
+        <input type="hidden" name="session_time" id="clubSessionTime" value="">
+        <input type="hidden" name="program_location" id="clubProgramLocation" value="">
+        <input type="hidden" name="total_price" id="clubTotalPrice" value="">
+        <input type="hidden" name="activation_minimum" id="clubActivationMinimum" value="">
+        <input type="hidden" name="maximum_capacity" id="clubMaximumCapacity" value="">
+
+        <h4 class="club-reg-section-title">Select Your Club</h4>
+        <div class="club-reg-grid">
+          <div class="club-reg-field">
+            <label for="integratedClub">Club</label>
+            <select id="integratedClub" name="club" required>
+              <option value="">Select your club</option>
+              <option value="Partner Club Preview">Partner Club Preview</option>
+              <option value="Fever United">Fever United</option>
+            </select>
+          </div>
+          <div class="club-reg-field">
+            <label for="integratedCohort">Cohort or time preference</label>
+            <select id="integratedCohort" name="cohort" required disabled><option value="">Select a club first</option></select>
+          </div>
+        </div>
+        <div class="club-reg-preview" id="integratedCohortDetails" hidden></div>
+
+        <h4 class="club-reg-section-title">Parent Information</h4>
+        <div class="club-reg-grid">
+          <div class="club-reg-field"><label for="clubParentName">Parent or guardian full name</label><input id="clubParentName" name="parent_name" required></div>
+          <div class="club-reg-field"><label for="clubParentEmail">Parent email address</label><input id="clubParentEmail" name="email" type="email" autocomplete="email" required></div>
+          <div class="club-reg-field"><label for="clubParentPhone">Parent phone number</label><input id="clubParentPhone" name="parent_phone" type="tel" autocomplete="tel" required></div>
+        </div>
+
+        <h4 class="club-reg-section-title">Athlete Information</h4>
+        <div class="club-reg-grid">
+          <div class="club-reg-field"><label for="clubAthleteName">Athlete full name</label><input id="clubAthleteName" name="athlete_name" required></div>
+          <div class="club-reg-field"><label for="clubAthleteAge">Athlete age</label><input id="clubAthleteAge" name="athlete_age" type="number" min="6" max="19" required></div>
+        </div>
+
+        <div id="clubPaymentSection">
+          <h4 class="club-reg-section-title">Secure Payment</h4>
+          <div class="club-reg-preview" id="clubPaymentNotice">
+            <strong>$24 total includes both sessions.</strong><br>
+            Submit the registration first. You will then continue directly to secure Stripe payment for the cohort you selected.
+          </div>
+        </div>
+
+        <div class="club-reg-grid" style="margin-top:1rem">
+          <div class="club-reg-field full"><label for="clubTypedName">Typed parent or guardian name</label><input id="clubTypedName" name="typed_parent_name" required></div>
+        </div>
+
+        <label class="club-consent"><input id="clubAgreement" type="checkbox" name="registration_consent" value="Yes" required><span id="clubAgreementText">I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for both sessions in the selected cohort. I understand that the cohort requires at least 8 paid athletes to proceed and is limited to 12 paid athletes. If the minimum is not reached, I may approve a transfer to another eligible cohort or receive a full refund. I understand that registration is confirmed only after payment has been received and verified.</span></label>
+        <div class="club-submit-row"><button class="btn btn-primary" id="clubSubmitButton" type="submit">Submit Registration</button><span class="club-form-status" id="clubFormStatus">Registration is pending until payment is received and verified.</span></div>
+      </form>
+    </div>
+
+    <div class="club-confirmation" id="clubConfirmation" aria-live="polite">
+      <p class="eyebrow center">Registration Received</p>
+      <h3 id="clubConfirmationTitle">Registration received.</h3>
+      <p id="clubConfirmationMessage">Your athlete registration has been received. Complete the $24 payment below to reserve your place in the selected cohort.</p>
+      <div class="club-confirmation-summary" id="clubConfirmationSummary"></div>
+      <div class="club-payment-next" id="clubStripePaymentArea" hidden>
+        <a class="btn btn-primary" id="clubStripePaymentButton" href="#" rel="noopener">Continue to Secure Payment — $24</a>
+        <p class="club-secure-note">Payment is securely processed by Stripe.</p>
+      </div>
+      <a class="btn btn-ghost" href="#/club-registration" data-route="club-registration">Return to Club Registration</a>
+    </div>
+  </div>
+</section>
+
+</div>
 
 
 <div id="football-view" class="site-view" hidden>
@@ -2334,6 +2567,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 (function(){
   const homeView = document.getElementById('home-view');
   const soccerView = document.getElementById('soccer-view');
+  const clubRegistrationView = document.getElementById('club-registration-view');
   const footballView = document.getElementById('football-view');
   const trackView = document.getElementById('track-view');
 
@@ -2351,29 +2585,42 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 
     window.setTimeout(function(){
       const isSoccer = route === 'soccer';
+      const isClubRegistration = route === 'club-registration';
       const isFootball = route === 'football';
       const isTrack = route === 'track';
-      const isHome = !isSoccer && !isFootball && !isTrack;
+      const isHome = !isSoccer && !isClubRegistration && !isFootball && !isTrack;
 
       homeView.hidden = !isHome;
       soccerView.hidden = !isSoccer;
+      if (clubRegistrationView) clubRegistrationView.hidden = !isClubRegistration;
       footballView.hidden = !isFootball;
       trackView.hidden = !isTrack;
 
       if (push) {
-        const hash = isSoccer ? '#/soccer' : isFootball ? '#/football' : isTrack ? '#/track' : '#/';
+        const hash = isSoccer ? '#/soccer'
+          : isClubRegistration ? '#/club-registration'
+          : isFootball ? '#/football'
+          : isTrack ? '#/track'
+          : '#/';
         history.pushState({route:route}, '', hash);
       }
 
       document.title = isSoccer
         ? 'Soccer Performance Development — DU Airlines Elite Performance Academy'
-        : isFootball
-          ? 'Football Speed Development — DU Airlines Elite Performance Academy'
-          : isTrack
-            ? 'Track & Field Development — DU Airlines Elite Performance Academy'
-            : 'DU Airlines Elite Performance Academy — Speed, Movement & Horizontal Jumps';
+        : isClubRegistration
+          ? 'Partner Club Registration — DU Airlines Elite Performance Academy'
+          : isFootball
+            ? 'Football Speed Development — DU Airlines Elite Performance Academy'
+            : isTrack
+              ? 'Track & Field Development — DU Airlines Elite Performance Academy'
+              : 'DU Airlines Elite Performance Academy — Speed, Movement & Horizontal Jumps';
 
-      const activeView = isSoccer ? soccerView : isFootball ? footballView : isTrack ? trackView : homeView;
+      const activeView = isSoccer ? soccerView
+        : isClubRegistration ? clubRegistrationView
+        : isFootball ? footballView
+        : isTrack ? trackView
+        : homeView;
+
       revealActiveView(activeView);
       window.scrollTo({top:0, behavior:'instant'});
       document.body.classList.remove('route-transitioning');
@@ -2382,6 +2629,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 
   function routeFromHash(){
     if (location.hash === '#/soccer') return 'soccer';
+    if (location.hash === '#/club-registration') return 'club-registration';
     if (location.hash === '#/football') return 'home';
     if (location.hash === '#/track') return 'track';
     return 'home';
@@ -2620,11 +2868,12 @@ document.addEventListener('click',function(e){
   const status=document.getElementById('clubFormStatus');
   const submitButton=document.getElementById('clubSubmitButton');
   const paymentSection=document.getElementById('clubPaymentSection');
-  const paymentSender=document.getElementById('clubPaymentSender');
   const agreementText=document.getElementById('clubAgreementText');
   const submissionType=document.getElementById('clubSubmissionType');
   const registrationStatus=document.getElementById('clubRegistrationStatus');
   const paymentStatus=document.getElementById('clubPaymentStatus');
+  const paymentMethod=document.getElementById('clubPaymentMethod');
+  const paymentLink=document.getElementById('clubPaymentLink');
   const nextUrl=document.getElementById('clubNextUrl');
   const autoresponse=document.getElementById('clubAutoresponse');
   const subject=document.getElementById('clubSubject');
@@ -2635,79 +2884,157 @@ document.addEventListener('click',function(e){
   const totalPrice=document.getElementById('clubTotalPrice');
   const activationMinimum=document.getElementById('clubActivationMinimum');
   const maximumCapacity=document.getElementById('clubMaximumCapacity');
+  const stripeArea=document.getElementById('clubStripePaymentArea');
+  const stripeButton=document.getElementById('clubStripePaymentButton');
   if(!club||!cohort||!form)return;
 
   const feverUnitedLocation='St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092';
   const cohorts={
     preview:{
+      slug:'preview',
       value:'Demonstration Cohort',
       label:'Demonstration Cohort — Director Preview',
       name:'Demonstration Cohort — Two-Week Program',
-      session1:'Date confirmed with selected team',session2:'Second date confirmed with selected team',
-      time:'Based on the confirmed team schedule',location:'Partner club training location',price:'Confirmed with club',minimum:'Confirmed with club',maximum:'12',kind:'active',status:'Preview'
+      session1:'Date confirmed with selected team',
+      session2:'Second date confirmed with selected team',
+      time:'Based on the confirmed team schedule',
+      location:'Partner club training location',
+      price:'Confirmed with club',
+      minimum:'Confirmed with club',
+      maximum:'12',
+      kind:'preview',
+      status:'Preview',
+      paymentUrl:''
     },
     feverWed630:{
-      value:'Fever United — Wednesday 6:30 PM Cohort',label:'Wednesday 6:30 PM Cohort — Open',name:'Fever United — Wednesday 6:30 PM Cohort',
-      session1:'Wednesday, September 9, 2026',session2:'Wednesday, September 16, 2026',time:'6:30–7:30 PM',location:feverUnitedLocation,
-      price:'$24 total for both sessions',minimum:'8 paid athletes',maximum:'12 paid athletes',kind:'active',status:'Open'
+      slug:'feverWed630',
+      value:'Fever United — Wednesday 6:30 PM Cohort',
+      label:'Wednesday 6:30 PM Cohort — Open',
+      name:'Fever United — Wednesday 6:30 PM Cohort',
+      session1:'Wednesday, September 9, 2026',
+      session2:'Wednesday, September 16, 2026',
+      time:'6:30–7:30 PM',
+      location:feverUnitedLocation,
+      price:'$24 total for both sessions',
+      minimum:'8 paid athletes',
+      maximum:'12 paid athletes',
+      kind:'active',
+      status:'Open',
+      paymentUrl:'https://buy.stripe.com/14A14m6abdBd4c90Nj5os00'
     },
     feverFri530:{
-      value:'Fever United — Friday 5:30 PM Cohort',label:'Friday 5:30 PM Cohort — Open',name:'Fever United — Friday 5:30 PM Cohort',
-      session1:'Friday, September 11, 2026',session2:'Friday, September 18, 2026',time:'5:30–6:30 PM',location:feverUnitedLocation,
-      price:'$24 total for both sessions',minimum:'8 paid athletes',maximum:'12 paid athletes',kind:'active',status:'Open'
+      slug:'feverFri530',
+      value:'Fever United — Friday 5:30 PM Cohort',
+      label:'Friday 5:30 PM Cohort — Open',
+      name:'Fever United — Friday 5:30 PM Cohort',
+      session1:'Friday, September 11, 2026',
+      session2:'Friday, September 18, 2026',
+      time:'5:30–6:30 PM',
+      location:feverUnitedLocation,
+      price:'$24 total for both sessions',
+      minimum:'8 paid athletes',
+      maximum:'12 paid athletes',
+      kind:'active',
+      status:'Open',
+      paymentUrl:'https://buy.stripe.com/14AcN4cyz54H241brX5os01'
     },
     feverInterest:{
-      value:'Fever United — Wednesday 5:30 PM Additional Cohort',label:'Additional Wednesday cohort — opening based on demand',name:'Fever United — Wednesday 5:30 PM Additional Cohort',
-      session1:'Potential: Wednesday, September 9, 2026',session2:'Potential: Wednesday, September 16, 2026',time:'Potential: 5:30–6:30 PM',location:feverUnitedLocation,
-      price:'$24 total for both sessions if activated',minimum:'8 paid athletes if activated',maximum:'12 paid athletes if activated',kind:'interest',status:'Opens based on demand'
+      slug:'feverInterest',
+      value:'Fever United — Wednesday 5:30 PM Additional Cohort',
+      label:'Additional Wednesday cohort — opening based on demand',
+      name:'Fever United — Wednesday 5:30 PM Additional Cohort',
+      session1:'Potential: Wednesday, September 9, 2026',
+      session2:'Potential: Wednesday, September 16, 2026',
+      time:'Potential: 5:30–6:30 PM',
+      location:feverUnitedLocation,
+      price:'$24 total for both sessions if activated',
+      minimum:'8 paid athletes if activated',
+      maximum:'12 paid athletes if activated',
+      kind:'interest',
+      status:'Opens based on demand',
+      paymentUrl:''
     }
   };
 
-  function currentCohort(){ return Object.values(cohorts).find(function(c){return c.value===cohort.value}) || null; }
+  function currentCohort(){
+    return Object.values(cohorts).find(function(c){return c.value===cohort.value}) || null;
+  }
+
   function setHidden(meta){
-    session1.value=meta?meta.session1:'';session2.value=meta?meta.session2:'';sessionTime.value=meta?meta.time:'';
-    programLocation.value=meta?meta.location:'';totalPrice.value=meta?meta.price:'';activationMinimum.value=meta?meta.minimum:'';maximumCapacity.value=meta?meta.maximum:'';
+    session1.value=meta?meta.session1:'';
+    session2.value=meta?meta.session2:'';
+    sessionTime.value=meta?meta.time:'';
+    programLocation.value=meta?meta.location:'';
+    totalPrice.value=meta?meta.price:'';
+    activationMinimum.value=meta?meta.minimum:'';
+    maximumCapacity.value=meta?meta.maximum:'';
+    if(paymentLink)paymentLink.value=meta&&meta.paymentUrl?meta.paymentUrl:'';
   }
-  function resetPayments(){
-    document.querySelectorAll('#integratedClubForm input[name="payment_method"]').forEach(function(r){r.checked=false});
-    document.querySelectorAll('.club-payment-detail').forEach(function(el){el.classList.remove('show')});
-  }
+
   function configureFor(meta){
-    if(!meta){details.hidden=true;return;}
+    if(!meta){
+      details.hidden=true;
+      if(paymentSection)paymentSection.hidden=true;
+      return;
+    }
+
     setHidden(meta);
     details.innerHTML='<strong>'+meta.name+'</strong><br>'+meta.session1+'<br>'+meta.session2+'<br>Time: '+meta.time+'<br>Location: '+meta.location+'<br>Total price: '+meta.price+'<br>Minimum: '+meta.minimum+'<br>Maximum: '+meta.maximum+'<br>Status: '+meta.status+(meta.kind==='active'&&club.value==='Fever United'?'<br><strong>$24 total includes both sessions.</strong>':'');
     details.hidden=false;
 
-    const paymentRadios=document.querySelectorAll('#integratedClubForm input[name="payment_method"]');
-    const isInterest=meta.kind==='interest';
-    paymentSection.hidden=isInterest;
-    paymentRadios.forEach(function(r){r.required=!isInterest;if(isInterest)r.checked=false});
-    paymentSender.required=!isInterest;
-    if(isInterest){paymentSender.value='';resetPayments();}
-
-    if(isInterest){
+    if(meta.kind==='interest'){
+      if(paymentSection)paymentSection.hidden=true;
       submissionType.value='Fever United Cohort Interest';
       registrationStatus.value='Interest Received — Not a Paid Registration';
       paymentStatus.value='Not Applicable — Interest Only';
+      if(paymentMethod)paymentMethod.value='';
+      if(paymentLink)paymentLink.value='';
       subject.value='Fever United Wednesday 5:30 PM Cohort Interest — DU Airlines';
-      nextUrl.value='https://duairlineseliteacademy.com/?submitted=club-interest#/soccer';
+      nextUrl.value='https://duairlineseliteacademy.com/?submitted=club-interest&cohort='+encodeURIComponent(meta.slug)+'#/club-registration';
       submitButton.textContent='Submit Interest';
-      status.textContent='Interest only — please do not submit payment unless this cohort is activated.';
+      status.textContent='Interest only — no payment is required unless this cohort is activated.';
       agreementText.textContent='I confirm that the information provided is accurate and that I am interested in the potential Wednesday 5:30–6:30 PM Fever United cohort. I understand that this cohort is not yet active, that submitting interest does not reserve a paid place, and that I should not submit payment until activation is confirmed.';
-    }else{
-      submissionType.value=club.value==='Fever United'?'Fever United Registration':'Club Registration';
-      registrationStatus.value='Pending Verification';paymentStatus.value='Pending Verification';
-      subject.value=club.value==='Fever United'?'New Fever United Registration — DU Airlines':'New Club Registration — DU Airlines Elite Performance Academy';
-      nextUrl.value='https://duairlineseliteacademy.com/?submitted=club-active#/soccer';
-      submitButton.textContent='Submit Registration';
-      status.textContent='Registration is pending until payment is received and verified.';
-      agreementText.textContent='I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for both sessions in the selected cohort. I understand that the cohort requires at least 8 paid athletes to proceed and is limited to 12 paid athletes. If the minimum is not reached, I may approve a transfer to another eligible cohort or receive a full refund. I understand that registration is confirmed only after payment has been received and verified.';
+      return;
     }
+
+    if(meta.kind==='preview'){
+      if(paymentSection)paymentSection.hidden=true;
+      submissionType.value='Club Registration Preview';
+      registrationStatus.value='Preview';
+      paymentStatus.value='Not Applicable — Preview';
+      if(paymentMethod)paymentMethod.value='';
+      if(paymentLink)paymentLink.value='';
+      subject.value='Partner Club Registration Preview — DU Airlines';
+      nextUrl.value='https://duairlineseliteacademy.com/?submitted=club-preview&cohort='+encodeURIComponent(meta.slug)+'#/club-registration';
+      submitButton.textContent='Submit Preview Registration';
+      status.textContent='Director preview — no live payment is collected.';
+      agreementText.textContent='I confirm that the information provided is accurate and understand that this is a director preview registration and does not create a paid athlete reservation.';
+      return;
+    }
+
+    if(paymentSection)paymentSection.hidden=false;
+    submissionType.value=club.value==='Fever United'?'Fever United Registration':'Club Registration';
+    registrationStatus.value='Registration Received — Pending Payment';
+    paymentStatus.value='Pending Payment';
+    if(paymentMethod)paymentMethod.value='Stripe';
+    subject.value=club.value==='Fever United'?'New Fever United Registration — DU Airlines':'New Club Registration — DU Airlines Elite Performance Academy';
+    nextUrl.value='https://duairlineseliteacademy.com/?submitted=club-active&cohort='+encodeURIComponent(meta.slug)+'#/club-registration';
+    submitButton.textContent='Submit Registration';
+    status.textContent='After submission, continue to secure Stripe payment to reserve the athlete’s place.';
+    agreementText.textContent='I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for both sessions in the selected cohort. I understand that the cohort requires at least 8 paid athletes to proceed and is limited to 12 paid athletes. If the minimum is not reached, I may approve a transfer to another eligible cohort or receive a full refund. I understand that my registration remains Pending Payment until the $24 Stripe payment is completed.';
   }
 
   club.addEventListener('change',function(){
     cohort.disabled=!club.value;
-    if(!club.value){cohort.innerHTML='<option value="">Select a club first</option>';details.hidden=true;return;}
+
+    if(!club.value){
+      cohort.innerHTML='<option value="">Select a club first</option>';
+      details.hidden=true;
+      setHidden(null);
+      if(paymentSection)paymentSection.hidden=true;
+      return;
+    }
+
     if(club.value==='Fever United'){
       cohort.innerHTML='<option value="">Select a Fever United cohort</option>'+[
         cohorts.feverWed630,cohorts.feverFri530,cohorts.feverInterest
@@ -2715,64 +3042,86 @@ document.addEventListener('click',function(e){
     }else{
       cohort.innerHTML='<option value="">Select your team or training cohort</option><option value="'+cohorts.preview.value+'">'+cohorts.preview.label+'</option>';
     }
-    details.hidden=true;setHidden(null);paymentSection.hidden=false;
+
+    details.hidden=true;
+    setHidden(null);
+    if(paymentSection)paymentSection.hidden=true;
   });
 
-  cohort.addEventListener('change',function(){configureFor(currentCohort())});
-
-  const paymentMap={Zelle:'payDetailZelle',PayPal:'payDetailPayPal','Apple Cash':'payDetailApple'};
-  document.querySelectorAll('#integratedClubForm input[name="payment_method"]').forEach(function(radio){
-    radio.addEventListener('change',function(){
-      Object.values(paymentMap).forEach(function(id){const el=document.getElementById(id);if(el)el.classList.remove('show')});
-      const selected=document.getElementById(paymentMap[radio.value]);if(selected)selected.classList.add('show');
-    });
+  cohort.addEventListener('change',function(){
+    cohort.setCustomValidity('');
+    configureFor(currentCohort());
   });
-
-  document.querySelectorAll('.club-copy').forEach(function(button){
-    button.addEventListener('click',async function(){
-      try{await navigator.clipboard.writeText(button.dataset.copy);button.textContent='Copied';setTimeout(function(){button.textContent=button.dataset.label||'Copy'},1400)}catch(e){button.textContent='Copy manually'}
-    });
-  });
-
-  function paymentDestination(method){
-    if(method==='PayPal')return 'duchenge28@gmail.com';
-    if(method==='Zelle'||method==='Apple Cash')return '(817) 271-7896';
-    return 'Not applicable';
-  }
 
   form.addEventListener('submit',function(event){
     const meta=currentCohort();
-    if(!meta){event.preventDefault();cohort.setCustomValidity('Please select a cohort or time preference.');cohort.reportValidity();return;}
+
+    if(!meta){
+      event.preventDefault();
+      cohort.setCustomValidity('Please select a cohort or time preference.');
+      cohort.reportValidity();
+      return;
+    }
+
     cohort.setCustomValidity('');
-    if(!form.checkValidity()){event.preventDefault();form.reportValidity();return;}
+    if(!form.checkValidity()){
+      event.preventDefault();
+      form.reportValidity();
+      return;
+    }
+
     document.getElementById('clubSubmissionDate').value=new Date().toISOString();
     const parentName=document.getElementById('clubParentName').value.trim();
     const athleteName=document.getElementById('clubAthleteName').value.trim();
+
     if(meta.kind==='interest'){
       autoresponse.value='Hello '+parentName+',\n\nThank you. Your interest in the Wednesday 5:30–6:30 PM Fever United cohort has been received. We will contact you if this additional cohort is activated. Please do not submit payment until activation is confirmed.\n\nAthlete: '+athleteName+'\nPotential dates: Wednesday, September 9 and Wednesday, September 16, 2026\nPotential time: 5:30–6:30 PM\nPrice if activated: $24 total for both sessions\nStatus: Opens based on demand\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
       status.textContent='Submitting interest…';
-    }else{
-      const selectedPayment=form.querySelector('input[name="payment_method"]:checked');
-      const method=selectedPayment?selectedPayment.value:'';
-      autoresponse.value='Hello '+parentName+',\n\nRegistration received. Your place is pending payment verification.\n\nParent: '+parentName+'\nAthlete: '+athleteName+'\nClub: '+club.value+'\nSelected cohort: '+meta.name+'\nSession 1: '+meta.session1+'\nSession 2: '+meta.session2+'\nTime: '+meta.time+'\nLocation: '+meta.location+'\nTotal price: $24\n$24 total includes both sessions.\nPayment method: '+method+'\nSend payment to: '+paymentDestination(method)+'\nPayment status: Pending Verification\nMinimum: 8 paid athletes\nMaximum: 12 paid athletes\nIf the minimum is not reached, you may approve a transfer to another compatible active cohort with availability or receive a full refund.\n\nPlease include the athlete’s full name in the payment note. Registration is confirmed only after payment has been received and verified.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
-      status.textContent='Submitting registration…';
+      return;
     }
+
+    if(meta.kind==='preview'){
+      autoresponse.value='Hello '+parentName+',\n\nYour partner-club preview registration has been received.\n\nAthlete: '+athleteName+'\nSelected cohort: '+meta.name+'\nStatus: Preview only — no payment collected.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
+      status.textContent='Submitting preview…';
+      return;
+    }
+
+    autoresponse.value='Hello '+parentName+',\n\nYour athlete registration has been received. Payment status: Pending Payment.\n\nParent: '+parentName+'\nAthlete: '+athleteName+'\nClub: '+club.value+'\nSelected cohort: '+meta.name+'\nSession 1: '+meta.session1+'\nSession 2: '+meta.session2+'\nTime: '+meta.time+'\nLocation: '+meta.location+'\nTotal price: $24\nMinimum: 8 paid athletes\nMaximum: 12 paid athletes\n\nComplete the $24 secure Stripe payment to reserve your place:\n'+meta.paymentUrl+'\n\nIf the minimum is not reached, you may approve a transfer to another compatible active cohort with availability or receive a full refund.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
+    status.textContent='Submitting registration…';
   });
 
-  // Show a useful on-site acknowledgement after FormSubmit redirects back.
   const params=new URLSearchParams(window.location.search);
   const submitted=params.get('submitted');
-  if(submitted==='club-active'||submitted==='club-interest'){
-    card.style.display='none';confirmation.classList.add('show');
+  const returnedSlug=params.get('cohort');
+  const returnedMeta=returnedSlug&&cohorts[returnedSlug]?cohorts[returnedSlug]:null;
+
+  if(submitted==='club-active'||submitted==='club-interest'||submitted==='club-preview'){
+    card.style.display='none';
+    confirmation.classList.add('show');
+
+    if(stripeArea)stripeArea.hidden=true;
+
     if(submitted==='club-interest'){
       confirmationTitle.textContent='Interest received.';
-      confirmationMessage.textContent='Thank you. Your interest in the Wednesday 5:30–6:30 PM cohort has been received. We will contact you if this additional cohort is activated. Please do not submit payment until activation is confirmed.';
+      confirmationMessage.textContent='Thank you. Your interest in the additional Wednesday 5:30–6:30 PM cohort has been received. We will contact you if this cohort is activated. No payment is required now.';
       summary.innerHTML='<div><span>Status</span><strong>Interest only — not a paid registration</strong></div><div><span>Potential time</span><strong>Wednesday 5:30–6:30 PM</strong></div>';
+    }else if(submitted==='club-preview'){
+      confirmationTitle.textContent='Preview registration received.';
+      confirmationMessage.textContent='The director preview registration was received. No live payment is required.';
+      summary.innerHTML='<div><span>Status</span><strong>Preview only</strong></div>';
     }else{
       confirmationTitle.textContent='Registration received.';
-      confirmationMessage.textContent='Your place is pending payment verification. You will receive an email containing your registration details and payment instructions.';
-      summary.innerHTML='<div><span>Payment status</span><strong>Pending Verification</strong></div><div><span>Next step</span><strong>Coach Du verifies payment manually</strong></div>';
+      confirmationMessage.textContent='Your athlete registration has been received. Complete the $24 payment below to reserve your place in the selected cohort.';
+      summary.innerHTML='<div><span>Payment status</span><strong>Pending Payment</strong></div>'+(returnedMeta?'<div><span>Selected cohort</span><strong>'+returnedMeta.name+'</strong></div>':'');
+
+      if(returnedMeta&&returnedMeta.paymentUrl&&stripeButton&&stripeArea){
+        stripeButton.href=returnedMeta.paymentUrl;
+        stripeArea.hidden=false;
+      }else{
+        confirmationMessage.textContent='Your athlete registration has been received, but the secure payment button could not be matched to a cohort. Please return to registration and verify the selected cohort before paying.';
+      }
     }
+
     confirmation.scrollIntoView({behavior:'smooth',block:'start'});
   }
 })();
