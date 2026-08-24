@@ -2742,7 +2742,8 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       const isRegistrationComplete = route === 'registration-complete';
       const isFootball = route === 'football';
       const isTrack = route === 'track';
-      const isHome = !isSoccer && !isClubRegistration && !isRegistrationComplete && !isFootball && !isTrack;
+      const isHub = route === 'hub';
+      const isHome = !isSoccer && !isClubRegistration && !isRegistrationComplete && !isFootball && !isTrack && !isHub;
 
       homeView.hidden = !isHome;
       soccerView.hidden = !isSoccer;
@@ -2750,6 +2751,8 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       if (registrationCompleteView) registrationCompleteView.hidden = !isRegistrationComplete;
       footballView.hidden = !isFootball;
       trackView.hidden = !isTrack;
+      const hubRoot = document.getElementById('hub-root');
+      if (hubRoot) hubRoot.hidden = !isHub;
 
       if (push) {
         const hash = isSoccer ? '#/soccer'
@@ -2757,6 +2760,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
           : isRegistrationComplete ? '#/registration-complete'
           : isFootball ? '#/football'
           : isTrack ? '#/track'
+          : isHub ? '#/hub/login'
           : '#/';
         history.pushState({route:route}, '', hash);
       }
@@ -2771,16 +2775,19 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
             ? 'Football Speed Development — DU Airlines Elite Performance Academy'
             : isTrack
               ? 'Track & Field Development — DU Airlines Elite Performance Academy'
-              : 'DU Airlines Elite Performance Academy — Speed, Movement & Horizontal Jumps';
+              : isHub
+                ? 'Performance Hub — DU Airlines Elite Performance Academy'
+                : 'DU Airlines Elite Performance Academy — Speed, Movement & Horizontal Jumps';
 
       const activeView = isSoccer ? soccerView
         : isClubRegistration ? clubRegistrationView
         : isRegistrationComplete ? registrationCompleteView
         : isFootball ? footballView
         : isTrack ? trackView
+        : isHub ? null
         : homeView;
 
-      revealActiveView(activeView);
+      if (activeView) revealActiveView(activeView);
       window.scrollTo({top:0, behavior:'instant'});
       document.body.classList.remove('route-transitioning');
     }, 90);
@@ -2792,6 +2799,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
     if (location.hash === '#/registration-complete') return 'registration-complete';
     if (location.hash === '#/football') return 'home';
     if (location.hash === '#/track') return 'track';
+    if (location.hash === '#/hub' || location.hash.startsWith('#/hub/')) return 'hub';
     return 'home';
   }
 
@@ -3234,25 +3242,75 @@ document.addEventListener('click',function(e){
 </script>
 
 
+<style id="performance-hub-dashboard-upgrade">
+  .hub-role-grid{display:grid;grid-template-columns:1fr;gap:1rem;margin:1.5rem 0}
+  .hub-role-card{width:100%;text-align:left;padding:1.35rem;border:1px solid var(--hub-line);background:linear-gradient(180deg,var(--hub-panel-2),var(--hub-panel));color:var(--hub-text);border-radius:9px;cursor:pointer;font:inherit;transition:.15s ease}
+  .hub-role-card:hover{transform:translateY(-2px);border-color:var(--hub-gold)}
+  .hub-role-card strong{display:block;font-family:var(--serif);font-size:1.45rem;margin-bottom:.3rem}
+  .hub-role-card span{display:block;color:var(--hub-muted);font-size:.92rem;line-height:1.5}
+  .hub-access-back{display:inline-block;margin-top:1rem;color:var(--hub-gold);font-size:.85rem;cursor:pointer;background:none;border:0;font:inherit}
+  .hub-dashboard-head{display:grid;gap:.35rem;margin-bottom:1.25rem}
+  .hub-dashboard-head h1{font-family:var(--serif);font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;margin:0}
+  .hub-dashboard-sub{color:var(--hub-muted);margin:0}
+  .hub-current-week{border:1px solid var(--hub-gold);background:linear-gradient(180deg,rgba(110,23,38,.19),var(--hub-panel));border-radius:10px;padding:clamp(1.25rem,4vw,2rem);box-shadow:0 24px 60px -40px rgba(199,162,90,.7)}
+  .hub-week-label{font-size:.67rem;letter-spacing:.18em;text-transform:uppercase;color:var(--hub-gold);font-weight:700}
+  .hub-current-week h2{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.5rem);margin:.25rem 0 .4rem}
+  .hub-week-focus{color:var(--hub-muted);margin:0 0 1.1rem}
+  .hub-meta-row{display:flex;gap:.7rem;flex-wrap:wrap;margin:.9rem 0 1.2rem}
+  .hub-chip{font-size:.72rem;border:1px solid var(--hub-line);padding:.4rem .65rem;border-radius:999px;color:var(--hub-muted);background:rgba(255,255,255,.02)}
+  .hub-session-list{display:grid;gap:.8rem}
+  .hub-session{border:1px solid rgba(255,255,255,.08);background:#0d0d0d;border-radius:8px;padding:1rem}
+  .hub-session-top{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}
+  .hub-session h3{font-family:var(--serif);margin:0;font-size:1.15rem}
+  .hub-session-focus{color:var(--hub-gold);font-size:.8rem;margin:.25rem 0 .7rem}
+  .hub-prescription{margin:0;padding-left:1.15rem;color:var(--hub-text)}
+  .hub-prescription li{margin:.35rem 0}
+  .hub-note-card,.hub-action-card{border:1px solid var(--hub-line);background:var(--hub-panel);border-radius:9px;padding:1.2rem}
+  .hub-note-card h3,.hub-action-card h3{font-family:var(--serif);margin:0 0 .45rem;font-size:1.25rem}
+  .hub-note-card p,.hub-action-card p{margin:0;color:var(--hub-muted)}
+  .hub-dashboard-grid{display:grid;grid-template-columns:1fr;gap:1rem;margin-top:1rem}
+  .hub-dashboard-actions{display:grid;grid-template-columns:1fr;gap:1rem;margin-top:1rem}
+  .hub-action-card{display:block;transition:.15s ease}
+  a.hub-action-card:hover{border-color:var(--hub-gold);transform:translateY(-2px)}
+  .hub-action-arrow{display:block;color:var(--hub-gold);font-size:.8rem;font-weight:700;margin-top:.9rem}
+  .hub-details{border:1px solid var(--hub-line);border-radius:9px;background:var(--hub-panel);overflow:hidden}
+  .hub-details summary{cursor:pointer;padding:1.1rem 1.2rem;font-weight:600;color:var(--hub-text);list-style:none}
+  .hub-details summary::-webkit-details-marker{display:none}
+  .hub-details summary::after{content:'+';float:right;color:var(--hub-gold)}
+  .hub-details[open] summary::after{content:'–'}
+  .hub-details-body{padding:0 1.2rem 1.2rem;color:var(--hub-muted)}
+  .hub-video-week{margin-top:1rem;aspect-ratio:16/9;width:100%;border:1px solid var(--hub-line);border-radius:8px;overflow:hidden;background:#000}
+  .hub-video-week iframe{width:100%;height:100%;border:0}
+  .hub-empty-state{color:var(--hub-muted);padding:.8rem 0;font-size:.92rem}
+  .hub-login-heading{margin-bottom:.2rem!important}
+  .hub-login-sub{color:var(--hub-muted);margin:0 0 1rem;font-size:.92rem}
+  @media(min-width:720px){.hub-role-grid{grid-template-columns:1fr 1fr}.hub-dashboard-grid{grid-template-columns:1fr 1fr}.hub-dashboard-actions{grid-template-columns:repeat(2,1fr)}}
+  @media(min-width:980px){.hub-dashboard-actions{grid-template-columns:repeat(3,1fr)}}
+</style>
 <script id="performance-hub-app">
 (function(){
   'use strict';
 
-  // ============================================================
-  // PERFORMANCE HUB V1 — SIMPLE CONFIGURATION AREA
-  // Change access codes here for V1. For stronger security later,
-  // replace this client-side gate with server-side authentication.
-  // ============================================================
+  // PERFORMANCE HUB V2 — STAFF + ATHLETE EXPERIENCE
+  // Static-site build. Access codes are stored only as SHA-256 hashes here.
+  // This is a light gate, not enterprise authentication. Move to a backend later.
   const HUB_CONFIG = {
-    sessionKey: 'duAirlinesHubAccessV1',
-    accessCodes: [
-      'DUHUB-01-2026','DUHUB-02-2026','DUHUB-03-2026','DUHUB-04-2026','DUHUB-05-2026',
-      'DUHUB-06-2026','DUHUB-07-2026','DUHUB-08-2026','DUHUB-09-2026','DUHUB-10-2026'
-    ]
+    sessionKey:'duAirlinesHubSessionV2',
+    roleKey:'duAirlinesHubRoleV2',
+    userKey:'duAirlinesHubUserV2',
+    staffCodeHashes:['3c779d337b1117e408ac73d44a19150d88c858efb5270ce5797466f096ee5f56', 'd2d1896cbb4faff624b6d14b01ba78a32d38a3e943ca15a518f67880acb99ad9', 'af926a0996d86752a1d63d083d09f5592238ad7ce28fad173c5c507f4150c807', 'f55b9b4cd65b734568916d0a4a96ee75b4bdbabe07e4f385f32c4858d42e5d58'],
+    athleteCodeMap:{
+      'fd5b841424b84bbb1a07c9057533de98599a3e624216e74a94864943c7052945':'athlete-1',
+      'f28213ed19e021b86c661b9361a9877d46b83cfc3f77bd5f090f2d2e923d92f0':'athlete-2',
+      '698409f5f5e17d36e114fbcf7424a9324340c7d604d22d6f62babca4234aedbe':'athlete-3',
+      '5895cbf13918083006d8d0f21b9daeb69d8b4a244748f201b6861c7553652077':'athlete-4',
+      '2f6cb386df8097d73be745e7e681d7f233c08ba4d71d085f6d9ba92ad88444e7':'athlete-5',
+      '722563261660971944f9f21eb7ecc03667b70d4fde8c72aa7ac4034492126f10':'athlete-6',
+      'dc4a20907da83e383089b0bdcf69c1debf4a99392fa01fba74275d9a6c517a85':'athlete-7',
+      'f73dc6b453228415fefae76bb3ccda5f84754739db495e7de94b2ee89a7e219b':'athlete-8'
+    }
   };
 
-  // Single source of truth for exercise assets. The same ID can be
-  // referenced by warm-up, category pages and future programmes.
   const EXERCISES = [
     {id:'wu01',code:'WU01',title:'Ankle Rock / Knee Over Toe',category:['warm-up','mobility-recovery'],videoId:'6Dlac5mxD6k',order:1,coachingNote:'',dosage:'',active:true},
     {id:'wu02',code:'WU02',title:'Straight-Leg Hamstring Kick',category:['warm-up','mobility-recovery'],videoId:'UEzzeExMLLw',order:2,coachingNote:'',dosage:'',active:true},
@@ -3285,141 +3343,151 @@ document.addEventListener('click',function(e){
     {slug:'mobility-recovery',title:'Mobility & Recovery',description:'Mobility and recovery exercises used throughout the Du Airlines system.'}
   ];
 
-  const PROGRAMMES = {
-    sprint: {title:'Sprint Development',description:'Structured sprint-development programming and weekly training prescriptions.',weeks:[{id:'current',label:'Current Week',content:[]},{id:'week-1',label:'Week 1',content:[]}],notes:'Programme notes will appear here.'},
-    jumps: {title:'Horizontal Jumps',description:'Structured long-jump and triple-jump development led by Coach Du.',weeks:[{id:'current',label:'Current Week',content:[]},{id:'week-1',label:'Week 1',content:[]}],notes:'Programme notes will appear here.'}
+
+
+  // Edit this area to change programmes, current week, staff notes and athlete plans.
+  const SCHOOL_PROGRAMMES = {
+    'saints-jumps':{
+      school:'St. George’s College',
+      title:'Horizontal Jumps & Speed Development',
+      currentWeek:'Week 1',
+      weeklyFocus:'Programme details will be published here.',
+      duration:'10-week progression',
+      sessionDuration:'90–120 min',
+      programmeNotes:'A progressive horizontal-jumps and speed-development programme designed to sit alongside the school’s existing athletics structure.',
+      coachGuidance:'Use the current-week prescription as the operating plan. Exercise demonstrations are available in the library when needed.',
+      sessions:[]
+    }
+  };
+
+  const ATHLETES = {
+    'athlete-1':{name:'Athlete 1',programme:'Private Performance Programme',currentWeek:'Week 1',weeklyFocus:'Your current programme will appear here.',coachNotes:'Coach Du notes will appear here.',weeklyNotes:'',programmeNotes:'Private athlete development programme.',videoUrl:'',sessions:[]},
+    'athlete-2':{name:'Athlete 2',programme:'Private Performance Programme',currentWeek:'Week 1',weeklyFocus:'Your current programme will appear here.',coachNotes:'Coach Du notes will appear here.',weeklyNotes:'',programmeNotes:'Private athlete development programme.',videoUrl:'',sessions:[]},
+    'athlete-3':{name:'Athlete 3',programme:'Private Performance Programme',currentWeek:'Week 1',weeklyFocus:'Your current programme will appear here.',coachNotes:'Coach Du notes will appear here.',weeklyNotes:'',programmeNotes:'Private athlete development programme.',videoUrl:'',sessions:[]},
+    'athlete-4':{name:'Athlete 4',programme:'Private Performance Programme',currentWeek:'Week 1',weeklyFocus:'Your current programme will appear here.',coachNotes:'Coach Du notes will appear here.',weeklyNotes:'',programmeNotes:'Private athlete development programme.',videoUrl:'',sessions:[]},
+    'athlete-5':{name:'Athlete 5',programme:'Private Performance Programme',currentWeek:'Week 1',weeklyFocus:'Your current programme will appear here.',coachNotes:'Coach Du notes will appear here.',weeklyNotes:'',programmeNotes:'Private athlete development programme.',videoUrl:'',sessions:[]},
+    'athlete-6':{name:'Athlete 6',programme:'Private Performance Programme',currentWeek:'Week 1',weeklyFocus:'Your current programme will appear here.',coachNotes:'Coach Du notes will appear here.',weeklyNotes:'',programmeNotes:'Private athlete development programme.',videoUrl:'',sessions:[]},
+    'athlete-7':{name:'Athlete 7',programme:'Private Performance Programme',currentWeek:'Week 1',weeklyFocus:'Your current programme will appear here.',coachNotes:'Coach Du notes will appear here.',weeklyNotes:'',programmeNotes:'Private athlete development programme.',videoUrl:'',sessions:[]},
+    'athlete-8':{name:'Athlete 8',programme:'Private Performance Programme',currentWeek:'Week 1',weeklyFocus:'Your current programme will appear here.',coachNotes:'Coach Du notes will appear here.',weeklyNotes:'',programmeNotes:'Private athlete development programme.',videoUrl:'',sessions:[]}
   };
 
   const root=document.getElementById('hub-root');
   const publicViews=Array.from(document.querySelectorAll('.site-view'));
-  if(!root) return;
+  if(!root)return;
 
-  function loggedIn(){return localStorage.getItem(HUB_CONFIG.sessionKey)==='granted';}
-  function setLoggedIn(value){if(value)localStorage.setItem(HUB_CONFIG.sessionKey,'granted');else localStorage.removeItem(HUB_CONFIG.sessionKey);}
   function isHubRoute(){return location.hash==='#/hub'||location.hash.startsWith('#/hub/');}
-  function escapeHtml(value){return String(value).replace(/[&<>'"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch];});}
-
-  function nav(active){
-    const links=[
-      ['home','#/hub','Hub Home'],['warm-up','#/hub/warm-up','Complete Warm-Up'],['library','#/hub/library','Training Library'],
-      ['sprint','#/hub/programme/sprint','Sprint Development'],['jumps','#/hub/programme/jumps','Horizontal Jumps'],['support','#/hub/video-guide','Video Submission Guide']
-    ];
-    return '<header class="hub-topbar"><div class="hub-wrap hub-topbar-row">'+
-      '<a class="hub-brand" href="#/hub">DU AIRLINES <span>PERFORMANCE HUB</span></a>'+
-      '<button class="hub-menu-button" type="button" aria-expanded="false" aria-controls="hubNav">Menu</button>'+
-      '<nav class="hub-nav" id="hubNav" aria-label="Performance Hub">'+links.map(function(x){return '<a href="'+x[1]+'"'+(active===x[0]?' aria-current="page"':'')+'>'+x[2]+'</a>';}).join('')+'<button class="hub-logout" type="button">Log Out</button></nav></div></header>';
-  }
-
-  function shell(content,active){return '<div class="hub-shell">'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
-  function pageHead(eyebrow,title,description){return '<a class="hub-back" href="#/hub">← Hub Home</a><div class="hub-page-head"><p class="hub-eyebrow">'+escapeHtml(eyebrow)+'</p><h1>'+escapeHtml(title)+'</h1><p>'+escapeHtml(description)+'</p></div>';}
+  function escapeHtml(value){return String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));}
+  function session(){try{return JSON.parse(localStorage.getItem(HUB_CONFIG.sessionKey)||'null');}catch(e){return null;}}
+  function setSession(value){if(value)localStorage.setItem(HUB_CONFIG.sessionKey,JSON.stringify(value));else localStorage.removeItem(HUB_CONFIG.sessionKey);}
+  function logout(){setSession(null);location.hash='#/hub/login';}
+  async function hashCode(code){const data=new TextEncoder().encode(code.trim().toLowerCase());const digest=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');}
   function categoryRoute(cat){return cat.route||'#/hub/library/'+cat.slug;}
 
-  function renderLogin(){
-    root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card" aria-labelledby="hubLoginTitle"><p class="hub-eyebrow">PRIVATE ATHLETE ACCESS</p><h1 id="hubLoginTitle">DU AIRLINES<br>PERFORMANCE HUB</h1><p class="tagline">Train. Develop. Perform.</p><form id="hubLoginForm"><div class="hub-field"><label for="hubCode">Access Code</label><input id="hubCode" name="hubCode" type="password" autocomplete="current-password" required></div><button class="hub-button" type="submit">Enter Performance Hub</button><p id="hubLoginError" class="hub-error" role="alert"></p></form><p class="hub-access-note">Private access for Du Airlines athletes, partner schools and approved programmes.</p><p class="hub-access-note"><a href="#/track" style="color:var(--hub-gold)">← Return to Du Airlines website</a></p></section></div>';
+  function nav(active){
+    const s=session();
+    const dashboard=s?.role==='staff'?'#/hub/staff':'#/hub/athlete';
+    const links=[['dashboard',dashboard,'Dashboard'],['library','#/hub/library','Exercise Library'],['warm-up','#/hub/warm-up','Complete Warm-Up'],['support','#/hub/video-guide','Video Guide']];
+    return '<header class="hub-topbar"><div class="hub-wrap hub-topbar-row">'+
+      '<a class="hub-brand" href="'+dashboard+'">DU AIRLINES <span>PERFORMANCE HUB</span></a>'+
+      '<button class="hub-menu-button" type="button" aria-expanded="false" aria-controls="hubNav">Menu</button>'+
+      '<nav class="hub-nav" id="hubNav" aria-label="Performance Hub">'+links.map(x=>'<a href="'+x[1]+'"'+(active===x[0]?' aria-current="page"':'')+'>'+x[2]+'</a>').join('')+'<button class="hub-logout" type="button">Log Out</button></nav></div></header>';
+  }
+  function shell(content,active){return '<div class="hub-shell">'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
+  function pageHead(eyebrow,title,description,back){return '<a class="hub-back" href="'+(back||'#\/hub')+'">← Back</a><div class="hub-page-head"><p class="hub-eyebrow">'+escapeHtml(eyebrow)+'</p><h1>'+escapeHtml(title)+'</h1><p>'+escapeHtml(description)+'</p></div>';}
+
+  function renderRoleSelect(){
+    root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">PRIVATE PERFORMANCE ACCESS</p><h1 class="hub-login-heading">DU AIRLINES<br>PERFORMANCE HUB</h1><p class="tagline">Train. Develop. Perform.</p><p class="hub-login-sub">Select your access type.</p><div class="hub-role-grid"><button class="hub-role-card" data-login-role="staff"><strong>Staff Login</strong><span>Weekly programme, coach guidance and exercise library.</span></button><button class="hub-role-card" data-login-role="athlete"><strong>Athlete Login</strong><span>Your private weekly plan, Coach Du notes and exercise demonstrations.</span></button></div><p class="hub-access-note"><a href="#/track" style="color:var(--hub-gold)">← Return to Du Airlines website</a></p></section></div>';
   }
 
-  function renderHome(){
-    const library=LIBRARY_CATEGORIES.map(function(cat){return '<a class="hub-card" href="'+categoryRoute(cat)+'"><span class="hub-card-kicker">Training Library</span><h3>'+cat.title+'</h3><p>'+cat.description+'</p><span class="hub-card-arrow">Open →</span></a>';}).join('');
-    const programmes='<a class="hub-card" href="#/hub/programme/sprint"><span class="hub-card-kicker">Performance Programme</span><h3>Sprint Development</h3><p>'+PROGRAMMES.sprint.description+'</p><span class="hub-card-arrow">Open Programme →</span></a><a class="hub-card" href="#/hub/programme/jumps"><span class="hub-card-kicker">Performance Programme</span><h3>Horizontal Jumps</h3><p>'+PROGRAMMES.jumps.description+'</p><span class="hub-card-arrow">Open Programme →</span></a>';
-    const support='<a class="hub-card" href="#/hub/video-guide"><span class="hub-card-kicker">Athlete Support</span><h3>Video Submission Guide</h3><p>How to film, name and prepare sprint and jumps footage for Coach Du.</p><span class="hub-card-arrow">View Guide →</span></a>';
-    root.innerHTML=shell('<section class="hub-hero"><p class="hub-eyebrow">DU AIRLINES PERFORMANCE HUB</p><h1 class="hub-title">Train. Develop. <em>Perform.</em></h1><p class="hub-lede">Your digital training environment for movement preparation, speed, strength, power and horizontal-jumps development.</p></section><section class="hub-section"><div class="hub-section-head"><h2>Training Library</h2></div><div class="hub-grid">'+library+'</div></section><section class="hub-section"><div class="hub-section-head"><h2>Performance Programmes</h2></div><div class="hub-grid">'+programmes+'</div></section><section class="hub-section"><div class="hub-section-head"><h2>Athlete Support</h2></div><div class="hub-grid">'+support+'</div></section>','home');
+  function renderCodeLogin(role){
+    const isStaff=role==='staff';
+    root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">'+(isStaff?'STAFF ACCESS':'ATHLETE ACCESS')+'</p><h1 class="hub-login-heading">'+(isStaff?'Staff Performance Dashboard':'My Performance Hub')+'</h1><p class="hub-login-sub">Enter your private '+(isStaff?'staff':'athlete')+' access code.</p><form id="hubLoginForm" data-role="'+role+'"><div class="hub-field"><label for="hubCode">Access Code</label><input id="hubCode" name="hubCode" type="password" autocomplete="current-password" required></div><button class="hub-button" type="submit">'+(isStaff?'Access Staff Hub':'Access My Performance Hub')+'</button><p id="hubLoginError" class="hub-error" role="alert"></p></form><button class="hub-access-back" type="button" data-role-back>← Choose another access type</button></section></div>';
+  }
+
+  function sessionMarkup(sessions){
+    if(!sessions||!sessions.length)return '<p class="hub-empty-state">No sessions have been published for this week yet.</p>';
+    return '<div class="hub-session-list">'+sessions.map((s,i)=>'<article class="hub-session"><div class="hub-session-top"><h3>'+escapeHtml(s.day||('Session '+(i+1)))+'</h3></div>'+(s.focus?'<p class="hub-session-focus">'+escapeHtml(s.focus)+'</p>':'')+(s.items?.length?'<ul class="hub-prescription">'+s.items.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</ul>':'')+(s.notes?'<p class="hub-empty-state">'+escapeHtml(s.notes)+'</p>':'')+'</article>').join('')+'</div>';
+  }
+
+  function renderStaffDashboard(){
+    const p=SCHOOL_PROGRAMMES['saints-jumps'];
+    const content='<section class="hub-dashboard-head"><p class="hub-eyebrow">STAFF PERFORMANCE DASHBOARD</p><h1>'+escapeHtml(p.school)+'</h1><p class="hub-dashboard-sub">'+escapeHtml(p.title)+'</p></section>'+
+      '<section class="hub-current-week"><span class="hub-week-label">Current Week</span><h2>'+escapeHtml(p.currentWeek)+'</h2><p class="hub-week-focus">'+escapeHtml(p.weeklyFocus)+'</p><div class="hub-meta-row"><span class="hub-chip">'+escapeHtml(p.duration)+'</span><span class="hub-chip">'+escapeHtml(p.sessionDuration)+'</span></div>'+sessionMarkup(p.sessions)+'</section>'+
+      '<div class="hub-dashboard-grid"><details class="hub-details"><summary>Program Notes</summary><div class="hub-details-body">'+escapeHtml(p.programmeNotes)+'</div></details><details class="hub-details"><summary>Coach Guidance</summary><div class="hub-details-body">'+escapeHtml(p.coachGuidance)+'</div></details></div>'+
+      '<div class="hub-dashboard-actions"><a class="hub-action-card" href="#/hub/library"><h3>Explore Exercise Library</h3><p>Open drill demonstrations only when you need them.</p><span class="hub-action-arrow">Open Library →</span></a><a class="hub-action-card" href="#/hub/warm-up"><h3>Complete Warm-Up</h3><p>Access the standard Du Airlines movement-preparation sequence.</p><span class="hub-action-arrow">Open Warm-Up →</span></a><a class="hub-action-card" href="#/hub/video-guide"><h3>Video Submission Guide</h3><p>Prepare athlete footage for remote technical review.</p><span class="hub-action-arrow">View Guide →</span></a></div>';
+    root.innerHTML=shell(content,'dashboard');
+  }
+
+  function youtubeEmbed(url){
+    if(!url)return '';
+    let id='';
+    const m=String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([^?&/]+)/);
+    if(m)id=m[1];
+    return id?'<div class="hub-video-week"><iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'" title="Video of the Week" allowfullscreen></iframe></div>':'';
+  }
+
+  function renderAthleteDashboard(){
+    const s=session();const a=ATHLETES[s?.userId];if(!a){logout();return;}
+    const video=youtubeEmbed(a.videoUrl);
+    const content='<section class="hub-dashboard-head"><p class="hub-eyebrow">PRIVATE PERFORMANCE HUB</p><h1>'+escapeHtml(a.name)+'</h1><p class="hub-dashboard-sub">'+escapeHtml(a.programme)+'</p></section>'+
+      '<section class="hub-current-week"><span class="hub-week-label">Current Week</span><h2>'+escapeHtml(a.currentWeek)+'</h2><p class="hub-week-focus">'+escapeHtml(a.weeklyFocus)+'</p>'+sessionMarkup(a.sessions)+'</section>'+
+      '<div class="hub-dashboard-grid"><section class="hub-note-card"><h3>Coach Notes</h3><p>'+escapeHtml(a.coachNotes||'No coach notes published yet.')+'</p></section>'+(a.weeklyNotes?'<section class="hub-note-card"><h3>Weekly Notes</h3><p>'+escapeHtml(a.weeklyNotes)+'</p></section>':'')+'</div>'+
+      (video?'<section class="hub-section"><div class="hub-section-head"><h2>Video of the Week</h2></div>'+video+'</section>':'')+
+      '<details class="hub-details" style="margin-top:1rem"><summary>Program Notes</summary><div class="hub-details-body">'+escapeHtml(a.programmeNotes)+'</div></details>'+
+      '<div class="hub-dashboard-actions"><a class="hub-action-card" href="#/hub/library"><h3>Explore Exercise Library</h3><p>Find demonstrations for exercises in your programme.</p><span class="hub-action-arrow">Open Library →</span></a><a class="hub-action-card" href="#/hub/warm-up"><h3>Complete Warm-Up</h3><p>Follow the Du Airlines foundational warm-up sequence.</p><span class="hub-action-arrow">Open Warm-Up →</span></a></div>';
+    root.innerHTML=shell(content,'dashboard');
   }
 
   function videoCard(ex,index){
-    const note=ex.dosage||ex.coachingNote||'Dosage / Coach Du instructions can be added here.';
+    const note=ex.dosage||ex.coachingNote||'Follow Coach Du’s prescribed dosage for your programme.';
     const youtubeUrl='https://www.youtube.com/shorts/'+encodeURIComponent(ex.videoId);
-    return '<article class="hub-exercise-card" id="exercise-'+escapeHtml(ex.id)+'"><div class="hub-exercise-head"><div class="hub-seq">'+String(index+1).padStart(2,'0')+'</div><div><div class="hub-exercise-code">'+escapeHtml(ex.code)+'</div><h3 class="hub-exercise-title">'+escapeHtml(ex.title)+'</h3></div></div><a class="hub-video hub-youtube-direct" href="'+youtubeUrl+'" target="_blank" rel="noopener noreferrer" aria-label="Watch '+escapeHtml(ex.title)+' on YouTube"><img loading="lazy" decoding="async" src="https://i.ytimg.com/vi/'+encodeURIComponent(ex.videoId)+'/hqdefault.jpg" alt="Video thumbnail for '+escapeHtml(ex.title)+'"><span class="hub-play">▶</span><span class="hub-youtube-label">Watch on YouTube ↗</span></a><div class="hub-exercise-meta">'+escapeHtml(note)+'</div></article>';
-  }
-
-  function renderWarmup(){
-    const exercises=EXERCISES.filter(function(ex){return ex.active&&ex.category.includes('warm-up');}).sort(function(a,b){return a.order-b.order;});
-    root.innerHTML=shell(pageHead('Complete Warm-Up','DU AIRLINES COMPLETE WARM-UP','Follow these exercises in order unless Coach Du has prescribed a modified warm-up.')+'<div class="hub-video-grid">'+exercises.map(videoCard).join('')+'</div><div class="hub-complete"><h3>Warm-Up Complete</h3><a class="hub-button" href="#/hub">Return to Performance Hub</a></div>','warm-up');
+    return '<article class="hub-exercise-card" id="exercise-'+escapeHtml(ex.id)+'"><div class="hub-exercise-head"><div class="hub-seq">'+String(index+1).padStart(2,'0')+'</div><div><div class="hub-exercise-code">'+escapeHtml(ex.code)+'</div><h3 class="hub-exercise-title">'+escapeHtml(ex.title)+'</h3></div></div><a class="hub-video hub-youtube-direct" href="'+youtubeUrl+'" target="_blank" rel="noopener noreferrer"><img loading="lazy" decoding="async" src="https://i.ytimg.com/vi/'+encodeURIComponent(ex.videoId)+'/hqdefault.jpg" alt="Video thumbnail for '+escapeHtml(ex.title)+'"><span class="hub-play">▶</span><span class="hub-youtube-label">Watch on YouTube ↗</span></a><div class="hub-exercise-meta">'+escapeHtml(note)+'</div></article>';
   }
 
   function renderLibrary(){
-    root.innerHTML=shell(pageHead('Training Library','Exercise Library','Choose a category. Exercises are stored once and can be reused across warm-ups, libraries and future programmes.')+'<div class="hub-grid">'+LIBRARY_CATEGORIES.map(function(cat){return '<a class="hub-card" href="'+categoryRoute(cat)+'"><span class="hub-card-kicker">Library Category</span><h3>'+cat.title+'</h3><p>'+cat.description+'</p><span class="hub-card-arrow">Open →</span></a>';}).join('')+'</div>','library');
+    const back=session()?.role==='staff'?'#/hub/staff':'#/hub/athlete';
+    root.innerHTML=shell(pageHead('Exercise Library','Explore Exercise Library','Choose a category. The library supports the weekly programme; it does not replace it.',back)+'<div class="hub-grid">'+LIBRARY_CATEGORIES.map(cat=>'<a class="hub-card" href="'+categoryRoute(cat)+'"><span class="hub-card-kicker">Library Category</span><h3>'+cat.title+'</h3><p>'+cat.description+'</p><span class="hub-card-arrow">Open →</span></a>').join('')+'</div>','library');
   }
-
-  function renderCategory(slug){
-    const cat=LIBRARY_CATEGORIES.find(function(x){return x.slug===slug;});
-    if(!cat){renderNotFound();return;}
-    if(slug==='warm-up'){renderWarmup();return;}
-    const exercises=EXERCISES.filter(function(ex){return ex.active&&ex.category.includes(slug);}).sort(function(a,b){return a.order-b.order;});
-    const body=exercises.length?'<div class="hub-video-grid">'+exercises.map(videoCard).join('')+'</div>':'<div class="hub-empty"><h3>Library ready for content.</h3><p>This category is built and ready for Coach Du to add exercises without redesigning the page.</p></div>';
-    root.innerHTML=shell(pageHead('Training Library',cat.title,cat.description)+body,'library');
-  }
-
-  function renderProgramme(key){
-    const programme=PROGRAMMES[key];
-    if(!programme){renderNotFound();return;}
-    const active=key==='sprint'?'sprint':'jumps';
-    root.innerHTML=shell(pageHead('Performance Programme',programme.title,programme.description)+'<div class="hub-week-tabs">'+programme.weeks.map(function(w,i){return '<button type="button" class="hub-week-tab'+(i===0?' active':'')+'" data-week="'+w.id+'">'+w.label+'</button>';}).join('')+'<button type="button" class="hub-week-tab" data-week="notes">Programme Notes</button></div><div id="hubProgrammePanel" class="hub-program-panel"><h3>'+programme.weeks[0].label+'</h3><p>Coach Du’s sets, reps, distances, rest periods and progression will appear here.</p></div>',active);
-    root.dataset.programme=key;
-  }
-
-  function renderVideoGuide(){
-    root.innerHTML=shell(pageHead('Athlete Support','Video Submission Guide','This page prepares the structure for remote technical review. No upload system is included in Version 1.')+'<div class="hub-empty"><h3>Filming guidance will cover:</h3><ul class="hub-support-list"><li>How to film sprint videos</li><li>How to film long jump</li><li>How to film triple jump</li><li>Recommended camera angles</li><li>How to name videos</li><li>How to submit footage to Coach Du</li></ul></div>','support');
-  }
-
-  function renderNotFound(){root.innerHTML=shell(pageHead('Performance Hub','Page not found','Return to Hub Home and choose a training section.')+'<a class="hub-button" href="#/hub">Hub Home</a>','');}
+  function renderWarmup(){const exercises=EXERCISES.filter(ex=>ex.active&&ex.category.includes('warm-up')).sort((a,b)=>a.order-b.order);const back=session()?.role==='staff'?'#/hub/staff':'#/hub/athlete';root.innerHTML=shell(pageHead('Exercise Library','DU AIRLINES COMPLETE WARM-UP','Follow this sequence in order unless Coach Du has prescribed a modified warm-up.',back)+'<div class="hub-video-grid">'+exercises.map(videoCard).join('')+'</div>','warm-up');}
+  function renderCategory(slug){const cat=LIBRARY_CATEGORIES.find(x=>x.slug===slug);if(!cat){renderNotFound();return;}if(slug==='warm-up'){renderWarmup();return;}const exercises=EXERCISES.filter(ex=>ex.active&&ex.category.includes(slug)).sort((a,b)=>a.order-b.order);const body=exercises.length?'<div class="hub-video-grid">'+exercises.map(videoCard).join('')+'</div>':'<div class="hub-empty"><h3>Library ready for content.</h3><p>This category is ready for additional exercises.</p></div>';root.innerHTML=shell(pageHead('Exercise Library',cat.title,cat.description,'#/hub/library')+body,'library');}
+  function renderVideoGuide(){const back=session()?.role==='staff'?'#/hub/staff':'#/hub/athlete';root.innerHTML=shell(pageHead('Athlete Support','Video Submission Guide','Prepare sprint and jumps footage for Coach Du’s remote technical review.',back)+'<div class="hub-empty"><h3>Filming guidance</h3><ul class="hub-support-list"><li>Film the full movement from start to finish</li><li>Keep the camera stable</li><li>Use clear side or rear angles where appropriate</li><li>Name footage with athlete + date + exercise/event</li><li>Submit through the channel Coach Du provides</li></ul></div>','support');}
+  function renderNotFound(){root.innerHTML=shell(pageHead('Performance Hub','Page not found','Return to your dashboard.',session()?.role==='staff'?'#/hub/staff':'#/hub/athlete')+'','');}
 
   function render(){
-    if(!isHubRoute()){
-      root.hidden=true;
-      publicViews.forEach(function(v){ if(location.hash==='#/track'&&v.id==='track-view') v.hidden=false; });
-      return;
-    }
-    publicViews.forEach(function(v){v.hidden=true;});
-    root.hidden=false;
-    if(!loggedIn() && location.hash!=='#/hub/login'){
-      history.replaceState({},'', '#/hub/login');
-      renderLogin();
-      window.scrollTo(0,0);return;
-    }
-    const route=location.hash.replace('#/hub','')||'/';
-    if(route==='/login'){loggedIn()?location.replace('#/hub'):renderLogin();}
-    else if(route==='/')renderHome();
-    else if(route==='/warm-up')renderWarmup();
+    if(!isHubRoute()){root.hidden=true;return;}
+    publicViews.forEach(v=>v.hidden=true);root.hidden=false;
+    const route=location.hash.replace('#/hub','')||'/';const s=session();
+    if(route==='/login'){renderRoleSelect();}
+    else if(route==='/login/staff'){renderCodeLogin('staff');}
+    else if(route==='/login/athlete'){renderCodeLogin('athlete');}
+    else if(!s){location.hash='#/hub/login';return;}
+    else if(route==='/'||route==='/staff'||route==='/athlete'){if(s.role==='staff')renderStaffDashboard();else renderAthleteDashboard();}
     else if(route==='/library')renderLibrary();
+    else if(route==='/warm-up')renderWarmup();
     else if(route.startsWith('/library/'))renderCategory(route.split('/')[2]);
-    else if(route==='/programme/sprint')renderProgramme('sprint');
-    else if(route==='/programme/jumps')renderProgramme('jumps');
     else if(route==='/video-guide')renderVideoGuide();
     else renderNotFound();
     window.scrollTo(0,0);
   }
 
-  document.addEventListener('submit',function(event){
-    if(event.target.id!=='hubLoginForm')return;
-    event.preventDefault();
-    const input=document.getElementById('hubCode');
-    const error=document.getElementById('hubLoginError');
-    const code=(input.value||'').trim();
-    if(HUB_CONFIG.accessCodes.includes(code)){
-      setLoggedIn(true);location.hash='#/hub';
-    }else{
-      error.textContent='Access code not recognized. Please contact Coach Du.';
-      input.select();
-    }
-  });
-
   document.addEventListener('click',function(event){
-    const menu=event.target.closest('.hub-menu-button');
-    if(menu){const navEl=document.getElementById('hubNav');const open=navEl.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));return;}
-    if(event.target.closest('.hub-logout')){setLoggedIn(false);location.hash='#/hub/login';return;}
-    const tab=event.target.closest('.hub-week-tab');
-    if(tab){
-      const panel=document.getElementById('hubProgrammePanel');
-      const key=root.dataset.programme;const programme=PROGRAMMES[key];if(!panel||!programme)return;
-      document.querySelectorAll('.hub-week-tab').forEach(function(b){b.classList.remove('active');});tab.classList.add('active');
-      if(tab.dataset.week==='notes')panel.innerHTML='<h3>Programme Notes</h3><p>'+escapeHtml(programme.notes)+'</p>';
-      else {const week=programme.weeks.find(function(w){return w.id===tab.dataset.week;});panel.innerHTML='<h3>'+escapeHtml(week.label)+'</h3><p>Coach Du’s sets, reps, distances, rest periods and progression will appear here.</p>';}
-    }
+    const role=event.target.closest('[data-login-role]');if(role){location.hash='#/hub/login/'+role.dataset.loginRole;return;}
+    if(event.target.closest('[data-role-back]')){location.hash='#/hub/login';return;}
+    const menu=event.target.closest('.hub-menu-button');if(menu){const navEl=document.getElementById('hubNav');const open=navEl.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));return;}
+    if(event.target.closest('.hub-logout')){logout();return;}
   });
 
-  window.addEventListener('hashchange',function(){window.setTimeout(render,110);});
-  window.addEventListener('popstate',function(){window.setTimeout(render,110);});
-  window.setTimeout(render,140);
+  document.addEventListener('submit',async function(event){
+    if(event.target.id!=='hubLoginForm')return;event.preventDefault();
+    const role=event.target.dataset.role;const input=document.getElementById('hubCode');const error=document.getElementById('hubLoginError');const hash=await hashCode(input.value||'');
+    if(role==='staff'&&HUB_CONFIG.staffCodeHashes.includes(hash)){setSession({role:'staff',userId:'staff'});location.hash='#/hub/staff';return;}
+    if(role==='athlete'&&HUB_CONFIG.athleteCodeMap[hash]){setSession({role:'athlete',userId:HUB_CONFIG.athleteCodeMap[hash]});location.hash='#/hub/athlete';return;}
+    error.textContent='Access code not recognized. Please contact Coach Du.';input.select();
+  });
+
+  window.addEventListener('hashchange',()=>setTimeout(render,80));
+  window.addEventListener('popstate',()=>setTimeout(render,80));
+  if(location.hash==='#/hub'||location.hash.startsWith('#/hub/'))setTimeout(render,100);
 })();
 </script>
 
