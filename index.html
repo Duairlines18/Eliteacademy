@@ -835,6 +835,44 @@ font:inherit;
 .pro-modal-backdrop{position:fixed;inset:0;z-index:999;background:rgba(3,10,7,.84);display:grid;place-items:center;padding:1rem;overflow:auto}.pro-modal{width:min(620px,100%);max-height:calc(100vh - 2rem);overflow:auto;background:var(--ink);border:1px solid var(--hair);box-shadow:0 30px 90px rgba(0,0,0,.5)}.pro-modal-head{padding:1.2rem 1.3rem;border-bottom:1px solid var(--hair-soft);display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}.pro-modal-head h2{font-family:var(--serif);font-size:1.7rem;margin:0}.pro-modal-body{padding:1.3rem}.pro-x{width:38px;height:38px;background:transparent;color:var(--cream);border:1px solid var(--hair-soft);cursor:pointer}
 .pro-exercise{display:grid;grid-template-columns:44px 1fr auto;gap:.8rem;align-items:center;padding:.9rem 0;border-bottom:1px solid var(--hair-soft)}.pro-exercise-num{width:38px;height:38px;border:1px solid var(--hair);display:grid;place-items:center;color:var(--gold);font-size:.68rem}.pro-exercise h4{margin:0;font-size:.9rem}.pro-exercise p{margin:.15rem 0;color:var(--sage);font-size:.74rem}.pro-exercise-prescription{color:var(--gold-soft);font-size:.74rem;text-align:right}.pro-coming{display:inline-flex;margin-top:.45rem;padding:.38rem .55rem;border:1px solid var(--hair-soft);background:transparent;color:var(--cream);font-size:.68rem;cursor:pointer}
 
+
+
+/* ===== Professional Performance: Supabase account UX ===== */
+.pro-auth-switch{
+  appearance:none;border:0;background:transparent;color:var(--gold);font:inherit;
+  font-size:.68rem;font-weight:800;cursor:pointer;margin:.75rem auto 0;display:block;
+  text-decoration:underline;text-underline-offset:3px
+}
+.pro-auth-switch:hover{opacity:.82}
+.pro-auth-busy{opacity:.65;pointer-events:none}
+
+/* ===== Professional Performance: post-onboarding plan selection ===== */
+.pro-plan-checkout-card{max-width:820px}
+.pro-plan-options{display:grid;gap:.65rem;margin:1.2rem 0}
+.pro-plan-option{
+  width:100%;appearance:none;text-align:left;color:var(--cream);background:var(--green-2);
+  border:1px solid var(--hair-soft);padding:1rem 1.05rem;cursor:pointer;
+  transition:border-color .16s ease,background .16s ease
+}
+.pro-plan-option:hover{border-color:rgba(199,162,90,.55)}
+.pro-plan-option.selected{border-color:var(--gold);background:rgba(199,162,90,.055)}
+.pro-plan-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.pro-plan-top>div:first-child{min-width:0}
+.pro-plan-kicker{display:block;color:var(--gold);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.2rem}
+.pro-plan-top strong{display:block;font-family:var(--serif);font-size:1.1rem}
+.pro-plan-price{font-family:var(--serif);font-size:1.45rem;color:var(--gold);white-space:nowrap}
+.pro-plan-price small{font-family:var(--sans);font-size:.58rem;color:var(--sage)}
+.pro-plan-option p{color:var(--sage);font-size:.72rem;margin:.5rem 0 .55rem;max-width:630px}
+.pro-plan-select{display:block;font-size:.62rem;color:var(--sage);font-weight:800}
+.pro-plan-option.selected .pro-plan-select{color:var(--gold)}
+.pro-selected-summary{display:flex;justify-content:space-between;gap:1rem;align-items:center;border-top:1px solid var(--hair-soft);border-bottom:1px solid var(--hair-soft);padding:.8rem 0;margin:1rem 0}
+.pro-selected-summary span{color:var(--sage);font-size:.68rem}.pro-selected-summary strong{font-size:.78rem}
+@media(max-width:620px){
+  .pro-plan-top,.pro-selected-summary{display:block}
+  .pro-plan-price{margin-top:.45rem}
+  .pro-selected-summary strong{display:block;margin-top:.2rem}
+}
+
 /* ===== Professional Performance Hub — founding member experience ===== */
 .pro-hub-member{display:flex;align-items:center;gap:.65rem;color:var(--sage);font-size:.72rem}
 .pro-hub-avatar{width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);display:grid;place-items:center;color:var(--gold);font-weight:800}
@@ -2818,16 +2856,94 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div id="professional-join-view" class="pro-view" hidden>
 <header class="topbar"><div class="wrap row"><a class="wordmark" href="#/professional-performance" data-route="professional"><b>DU AIRLINES</b> PROFESSIONAL PERFORMANCE</a><a class="top-cta" href="#/professional-performance" data-route="professional">← Back</a></div></header>
 <section class="section"><div class="wrap" style="max-width:680px"><p class="eyebrow">Founding Membership</p><h2 class="head">Set up your <span class="accent">Professional Performance account.</span></h2><p class="lede">Create your account, answer five quick questions, then complete secure payment. Your email and password become your Performance Hub login.</p>
-<div class="soccer-form-card" id="pro-registration-card"><form id="proRegistrationForm"><div class="pro-grid2"><div class="pro-field"><label>First name</label><input id="proFirst" required autocomplete="given-name"></div><div class="pro-field"><label>Last name</label><input id="proLast" required autocomplete="family-name"></div></div><div class="pro-field"><label>Email</label><input id="proEmail" type="email" required autocomplete="email"></div><div class="pro-field"><label>Create password</label><input id="proPassword" type="password" minlength="8" required autocomplete="new-password"></div><div class="pro-checkout"><strong><span>Founding Membership</span><span>$79 / month</span></strong><p class="pro-helper">The same email + password become your Hub login.</p></div><p id="proRegistrationError" class="pro-error"></p><button class="btn btn-primary" type="submit">Create Account & Continue</button></form></div>
+<div class="soccer-form-card" id="pro-registration-card">
+  <form id="proRegistrationForm">
+    <div class="pro-grid2">
+      <div class="pro-field"><label>First name</label><input id="proFirst" required autocomplete="given-name"></div>
+      <div class="pro-field"><label>Last name</label><input id="proLast" required autocomplete="family-name"></div>
+    </div>
+    <div class="pro-field"><label>Email</label><input id="proEmail" type="email" required autocomplete="email"></div>
+    <div class="pro-field"><label>Create password</label><input id="proPassword" type="password" minlength="8" required autocomplete="new-password"></div>
+    <div class="pro-checkout"><strong><span>Founding Membership</span><span>From $79 / month</span></strong><p class="pro-helper">This email + password become your secure Performance Hub login.</p></div>
+    <p id="proRegistrationError" class="pro-error"></p>
+    <button class="btn btn-primary" id="proCreateAccountButton" type="submit">Create Account & Continue</button>
+    <button class="pro-auth-switch" id="proShowLogin" type="button">Already have an account? Sign in</button>
+  </form>
+</div>
+
+<div class="soccer-form-card" id="pro-login-card" hidden>
+  <p class="eyebrow">Welcome Back</p>
+  <h3 style="font-family:var(--serif);font-size:1.55rem;margin-bottom:.35rem">Sign in to continue.</h3>
+  <p class="pro-helper">Use the same email and password you created for Professional Performance.</p>
+  <form id="proLoginForm">
+    <div class="pro-field"><label>Email</label><input id="proLoginEmail" type="email" required autocomplete="email"></div>
+    <div class="pro-field"><label>Password</label><input id="proLoginPassword" type="password" minlength="8" required autocomplete="current-password"></div>
+    <p id="proLoginError" class="pro-error"></p>
+    <button class="btn btn-primary" id="proLoginButton" type="submit">Sign In & Continue</button>
+    <button class="pro-auth-switch" id="proShowCreate" type="button">New here? Create an account</button>
+  </form>
+</div>
+
+<div class="soccer-form-card" id="pro-confirm-card" hidden>
+  <p class="eyebrow">Confirm Your Email</p>
+  <h3 style="font-family:var(--serif);font-size:1.55rem;margin-bottom:.35rem">One quick security step.</h3>
+  <p class="lede" style="font-size:.95rem">We sent a confirmation link to <strong id="proConfirmEmail">your email</strong>. Open that email and confirm your address, then return here.</p>
+  <p class="pro-helper">If your account is already confirmed, use Sign In below.</p>
+  <button class="btn btn-primary" id="proConfirmedContinue" type="button">I’ve Confirmed My Email</button>
+  <button class="pro-auth-switch" id="proConfirmShowLogin" type="button">Sign in manually</button>
+  <p id="proConfirmError" class="pro-error"></p>
+</div>
+
 <div class="soccer-form-card" id="pro-onboarding-card" hidden><div class="pro-progress"><span id="proProgress" style="width:20%"></span></div><form id="proOnboardingForm"><section data-pro-step="1"><p class="eyebrow">1 of 5</p><h3>What are you mainly trying to improve right now?</h3><p class="pro-helper">Select up to two.</p><div class="pro-choice-grid" id="proGoalChoices"></div></section><section data-pro-step="2" hidden><p class="eyebrow">2 of 5</p><h3>What does your normal work + training setup look like?</h3><div class="pro-field"><label>Work environment</label><select id="proWork" required><option value="">Select one</option><option>Remote</option><option>Hybrid</option><option>Office</option><option>Frequent travel</option><option>Variable</option></select></div><div class="pro-field"><label>Training environment</label><select id="proTrainEnv" required><option value="">Select one</option><option>Home</option><option>Gym</option><option>Both</option><option>Frequent travel / hotel setup</option></select></div></section><section data-pro-step="3" hidden><p class="eyebrow">3 of 5</p><h3>What can you realistically commit to most weeks?</h3><div class="pro-field"><label>Preferred session duration</label><select id="proDuration" required><option value="">Select one</option><option>15 minutes</option><option>30 minutes</option><option>45 minutes</option><option>60 minutes</option></select></div><div class="pro-field"><label>Current training frequency</label><select id="proFrequency" required><option value="">Select one</option><option>0 days</option><option>1–2 days</option><option>3 days</option><option>4+ days</option></select></div></section><section data-pro-step="4" hidden><p class="eyebrow">4 of 5</p><h3>What equipment do you normally have access to?</h3><p class="pro-helper">Select all that apply.</p><div class="pro-choice-grid" id="proEquipmentChoices"></div></section><section data-pro-step="5" hidden><p class="eyebrow">5 of 5</p><h3>Tell us anything we should know before programming for you.</h3><div class="pro-field"><label>Training experience</label><select id="proExperience" required><option value="">Select one</option><option>Beginner</option><option>Some training experience</option><option>Train regularly</option><option>Former/current athlete</option></select></div><div class="pro-field"><label>Physical limitations / injury considerations <span class="pro-helper">(optional)</span></label><textarea id="proLimitations" rows="3"></textarea><p class="pro-helper">This helps select an appropriate training pathway. It is not a medical assessment.</p></div></section><p id="proOnboardingError" class="pro-error"></p><div class="pro-actions-row"><button id="proBack" class="btn btn-ghost" type="button" hidden>Back</button><button id="proNext" class="btn btn-primary" type="button">Continue</button></div></form></div>
-<div class="soccer-form-card" id="pro-payment-card" hidden><p class="eyebrow">Final Step</p><h3 style="font-family:var(--serif);font-size:1.7rem">Complete your founding membership.</h3><p class="lede">Your account and training profile are ready. Complete secure payment to activate Professional Performance.</p><div class="pro-checkout"><strong><span>Founding Membership</span><span>$79 / month</span></strong><p class="pro-helper">Recurring monthly membership. Payment is processed securely through Stripe.</p></div><button id="proStripeButton" class="btn btn-primary" type="button">Pay Securely with Stripe — $79</button><p class="pro-helper">After payment, you are taken directly into your Performance Hub.</p></div>
+<div class="soccer-form-card pro-plan-checkout-card" id="pro-payment-card" hidden>
+  <p class="eyebrow">Final Step</p>
+  <h3 style="font-family:var(--serif);font-size:1.8rem;margin-bottom:.35rem">Choose your commitment.</h3>
+  <p class="lede">Your account and training profile are ready. Choose the option that best fits how you want to start.</p>
+
+  <div class="pro-plan-options" role="radiogroup" aria-label="Professional Performance membership options">
+    <button type="button" class="pro-plan-option selected" data-pro-plan="monthly" aria-pressed="true">
+      <div class="pro-plan-top">
+        <div><span class="pro-plan-kicker">Most Flexible</span><strong>Monthly</strong></div>
+        <div class="pro-plan-price">$79 <small>/ month</small></div>
+      </div>
+      <p>Easy entry. Stay flexible while still getting the full Professional Performance system.</p>
+      <span class="pro-plan-select">Selected ✓</span>
+    </button>
+
+    <button type="button" class="pro-plan-option" data-pro-plan="three" aria-pressed="false">
+      <div class="pro-plan-top">
+        <div><span class="pro-plan-kicker">Recommended</span><strong>3-Month Performance Block</strong></div>
+        <div class="pro-plan-price">$219 <small>upfront</small></div>
+      </div>
+      <p>A defined 12-week performance block for professionals ready to commit to consistency.</p>
+      <span class="pro-plan-select">Choose 3 Months</span>
+    </button>
+
+    <button type="button" class="pro-plan-option" data-pro-plan="six" aria-pressed="false">
+      <div class="pro-plan-top">
+        <div><span class="pro-plan-kicker">Best Value</span><strong>6-Month Performance Membership</strong></div>
+        <div class="pro-plan-price">$399 <small>upfront</small></div>
+      </div>
+      <p>Longer-term structure for professionals who want performance training built into their lifestyle.</p>
+      <span class="pro-plan-select">Choose 6 Months</span>
+    </button>
+  </div>
+
+  <div class="pro-selected-summary" id="proSelectedSummary">
+    <span>Your selection</span><strong>Monthly — $79/month</strong>
+  </div>
+
+  <p id="proCheckoutError" class="pro-error"></p>
+  <button id="proStripeButton" class="btn btn-primary" type="button">Continue to Secure Payment — $79/month</button>
+  <p class="pro-helper">Payment is processed securely through Stripe. After payment, you’ll return to your Professional Performance experience.</p>
+</div>
 <div class="soccer-form-card" id="pro-success-card" hidden><p class="eyebrow">You’re In</p><h3 style="font-family:var(--serif);font-size:1.8rem">Welcome to Professional Performance.</h3><p class="lede">Payment confirmed. Use the same email and password whenever you return.</p><a class="btn btn-primary" href="#/professional-hub" data-route="professional-hub">Enter Performance Hub</a></div></div></section></div>
 
 <div id="professional-hub-view" class="pro-hub-shell" hidden>
 <header class="pro-hub-top">
   <div class="wrap row">
     <div class="pro-hub-brand"><small>DU Airlines Performance Hub</small><strong>Professional Performance</strong></div>
-    <div class="pro-hub-member"><span id="proHubEmail">Member</span><span class="pro-hub-avatar" id="proHubAvatar">DU</span><a class="btn btn-ghost" href="#/professional-performance" data-route="professional">Exit Hub</a></div>
+    <div class="pro-hub-member"><span id="proHubEmail">Member</span><span class="pro-hub-avatar" id="proHubAvatar">DU</span><button class="btn btn-ghost" id="proSignOut" type="button">Sign Out</button><a class="btn btn-ghost" href="#/professional-performance" data-route="professional">Exit Hub</a></div>
   </div>
 </header>
 
@@ -3695,9 +3811,21 @@ document.addEventListener('click',function(e){
 </script>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+
 (function(){
-  const PRO_CONFIG={foundingPrice:79,stripeCheckoutUrl:'https://buy.stripe.com/bJe7sK2XZ0OrdMJ67D5os02',demoMode:false};
+  const PRO_CONFIG={
+    foundingPrice:79,
+    demoMode:false,
+    supabaseUrl:'https://hiktwkdfvlujszczthdu.supabase.co',
+    supabaseKey:'sb_publishable_MKg9hNp7WuDlnK0TnlwwtQ_n8j4-dYx',
+    plans:{
+      monthly:{label:'Monthly',priceLabel:'$79/month',numericPrice:79,checkoutUrl:'https://buy.stripe.com/bJe7sK2XZ0OrdMJ67D5os02'},
+      three:{label:'3-Month Performance Block',priceLabel:'$219 upfront',numericPrice:219,checkoutUrl:'https://buy.stripe.com/7sYaEW8ij2Wz4c9dA55os04'},
+      six:{label:'6-Month Performance Membership',priceLabel:'$399 upfront',numericPrice:399,checkoutUrl:'https://buy.stripe.com/00waEW8ijdBd3850Nj5os03'}
+    }
+  };
   const goals=['Get consistent again','Feel stronger','Move better','Improve mobility','Improve conditioning','Feel more athletic','Maintain training around work','Stay consistent while traveling'];
   const equipment=['Bodyweight only','Resistance bands','Dumbbells','Kettlebells','Bench','Cable / machines','Barbell','Full commercial gym','Hotel / limited equipment'];
   const sessions=[
@@ -3705,21 +3833,330 @@ document.addEventListener('click',function(e){
     {id:'p2',label:'SESSION 2 · PERFORM',title:'Athletic Conditioning',duration:'30 MIN',environment:'HOME · GYM',equipment:'Bodyweight / Light equipment',exercises:[['01','Movement Preparation','5 min','Joint preparation'],['02','Athletic Movement Circuit','4 rounds','Quality movement'],['03','Reverse Lunge','3 × 8 / side','Single-leg strength'],['04','Row Variation','3 × 10','Upper-back strength'],['05','Conditioning Block','8 min','Controlled work capacity']]},
     {id:'p3',label:'SESSION 3 · MOVE + BUILD',title:'Athletic Strength + Core',duration:'45 MIN',environment:'GYM · TRAVEL',equipment:'Full gym / Hotel alternative',exercises:[['01','Movement Preparation','6 min','Mobility + coordination'],['02','Squat Pattern','3 × 8','Lower-body strength'],['03','Single-Leg RDL','3 × 8 / side','Balance + posterior chain'],['04','Half-Kneeling Press','3 × 8 / side','Upper-body + trunk control'],['05','Lateral Movement','3 rounds','Athletic movement'],['06','Core Finisher','6 min','Trunk strength + control']]}
   ];
+
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
   const getMember=()=>{try{return JSON.parse(localStorage.getItem('duProfessionalMember')||'null')}catch(e){return null}};
   const saveMember=m=>localStorage.setItem('duProfessionalMember',JSON.stringify(m));
-  const show=id=>{const e=document.getElementById(id);if(e)e.hidden=false}, hide=id=>{const e=document.getElementById(id);if(e)e.hidden=true};
-  function choices(rootId,items,name){const r=document.getElementById(rootId);if(!r||r.children.length)return;items.forEach((v,i)=>r.insertAdjacentHTML('beforeend',`<div class="pro-choice"><input id="${name}${i}" name="${name}" type="checkbox" value="${v}"><label for="${name}${i}">${v}</label></div>`))}
-  choices('proGoalChoices',goals,'proGoal');choices('proEquipmentChoices',equipment,'proEquipment');
+  const show=id=>{const e=document.getElementById(id);if(e)e.hidden=false};
+  const hide=id=>{const e=document.getElementById(id);if(e)e.hidden=true};
+  const setBusy=(button,busy,label)=>{if(!button)return;button.disabled=busy;button.classList.toggle('pro-auth-busy',busy);if(label)button.textContent=busy?'Please wait…':label};
+  const sb=(window.supabase&&window.supabase.createClient)
+    ? window.supabase.createClient(PRO_CONFIG.supabaseUrl,PRO_CONFIG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})
+    : null;
+
+  let pendingSignup={email:'',password:'',firstName:'',lastName:''};
+  let currentUser=null;
+
+  function choices(rootId,items,name){
+    const r=document.getElementById(rootId);
+    if(!r||r.children.length)return;
+    items.forEach((v,i)=>r.insertAdjacentHTML('beforeend',`<div class="pro-choice"><input id="${name}${i}" name="${name}" type="checkbox" value="${v}"><label for="${name}${i}">${v}</label></div>`));
+  }
+  choices('proGoalChoices',goals,'proGoal');
+  choices('proEquipmentChoices',equipment,'proEquipment');
+
+  function memberFromRow(row,user){
+    if(!row)return {
+      firstName:user?.user_metadata?.first_name||'',
+      lastName:user?.user_metadata?.last_name||'',
+      email:user?.email||'',
+      memberType:'professional',
+      foundingMember:true,
+      membershipPrice:79,
+      membershipStatus:'account_created',
+      paid:false
+    };
+    return {
+      firstName:row.first_name||'',
+      lastName:row.last_name||'',
+      email:row.email||user?.email||'',
+      memberType:row.member_type||'professional',
+      foundingMember:row.founding_member!==false,
+      membershipPrice:Number(row.membership_price||79),
+      membershipStatus:row.membership_status||'account_created',
+      paid:Boolean(row.paid),
+      primaryGoals:row.primary_goals||[],
+      workEnvironment:row.work_environment||'',
+      trainingEnvironment:row.training_environment||'',
+      preferredDuration:row.preferred_duration||'',
+      currentFrequency:row.current_frequency||'',
+      equipment:row.equipment||[],
+      trainingExperience:row.training_experience||'',
+      limitations:row.limitations||'',
+      onboardingComplete:Boolean(row.onboarding_complete),
+      selectedPlan:row.selected_plan||'',
+      selectedPlanLabel:row.selected_plan_label||'',
+      selectedPlanPrice:row.selected_plan_price||''
+    };
+  }
+
+  async function getSessionUser(){
+    if(!sb)return null;
+    const {data,error}=await sb.auth.getSession();
+    if(error)throw error;
+    currentUser=data.session?.user||null;
+    return currentUser;
+  }
+
+  async function ensureProfile(user,base={}){
+    if(!sb||!user)throw new Error('Secure account service is unavailable. Please refresh and try again.');
+    const payload={
+      user_id:user.id,
+      first_name:base.firstName||user.user_metadata?.first_name||'',
+      last_name:base.lastName||user.user_metadata?.last_name||'',
+      email:user.email||base.email||'',
+      member_type:'professional',
+      founding_member:true
+    };
+    const {data,error}=await sb.from('professional_members').upsert(payload,{onConflict:'user_id'}).select().single();
+    if(error)throw error;
+    const m=memberFromRow(data,user);
+    saveMember(m);
+    return m;
+  }
+
+  async function loadProfile(user){
+    if(!sb||!user)return null;
+    const {data,error}=await sb.from('professional_members').select('*').eq('user_id',user.id).maybeSingle();
+    if(error)throw error;
+    if(!data)return ensureProfile(user);
+    const m=memberFromRow(data,user);
+    saveMember(m);
+    return m;
+  }
+
+  async function updateProfile(fields){
+    const user=currentUser||await getSessionUser();
+    if(!user)throw new Error('Your session has expired. Please sign in again.');
+    const {data,error}=await sb.from('professional_members').update(fields).eq('user_id',user.id).select().single();
+    if(error)throw error;
+    const m=memberFromRow(data,user);
+    saveMember(m);
+    return m;
+  }
+
+  function openRegistration(){
+    show('pro-registration-card');hide('pro-login-card');hide('pro-confirm-card');
+  }
+  function openLogin(email=''){
+    hide('pro-registration-card');show('pro-login-card');hide('pro-confirm-card');
+    if(email&&$('#proLoginEmail'))$('#proLoginEmail').value=email;
+  }
+  function openOnboarding(){
+    hide('pro-registration-card');hide('pro-login-card');hide('pro-confirm-card');hide('pro-payment-card');
+    show('pro-onboarding-card');renderStep();
+  }
+  function openPayment(){
+    hide('pro-registration-card');hide('pro-login-card');hide('pro-confirm-card');hide('pro-onboarding-card');
+    show('pro-payment-card');
+  }
+
+  if($('#proShowLogin'))$('#proShowLogin').addEventListener('click',()=>openLogin($('#proEmail')?.value.trim()||''));
+  if($('#proShowCreate'))$('#proShowCreate').addEventListener('click',openRegistration);
+  if($('#proConfirmShowLogin'))$('#proConfirmShowLogin').addEventListener('click',()=>openLogin(pendingSignup.email));
+
   const reg=$('#proRegistrationForm');
-  if(reg)reg.addEventListener('submit',e=>{e.preventDefault();const first=$('#proFirst').value.trim(),last=$('#proLast').value.trim(),email=$('#proEmail').value.trim(),pw=$('#proPassword').value,err=$('#proRegistrationError');err.textContent='';if(!first||!last||!email||pw.length<8){err.textContent='Complete all fields. Password must be at least 8 characters.';return}saveMember({firstName:first,lastName:last,email,memberType:'professional',foundingMember:true,membershipPrice:79,membershipStatus:'account_created',paid:false});hide('pro-registration-card');show('pro-onboarding-card');renderStep()});
+  if(reg)reg.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const first=$('#proFirst').value.trim(),last=$('#proLast').value.trim(),email=$('#proEmail').value.trim(),pw=$('#proPassword').value;
+    const err=$('#proRegistrationError'),btn=$('#proCreateAccountButton');
+    err.textContent='';
+    if(!first||!last||!email||pw.length<8){err.textContent='Complete all fields. Password must be at least 8 characters.';return}
+    if(!sb){err.textContent='Secure account service did not load. Refresh the page and try again.';return}
+    setBusy(btn,true,'Create Account & Continue');
+    try{
+      pendingSignup={email,password:pw,firstName:first,lastName:last};
+      const {data,error}=await sb.auth.signUp({
+        email,password:pw,
+        options:{
+          data:{first_name:first,last_name:last,member_type:'professional'},
+          emailRedirectTo:'https://duairlineseliteacademy.com/#/professional-join'
+        }
+      });
+      if(error)throw error;
+      saveMember({firstName:first,lastName:last,email,memberType:'professional',foundingMember:true,membershipPrice:79,membershipStatus:'account_created',paid:false});
+      if(data.session&&data.user){
+        currentUser=data.user;
+        await ensureProfile(data.user,{firstName:first,lastName:last,email});
+        openOnboarding();
+      }else{
+        hide('pro-registration-card');show('pro-confirm-card');
+        if($('#proConfirmEmail'))$('#proConfirmEmail').textContent=email;
+      }
+    }catch(ex){
+      const msg=(ex?.message||'').toLowerCase();
+      err.textContent=msg.includes('already')?'An account already exists with this email. Choose “Sign in” below.':(ex.message||'We could not create your account. Please try again.');
+    }finally{setBusy(btn,false,'Create Account & Continue')}
+  });
+
+  const login=$('#proLoginForm');
+  if(login)login.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const email=$('#proLoginEmail').value.trim(),password=$('#proLoginPassword').value;
+    const err=$('#proLoginError'),btn=$('#proLoginButton');
+    err.textContent='';
+    if(!email||password.length<8){err.textContent='Enter your email and password.';return}
+    if(!sb){err.textContent='Secure account service did not load. Refresh the page and try again.';return}
+    setBusy(btn,true,'Sign In & Continue');
+    try{
+      const {data,error}=await sb.auth.signInWithPassword({email,password});
+      if(error)throw error;
+      currentUser=data.user;
+      const m=await loadProfile(data.user);
+      if(m.onboardingComplete)openPayment();else openOnboarding();
+    }catch(ex){
+      err.textContent=(ex?.message||'Unable to sign in. Check your email and password.');
+    }finally{setBusy(btn,false,'Sign In & Continue')}
+  });
+
+  if($('#proConfirmedContinue'))$('#proConfirmedContinue').addEventListener('click',async function(){
+    const err=$('#proConfirmError');err.textContent='';
+    if(pendingSignup.email&&pendingSignup.password){
+      setBusy(this,true,'I’ve Confirmed My Email');
+      try{
+        const {data,error}=await sb.auth.signInWithPassword({email:pendingSignup.email,password:pendingSignup.password});
+        if(error)throw error;
+        currentUser=data.user;
+        await ensureProfile(data.user,{firstName:pendingSignup.firstName,lastName:pendingSignup.lastName,email:pendingSignup.email});
+        pendingSignup={email:'',password:'',firstName:'',lastName:''};
+        openOnboarding();
+      }catch(ex){
+        err.textContent='Email is not confirmed yet, or the sign-in could not be completed. Confirm the email, then try again or use Sign In.';
+      }finally{setBusy(this,false,'I’ve Confirmed My Email')}
+    }else{
+      openLogin();
+    }
+  });
+
   let step=1;
-  function renderStep(){$$('[data-pro-step]').forEach(x=>x.hidden=Number(x.dataset.proStep)!==step);if($('#proProgress'))$('#proProgress').style.width=(step*20)+'%';if($('#proBack'))$('#proBack').hidden=step===1;if($('#proNext'))$('#proNext').textContent=step===5?'Continue to Payment':'Continue'}
-  function valid(){const e=$('#proOnboardingError');e.textContent='';if(step===1){const c=$$('input[name="proGoal"]:checked');if(c.length<1||c.length>2){e.textContent='Select one or two goals.';return false}}if(step===2&&(!$('#proWork').value||!$('#proTrainEnv').value)){e.textContent='Select both environments.';return false}if(step===3&&(!$('#proDuration').value||!$('#proFrequency').value)){e.textContent='Select your duration and current frequency.';return false}if(step===4&&$$('input[name="proEquipment"]:checked').length<1){e.textContent='Select at least one equipment option.';return false}if(step===5&&!$('#proExperience').value){e.textContent='Select your training experience.';return false}return true}
-  if($('#proNext'))$('#proNext').addEventListener('click',()=>{if(!valid())return;if(step<5){step++;renderStep();return}const m=getMember()||{};m.primaryGoals=$$('input[name="proGoal"]:checked').map(x=>x.value);m.workEnvironment=$('#proWork').value;m.trainingEnvironment=$('#proTrainEnv').value;m.preferredDuration=$('#proDuration').value;m.currentFrequency=$('#proFrequency').value;m.equipment=$$('input[name="proEquipment"]:checked').map(x=>x.value);m.trainingExperience=$('#proExperience').value;m.limitations=$('#proLimitations').value.trim();m.onboardingComplete=true;m.membershipStatus='pending_payment';saveMember(m);hide('pro-onboarding-card');show('pro-payment-card')});
+  function renderStep(){
+    $$('[data-pro-step]').forEach(x=>x.hidden=Number(x.dataset.proStep)!==step);
+    if($('#proProgress'))$('#proProgress').style.width=(step*20)+'%';
+    if($('#proBack'))$('#proBack').hidden=step===1;
+    if($('#proNext'))$('#proNext').textContent=step===5?'Continue to Payment':'Continue';
+  }
+  function valid(){
+    const e=$('#proOnboardingError');e.textContent='';
+    if(step===1){const c=$$('input[name="proGoal"]:checked');if(c.length<1||c.length>2){e.textContent='Select one or two goals.';return false}}
+    if(step===2&&(!$('#proWork').value||!$('#proTrainEnv').value)){e.textContent='Select both environments.';return false}
+    if(step===3&&(!$('#proDuration').value||!$('#proFrequency').value)){e.textContent='Select your duration and current frequency.';return false}
+    if(step===4&&$$('input[name="proEquipment"]:checked').length<1){e.textContent='Select at least one equipment option.';return false}
+    if(step===5&&!$('#proExperience').value){e.textContent='Select your training experience.';return false}
+    return true;
+  }
+  if($('#proNext'))$('#proNext').addEventListener('click',async function(){
+    if(!valid())return;
+    if(step<5){step++;renderStep();return}
+    const err=$('#proOnboardingError');
+    setBusy(this,true,'Continue to Payment');
+    try{
+      const fields={
+        primary_goals:$$('input[name="proGoal"]:checked').map(x=>x.value),
+        work_environment:$('#proWork').value,
+        training_environment:$('#proTrainEnv').value,
+        preferred_duration:$('#proDuration').value,
+        current_frequency:$('#proFrequency').value,
+        equipment:$$('input[name="proEquipment"]:checked').map(x=>x.value),
+        training_experience:$('#proExperience').value,
+        limitations:$('#proLimitations').value.trim(),
+        onboarding_complete:true,
+        membership_status:'pending_payment'
+      };
+      await updateProfile(fields);
+      openPayment();
+    }catch(ex){
+      err.textContent=ex.message||'We could not save your onboarding yet. Please try again.';
+    }finally{setBusy(this,false,'Continue to Payment')}
+  });
   if($('#proBack'))$('#proBack').addEventListener('click',()=>{if(step>1){step--;renderStep()}});
-  if($('#proStripeButton'))$('#proStripeButton').addEventListener('click',()=>{if(PRO_CONFIG.stripeCheckoutUrl){location.href=PRO_CONFIG.stripeCheckoutUrl;return}if(!PRO_CONFIG.demoMode){alert('Stripe checkout is not configured yet.');return}const m=getMember()||{};m.paid=true;m.membershipStatus='active';saveMember(m);hide('pro-payment-card');show('pro-success-card')});
-  function done(){try{return JSON.parse(localStorage.getItem('duProCompleted')||'[]')}catch(e){return[]}}
+
+  let selectedProPlan='monthly';
+  function renderProPlanSelection(){
+    $$('[data-pro-plan]').forEach(btn=>{
+      const selected=btn.dataset.proPlan===selectedProPlan;
+      btn.classList.toggle('selected',selected);
+      btn.setAttribute('aria-pressed',selected?'true':'false');
+      const label=btn.querySelector('.pro-plan-select');
+      if(label){
+        if(selected) label.textContent='Selected ✓';
+        else if(btn.dataset.proPlan==='three') label.textContent='Choose 3 Months';
+        else if(btn.dataset.proPlan==='six') label.textContent='Choose 6 Months';
+        else label.textContent='Choose Monthly';
+      }
+    });
+    const p=PRO_CONFIG.plans[selectedProPlan];
+    if($('#proSelectedSummary'))$('#proSelectedSummary').innerHTML=`<span>Your selection</span><strong>${p.label} — ${p.priceLabel}</strong>`;
+    if($('#proStripeButton'))$('#proStripeButton').textContent=`Continue to Secure Payment — ${p.priceLabel}`;
+  }
+  async function persistSelectedPlan(){
+    const p=PRO_CONFIG.plans[selectedProPlan];
+    const local=getMember()||{};
+    local.selectedPlan=selectedProPlan;
+    local.selectedPlanLabel=p.label;
+    local.selectedPlanPrice=p.priceLabel;
+    local.membershipPrice=p.numericPrice;
+    local.membershipStatus='pending_payment';
+    saveMember(local);
+    await updateProfile({
+      selected_plan:selectedProPlan,
+      selected_plan_label:p.label,
+      selected_plan_price:p.priceLabel,
+      membership_price:p.numericPrice,
+      membership_status:'pending_payment'
+    });
+  }
+  $$('[data-pro-plan]').forEach(btn=>btn.addEventListener('click',()=>{
+    selectedProPlan=btn.dataset.proPlan;
+    renderProPlanSelection();
+    persistSelectedPlan().catch(()=>{});
+  }));
+  renderProPlanSelection();
+
+  if($('#proStripeButton'))$('#proStripeButton').addEventListener('click',async function(){
+    const p=PRO_CONFIG.plans[selectedProPlan],err=$('#proCheckoutError');
+    err.textContent='';
+    setBusy(this,true,`Continue to Secure Payment — ${p.priceLabel}`);
+    try{
+      await persistSelectedPlan();
+      if(p.checkoutUrl){location.href=p.checkoutUrl;return}
+      throw new Error('Secure checkout is not configured.');
+    }catch(ex){
+      err.textContent=ex.message||'We could not save your plan selection. Please try again.';
+      setBusy(this,false,`Continue to Secure Payment — ${p.priceLabel}`);
+    }
+  });
+
+  async function initialiseProfessionalAuth(){
+    if(!sb)return;
+    try{
+      const user=await getSessionUser();
+      if(!user)return;
+      const m=await loadProfile(user);
+      if(location.hash==='#/professional-join'){
+        if(m.onboardingComplete)openPayment();else openOnboarding();
+      }
+    }catch(ex){console.warn('Professional account initialization:',ex.message)}
+  }
+  initialiseProfessionalAuth();
+
+function done(){try{return JSON.parse(localStorage.getItem('duProCompleted')||'[]')}catch(e){return[]}}
+  async function guardAndRenderHub(){
+    if(!sb){renderHub();return}
+    try{
+      const user=await getSessionUser();
+      if(!user){
+        location.hash='#/professional-join';
+        setTimeout(()=>openLogin(),80);
+        return;
+      }
+      await loadProfile(user);
+      renderHub();
+    }catch(ex){
+      console.warn('Professional Hub access:',ex.message);
+      location.hash='#/professional-join';
+      setTimeout(()=>openLogin(),80);
+    }
+  }
   function renderHub(){
     const root=$('#proWeek');if(!root)return;
     const m=getMember()||{};
@@ -3783,7 +4220,17 @@ document.addEventListener('click',function(e){
     this.textContent='Review Available Anytime ✓';
   });
 
-  window.addEventListener('hashchange',()=>{if(location.hash==='#/professional-hub')setTimeout(renderHub,120)});if(location.hash==='#/professional-hub')setTimeout(renderHub,160);
+  if($('#proSignOut'))$('#proSignOut').addEventListener('click',async()=>{
+    try{if(sb)await sb.auth.signOut()}catch(e){}
+    localStorage.removeItem('duProfessionalMember');
+    currentUser=null;
+    location.hash='#/professional-performance';
+  });
+  window.addEventListener('hashchange',()=>{
+    if(location.hash==='#/professional-hub')setTimeout(guardAndRenderHub,120);
+    if(location.hash==='#/professional-join')setTimeout(initialiseProfessionalAuth,80);
+  });
+  if(location.hash==='#/professional-hub')setTimeout(guardAndRenderHub,160);
 })();
 </script>
 
