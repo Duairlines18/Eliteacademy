@@ -3794,7 +3794,7 @@ document.addEventListener('click',function(e){
       currentUser=data.user;
       await ensureProfile(data.user,{firstName:first,lastName:last,email});
       saveMember({firstName:first,lastName:last,email,memberType:'professional',foundingMember:true,membershipPrice:79,membershipStatus:'account_created',paid:false});
-      location.hash='#/professional-hub';
+      openOnboarding();
     }catch(ex){
       const msg=(ex?.message||'').toLowerCase();
       err.textContent=msg.includes('already')?'An account already exists with this email. Choose “Sign in” below.':(ex.message||'We could not create your account. Please try again.');
@@ -3814,8 +3814,8 @@ document.addEventListener('click',function(e){
       const {data,error}=await sb.auth.signInWithPassword({email,password});
       if(error)throw error;
       currentUser=data.user;
-      await loadProfile(data.user);
-      location.hash='#/professional-hub';
+      const m=await loadProfile(data.user);
+      if(m.onboardingComplete)openPayment();else openOnboarding();
     }catch(ex){
       err.textContent=(ex?.message||'Unable to sign in. Check your email and password.');
     }finally{setBusy(btn,false,'Sign In & Continue')}
@@ -3943,9 +3943,9 @@ document.addEventListener('click',function(e){
     try{
       const user=await getSessionUser();
       if(!user)return;
-      await loadProfile(user);
+      const m=await loadProfile(user);
       if(location.hash==='#/professional-join'){
-        location.hash='#/professional-hub';
+        if(m.onboardingComplete)openPayment();else openOnboarding();
       }
     }catch(ex){console.warn('Professional account initialization:',ex.message)}
   }
