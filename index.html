@@ -3784,20 +3784,17 @@ document.addEventListener('click',function(e){
       const {data,error}=await sb.auth.signUp({
         email,password:pw,
         options:{
-          data:{first_name:first,last_name:last,member_type:'professional'},
-          emailRedirectTo:'https://duairlineseliteacademy.com/#/professional-join'
+          data:{first_name:first,last_name:last,member_type:'professional'}
         }
       });
       if(error)throw error;
-      saveMember({firstName:first,lastName:last,email,memberType:'professional',foundingMember:true,membershipPrice:79,membershipStatus:'account_created',paid:false});
-      if(data.session&&data.user){
-        currentUser=data.user;
-        ensureProfile(data.user,{firstName:first,lastName:last,email}).catch(console.error);
-        openOnboarding();
-      }else{
-        hide('pro-registration-card');show('pro-confirm-card');
-        if($('#proConfirmEmail'))$('#proConfirmEmail').textContent=email;
+      if(!data?.session || !data?.user){
+        throw new Error('Your account was created but a session was not started. Please sign in.');
       }
+      currentUser=data.user;
+      await ensureProfile(data.user,{firstName:first,lastName:last,email});
+      saveMember({firstName:first,lastName:last,email,memberType:'professional',foundingMember:true,membershipPrice:79,membershipStatus:'account_created',paid:false});
+      location.hash='#/professional-hub';
     }catch(ex){
       const msg=(ex?.message||'').toLowerCase();
       err.textContent=msg.includes('already')?'An account already exists with this email. Choose “Sign in” below.':(ex.message||'We could not create your account. Please try again.');
@@ -3817,8 +3814,8 @@ document.addEventListener('click',function(e){
       const {data,error}=await sb.auth.signInWithPassword({email,password});
       if(error)throw error;
       currentUser=data.user;
-      const m=await loadProfile(data.user);
-      if(m.onboardingComplete)openPayment();else openOnboarding();
+      await loadProfile(data.user);
+      location.hash='#/professional-hub';
     }catch(ex){
       err.textContent=(ex?.message||'Unable to sign in. Check your email and password.');
     }finally{setBusy(btn,false,'Sign In & Continue')}
@@ -3946,9 +3943,9 @@ document.addEventListener('click',function(e){
     try{
       const user=await getSessionUser();
       if(!user)return;
-      const m=await loadProfile(user);
+      await loadProfile(user);
       if(location.hash==='#/professional-join'){
-        if(m.onboardingComplete)openPayment();else openOnboarding();
+        location.hash='#/professional-hub';
       }
     }catch(ex){console.warn('Professional account initialization:',ex.message)}
   }
