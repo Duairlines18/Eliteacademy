@@ -3792,7 +3792,7 @@ document.addEventListener('click',function(e){
       saveMember({firstName:first,lastName:last,email,memberType:'professional',foundingMember:true,membershipPrice:79,membershipStatus:'account_created',paid:false});
       if(data.session&&data.user){
         currentUser=data.user;
-        await ensureProfile(data.user,{firstName:first,lastName:last,email});
+        ensureProfile(data.user,{firstName:first,lastName:last,email}).catch(console.error);
         openOnboarding();
       }else{
         hide('pro-registration-card');show('pro-confirm-card');
