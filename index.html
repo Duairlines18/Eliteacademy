@@ -1627,6 +1627,10 @@ footer,
   }
   @media(min-width:1200px){.hub-nav a,.hub-nav button{padding:.5rem .7rem}}
 </style>
+
+<style>
+.hub-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;margin-top:.55rem}.hub-check-grid label{display:flex;align-items:center;gap:.55rem;padding:.65rem .75rem;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(255,255,255,.03);cursor:pointer}.hub-check-grid input{width:auto;margin:0}.hub-helper{margin:.35rem 0 0;color:var(--hub-muted);font-size:.88rem}@media(max-width:640px){.hub-check-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body id="top">
 <div class="site-view" id="home-view">
@@ -3671,7 +3675,7 @@ document.addEventListener('click',function(e){
     const parent=audience==='parent', privateAthlete=audience==='private-athlete', professional=audience==='professional';
     let fields='';
     if(parent){
-      fields='<div class="hub-field"><label>Parent first name</label><input name="parent_first_name" value="'+escapeHtml(profile?.parent?.firstName||'')+'" required></div><div class="hub-field"><label>Parent last name</label><input name="parent_last_name" value="'+escapeHtml(profile?.parent?.lastName||'')+'" required></div><div class="hub-field"><label>Athlete first name</label><input name="athlete_first_name" value="'+escapeHtml(profile?.athlete?.displayName||'')+'" required></div><div class="hub-field"><label>Athlete last name</label><input name="athlete_last_name" required></div><div class="hub-field"><label>Age band</label><input name="age_band" placeholder="e.g. 12–14" required></div><div class="hub-field"><label>Sport / pathway</label><input name="sport_pathway" placeholder="e.g. Volleyball" required></div><div class="hub-field"><label>Training environment</label><input name="training_environment" placeholder="Home, gym, court..." required></div><div class="hub-field"><label>Equipment available</label><input name="equipment" placeholder="Bodyweight, bands, dumbbells"></div><div class="hub-field"><label>Weekly availability</label><input name="weekly_availability" placeholder="e.g. Mon / Wed / Sat mornings" required></div><div class="hub-field"><label>Anything Coach Du should consider?</label><textarea name="considerations" rows="3"></textarea></div>';
+      fields='<div class="hub-field"><label>Parent first name</label><input name="parent_first_name" value="'+escapeHtml(profile?.parent?.firstName||'')+'" required></div><div class="hub-field"><label>Parent last name</label><input name="parent_last_name" value="'+escapeHtml(profile?.parent?.lastName||'')+'" required></div><div class="hub-field"><label>Athlete first name</label><input name="athlete_first_name" value="'+escapeHtml(profile?.athlete?.displayName||'')+'" required></div><div class="hub-field"><label>Athlete last name</label><input name="athlete_last_name" required></div><div class="hub-field"><label>Child age</label><input name="age_band" placeholder="e.g. 13" required></div><div class="hub-field"><label>Primary sport(s)</label><input name="sport_pathway" placeholder="e.g. Volleyball, Soccer" required></div><div class="hub-field"><label>What would you most like us to improve?</label><p class="hub-helper">Select all that apply.</p><div class="hub-check-grid"><label><input type="checkbox" name="development_goals" value="Movement quality"> Movement quality</label><label><input type="checkbox" name="development_goals" value="Mobility"> Mobility</label><label><input type="checkbox" name="development_goals" value="Coordination"> Coordination</label><label><input type="checkbox" name="development_goals" value="Core strength"> Core strength</label><label><input type="checkbox" name="development_goals" value="Foundational strength"> Foundational strength</label><label><input type="checkbox" name="development_goals" value="Jumping"> Jumping</label><label><input type="checkbox" name="development_goals" value="Speed"> Speed</label><label><input type="checkbox" name="development_goals" value="Injury prevention"> Injury prevention</label></div></div><div class="hub-field"><label>Current weekly sport schedule</label><textarea name="weekly_sport_schedule" rows="3" placeholder="Practices, games, PE, club sessions, etc." required></textarea></div><div class="hub-field"><label>Any current pain, injuries, or areas that regularly feel tight or sore?</label><textarea name="current_considerations" rows="3" placeholder="Write None if there are no current issues." required></textarea></div><div class="hub-field"><label>Any previous significant injuries?</label><textarea name="injury_history" rows="3" placeholder="Write None if there is no significant injury history." required></textarea></div><div class="hub-field"><label>Where will they usually train?</label><p class="hub-helper">Select all that apply.</p><div class="hub-check-grid"><label><input type="checkbox" name="training_environment" value="Home"> Home</label><label><input type="checkbox" name="training_environment" value="Gym"> Gym</label><label><input type="checkbox" name="training_environment" value="Field"> Field</label><label><input type="checkbox" name="training_environment" value="Court"> Court</label><label><input type="checkbox" name="training_environment" value="School"> School</label></div></div><div class="hub-field"><label>What equipment is available?</label><p class="hub-helper">Select all that apply.</p><div class="hub-check-grid"><label><input type="checkbox" name="equipment" value="Bodyweight only"> Bodyweight only</label><label><input type="checkbox" name="equipment" value="Resistance bands"> Resistance bands</label><label><input type="checkbox" name="equipment" value="Dumbbells"> Dumbbells</label><label><input type="checkbox" name="equipment" value="Kettlebells"> Kettlebells</label><label><input type="checkbox" name="equipment" value="Medicine ball"> Medicine ball</label><label><input type="checkbox" name="equipment" value="Full gym"> Full gym</label><label><input type="checkbox" name="equipment" value="Other"> Other</label></div></div><div class="hub-field"><label>How many days per week can they realistically do 15–30 minutes?</label><select name="weekly_availability" required><option value="">Select one</option><option>1 day</option><option>2 days</option><option>3 days</option><option>4 days</option><option>5+ days</option></select></div><div class="hub-field"><label>Anything else Coach Du should know?</label><textarea name="considerations" rows="3"></textarea></div>';
     }else if(privateAthlete){
       fields='<div class="hub-field"><label>First name</label><input name="first_name" value="'+escapeHtml(profile?.firstName||'')+'" required></div><div class="hub-field"><label>Last name</label><input name="last_name" value="'+escapeHtml(profile?.lastName||'')+'" required></div><div class="hub-field"><label>Sport / pathway</label><input name="sport_pathway" required></div><div class="hub-field"><label>Primary goals</label><input name="primary_goals" placeholder="Speed, jump, strength"></div><div class="hub-field"><label>Training environment</label><input name="training_environment" required></div><div class="hub-field"><label>Equipment available</label><input name="equipment"></div><div class="hub-field"><label>Weekly availability</label><input name="weekly_availability" required></div><div class="hub-field"><label>Training experience</label><textarea name="training_experience" rows="3"></textarea></div><div class="hub-field"><label>Schedule notes</label><textarea name="schedule_notes" rows="3"></textarea></div>';
     }else{
@@ -3864,8 +3868,36 @@ document.addEventListener('click',function(e){
       event.preventDefault();const form=event.target,audience=form.dataset.audience,error=form.querySelector('[data-onboarding-error]'),button=form.querySelector('button[type="submit"]');error.textContent='';button.disabled=true;const original=button.textContent;button.textContent='Saving…';
       try{
         const fd=new FormData(form),profile={};
-        for(const [key,val] of fd.entries())profile[key]=String(val).trim();
-        if(profile.equipment!==undefined)profile.equipment=profile.equipment?profile.equipment.split(',').map(x=>x.trim()).filter(Boolean):[];
+        for(const [key,val] of fd.entries()){
+          const clean=String(val).trim();
+          if(audience==='parent'&&['development_goals','training_environment','equipment'].includes(key)){
+            if(!Array.isArray(profile[key]))profile[key]=[];
+            if(clean)profile[key].push(clean);
+          }else profile[key]=clean;
+        }
+        if(audience==='parent'){
+          const goals=Array.isArray(profile.development_goals)?profile.development_goals:[];
+          const environments=Array.isArray(profile.training_environment)?profile.training_environment:[];
+          const equipment=Array.isArray(profile.equipment)?profile.equipment:[];
+          if(!goals.length)throw new Error('Select at least one development goal.');
+          if(!environments.length)throw new Error('Select at least one training environment.');
+          if(!equipment.length)throw new Error('Select at least one equipment option.');
+          const detailLines=[
+            goals.length?'Development goals: '+goals.join(', '):'',
+            profile.weekly_sport_schedule?'Current weekly sport schedule: '+profile.weekly_sport_schedule:'',
+            profile.current_considerations?'Current pain / injury / tightness: '+profile.current_considerations:'',
+            profile.injury_history?'Previous significant injuries: '+profile.injury_history:'',
+            profile.considerations?'Additional notes: '+profile.considerations:''
+          ].filter(Boolean);
+          profile.training_environment=environments.join(', ');
+          profile.equipment=equipment;
+          profile.considerations=detailLines.join('\n');
+          delete profile.development_goals;
+          delete profile.weekly_sport_schedule;
+          delete profile.current_considerations;
+          delete profile.injury_history;
+        }
+        if(profile.equipment!==undefined&&!Array.isArray(profile.equipment))profile.equipment=profile.equipment?profile.equipment.split(',').map(x=>x.trim()).filter(Boolean):[];
         if(profile.primary_goals!==undefined)profile.primary_goals=profile.primary_goals?profile.primary_goals.split(',').map(x=>x.trim()).filter(Boolean):[];
         await authEdgePost(HUB_CONFIG.accountFunctions[audience],{action:'save-onboarding',profile});
         resetHubState();await enterAccount(audience);
