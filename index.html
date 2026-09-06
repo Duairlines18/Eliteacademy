@@ -3625,7 +3625,7 @@ document.addEventListener('click',function(e){
     const label=accountLabel(audience);
     root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">'+escapeHtml(label.toUpperCase())+'</p><h1 class="hub-login-heading">'+escapeHtml(label)+'</h1><p class="hub-login-sub">Sign in to an existing account or create a new one. New accounts remain pending until Coach Du activates and assigns the correct programme.</p>'
       +(message?'<div class="hub-note-card" style="margin-bottom:1rem"><p>'+escapeHtml(message)+'</p></div>':'')
-      +'<form id="hubAccountLoginForm" data-audience="'+audience+'"><div class="hub-field"><label>Email</label><input name="email" type="email" autocomplete="email" required></div><div class="hub-field"><label>Password</label><input name="password" type="password" autocomplete="current-password" minlength="8" required></div><button class="hub-button" type="submit">Sign In</button><p class="hub-error" data-account-error role="alert"></p></form>'
+      +'<form id="hubAccountLoginForm" data-audience="'+audience+'"><div class="hub-field"><label>Email</label><input name="email" type="email" autocomplete="email" required></div><div class="hub-field"><label>Password</label><input name="password" type="password" autocomplete="current-password" minlength="8" required></div><button class="hub-button" type="submit">Sign In</button><button class="hub-access-back" type="button" data-forgot-password style="margin-top:.65rem">Forgot password?</button><p class="hub-error" data-account-error role="alert"></p><p class="hub-login-sub" data-password-reset-message style="margin-top:.5rem"></p></form>'
       +'<details class="hub-details" style="margin-top:1rem"><summary>Create a new account</summary><div class="hub-details-body"><form id="hubAccountSignupForm" data-audience="'+audience+'">'
       +'<div class="hub-field"><label>'+ (parent?'Parent first name':'First name') +'</label><input name="first_name" autocomplete="given-name" required></div>'
       +'<div class="hub-field"><label>'+ (parent?'Parent last name':'Last name') +'</label><input name="last_name" autocomplete="family-name" required></div>'
@@ -3645,6 +3645,22 @@ document.addEventListener('click',function(e){
       fields='<div class="hub-field"><label>Primary goals</label><input name="primary_goals" placeholder="Strength, mobility, conditioning"></div><div class="hub-field"><label>Work environment</label><input name="work_environment" placeholder="Office, remote, travel, field" required></div><div class="hub-field"><label>Training environment</label><input name="training_environment" required></div><div class="hub-field"><label>Preferred duration</label><input name="preferred_duration" placeholder="30–45 minutes" required></div><div class="hub-field"><label>Current training frequency</label><input name="current_frequency" required></div><div class="hub-field"><label>Equipment available</label><input name="equipment"></div><div class="hub-field"><label>Training experience</label><textarea name="training_experience" rows="3"></textarea></div><div class="hub-field"><label>Limitations / considerations</label><textarea name="limitations" rows="3"></textarea></div><div class="hub-field"><label>Plan</label><select name="selected_plan" required><option value="monthly">Monthly — $79/month</option><option value="three">3-Month Performance Block — $219</option><option value="six">6-Month Performance Membership — $399</option></select></div>';
     }
     root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">ACCOUNT SETUP</p><h1 class="hub-login-heading">'+escapeHtml(accountLabel(audience))+'</h1><p class="hub-login-sub">Complete this once. Programme assignment, payment approval and access are controlled by Coach Du in Supabase.</p><form id="hubAccountOnboardingForm" data-audience="'+audience+'">'+fields+'<button class="hub-button" type="submit">Save & Continue</button><p class="hub-error" data-onboarding-error role="alert"></p></form><button class="hub-access-back hub-account-signout" type="button">Sign Out</button></section></div>';
+  }
+  function renderPasswordReset(){
+    publicViews.forEach(v=>v.hidden=true);root.hidden=false;
+    root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">SECURE ACCOUNT RECOVERY</p><h1 class="hub-login-heading">Choose a New Password</h1><p class="hub-login-sub">Enter a new password for your Du Airlines Performance Hub account.</p><form id="hubPasswordResetForm"><div class="hub-field"><label>New password</label><input name="password" type="password" autocomplete="new-password" minlength="8" required></div><div class="hub-field"><label>Confirm new password</label><input name="confirm_password" type="password" autocomplete="new-password" minlength="8" required></div><button class="hub-button" type="submit">Update Password</button><p class="hub-error" data-password-update-error role="alert"></p></form></section></div>';
+  }
+  async function initializePasswordRecovery(){
+    if(new URLSearchParams(location.search).get('hubRecovery')!=='1')return false;
+    const client=accountClient();if(!client)return false;
+    try{
+      const {data,error}=await client.auth.getSession();
+      if(error)throw error;
+      if(!data?.session)return false;
+      history.replaceState({},'',location.pathname+'#/hub/reset-password');
+      renderPasswordReset();
+      return true;
+    }catch(error){return false;}
   }
   function renderAccountStatus(audience,error){
     const code=error?.code||'';
@@ -3719,6 +3735,7 @@ document.addEventListener('click',function(e){
     if(route==='/login/parent'){renderAccountAccess('parent');window.scrollTo(0,0);return;}
     if(route==='/login/private-athlete'){renderAccountAccess('private-athlete');window.scrollTo(0,0);return;}
     if(route==='/login/professional'){renderAccountAccess('professional');window.scrollTo(0,0);return;}
+    if(route==='/reset-password'){renderPasswordReset();window.scrollTo(0,0);return;}
     if(!s){location.hash='#/hub/login';return;}
     if(!HUB_STATE.programme){
       root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">PRIVATE PERFORMANCE ACCESS</p><h1 class="hub-login-heading">Loading your programme…</h1><p class="hub-login-sub">Validating your Hub session.</p></section></div>';
@@ -3759,6 +3776,19 @@ document.addEventListener('click',function(e){
     const role=event.target.closest('[data-login-role]');if(role){location.hash='#/hub/login/'+role.dataset.loginRole;return;}
     const accountRole=event.target.closest('[data-account-role]');if(accountRole){location.hash='#/hub/login/'+accountRole.dataset.accountRole;return;}
     if(event.target.closest('[data-role-back]')){location.hash='#/hub/login';return;}
+    const forgot=event.target.closest('[data-forgot-password]');if(forgot){
+      const form=forgot.closest('#hubAccountLoginForm'),emailInput=form?.querySelector('input[name="email"]'),error=form?.querySelector('[data-account-error]'),message=form?.querySelector('[data-password-reset-message]');
+      const email=String(emailInput?.value||'').trim();if(error)error.textContent='';if(message)message.textContent='';
+      if(!email){if(error)error.textContent='Enter your email address first, then select Forgot password.';emailInput?.focus();return;}
+      forgot.disabled=true;const original=forgot.textContent;forgot.textContent='Sending reset email…';
+      const client=accountClient();
+      if(!client){if(error)error.textContent='Secure password reset is unavailable. Please refresh.';forgot.disabled=false;forgot.textContent=original;return;}
+      client.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname+'?hubRecovery=1'})
+        .then(({error:resetError})=>{if(resetError){if(error)error.textContent=resetError.message||'Unable to send reset email.';}else if(message){message.textContent='Password reset email sent. Open the link in that email to choose a new password.';}})
+        .catch(err=>{if(error)error.textContent=err.message||'Unable to send reset email.';})
+        .finally(()=>{forgot.disabled=false;forgot.textContent=original;});
+      return;
+    }
     if(event.target.closest('.hub-account-signout')){const client=accountClient();if(client)client.auth.signOut().finally(()=>logout());else logout();return;}
     const menu=event.target.closest('.hub-menu-button');if(menu){const navEl=document.getElementById('hubNav');const open=navEl.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));return;}
     if(event.target.closest('.hub-logout')){logout();return;}
@@ -3766,6 +3796,16 @@ document.addEventListener('click',function(e){
   });
   document.addEventListener('submit',async function(event){
     if(event.target.id==='hubLoginForm'){event.preventDefault();const role=event.target.dataset.role,input=document.getElementById('hubCode'),error=document.getElementById('hubLoginError'),button=event.target.querySelector('button[type="submit"]');error.textContent='';button.disabled=true;const original=button.textContent;button.textContent='Checking access…';try{const result=await edgePost(HUB_CONFIG.verifyFunction,{code:input.value||'',view:role});const next={role:result.role,token:result.token,expiresAt:result.expiresAt};setSession(next);HUB_STATE={programme:null,cohort:null,contentStatus:null};await loadHubData(next);location.hash=role==='staff'?'#/hub/staff':'#/hub/athlete';}catch(err){setSession(null);HUB_STATE={programme:null,cohort:null,contentStatus:null};error.textContent=err.message||'Access code not recognized. Please contact Coach Du.';input.select();}finally{button.disabled=false;button.textContent=original;}return;}
+    if(event.target.id==='hubPasswordResetForm'){
+      event.preventDefault();const form=event.target,error=form.querySelector('[data-password-update-error]'),button=form.querySelector('button[type="submit"]'),fd=new FormData(form),password=String(fd.get('password')||''),confirmPassword=String(fd.get('confirm_password')||'');error.textContent='';
+      if(password.length<8){error.textContent='Use at least 8 characters.';return;}if(password!==confirmPassword){error.textContent='The passwords do not match.';return;}
+      button.disabled=true;const original=button.textContent;button.textContent='Updating password…';
+      try{
+        const client=accountClient();if(!client)throw new Error('Secure password reset is unavailable. Please refresh.');
+        const {error:updateError}=await client.auth.updateUser({password});if(updateError)throw updateError;
+        await client.auth.signOut();setSession(null);resetHubState();history.replaceState({},'',location.pathname+'#/hub/login');location.hash='#/hub/login';
+      }catch(err){error.textContent=err.message||'Unable to update password.';}finally{button.disabled=false;button.textContent=original;}return;
+    }
     if(event.target.id==='hubAccountLoginForm'){
       event.preventDefault();const form=event.target,audience=form.dataset.audience,error=form.querySelector('[data-account-error]'),button=form.querySelector('button[type="submit"]');error.textContent='';button.disabled=true;const original=button.textContent;button.textContent='Signing in…';
       try{
@@ -3802,7 +3842,8 @@ document.addEventListener('click',function(e){
     if(event.target.id==='sessionIssueForm'){event.preventDefault();const result=document.getElementById('sessionIssueResult');result.innerHTML='<div class="hub-feedback-success">Session issue noted — your coach can review it.</div>';return;}
     if(event.target.id==='coachFeedbackForm'){event.preventDefault();const result=document.getElementById('coachFeedbackResult');result.innerHTML='<div class="hub-feedback-success">Weekly coach feedback received.</div>';return;}
   });
-  window.addEventListener('hashchange',()=>setTimeout(render,50)); window.addEventListener('popstate',()=>setTimeout(render,50)); if(isHubRoute())setTimeout(render,60);
+  window.addEventListener('hashchange',()=>setTimeout(render,50)); window.addEventListener('popstate',()=>setTimeout(render,50));
+  initializePasswordRecovery().then(recovery=>{if(!recovery&&isHubRoute())setTimeout(render,60);});
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
