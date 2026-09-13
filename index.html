@@ -3492,7 +3492,7 @@ document.addEventListener('click',function(e){
       professional:'member-hub-data'
     }
   };
-  let HUB_STATE = {programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[]};
+  let HUB_STATE = {programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};
   let EXERCISES = [
     {id:'wu01',code:'WU01',title:'Ankle Rock / Knee Over Toe',category:['warm-up','mobility-recovery'],videoId:'6Dlac5mxD6k',order:1,coachingNote:'',dosage:'',active:true},
     {id:'wu02',code:'WU02',title:'Straight-Leg Hamstring Kick',category:['warm-up','mobility-recovery'],videoId:'UEzzeExMLLw',order:2,coachingNote:'',dosage:'',active:true},
@@ -3549,7 +3549,7 @@ document.addEventListener('click',function(e){
     HUB_ACCOUNT_CLIENT=window.supabase.createClient(HUB_CONFIG.supabaseUrl,HUB_CONFIG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
     return HUB_ACCOUNT_CLIENT;
   }
-  function resetHubState(){HUB_STATE={programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[]};}
+  function resetHubState(){HUB_STATE={programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};}
   function logout(){
     const active=session();
     if(active?.mode==='account'){
@@ -3598,7 +3598,9 @@ document.addEventListener('click',function(e){
       athlete:data.athlete||null,
       pathway:data.pathway||null,
       audience:data.audience||audience,
-      historyWeeks:Array.isArray(data.historyWeeks)?data.historyWeeks:[]
+      historyWeeks:Array.isArray(data.historyWeeks)?data.historyWeeks:[],
+      upcomingWeeks:Array.isArray(data.upcomingWeeks)?data.upcomingWeeks:[],
+      programmeSchedule:Array.isArray(data.programmeSchedule)?data.programmeSchedule:[]
     };
     if(Array.isArray(data.exercises)&&data.exercises.length){
       const byCode=new Map(EXERCISES.map(ex=>[ex.code,ex]));
@@ -3616,7 +3618,7 @@ document.addEventListener('click',function(e){
     if(!s?.token)return false;
     try{
       const data=await edgePost(HUB_CONFIG.dataFunction,{action:'bootstrap'},{'x-du-session':s.token});
-      HUB_STATE={programme:data.programme||null,cohort:data.cohort||null,contentStatus:data.contentStatus||null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[]};
+      HUB_STATE={programme:data.programme||null,cohort:data.cohort||null,contentStatus:data.contentStatus||null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};
       if(Array.isArray(data.exercises)&&data.exercises.length){
         const byCode=new Map(EXERCISES.map(ex=>[ex.code,ex]));
         data.exercises.forEach(ex=>byCode.set(ex.code,{
@@ -3640,6 +3642,7 @@ document.addEventListener('click',function(e){
   function requireChoice(value,label){if(Array.isArray(value)?!value.length:!value)throw new Error('Please answer: '+label);return value;}
   async function saveHubFeedback(feedbackType,feedback){const s=session();if(!s)throw new Error('Your Hub session has expired. Please sign in again.');if(s.mode==='account'){if(s.audience==='professional')throw new Error('Weekly feedback is not enabled for Professional Performance yet.');return authEdgePost(HUB_CONFIG.accountFunctions[s.audience],{action:'save-feedback',feedbackType,feedback});}return edgePost(HUB_CONFIG.dataFunction,{action:'save-feedback',feedbackType,feedback},{'x-du-session':s.token});}
   async function loadHistoryWeek(weekNumber){const s=session();if(!s||s.mode!=='account'||!['parent','private-athlete'].includes(s.audience))throw new Error('Previous weeks are not available for this access type.');return authEdgePost(HUB_CONFIG.accountFunctions[s.audience],{action:'history',weekNumber});}
+  async function loadPrivateProgrammeWeek(weekNumber){const s=session();if(!s||s.mode!=='account'||s.audience!=='private-athlete')throw new Error('That programme week is not available for this access type.');return authEdgePost(HUB_CONFIG.accountFunctions['private-athlete'],{action:'programme-week',weekNumber});}
   function mergeExercises(items){if(!Array.isArray(items)||!items.length)return;const byCode=new Map(EXERCISES.map(ex=>[ex.code,ex]));items.forEach(ex=>byCode.set(ex.code,{id:ex.id||String(ex.code||'').toLowerCase(),code:ex.code,title:ex.title||ex.name||ex.code,category:Array.isArray(ex.category)?ex.category:[],videoId:ex.videoId||'',videoUrl:ex.videoUrl||'',order:Number(ex.order||0),coachingNote:ex.coachingCues||'',dosage:ex.defaultDosage||'',active:ex.active!==false}));EXERCISES=Array.from(byCode.values());}
   function historyBlock(){const weeks=Array.isArray(HUB_STATE.historyWeeks)?HUB_STATE.historyWeeks:[];if(!weeks.length||!['parent','private-athlete'].includes(HUB_STATE.audience))return '';return section('Previous Weeks','Published training history — read only.','<div class="hub-history-grid">'+weeks.map(w=>'<a class="hub-history-card" href="#/hub/history/'+encodeURIComponent(w.week_number)+'"><div><strong>Week '+w.week_number+(w.phase?' — '+escapeHtml(w.phase):'')+'</strong><span>'+escapeHtml(w.weekly_objective||'Published programme week')+'</span></div><span>Review →</span></a>').join('')+'</div>');}
   function playlistUrl(item){if(item&&item.url)return item.url;if(item&&item.id)return 'https://www.youtube.com/playlist?list='+encodeURIComponent(item.id);return '';}
@@ -3754,8 +3757,54 @@ document.addEventListener('click',function(e){
   }
 
   function sessionSummaryCard(s){return '<article class="hub-session hub-click-card"><div class="hub-session-top"><div><h3>'+escapeHtml(s.day+' — '+s.title)+'</h3><p class="hub-session-focus">'+escapeHtml(s.focus)+'</p><span class="hub-chip">'+escapeHtml(s.requirement||'Mandatory')+'</span></div><span class="hub-session-meta">'+escapeHtml(s.duration)+'</span></div><a class="hub-link" href="#/hub/session/'+encodeURIComponent(s.id)+'">View Session →</a></article>';}
-  function weekBrowser(p){const current=Number(p.week||1);const next=current+1;return '<div class="hub-week-browser"><a class="hub-week-browser-card current" href="#/hub/athlete"><span class="hub-week-browser-label">Current</span><strong>Week '+current+'</strong><p>'+escapeHtml(p.weeklyObjective||'Your active training week.')+'</p><span class="hub-week-browser-action">Open week ↓</span></a><a class="hub-week-browser-card" href="#/hub/upcoming-week/'+next+'"><span class="hub-week-browser-label">Up next</span><strong>Week '+next+'</strong><p>Builds from this week. Coach Du will publish it when it is ready.</p><span class="hub-week-browser-action">Preview →</span></a></div>';}
-  function renderUpcomingWeek(weekNumber){const p=programme();const current=Number(p?.week||1);const requested=Number(weekNumber);const safeWeek=Number.isInteger(requested)&&requested>current?requested:current+1;const back=session()?.role==='staff'?'#/hub/current-week':'#/hub/athlete';const body=pageHead('Programme Preview','Week '+safeWeek,'Your next week will build from the work you are completing now.',back)+'<div class="hub-note-card"><h3>Week '+safeWeek+' is being prepared.</h3><p>There is nothing you need to do here yet. Complete the current week first. Coach Du will publish the next sessions when they are ready.</p></div>';root.innerHTML=shell(body,'dashboard');}
+  function formatWeekRange(startValue){
+    if(!startValue)return '';
+    const start=new Date(startValue);
+    if(Number.isNaN(start.getTime()))return '';
+    const end=new Date(start.getTime()+6*24*60*60*1000);
+    const sameMonth=start.getMonth()===end.getMonth();
+    const startMonth=start.toLocaleDateString(undefined,{month:'short'});
+    const endMonth=end.toLocaleDateString(undefined,{month:'short'});
+    return sameMonth?startMonth+' '+start.getDate()+'–'+end.getDate():startMonth+' '+start.getDate()+'–'+endMonth+' '+end.getDate();
+  }
+  function weekBrowser(p){
+    const current=Number(p.week||1);
+    const schedule=Array.isArray(HUB_STATE.programmeSchedule)?HUB_STATE.programmeSchedule:[];
+    if(HUB_STATE.audience==='private-athlete'&&schedule.length){
+      const visible=schedule.filter(w=>{
+        const n=Number(w.week_number||0);
+        return n===current||n===current+1;
+      });
+      return '<div class="hub-week-browser">'+visible.map(w=>{
+        const n=Number(w.week_number||0);
+        const isCurrent=n===current;
+        const range=formatWeekRange(w.scheduled_for);
+        const isPublished=Boolean(w.published_at)&&w.verification_status==='verified'&&['live','completed'].includes(w.status);
+        const label=isCurrent?'Current':'Next week';
+        const href=isCurrent?'#/hub/athlete':(isPublished?'#/hub/programme-week/'+n:'#/hub/upcoming-week/'+n);
+        const objective=isCurrent?(p.weeklyObjective||'Your active training week.'):(w.weekly_objective||'Your next programme week.');
+        const action=isCurrent?'Open week ↓':(isPublished?'Open week →':'Locked');
+        return '<a class="hub-week-browser-card'+(isCurrent?' current':'')+'" href="'+href+'"><span class="hub-week-browser-label">'+label+'</span><strong>Week '+n+(range?' · '+escapeHtml(range):'')+'</strong>'+(w.phase?'<p><strong>'+escapeHtml(w.phase)+'</strong></p>':'')+'<p>'+escapeHtml(objective)+'</p><span class="hub-week-browser-action">'+action+'</span></a>';
+      }).join('')+'</div><p class="hub-helper" style="margin-top:-.25rem;margin-bottom:1rem">Later weeks stay in the background and remain locked until Coach Du opens the next two-week block.</p>';
+    }
+    const next=current+1;
+    return '<div class="hub-week-browser"><a class="hub-week-browser-card current" href="#/hub/athlete"><span class="hub-week-browser-label">Current</span><strong>Week '+current+'</strong><p>'+escapeHtml(p.weeklyObjective||'Your active training week.')+'</p><span class="hub-week-browser-action">Open week ↓</span></a><a class="hub-week-browser-card" href="#/hub/upcoming-week/'+next+'"><span class="hub-week-browser-label">Up next</span><strong>Week '+next+'</strong><p>Builds from this week. Coach Du will publish it when it is ready.</p><span class="hub-week-browser-action">Preview →</span></a></div>';
+  }
+  function renderUpcomingWeek(weekNumber){
+    const p=programme();
+    const current=Number(p?.week||1);
+    const requested=Number(weekNumber);
+    const safeWeek=Number.isInteger(requested)&&requested>current?requested:current+1;
+    const back=session()?.role==='staff'?'#/hub/current-week':'#/hub/athlete';
+    const schedule=Array.isArray(HUB_STATE.programmeSchedule)?HUB_STATE.programmeSchedule:[];
+    const meta=schedule.find(w=>Number(w.week_number)===safeWeek)||null;
+    const range=meta?formatWeekRange(meta.scheduled_for):'';
+    const title='Week '+safeWeek+(range?' · '+range:'');
+    const phase=meta?.phase?'<p><strong>'+escapeHtml(meta.phase)+'</strong></p>':'';
+    const objective=meta?.weekly_objective?'<p>'+escapeHtml(meta.weekly_objective)+'</p>':'';
+    const body=pageHead('Programme Preview',title,'Already planned in the background. The workout details stay locked until Coach Du publishes this week.',back)+'<div class="hub-note-card"><h3>'+title+' is ready in the background.</h3>'+phase+objective+'<p>Complete your current week first. The full sessions will unlock when Coach Du publishes this week.</p></div>';
+    root.innerHTML=shell(body,'dashboard');
+  }
   function weekBlock(p,athlete=false){const sessions=Array.isArray(p.sessions)?p.sessions:[];return '<section class="hub-current-week"><span class="hub-week-label">Week Overview</span><h2>'+weekLabel(p)+(p.phase?' — '+escapeHtml(p.phase):'')+'</h2><div class="hub-meta-row" style="margin:.7rem 0 1rem"><span class="hub-chip">'+sessions.length+' Session'+(sessions.length===1?'':'s')+'</span>'+(p.phase?'<span class="hub-chip">'+escapeHtml(p.phase)+'</span>':'')+'</div><div class="hub-week-overview"><strong>This Week</strong><p class="hub-week-focus">'+escapeHtml(p.weeklyObjective||'Follow the current week exactly as prescribed.')+'</p></div><div class="hub-session-list">'+sessions.map(sessionSummaryCard).join('')+'</div></section>';}
 
 
@@ -3792,6 +3841,7 @@ document.addEventListener('click',function(e){
 
   function renderAdmin(){const schoolRows=MOCK.schools.map(s=>'<div class="hub-school-row"><div><h3>'+escapeHtml(s.name)+'</h3><p>'+escapeHtml(s.programme)+' · Week '+s.week+'</p></div><a class="hub-link" href="#/hub/staff">View School →</a></div>').join('');const flags=MOCK.flags.map(x=>'<div class="hub-progress-row"><div><strong>'+escapeHtml(x.athlete)+'</strong><p>'+escapeHtml(x.note)+'</p></div><span class="hub-status flag">Flag</span></div>').join('');root.innerHTML=shell(pageHead('DU AIRLINES PERFORMANCE ADMIN','Programme Overview','What do I need to know today?','#/hub/staff')+'<div class="hub-summary-grid"><div class="hub-summary-card"><strong>3</strong><span>Active Schools</span></div><div class="hub-summary-card"><strong>30</strong><span>Active Athletes</span></div><div class="hub-summary-card"><strong>5</strong><span>Active Coaches</span></div></div>'+section('Active Programmes','One Hub, different school start dates.','<div class="hub-note-card">'+schoolRows+'</div>')+section('Needs Attention','Keep the admin view focused on coaching decisions.','<div class="hub-note-card">'+flags+'<div class="hub-progress-row"><div><strong>3 upcoming programme reviews</strong><p>Week 6 review window approaching</p></div><span class="hub-status">Upcoming</span></div><div class="hub-progress-row"><div><strong>1 coach review due</strong><p>Mock programme review</p></div><span class="hub-status">Upcoming</span></div></div>')+'<div class="hub-dashboard-actions"><a class="hub-action-card" href="#/hub/staff"><h3>View School</h3><p>Open the St. George’s staff experience.</p><span class="hub-action-arrow">Open →</span></a><a class="hub-action-card" href="#/hub/athletes"><h3>View Athlete</h3><p>Open the mock athlete roster.</p><span class="hub-action-arrow">Open →</span></a><a class="hub-action-card" href="#/hub/progress"><h3>View Reviews</h3><p>Open reviews and flags.</p><span class="hub-action-arrow">Open →</span></a></div>','admin');}
   async function renderHistoryWeek(weekNumber){root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">PREVIOUS WEEKS</p><h1 class="hub-login-heading">Loading Week '+escapeHtml(weekNumber)+'…</h1></section></div>';try{const data=await loadHistoryWeek(Number(weekNumber));mergeExercises(data.exercises);const p=data.programme||{};const sessions=Array.isArray(p.sessions)?p.sessions:[];const sessionHtml=sessions.map(s=>{const codes=Array.isArray(s.exerciseCodes)?s.exerciseCodes:(Array.isArray(s.prescriptions)?s.prescriptions.map(x=>x.exerciseCode).filter(Boolean):[]);const ex=codes.map(c=>EXERCISES.find(x=>x.code===c)).filter(Boolean);return '<div class="hub-note-card hub-history-session"><div class="hub-section-head"><div><span class="hub-chip">'+escapeHtml(s.day||'Session')+'</span><h3 style="margin-top:.65rem">'+escapeHtml(s.title||'Training Session')+'</h3><p>'+escapeHtml(s.focus||s.objective||'')+'</p></div><span class="hub-session-meta">'+escapeHtml(s.duration||'')+'</span></div>'+renderWorkoutSections(s)+sessionMedia(s)+(ex.length&&!(Array.isArray(s.itemSections)&&s.itemSections.length)?'<div class="hub-video-grid" style="margin-top:1rem">'+ex.map((x,i)=>exerciseCard(x,i)).join('')+'</div>':'')+'</div>';}).join('');const body=pageHead('Previous Weeks','Week '+p.week+(p.phase?' — '+p.phase:''),'Read-only training history. Your current programme has not changed.','#/hub/athlete')+'<div class="hub-objective"><strong>Week Focus</strong><span>'+escapeHtml(p.weeklyObjective||'Published programme week')+'</span></div>'+sessionHtml;root.innerHTML=shell(body,'dashboard');}catch(err){root.innerHTML=shell(pageHead('Previous Weeks','Week unavailable',err.message||'That previous week is not available.','#/hub/athlete'),'dashboard');}}
+  async function renderPrivateProgrammeWeek(weekNumber){root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">PROGRAMME WEEK</p><h1 class="hub-login-heading">Loading Week '+escapeHtml(weekNumber)+'…</h1></section></div>';try{const data=await loadPrivateProgrammeWeek(Number(weekNumber));mergeExercises(data.exercises);const p=data.programme||{};const sessions=Array.isArray(p.sessions)?p.sessions:[];const schedule=Array.isArray(HUB_STATE.programmeSchedule)?HUB_STATE.programmeSchedule:[];const meta=schedule.find(w=>Number(w.week_number)===Number(p.week))||null;const range=meta?formatWeekRange(meta.scheduled_for):'';const sessionHtml=sessions.map(s=>{const codes=Array.isArray(s.exerciseCodes)?s.exerciseCodes:(Array.isArray(s.prescriptions)?s.prescriptions.map(x=>x.exerciseCode).filter(Boolean):[]);const ex=codes.map(c=>EXERCISES.find(x=>x.code===c)).filter(Boolean);return '<div class="hub-note-card hub-history-session"><div class="hub-section-head"><div><span class="hub-chip">'+escapeHtml(s.day||'Session')+'</span><h3 style="margin-top:.65rem">'+escapeHtml(s.title||'Training Session')+'</h3><p>'+escapeHtml(s.focus||s.objective||'')+'</p></div><span class="hub-session-meta">'+escapeHtml(s.duration||'')+'</span></div>'+renderWorkoutSections(s)+sessionMedia(s)+(ex.length&&!(Array.isArray(s.itemSections)&&s.itemSections.length)?'<div class="hub-video-grid" style="margin-top:1rem">'+ex.map((x,i)=>exerciseCard(x,i)).join('')+'</div>':'')+'</div>';}).join('');const title='Week '+p.week+(range?' · '+range:'')+(p.phase?' — '+p.phase:'');const body=pageHead('Programme Week',title,'Your second visible training week. Follow it when this week begins.','#/hub/athlete')+'<div class="hub-objective"><strong>Week Focus</strong><span>'+escapeHtml(p.weeklyObjective||'Published programme week')+'</span></div>'+sessionHtml;root.innerHTML=shell(body,'dashboard');}catch(err){root.innerHTML=shell(pageHead('Programme Week','Week unavailable',err.message||'That programme week is not available yet.','#/hub/athlete'),'dashboard');}}
   function renderNotFound(){root.innerHTML=shell(pageHead('Performance Hub','Page not found','Return to your dashboard.',session()?.role==='staff'?'#/hub/staff':'#/hub/athlete'),'');}
 
   async function render(){
@@ -3826,6 +3876,7 @@ document.addEventListener('click',function(e){
     if(route==='/'||route==='/staff'||route==='/athlete'){active.role==='staff'?renderStaffDashboard():renderAthleteDashboard();}
     else if(route==='/current-week'&&active.role==='staff')renderCurrentWeek();
     else if(route.startsWith('/history/'))await renderHistoryWeek(decodeURIComponent(route.split('/')[2]||''));
+    else if(route.startsWith('/programme-week/'))await renderPrivateProgrammeWeek(decodeURIComponent(route.split('/')[2]||''));
     else if(route.startsWith('/upcoming-week/'))renderUpcomingWeek(decodeURIComponent(route.split('/')[2]||''));
     else if(route.startsWith('/session/'))renderSession(route.split('/')[2]);
     else if(route==='/athletes'&&active.role==='staff')renderAthletes();
