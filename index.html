@@ -227,6 +227,51 @@
   .price-best{font-size:.8rem;color:var(--sage-dim);font-style:italic;margin-bottom:1.2rem}
   .price-card .btn{justify-content:center;width:100%}
 
+
+  /* ---------- soccer evaluation feature ---------- */
+  .soccer-eval-wrap{max-width:920px;margin:2.35rem auto 0}
+  .soccer-eval-feature{
+    display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:2rem;align-items:center;
+    padding:clamp(1.5rem,3vw,2.25rem);background:linear-gradient(135deg,var(--green-2),rgba(20,50,34,.72));
+    border:1px solid var(--hair);border-radius:6px
+  }
+  .soccer-eval-copy h3{
+    font-family:var(--serif);font-size:clamp(1.65rem,3vw,2.25rem);line-height:1.05;
+    margin:.35rem 0 .75rem
+  }
+  .soccer-eval-copy p{color:var(--sage);max-width:62ch;margin:0}
+  .soccer-eval-points{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.15rem}
+  .soccer-eval-points span{
+    font-size:.74rem;color:var(--cream);border:1px solid var(--hair-soft);
+    padding:.45rem .65rem;border-radius:2px;background:rgba(255,255,255,.025)
+  }
+  .soccer-eval-action{
+    border-left:1px solid var(--hair);padding-left:2rem;text-align:center
+  }
+  .soccer-eval-price{font-family:var(--serif);font-size:3rem;line-height:1;color:var(--gold-soft)}
+  .soccer-eval-meta{display:block;color:var(--sage);font-size:.72rem;margin:.45rem 0 1.1rem}
+  .soccer-eval-action .btn{width:100%;justify-content:center}
+  @media(max-width:720px){
+    .soccer-eval-wrap{margin-top:1.6rem}
+    .soccer-eval-feature{grid-template-columns:1fr;gap:1.35rem;padding:1.35rem}
+    .soccer-eval-action{
+      border-left:0;border-top:1px solid var(--hair);padding-left:0;padding-top:1.2rem;text-align:left
+    }
+    .soccer-eval-price{font-size:2.45rem}
+    .soccer-eval-action .btn{margin-top:.2rem}
+    .soccer-eval-points{display:grid;grid-template-columns:1fr}
+  }
+
+  /* ---------- focused track form routes ---------- */
+  #track-view.track-form-focus > section{display:none}
+  #track-view.track-form-focus > section.track-focus-active{display:block}
+  .track-form-back{
+    display:inline-flex;align-items:center;gap:.5rem;margin-bottom:1.25rem;
+    color:var(--gold-soft);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase
+  }
+  .track-form-back:hover{color:var(--cream)}
+  #track-view.track-form-focus .section-compact{padding-top:clamp(2rem,5vw,4rem);padding-bottom:clamp(3rem,7vw,5rem)}
+
   /* ---------- pathways ---------- */
   .paths{display:grid;gap:1.4rem}
   @media(min-width:820px){ .paths{grid-template-columns:1fr 1fr} }
@@ -1680,34 +1725,12 @@ footer,
 </section>
 <!-- ================= PERFORMANCE HUB ================= -->
 <section class="section-compact audience-band" id="performance-hub">
-<div class="wrap">
+<div class="wrap" style="max-width:760px;text-align:center">
 <p class="eyebrow center">Du Airlines Performance Hub</p>
 <h2 class="head center">Your programme. Your week. <span class="accent">Your progression.</span></h2>
-<p class="lede center">Structured weekly performance programming for athletes, parents, professionals, schools and teams — with your current training plan, exercise guidance and progression in one place.</p>
+<p class="lede center">The Du Airlines Performance Hub delivers each athlete or group’s weekly programme, exercise guidance and progression in one clear place.</p>
 <div class="hero-actions" style="margin-top:1.8rem">
 <a class="btn btn-primary" href="#/hub/login">Enter Performance Hub</a>
-</div>
-<div class="sport-grid" style="margin-top:2.3rem">
-<article class="sport-card reveal">
-<div class="sport-tag">Private Athletes</div>
-<h3>Individual weekly programming</h3>
-<p>Access your assigned programme, current week and structured performance plan.</p>
-</article>
-<article class="sport-card reveal">
-<div class="sport-tag">Parents &amp; Youth Athletes</div>
-<h3>Structured development with parent access</h3>
-<p>Clear weekly training built around the athlete's development pathway and schedule.</p>
-</article>
-<article class="sport-card reveal">
-<div class="sport-tag">Professional Performance</div>
-<h3>Elite structure for professional life</h3>
-<p>Performance training designed to work around demanding work, travel and life schedules.</p>
-</article>
-<article class="sport-card reveal">
-<div class="sport-tag">Schools &amp; Teams</div>
-<h3>Cohort-based performance programmes</h3>
-<p>Give athletes and staff direct access to the programme assigned to their group.</p>
-</article>
 </div>
 </div>
 </section>
@@ -2079,17 +2102,17 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <article aria-labelledby="club-team-title" class="club-team-pathway reveal">
 <div class="club-path-top">
 <span class="club-path-kicker">Approved Partner Clubs &amp; Teams</span>
-<h3 id="club-team-title">Two-Week Supplemental Speed &amp; Movement Program</h3>
+<h3 id="club-team-title">Friday Speed &amp; Movement Session</h3>
 <div class="club-price-row">
 <span class="club-price"><small style="font-family:var(--sans);font-size:.9rem;color:var(--gold-soft);font-style:normal">Club Partner Rate</small></span>
-<span class="club-frequency"><strong style="color:var(--cream)">2 Sessions</strong><br/>Train once each week</span>
+<span class="club-frequency"><strong style="color:var(--cream)">Friday Session</strong><br/>Small-group development</span>
 </div>
 </div>
 <div class="club-path-content">
-<p>A focused two-week supplemental development program for youth soccer athletes registering through an approved partner club or team.</p>
+<p>A focused Friday speed and movement session for youth soccer athletes registering through an approved partner club or team.</p>
 <ul class="club-feature-list">
-<li>Two sessions</li>
-<li>Train once each week</li>
+<li>One Friday session</li>
+<li>Small-group development</li>
 <li>Groups of 8–12 athletes</li>
 <li>First-step acceleration</li>
 <li>Sprint mechanics</li>
@@ -2106,55 +2129,23 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </div>
 </div>
 </article>
-<p class="academy-offers-label">Private Academy Offers</p>
-<div class="soccer-path-grid">
-<article class="soccer-card feature reveal">
-<div class="program-label">Elite Performance Academy</div>
-<div class="program-count">8 Sessions</div>
-<div class="program-price">$300</div>
-<div class="program-frequency">Train twice each week</div>
-<p>Designed for athletes seeking consistent development and long-term athletic improvement.</p>
-<ul class="program-list">
-<li>Small group coaching (maximum 5 athletes)</li>
-<li>Sprint mechanics</li>
-<li>Acceleration development</li>
-<li>Deceleration training</li>
-<li>Explosive movement</li>
-<li>Technical coaching</li>
-<li>Video analysis</li>
-<li>Progress tracking</li>
-</ul>
-<a class="btn btn-primary soccer-form-trigger" data-soccer-pathway="Elite Performance Academy — 8 Sessions" href="#soccer-form">Join Elite Performance Academy →</a>
-</article>
-<article class="soccer-card reveal">
-<div class="program-label">Foundations Academy</div>
-<div class="program-count">4 Sessions</div>
-<div class="program-price">$200</div>
-<div class="program-frequency">Train once each week</div>
-<p>Perfect for athletes building strong movement foundations while balancing club or school training.</p>
-<ul class="program-list">
-<li>Small group coaching (maximum 5 athletes)</li>
-<li>Speed development</li>
-<li>Sprint mechanics</li>
-<li>Movement efficiency</li>
-<li>Technical coaching</li>
-<li>Progress tracking</li>
-</ul>
-<a class="btn btn-ghost soccer-form-trigger" data-soccer-pathway="Foundations Academy — 4 Sessions" href="#soccer-form">Join Foundations Academy →</a>
-</article>
-<article class="soccer-card reveal">
-<div class="program-label">Performance Evaluation</div>
-<div class="program-price">$65</div>
-<h3>A clear starting point</h3>
-<p>A one-on-one assessment designed to understand how your athlete moves and identify the best development pathway.</p>
-<ul class="program-list">
-<li>Movement assessment</li>
-<li>Sprint assessment</li>
-<li>Technical feedback</li>
-<li>Goal discussion</li>
-<li>Personalized development recommendations</li>
-</ul>
-<a class="btn btn-ghost soccer-form-trigger" data-soccer-pathway="Performance Evaluation" href="#soccer-form">Book Performance Evaluation →</a>
+<div class="soccer-eval-wrap reveal">
+<article class="soccer-eval-feature">
+<div class="soccer-eval-copy">
+<span class="program-label">One-to-One Assessment</span>
+<h3>Performance Evaluation</h3>
+<p>A focused one-on-one session to assess how your athlete moves, identify the highest-priority development areas and recommend the right next step.</p>
+<div class="soccer-eval-points" aria-label="Evaluation includes">
+<span>Movement &amp; sprint assessment</span>
+<span>Technical feedback</span>
+<span>Personalized next steps</span>
+</div>
+</div>
+<div class="soccer-eval-action">
+<div class="soccer-eval-price">$65</div>
+<span class="soccer-eval-meta">One-on-one evaluation</span>
+<a class="btn btn-primary soccer-form-trigger" data-soccer-pathway="Performance Evaluation" href="#soccer-form">Book Your Evaluation →</a>
+</div>
 </article>
 </div>
 </div>
@@ -2207,9 +2198,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <label for="soccer-pathway-select">Selected Coaching Pathway</label>
 <select id="soccer-pathway-select" name="Selected Coaching Pathway" required="">
 <option value="">Choose a pathway</option>
-<option value="Elite Performance Academy — 8 Sessions">Elite Performance Academy — 8 Sessions</option>
-<option value="Foundations Academy — 4 Sessions">Foundations Academy — 4 Sessions</option>
-<option value="Performance Evaluation">Performance Evaluation</option>
+<option value="Performance Evaluation">Performance Evaluation — $65</option>
 </select>
 </div>
 </div>
@@ -2237,13 +2226,13 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div class="wrap club-reg-shell">
 <div class="club-reg-hero">
 <p class="eyebrow center">Partner Club Registration</p>
-<h2>Two-Week Supplemental Speed &amp; Movement Program</h2>
+<h2>Friday Speed &amp; Movement Session</h2>
 <p class="lede center">Select your approved club and cohort below to register your athlete.</p>
 </div>
 <div class="club-reg-card" id="clubRegistrationCard">
 <p class="eyebrow">Partner-Club Registration</p>
 <h3>Register your athlete</h3>
-<p class="lede">Select your approved club and cohort to view the exact dates, time, price and registration requirements.</p>
+<p class="lede">Select your approved club and Friday cohort to view the session time, location and registration requirements.</p>
 <form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" id="integratedClubForm" method="POST" novalidate="">
 <input id="clubSubmissionType" name="submission_type" type="hidden" value="Club Registration"/>
 <input name="_url" type="hidden" value="https://duairlineseliteacademy.com/"/>
@@ -2294,21 +2283,21 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div id="clubPaymentSection">
 <h4 class="club-reg-section-title">Secure Payment</h4>
 <div class="club-reg-preview" id="clubPaymentNotice">
-<strong>$24 total includes both sessions.</strong><br/>
-            Submit the registration first. You will then continue directly to secure Stripe payment for the cohort you selected.
+<strong>$25 for the Friday session.</strong><br/>
+            Submit the registration first. Secure payment will be enabled once the updated $25 payment link is connected.
           </div>
 </div>
 <div class="club-reg-grid" style="margin-top:1rem">
 <div class="club-reg-field full"><label for="clubTypedName">Typed parent or guardian name</label><input id="clubTypedName" name="typed_parent_name" required=""/></div>
 </div>
-<label class="club-consent"><input id="clubAgreement" name="registration_consent" required="" type="checkbox" value="Yes"/><span id="clubAgreementText">I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for both sessions in the selected cohort. I understand that the cohort requires at least 8 paid athletes to proceed and is limited to 12 paid athletes. If the minimum is not reached, I may approve a transfer to another eligible cohort or receive a full refund. I understand that registration is confirmed only after payment has been received and verified.</span></label>
+<label class="club-consent"><input id="clubAgreement" name="registration_consent" required="" type="checkbox" value="Yes"/><span id="clubAgreementText">I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for the selected Friday session. I understand that the session requires at least 6 confirmed athletes to proceed and is limited to 12 athletes. Payment details will be provided once the updated session payment link is active.</span></label>
 <div class="club-submit-row"><button class="btn btn-primary" id="clubSubmitButton" type="submit">Submit Registration</button><span class="club-form-status" id="clubFormStatus">Registration is pending until payment is received and verified.</span></div>
 </form>
 </div>
 <div aria-live="polite" class="club-confirmation" id="clubConfirmation">
 <p class="eyebrow center">Registration Complete</p>
-<h3 id="clubConfirmationTitle">Payment Received — Your Athlete’s Spot Is Secured</h3>
-<p id="clubConfirmationMessage">Thank you. Your registration and Stripe payment are complete. Additional session details will be sent by email.</p>
+<h3 id="clubConfirmationTitle">Registration Received</h3>
+<p id="clubConfirmationMessage">Thank you. Your Friday registration has been received. Payment details will be sent separately once the group is confirmed.</p>
 <div class="club-confirmation-summary" id="clubConfirmationSummary"></div>
 <a class="btn btn-primary" data-route="home" href="#/">Return Home</a>
 </div>
@@ -2330,8 +2319,8 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div class="wrap club-reg-shell">
 <div aria-live="polite" class="club-confirmation show" id="stripeReturnConfirmation">
 <p class="eyebrow center">Registration Complete</p>
-<h3 id="stripeReturnTitle">Payment Received — Your Athlete’s Spot Is Secured</h3>
-<p id="stripeReturnMessage">Thank you. Your registration and Stripe payment are complete. Additional session details will be sent by email.</p>
+<h3 id="stripeReturnTitle">Registration Received</h3>
+<p id="stripeReturnMessage">Thank you. Your Friday registration has been received. Payment details will be sent separately once the group is confirmed.</p>
 <div class="club-confirmation-summary" id="stripeReturnSummary"></div>
 <a class="btn btn-primary" data-route="home" href="#/">Return Home</a>
 </div>
@@ -2513,8 +2502,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <label for="football-pathway-select">Selected Coaching Pathway</label>
 <select id="football-pathway-select" name="Selected Coaching Pathway" required="">
 <option value="">Choose a pathway</option>
-<option value="Elite Performance Academy — 8 Sessions — $300">Elite Performance Academy — 8 Sessions — $300</option>
-<option value="Foundations Academy — 4 Sessions — $200">Foundations Academy — 4 Sessions — $200</option>
+<option value="Individual Athlete Development Inquiry">Individual Athlete Development Inquiry</option>
 <option value="Performance Evaluation — $65">Performance Evaluation — $65</option>
 </select>
 </div>
@@ -2536,7 +2524,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <a href="#track-development">What Athletes Develop</a>
 <a href="#track-outcomes">Outcomes</a>
 <a href="#track-programs">Coaching Pathways</a>
-<a href="#track-form">Get Started</a>
+<a class="track-form-trigger" data-track-mode="enquire" data-track-pathway="Individual Athlete Development Inquiry" href="#/track/enquire">Get Started</a>
 <a href="#/hub/login">Performance Hub</a>
 </nav>
 <a class="top-cta" data-route="home" href="#/">← Home</a>
@@ -2600,42 +2588,36 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </section>
 <section class="section-compact" id="track-programs" style="background:var(--ink);border-block:1px solid var(--hair)">
 <div class="wrap">
-<p class="eyebrow center">Track &amp; Field Coaching Pathways</p>
-<h2 class="head center">Choose the pathway that fits <span class="accent">your athlete</span></h2>
-<p class="lede center">The same coaching standard applies across every pathway. The difference is the amount of weekly development and technical support.</p>
+<p class="eyebrow center">Track &amp; Field Development</p>
+<h2 class="head center">Specialist horizontal jumps support <span class="accent">around the athlete’s environment</span></h2>
+<p class="lede center">Coach Du works with school groups, small athlete groups and individual jumpers through focused technical development rather than fixed public session packages.</p>
 <div class="soccer-path-grid">
 <article class="soccer-card feature reveal">
-<div class="program-label">Elite Performance Academy</div>
-<div class="program-count">8 Sessions</div>
-<div class="program-price">$300</div>
-<div class="program-frequency">Train twice each week</div>
-<p>Best for athletes seeking consistent technical development and meaningful progress across a full training block.</p>
+<div class="program-label">Small-Group Horizontal Jump Development</div>
+<h3>Long jump and triple jump clinics for school and athlete groups</h3>
+<p>Focused specialist coaching designed to complement the athlete’s existing school or team programme.</p>
 <ul class="program-list">
-<li>Small group coaching (maximum 5 athletes)</li>
-<li>Long jump or triple jump development</li>
-<li>Sprint and acceleration mechanics</li>
-<li>Approach-run development</li>
-<li>Technical coaching</li>
-<li>Video analysis</li>
-<li>Progress tracking</li>
+<li>Long jump and triple jump development</li>
+<li>Approach-run consistency</li>
+<li>Takeoff and landing mechanics</li>
+<li>Acceleration and sprint mechanics</li>
+<li>Small-group technical coaching</li>
+<li>Video feedback where appropriate</li>
 </ul>
-<a class="btn btn-primary track-form-trigger" data-track-pathway="Elite Performance Academy — 8 Sessions — $300" href="#track-form">Join Elite Performance Academy →</a>
+<a class="btn btn-primary track-clinic-trigger" data-track-mode="register" href="#/track/register">Register With Your School / Group →</a>
 </article>
 <article class="soccer-card reveal">
-<div class="program-label">Foundations Academy</div>
-<div class="program-count">4 Sessions</div>
-<div class="program-price">$200</div>
-<div class="program-frequency">Train once each week</div>
-<p>Ideal for athletes building technical foundations while balancing school, club or team training.</p>
+<div class="program-label">Individual Athlete Development</div>
+<h3>Structured support built around the athlete</h3>
+<p>For jumpers and track athletes who may need a more individualized blend of technical coaching, programming, video review and Performance Hub support.</p>
 <ul class="program-list">
-<li>Small group coaching (maximum 5 athletes)</li>
-<li>Event fundamentals</li>
-<li>Sprint mechanics</li>
-<li>Rhythm and coordination</li>
-<li>Technical feedback</li>
-<li>Progress tracking</li>
+<li>Goal and schedule review</li>
+<li>Event-specific technical priorities</li>
+<li>Speed and movement development</li>
+<li>Individual programming where appropriate</li>
+<li>Clear next-step recommendation</li>
 </ul>
-<a class="btn btn-ghost track-form-trigger" data-track-pathway="Foundations Academy — 4 Sessions — $200" href="#track-form">Join Foundations Academy →</a>
+<a class="btn btn-ghost track-form-trigger" data-track-mode="enquire" data-track-pathway="Individual Athlete Development Inquiry" href="#/track/enquire">Start a Conversation →</a>
 </article>
 <article class="soccer-card reveal">
 <div class="program-label">Performance Evaluation</div>
@@ -2649,7 +2631,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <li>Goal discussion</li>
 <li>Personalized recommendations</li>
 </ul>
-<a class="btn btn-ghost track-form-trigger" data-track-pathway="Performance Evaluation — $65" href="#track-form">Book Performance Evaluation →</a>
+<a class="btn btn-ghost track-form-trigger" data-track-mode="evaluation" data-track-pathway="Performance Evaluation — $65" href="#/track/evaluation">Book Performance Evaluation →</a>
 </article>
 </div>
 </div>
@@ -2666,8 +2648,88 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </div>
 </div>
 </section>
+<section class="section-compact" id="track-clinic-form">
+<div class="wrap">
+<a class="track-form-back" data-route="track" href="#/track">← Back to Track &amp; Field</a>
+<p class="eyebrow center">Horizontal Jumps Clinic Registration</p>
+<h2 class="head center">Register with <span class="accent">your school or group</span></h2>
+<p class="lede center">This is an interest registration only. No payment is collected here. Coach Du will confirm the clinic once the group has enough athletes, then send the date, venue and payment details.</p>
+<div class="soccer-form-card">
+<form id="trackClinicForm" novalidate="">
+<input id="trackClinicId" name="clinic_id" type="hidden" value="horizontal-jump-development"/>
+<input id="trackClinicName" name="clinic_name" type="hidden" value="Small-Group Horizontal Jump Development"/>
+<input id="trackClinicSource" name="source" type="hidden" value="track_web"/>
+<input aria-hidden="true" autocomplete="off" class="honeypot" id="trackClinicWebsite" name="website" tabindex="-1" type="text"/>
+<div class="soccer-form-grid">
+<div class="soccer-field">
+<label for="trackClinicSchool">School / Group</label>
+<input id="trackClinicSchool" name="school_group" placeholder="Example: North Crowley High School" required="" type="text"/>
+</div>
+<div class="soccer-field">
+<label for="trackClinicGrade">Grade</label>
+<select id="trackClinicGrade" name="grade" required="">
+<option value="">Select grade</option>
+<option>7th</option><option>8th</option><option>9th</option><option>10th</option><option>11th</option><option>12th</option><option>Postgraduate / Other</option>
+</select>
+</div>
+<div class="soccer-field">
+<label for="trackClinicEvent">Event Interest</label>
+<select id="trackClinicEvent" name="event_interest" required="">
+<option value="">Select event</option>
+<option value="Long Jump">Long Jump</option>
+<option value="Triple Jump">Triple Jump</option>
+<option value="Both">Both</option>
+</select>
+</div>
+<div class="soccer-field">
+<label for="trackClinicPb">Current PB / Experience <span style="color:var(--sage-dim)">(optional)</span></label>
+<input id="trackClinicPb" name="personal_best" placeholder="Example: LJ 18'2&quot; / beginner" type="text"/>
+</div>
+<div class="soccer-field">
+<label for="trackClinicAthleteFirst">Athlete First Name</label>
+<input id="trackClinicAthleteFirst" name="athlete_first_name" required="" type="text"/>
+</div>
+<div class="soccer-field">
+<label for="trackClinicAthleteLast">Athlete Last Name</label>
+<input id="trackClinicAthleteLast" name="athlete_last_name" required="" type="text"/>
+</div>
+<div class="soccer-field">
+<label for="trackClinicParentName">Parent / Guardian Name</label>
+<input autocomplete="name" id="trackClinicParentName" name="parent_name" required="" type="text"/>
+</div>
+<div class="soccer-field">
+<label for="trackClinicParentEmail">Parent Email</label>
+<input autocomplete="email" id="trackClinicParentEmail" name="parent_email" required="" type="email"/>
+</div>
+<div class="soccer-field">
+<label for="trackClinicParentPhone">Parent Phone</label>
+<input autocomplete="tel" id="trackClinicParentPhone" name="parent_phone" required="" type="tel"/>
+</div>
+<div class="soccer-field">
+<label for="trackClinicCoach">Coach Name <span style="color:var(--sage-dim)">(optional)</span></label>
+<input id="trackClinicCoach" name="coach_name" placeholder="School or event coach" type="text"/>
+</div>
+</div>
+<label class="club-consent" style="margin-top:1.25rem">
+<input id="trackClinicConsent" required="" type="checkbox" value="Yes"/>
+<span>I confirm that I am the athlete’s parent or legal guardian (or the athlete is 18+), and I agree to receive clinic confirmation and next-step information from Du Airlines Elite Academy. I understand that this form registers interest only and does not collect payment or guarantee a place.</span>
+</label>
+<div class="soccer-form-submit">
+<button class="btn btn-primary" id="trackClinicSubmit" type="submit">Register Interest</button>
+</div>
+<p class="soccer-form-note" id="trackClinicStatus">No payment is required today. Your registration will be stored securely and Coach Du will be notified.</p>
+</form>
+<div class="club-confirmation" id="trackClinicConfirmation" style="margin-top:1.5rem">
+<p class="eyebrow center">Registration Received</p>
+<h3 style="text-align:center">Your athlete is on the interest list.</h3>
+<p style="text-align:center;color:var(--sage)">Coach Du will follow up with the confirmed clinic date, venue and payment details once the school/group is finalized.</p>
+</div>
+</div>
+</div>
+</section>
 <section class="section-compact" id="track-form">
 <div class="wrap">
+<a class="track-form-back" data-route="track" href="#/track">← Back to Track &amp; Field</a>
 <p class="eyebrow center">Track &amp; Field Registration</p>
 <h2 class="head center">Tell us about <span class="accent">your athlete</span></h2>
 <p class="lede center">Complete the form and Coach Du will follow up with availability and the best next step.</p>
@@ -2714,8 +2776,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <label for="track-pathway-select">Selected Coaching Pathway</label>
 <select id="track-pathway-select" name="Selected Coaching Pathway" required="">
 <option value="">Choose a pathway</option>
-<option value="Elite Performance Academy — 8 Sessions — $300">Elite Performance Academy — 8 Sessions — $300</option>
-<option value="Foundations Academy — 4 Sessions — $200">Foundations Academy — 4 Sessions — $200</option>
+<option value="Individual Athlete Development Inquiry">Individual Athlete Development Inquiry</option>
 <option value="Performance Evaluation — $65">Performance Evaluation — $65</option>
 </select>
 </div>
@@ -2945,7 +3006,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
       const isClubRegistration = route === 'club-registration';
       const isRegistrationComplete = route === 'registration-complete';
       const isFootball = route === 'football';
-      const isTrack = route === 'track';
+      const isTrack = route === 'track' || route === 'track-register' || route === 'track-enquire' || route === 'track-evaluation';
       const isHub = route === 'hub';
       const isProfessional = route === 'professional';
       const isProfessionalJoin = route === 'professional-join';
@@ -2969,6 +3030,9 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
           : isClubRegistration ? '#/club-registration'
           : isRegistrationComplete ? '#/registration-complete'
           : isFootball ? '#/football'
+          : route === 'track-register' ? '#/track/register'
+          : route === 'track-enquire' ? '#/track/enquire'
+          : route === 'track-evaluation' ? '#/track/evaluation'
           : isTrack ? '#/track'
           : isHub ? '#/hub/login'
           : isProfessional ? '#/professional-performance'
@@ -3010,6 +3074,26 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
         : homeView;
 
       if (activeView) revealActiveView(activeView);
+
+      if (trackView) {
+        trackView.classList.remove('track-form-focus');
+        trackView.querySelectorAll(':scope > section.track-focus-active').forEach(function(section){
+          section.classList.remove('track-focus-active');
+        });
+
+        let focusSection = null;
+        if (route === 'track-register') focusSection = document.getElementById('track-clinic-form');
+        if (route === 'track-enquire' || route === 'track-evaluation') focusSection = document.getElementById('track-form');
+
+        if (focusSection) {
+          trackView.classList.add('track-form-focus');
+          focusSection.classList.add('track-focus-active');
+          const pathwaySelect = document.getElementById('track-pathway-select');
+          if (pathwaySelect && route === 'track-enquire') pathwaySelect.value = 'Individual Athlete Development Inquiry';
+          if (pathwaySelect && route === 'track-evaluation') pathwaySelect.value = 'Performance Evaluation — $65';
+        }
+      }
+
       window.scrollTo({top:0, behavior:'instant'});
       document.body.classList.remove('route-transitioning');
     }, 90);
@@ -3020,6 +3104,9 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
     if (location.hash === '#/club-registration') return 'club-registration';
     if (location.hash === '#/registration-complete') return 'registration-complete';
     if (location.hash === '#/football') return 'home';
+    if (location.hash === '#/track/register') return 'track-register';
+    if (location.hash === '#/track/enquire') return 'track-enquire';
+    if (location.hash === '#/track/evaluation') return 'track-evaluation';
     if (location.hash === '#/track') return 'track';
     if (location.hash === '#/professional-performance') return 'professional';
     if (location.hash === '#/professional-join') { location.hash='#/hub/login/professional'; return 'hub'; }
@@ -3171,22 +3258,14 @@ document.addEventListener('click',function(e){
     if (!trigger) return;
 
     event.preventDefault();
-
-    const formSection = document.getElementById('track-form');
+    const mode = trigger.dataset.trackMode || 'enquire';
     const pathwaySelect = document.getElementById('track-pathway-select');
-    const trackView = document.getElementById('track-view');
+    if (pathwaySelect) pathwaySelect.value = trigger.dataset.trackPathway || '';
 
-    if (pathwaySelect) {
-      pathwaySelect.value = trigger.dataset.trackPathway || '';
-    }
-
-    window.setTimeout(function(){
-      if (!formSection) return;
-      const topbar = trackView ? trackView.querySelector('.topbar') : null;
-      const offset = topbar ? topbar.offsetHeight + 16 : 72;
-      const y = formSection.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({top:y, behavior:'smooth'});
-    }, 50);
+    const route = mode === 'evaluation' ? 'track-evaluation' : 'track-enquire';
+    const hash = mode === 'evaluation' ? '#/track/evaluation' : '#/track/enquire';
+    history.pushState({route:route}, '', hash);
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 })();
 </script>
@@ -3215,7 +3294,7 @@ document.addEventListener('click',function(e){
   }
 
   document.querySelectorAll('form').forEach(function(form){
-    if(form.id==='integratedClubForm') return; // Club registration owns its AJAX + Stripe flow.
+    if(form.id==='integratedClubForm' || form.id==='trackClinicForm') return; // These forms own their protected AJAX flows.
     const stamp=form.querySelector('.submitted-at');
     form.addEventListener('submit',function(event){
       if(stamp) stamp.value=new Date().toISOString();
@@ -3228,6 +3307,106 @@ document.addEventListener('click',function(e){
       if(submit && submit.dataset.submitting==='true'){event.preventDefault(); return;}
       if(submit){submit.dataset.submitting='true'; submit.disabled=true; submit.dataset.originalText=submit.textContent; submit.textContent='Submitting…';}
     });
+  });
+})();
+</script>
+<script>
+(function(){
+  const form=document.getElementById('trackClinicForm');
+  if(!form)return;
+
+  const submit=document.getElementById('trackClinicSubmit');
+  const status=document.getElementById('trackClinicStatus');
+  const confirmation=document.getElementById('trackClinicConfirmation');
+  const clinicId=document.getElementById('trackClinicId');
+  const clinicName=document.getElementById('trackClinicName');
+  const school=document.getElementById('trackClinicSchool');
+  const coach=document.getElementById('trackClinicCoach');
+  const source=document.getElementById('trackClinicSource');
+
+  const params=new URLSearchParams(window.location.search);
+  const incomingClinic=(params.get('clinic')||'').trim().toLowerCase();
+  const validClinic=/^[a-z0-9][a-z0-9-]{1,79}$/;
+  if(incomingClinic && validClinic.test(incomingClinic)){
+    clinicId.value=incomingClinic;
+    clinicName.value=incomingClinic.split('-').map(function(part){return part.charAt(0).toUpperCase()+part.slice(1);}).join(' ');
+  }
+  if(params.get('school')) school.value=params.get('school').slice(0,140);
+  if(params.get('coach')) coach.value=params.get('coach').slice(0,120);
+  if(params.get('source')) source.value=params.get('source').slice(0,80);
+
+  function setBusy(busy){
+    submit.disabled=busy;
+    submit.textContent=busy?'Saving Registration…':'Register Interest';
+  }
+
+  form.addEventListener('submit',async function(event){
+    event.preventDefault();
+    if(submit.disabled)return;
+    if(!form.checkValidity()){form.reportValidity();return;}
+
+    const honeypot=document.getElementById('trackClinicWebsite');
+    if(honeypot && honeypot.value)return;
+
+    setBusy(true);
+    status.textContent='Saving your registration…';
+
+    const payload={
+      clinic_id:clinicId.value,
+      clinic_name:clinicName.value,
+      school_group:school.value.trim(),
+      grade:document.getElementById('trackClinicGrade').value,
+      event_interest:document.getElementById('trackClinicEvent').value,
+      personal_best:document.getElementById('trackClinicPb').value.trim(),
+      athlete_first_name:document.getElementById('trackClinicAthleteFirst').value.trim(),
+      athlete_last_name:document.getElementById('trackClinicAthleteLast').value.trim(),
+      parent_name:document.getElementById('trackClinicParentName').value.trim(),
+      parent_email:document.getElementById('trackClinicParentEmail').value.trim(),
+      parent_phone:document.getElementById('trackClinicParentPhone').value.trim(),
+      coach_name:coach.value.trim(),
+      source:source.value,
+      website:honeypot?honeypot.value:''
+    };
+
+    try{
+      const response=await fetch('https://hiktwkdfvlujszczthdu.supabase.co/functions/v1/clinic-registration',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey':'sb_publishable_MKg9hNp7WuDlnK0TnlwwtQ_n8j4-dYx'
+        },
+        body:JSON.stringify(payload)
+      });
+      let result={};
+      try{result=await response.json();}catch(e){result={};}
+      if(!response.ok || result.ok!==true){
+        throw new Error(result.error||'Registration could not be completed. Please try again.');
+      }
+
+      form.reset();
+      clinicId.value=incomingClinic&&validClinic.test(incomingClinic)?incomingClinic:'horizontal-jump-development';
+      clinicName.value=incomingClinic&&validClinic.test(incomingClinic)
+        ? incomingClinic.split('-').map(function(part){return part.charAt(0).toUpperCase()+part.slice(1);}).join(' ')
+        : 'Small-Group Horizontal Jump Development';
+      if(params.get('school')) school.value=params.get('school').slice(0,140);
+      if(params.get('coach')) coach.value=params.get('coach').slice(0,120);
+      if(params.get('source')) source.value=params.get('source').slice(0,80);
+
+      form.style.display='none';
+      confirmation.classList.add('show');
+      confirmation.scrollIntoView({behavior:'smooth',block:'center'});
+    }catch(error){
+      status.textContent=error && error.message ? error.message : 'Registration could not be completed. Please try again.';
+      setBusy(false);
+    }
+  });
+
+  document.addEventListener('click',function(event){
+    const trigger=event.target.closest('.track-clinic-trigger');
+    if(!trigger)return;
+    event.preventDefault();
+    history.pushState({route:'track-register'}, '', '#/track/register');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 })();
 </script>
@@ -3259,10 +3438,8 @@ document.addEventListener('click',function(e){
 
   const feverUnitedLocation='St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092';
   const cohorts={
-    preview:{slug:'preview',value:'Demonstration Cohort',label:'Demonstration Cohort — Director Preview',name:'Demonstration Cohort — Two-Week Program',session1:'Date confirmed with selected team',session2:'Second date confirmed with selected team',time:'Based on the confirmed team schedule',location:'Partner club training location',price:'Confirmed with club',minimum:'Confirmed with club',maximum:'12',kind:'preview',status:'Preview',paymentUrl:''},
-    feverWed630:{slug:'feverWed630',value:'Fever United — Wednesday 6:30 PM Cohort',label:'Wednesday 6:30 PM Cohort — Open',name:'Fever United — Wednesday 6:30 PM Cohort',session1:'Wednesday, September 9, 2026',session2:'Wednesday, September 16, 2026',time:'6:30–7:30 PM',location:feverUnitedLocation,price:'$24 total for both sessions',minimum:'8 paid athletes',maximum:'12 paid athletes',kind:'active',status:'Open',paymentUrl:'https://buy.stripe.com/14A14m6abdBd4c90Nj5os00'},
-    feverFri530:{slug:'feverFri530',value:'Fever United — Friday 5:30 PM Cohort',label:'Friday 5:30 PM Cohort — Open',name:'Fever United — Friday 5:30 PM Cohort',session1:'Friday, September 11, 2026',session2:'Friday, September 18, 2026',time:'5:30–6:30 PM',location:feverUnitedLocation,price:'$24 total for both sessions',minimum:'8 paid athletes',maximum:'12 paid athletes',kind:'active',status:'Open',paymentUrl:'https://buy.stripe.com/14AcN4cyz54H241brX5os01'},
-    feverInterest:{slug:'feverInterest',value:'Fever United — Wednesday 5:30 PM Additional Cohort',label:'Additional Wednesday cohort — opening based on demand',name:'Fever United — Wednesday 5:30 PM Additional Cohort',session1:'Potential: Wednesday, September 9, 2026',session2:'Potential: Wednesday, September 16, 2026',time:'Potential: 5:30–6:30 PM',location:feverUnitedLocation,price:'$24 total for both sessions if activated',minimum:'8 paid athletes if activated',maximum:'12 paid athletes if activated',kind:'interest',status:'Opens based on demand',paymentUrl:''}
+    preview:{slug:'preview',value:'Demonstration Cohort',label:'Demonstration Cohort — Director Preview',name:'Demonstration Cohort — Friday Session',session1:'Friday date confirmed with selected team',session2:'',time:'Based on the confirmed team schedule',location:'Partner club training location',price:'Confirmed with club',minimum:'Confirmed with club',maximum:'12',kind:'preview',status:'Preview',paymentUrl:''},
+    feverFri530:{slug:'feverFri530',value:'Fever United — Friday 5:30 PM Session',label:'Friday 5:30 PM Session — Registration Open',name:'Fever United — Friday 5:30 PM Session',session1:'Friday — date confirmed with the club',session2:'',time:'5:30–6:30 PM',location:feverUnitedLocation,price:'$25 per athlete for this session',minimum:'6 confirmed athletes',maximum:'12 athletes',kind:'registration',status:'Registration Open — payment link pending',paymentUrl:''}
   };
 
   function currentCohort(){
@@ -3283,18 +3460,8 @@ document.addEventListener('click',function(e){
   function configureFor(meta){
     if(!meta){details.hidden=true;if(paymentSection)paymentSection.hidden=true;return;}
     setHidden(meta);
-    details.innerHTML='<strong>'+meta.name+'</strong><br>'+meta.session1+'<br>'+meta.session2+'<br>Time: '+meta.time+'<br>Location: '+meta.location+'<br>Total price: '+meta.price+'<br>Minimum: '+meta.minimum+'<br>Maximum: '+meta.maximum+'<br>Status: '+meta.status+(meta.kind==='active'&&club.value==='Fever United'?'<br><strong>$24 total includes both sessions.</strong>':'');
+    details.innerHTML='<strong>'+meta.name+'</strong><br>'+meta.session1+(meta.session2?'<br>'+meta.session2:'')+'<br>Time: '+meta.time+'<br>Location: '+meta.location+'<br>Price: '+meta.price+'<br>Minimum: '+meta.minimum+'<br>Maximum: '+meta.maximum+'<br>Status: '+meta.status;
     details.hidden=false;
-
-    if(meta.kind==='interest'){
-      if(paymentSection)paymentSection.hidden=true;
-      submissionType.value='Fever United Cohort Interest'; registrationStatus.value='Interest Received — Not a Paid Registration'; paymentStatus.value='Not Applicable — Interest Only';
-      if(paymentMethod)paymentMethod.value=''; if(paymentLink)paymentLink.value='';
-      subject.value='Fever United Wednesday 5:30 PM Cohort Interest — DU Airlines';
-      submitButton.textContent='Submit Interest'; status.textContent='Interest only — no payment is required unless this cohort is activated.';
-      agreementText.textContent='I confirm that the information provided is accurate and that I am interested in the potential Wednesday 5:30–6:30 PM Fever United cohort. I understand that this cohort is not yet active, that submitting interest does not reserve a paid place, and that I should not submit payment until activation is confirmed.';
-      return;
-    }
 
     if(meta.kind==='preview'){
       if(paymentSection)paymentSection.hidden=true;
@@ -3307,14 +3474,14 @@ document.addEventListener('click',function(e){
     }
 
     if(paymentSection)paymentSection.hidden=false;
-    submissionType.value=club.value==='Fever United'?'Fever United Registration':'Club Registration';
-    registrationStatus.value='Registration Received — Pending Payment';
-    paymentStatus.value='Pending Payment';
+    submissionType.value=club.value==='Fever United'?'Fever United Friday Registration':'Club Registration';
+    registrationStatus.value='Registration Received — Payment Link Pending';
+    paymentStatus.value='Payment Link Pending';
     if(paymentMethod)paymentMethod.value='Stripe';
-    subject.value=club.value==='Fever United'?'New Fever United Registration — DU Airlines':'New Club Registration — DU Airlines Elite Academy';
-    submitButton.textContent='Continue to Secure Payment — $24';
-    status.textContent='Your registration will be saved first, then you will continue directly to secure Stripe payment.';
-    agreementText.textContent='I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for both sessions in the selected cohort. I understand that the cohort requires at least 8 paid athletes to proceed and is limited to 12 paid athletes. If the minimum is not reached, I may approve a transfer to another eligible cohort or receive a full refund. I understand that my registration remains Pending Payment until the $24 Stripe payment is completed.';
+    subject.value=club.value==='Fever United'?'New Fever United Friday Registration — DU Airlines':'New Club Registration — DU Airlines Elite Academy';
+    submitButton.textContent='Submit Friday Registration';
+    status.textContent='Register first. Coach Du will send the $25 payment link once the Friday group is confirmed.';
+    agreementText.textContent='I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for one Friday session. I understand that the session requires at least 6 confirmed athletes to proceed and is limited to 12 athletes. I understand that payment is $25 per athlete for the session and that payment details will be sent separately until the updated Stripe link is connected.';
   }
 
   function setProcessing(processing, text){
@@ -3358,10 +3525,10 @@ document.addEventListener('click',function(e){
     const summary=document.getElementById('clubConfirmationSummary');
     if(!card||!confirmation)return;
     card.style.display='none'; confirmation.classList.add('show');
-    if(kind==='interest'){
-      title.textContent='Interest received.';
-      message.textContent='Thank you. Your interest has been saved. No payment is required unless this cohort is activated.';
-      summary.innerHTML='<div><span>Status</span><strong>Interest only — not a paid registration</strong></div>';
+    if(kind==='registration'){
+      title.textContent='Friday registration received.';
+      message.textContent='Thank you. Your athlete is registered for the Friday group. Coach Du will send the $25 payment link once the minimum group is confirmed.';
+      summary.innerHTML='<div><span>Session</span><strong>'+meta.name+'</strong></div><div><span>Price</span><strong>$25 per athlete</strong></div><div><span>Minimum</span><strong>6 confirmed athletes</strong></div><div><span>Payment</span><strong>Link sent separately</strong></div>';
     }else{
       title.textContent='Preview registration received.';
       message.textContent='The director preview registration was received. No live payment is required.';
@@ -3374,7 +3541,7 @@ document.addEventListener('click',function(e){
     cohort.disabled=!club.value;
     if(!club.value){cohort.innerHTML='<option value="">Select a club first</option>';details.hidden=true;setHidden(null);if(paymentSection)paymentSection.hidden=true;return;}
     if(club.value==='Fever United'){
-      cohort.innerHTML='<option value="">Select a Fever United cohort</option>'+[cohorts.feverWed630,cohorts.feverFri530,cohorts.feverInterest].map(function(c){return '<option value="'+c.value+'">'+c.label+'</option>'}).join('');
+      cohort.innerHTML='<option value="">Select a Fever United Friday session</option><option value="'+cohorts.feverFri530.value+'">'+cohorts.feverFri530.label+'</option>';
     }else{
       cohort.innerHTML='<option value="">Select your team or training cohort</option><option value="'+cohorts.preview.value+'">'+cohorts.preview.label+'</option>';
     }
@@ -3395,28 +3562,18 @@ document.addEventListener('click',function(e){
     document.getElementById('clubSubmissionDate').value=new Date().toISOString();
     const parentName=document.getElementById('clubParentName').value.trim();
     const athleteName=document.getElementById('clubAthleteName').value.trim();
-
-    if(meta.kind==='interest'){
-      autoresponse.value='Hello '+parentName+',\n\nThank you. Your interest in the Wednesday 5:30–6:30 PM Fever United cohort has been received. We will contact you if this additional cohort is activated. Please do not submit payment until activation is confirmed.\n\nAthlete: '+athleteName+'\nPotential dates: Wednesday, September 9 and Wednesday, September 16, 2026\nPotential time: 5:30–6:30 PM\nPrice if activated: $24 total for both sessions\nStatus: Opens based on demand\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
-    }else if(meta.kind==='preview'){
+    if(meta.kind==='preview'){
       autoresponse.value='Hello '+parentName+',\n\nYour partner-club preview registration has been received.\n\nAthlete: '+athleteName+'\nSelected cohort: '+meta.name+'\nStatus: Preview only — no payment collected.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
     }else{
-      autoresponse.value='Hello '+parentName+',\n\nYour athlete registration has been received. Payment status: Pending Payment.\n\nParent: '+parentName+'\nAthlete: '+athleteName+'\nClub: '+club.value+'\nSelected cohort: '+meta.name+'\nSession 1: '+meta.session1+'\nSession 2: '+meta.session2+'\nTime: '+meta.time+'\nLocation: '+meta.location+'\nTotal price: $24\nMinimum: 8 paid athletes\nMaximum: 12 paid athletes\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
+      autoresponse.value='Hello '+parentName+',\n\nYour Friday Speed & Movement registration has been received.\n\nParent: '+parentName+'\nAthlete: '+athleteName+'\nClub: '+club.value+'\nSession: '+meta.name+'\nDate: '+meta.session1+'\nTime: '+meta.time+'\nLocation: '+meta.location+'\nPrice: $25 per athlete\nMinimum: 6 confirmed athletes\nMaximum: 12 athletes\nPayment: Coach Du will send the payment link once the group is confirmed.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
     }
 
-    setProcessing(true,meta.kind==='active'?'Preparing secure payment…':'Submitting…');
-    status.textContent=meta.kind==='active'?'Saving registration before secure payment…':'Submitting…';
+    setProcessing(true,'Submitting…');
+    status.textContent='Saving registration…';
 
     try{
       await submitViaFormSubmit();
       status.textContent='Registration saved successfully.';
-
-      if(meta.kind==='active'){
-        if(!meta.paymentUrl) throw new Error('The secure payment link for this cohort is unavailable. Please try again or contact Coach Du.');
-        window.location.assign(meta.paymentUrl);
-        return;
-      }
-
       setProcessing(false);
       showLocalConfirmation(meta,meta.kind);
     }catch(error){
@@ -3437,7 +3594,7 @@ document.addEventListener('click',function(e){
     const returnMessage=document.getElementById('stripeReturnMessage');
     if(returnSummary&&returnTitle&&returnMessage){
       if(meta&&meta.kind==='active'){
-        returnTitle.textContent='Payment Received — Your Athlete’s Spot Is Secured';
+        returnTitle.textContent='Registration Received';
         returnMessage.textContent='Registration Complete. Additional session details will be sent by email.';
         returnSummary.innerHTML='<div><span>Cohort</span><strong>'+meta.name+'</strong></div><div><span>Session 1</span><strong>'+meta.session1+'</strong></div><div><span>Session 2</span><strong>'+meta.session2+'</strong></div><div><span>Time</span><strong>'+meta.time+'</strong></div><div><span>Location</span><strong>'+meta.location+'</strong></div>';
       }else{
