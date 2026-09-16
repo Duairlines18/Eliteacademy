@@ -2651,24 +2651,29 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div class="wrap">
 <a class="track-form-back" data-route="track" href="#/track">← Back to Track &amp; Field</a>
 <p class="eyebrow center">Horizontal Jumps Clinic Registration</p>
-<h2 class="head center">Register with <span class="accent">your school or group</span></h2>
-<p class="lede center">This is an interest registration only. No payment is collected here. Coach Du will confirm the clinic once the group has enough athletes, then send the date, venue and payment details.</p>
+<h2 class="head center">Reserve your athlete’s <span class="accent">place</span></h2>
+<p class="lede center">Register for the small-group Long Jump &amp; Triple Jump clinic below. After your details are saved, you’ll be taken securely to Stripe to complete payment.</p>
 <div class="soccer-form-card">
 <form id="trackClinicForm" novalidate="">
-<input id="trackClinicId" name="clinic_id" type="hidden" value="horizontal-jump-development"/>
-<input id="trackClinicName" name="clinic_name" type="hidden" value="Small-Group Horizontal Jump Development"/>
-<input id="trackClinicSource" name="source" type="hidden" value="track_web"/>
+<input id="trackClinicSource" name="source" type="hidden" value="track_clinic_web"/>
 <input aria-hidden="true" autocomplete="off" class="honeypot" id="trackClinicWebsite" name="website" tabindex="-1" type="text"/>
 <div class="soccer-form-grid">
+<div class="soccer-field full">
+<label for="trackClinicSession">Clinic</label>
+<select id="trackClinicSession" name="clinic_id" required="">
+<option value="">Select clinic</option>
+<option value="2026-10-01-horizontal-jumps">Thursday, October 1 — Horizontal Jumps Clinic</option>
+</select>
+</div>
 <div class="soccer-field">
-<label for="trackClinicSchool">School / Group</label>
-<input id="trackClinicSchool" name="school_group" placeholder="Example: North Crowley High School" required="" type="text"/>
+<label for="trackClinicAthleteName">Athlete Full Name</label>
+<input autocomplete="name" id="trackClinicAthleteName" name="athlete_name" required="" type="text"/>
 </div>
 <div class="soccer-field">
 <label for="trackClinicGrade">Grade</label>
 <select id="trackClinicGrade" name="grade" required="">
 <option value="">Select grade</option>
-<option>7th</option><option>8th</option><option>9th</option><option>10th</option><option>11th</option><option>12th</option><option>Postgraduate / Other</option>
+<option>7th</option><option>8th</option><option>9th</option><option>10th</option><option>11th</option><option>12th</option><option>Other</option>
 </select>
 </div>
 <div class="soccer-field">
@@ -2678,19 +2683,12 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <option value="Long Jump">Long Jump</option>
 <option value="Triple Jump">Triple Jump</option>
 <option value="Both">Both</option>
+<option value="Not Sure Yet">Not Sure Yet</option>
 </select>
 </div>
 <div class="soccer-field">
-<label for="trackClinicPb">Current PB / Experience <span style="color:var(--sage-dim)">(optional)</span></label>
-<input id="trackClinicPb" name="personal_best" placeholder="Example: LJ 18'2&quot; / beginner" type="text"/>
-</div>
-<div class="soccer-field">
-<label for="trackClinicAthleteFirst">Athlete First Name</label>
-<input id="trackClinicAthleteFirst" name="athlete_first_name" required="" type="text"/>
-</div>
-<div class="soccer-field">
-<label for="trackClinicAthleteLast">Athlete Last Name</label>
-<input id="trackClinicAthleteLast" name="athlete_last_name" required="" type="text"/>
+<label for="trackClinicSchool">School / Club <span style="color:var(--sage-dim)">(optional)</span></label>
+<input id="trackClinicSchool" name="school_group" placeholder="School or club (optional)" type="text"/>
 </div>
 <div class="soccer-field">
 <label for="trackClinicParentName">Parent / Guardian Name</label>
@@ -2704,25 +2702,16 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <label for="trackClinicParentPhone">Parent Phone</label>
 <input autocomplete="tel" id="trackClinicParentPhone" name="parent_phone" required="" type="tel"/>
 </div>
-<div class="soccer-field">
-<label for="trackClinicCoach">Coach Name <span style="color:var(--sage-dim)">(optional)</span></label>
-<input id="trackClinicCoach" name="coach_name" placeholder="School or event coach" type="text"/>
-</div>
 </div>
 <label class="club-consent" style="margin-top:1.25rem">
 <input id="trackClinicConsent" required="" type="checkbox" value="Yes"/>
-<span>I confirm that I am the athlete’s parent or legal guardian (or the athlete is 18+), and I agree to receive clinic confirmation and next-step information from Du Airlines Elite Academy. I understand that this form registers interest only and does not collect payment or guarantee a place.</span>
+<span>I confirm that I am the athlete’s parent/guardian (or the athlete is 18+) and agree to receive clinic confirmation and session information from Du Airlines Elite Academy.</span>
 </label>
 <div class="soccer-form-submit">
-<button class="btn btn-primary" id="trackClinicSubmit" type="submit">Register Interest</button>
+<button class="btn btn-primary" id="trackClinicSubmit" type="submit">Reserve Athlete's Place</button>
 </div>
-<p class="soccer-form-note" id="trackClinicStatus">No payment is required today. Your registration will be stored securely and Coach Du will be notified.</p>
+<p class="soccer-form-note" id="trackClinicStatus">Your details will be saved securely before you continue to payment.</p>
 </form>
-<div class="club-confirmation" id="trackClinicConfirmation" style="margin-top:1.5rem">
-<p class="eyebrow center">Registration Received</p>
-<h3 style="text-align:center">Your athlete is on the interest list.</h3>
-<p style="text-align:center;color:var(--sage)">Coach Du will follow up with the confirmed clinic date, venue and payment details once the school/group is finalized.</p>
-</div>
 </div>
 </div>
 </section>
@@ -3316,27 +3305,60 @@ document.addEventListener('click',function(e){
 
   const submit=document.getElementById('trackClinicSubmit');
   const status=document.getElementById('trackClinicStatus');
-  const confirmation=document.getElementById('trackClinicConfirmation');
-  const clinicId=document.getElementById('trackClinicId');
-  const clinicName=document.getElementById('trackClinicName');
+  const session=document.getElementById('trackClinicSession');
   const school=document.getElementById('trackClinicSchool');
-  const coach=document.getElementById('trackClinicCoach');
   const source=document.getElementById('trackClinicSource');
+  const stripeUrl='https://buy.stripe.com/8x200ibuv9kX6kh3Zv5os05';
+  const clinicNames={
+    '2026-10-01-horizontal-jumps':'Thursday, October 1 — Horizontal Jumps Clinic'
+  };
 
   const params=new URLSearchParams(window.location.search);
   const incomingClinic=(params.get('clinic')||'').trim().toLowerCase();
-  const validClinic=/^[a-z0-9][a-z0-9-]{1,79}$/;
-  if(incomingClinic && validClinic.test(incomingClinic)){
-    clinicId.value=incomingClinic;
-    clinicName.value=incomingClinic.split('-').map(function(part){return part.charAt(0).toUpperCase()+part.slice(1);}).join(' ');
-  }
+  if(incomingClinic && clinicNames[incomingClinic]) session.value=incomingClinic;
   if(params.get('school')) school.value=params.get('school').slice(0,140);
-  if(params.get('coach')) coach.value=params.get('coach').slice(0,120);
   if(params.get('source')) source.value=params.get('source').slice(0,80);
 
   function setBusy(busy){
     submit.disabled=busy;
-    submit.textContent=busy?'Saving Registration…':'Register Interest';
+    submit.dataset.submitting=busy?'true':'false';
+    submit.textContent=busy?'Submitting…':"Reserve Athlete's Place";
+  }
+
+  function splitAthleteName(fullName){
+    const parts=fullName.trim().replace(/\s+/g,' ').split(' ');
+    if(parts.length===1)return {first:parts[0],last:'—'};
+    return {first:parts.slice(0,-1).join(' '),last:parts[parts.length-1]};
+  }
+
+  async function notifyCoach(payload,registrationId){
+    try{
+      const emailResponse=await fetch('https://formsubmit.co/ajax/coachdu@duairlineseliteacademy.com',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify({
+          _subject:'New Track Clinic Registration — '+payload.athlete_name+' — Oct 1',
+          _template:'table',
+          submission_type:'Track & Field Clinic Registration',
+          registration_id:registrationId,
+          athlete_name:payload.athlete_name,
+          parent_guardian:payload.parent_name,
+          parent_email:payload.parent_email,
+          parent_phone:payload.parent_phone,
+          grade:payload.grade,
+          event_interest:payload.event_interest,
+          school_club:payload.school_group||'Not provided',
+          clinic:payload.clinic_name,
+          clinic_date:'Thursday, October 1, 2026',
+          registration_status:'AWAITING PAYMENT',
+          submitted_at:new Date().toISOString()
+        })
+      });
+      return emailResponse.ok;
+    }catch(error){
+      console.warn('Track clinic email notification failed',error);
+      return false;
+    }
   }
 
   form.addEventListener('submit',async function(event){
@@ -3347,25 +3369,27 @@ document.addEventListener('click',function(e){
     const honeypot=document.getElementById('trackClinicWebsite');
     if(honeypot && honeypot.value)return;
 
-    setBusy(true);
-    status.textContent='Saving your registration…';
-
+    const athleteName=document.getElementById('trackClinicAthleteName').value.trim();
+    const split=splitAthleteName(athleteName);
+    const selectedClinic=session.value;
     const payload={
-      clinic_id:clinicId.value,
-      clinic_name:clinicName.value,
+      clinic_id:selectedClinic,
+      clinic_name:clinicNames[selectedClinic]||'Horizontal Jumps Clinic',
       school_group:school.value.trim(),
       grade:document.getElementById('trackClinicGrade').value,
       event_interest:document.getElementById('trackClinicEvent').value,
-      personal_best:document.getElementById('trackClinicPb').value.trim(),
-      athlete_first_name:document.getElementById('trackClinicAthleteFirst').value.trim(),
-      athlete_last_name:document.getElementById('trackClinicAthleteLast').value.trim(),
+      athlete_name:athleteName,
+      athlete_first_name:split.first,
+      athlete_last_name:split.last,
       parent_name:document.getElementById('trackClinicParentName').value.trim(),
       parent_email:document.getElementById('trackClinicParentEmail').value.trim(),
       parent_phone:document.getElementById('trackClinicParentPhone').value.trim(),
-      coach_name:coach.value.trim(),
-      source:source.value,
+      source:source.value||'track_clinic_web',
       website:honeypot?honeypot.value:''
     };
+
+    setBusy(true);
+    status.textContent='Saving your registration…';
 
     try{
       const response=await fetch('https://hiktwkdfvlujszczthdu.supabase.co/functions/v1/clinic-registration',{
@@ -3379,23 +3403,14 @@ document.addEventListener('click',function(e){
       let result={};
       try{result=await response.json();}catch(e){result={};}
       if(!response.ok || result.ok!==true){
-        throw new Error(result.error||'Registration could not be completed. Please try again.');
+        throw new Error(result.error||'We could not start your registration. Please try again.');
       }
 
-      form.reset();
-      clinicId.value=incomingClinic&&validClinic.test(incomingClinic)?incomingClinic:'horizontal-jump-development';
-      clinicName.value=incomingClinic&&validClinic.test(incomingClinic)
-        ? incomingClinic.split('-').map(function(part){return part.charAt(0).toUpperCase()+part.slice(1);}).join(' ')
-        : 'Small-Group Horizontal Jump Development';
-      if(params.get('school')) school.value=params.get('school').slice(0,140);
-      if(params.get('coach')) coach.value=params.get('coach').slice(0,120);
-      if(params.get('source')) source.value=params.get('source').slice(0,80);
-
-      form.style.display='none';
-      confirmation.classList.add('show');
-      confirmation.scrollIntoView({behavior:'smooth',block:'center'});
+      status.textContent='Registration received. Taking you to secure payment…';
+      await notifyCoach(payload,result.registration_id);
+      window.location.assign(stripeUrl);
     }catch(error){
-      status.textContent=error && error.message ? error.message : 'Registration could not be completed. Please try again.';
+      status.textContent=error && error.message ? error.message : 'We could not start your registration. Please try again.';
       setBusy(false);
     }
   });
