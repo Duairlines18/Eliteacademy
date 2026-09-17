@@ -3282,7 +3282,7 @@ document.addEventListener('click',function(e){
   }
 
   document.querySelectorAll('form').forEach(function(form){
-    if(form.id==='integratedClubForm' || form.id==='trackClinicForm') return; // These forms own their protected AJAX flows.
+    if(['integratedClubForm','trackClinicForm','soccerInquiryForm','trackInquiryForm'].includes(form.id)) return; // These forms own explicit submission flows.
     const stamp=form.querySelector('.submitted-at');
     form.addEventListener('submit',function(event){
       if(stamp) stamp.value=new Date().toISOString();
@@ -3300,7 +3300,98 @@ document.addEventListener('click',function(e){
 </script>
 <script>
 (function(){
+  const FORM_SUBMIT_BASE='https://formsubmit.co/';
+
+  function setPaidFormBusy(form,busy,label){
+    const button=form?form.querySelector('[type="submit"]'):null;
+    if(!button)return;
+    button.disabled=busy;
+    button.dataset.submitting=busy?'true':'false';
+    if(busy){button.dataset.originalText=button.textContent;button.textContent=label||'Submitting…';}
+    else if(button.dataset.originalText){button.textContent=button.dataset.originalText;}
+  }
+
+  async function submitLeadAjax(form){
+    const data=new FormData(form);
+    data.delete('_next');
+    const endpoint=String(form.action||'').replace(FORM_SUBMIT_BASE,FORM_SUBMIT_BASE+'ajax/');
+    if(!endpoint.includes('/ajax/'))throw new Error('Lead notification endpoint is unavailable.');
+    const response=await fetch(endpoint,{method:'POST',headers:{Accept:'application/json'},body:data,keepalive:true});
+    let result={};
+    try{result=await response.json();}catch(_){result={};}
+    if(!response.ok || result.success===false || result.success==='false'){
+      throw new Error(result.message||'We could not send the registration. Please try again.');
+    }
+    return result;
+  }
+
+  function submitToHiddenFrame(form,stripeUrl){
+    const frame=document.createElement('iframe');
+    frame.name='du-formsubmit-'+Date.now();
+    frame.hidden=true;
+    frame.setAttribute('aria-hidden','true');
+    document.body.appendChild(frame);
+    form.target=frame.name;
+    form.submit();
+    window.setTimeout(function(){window.location.assign(stripeUrl);},900);
+  }
+
+  async function submitLeadThenRedirect(form,stripeUrl,statusNode){
+    if(!form.checkValidity()){form.reportValidity();return;}
+    const honeypot=form.querySelector('input[name="website"]');
+    if(honeypot&&honeypot.value)return;
+    setPaidFormBusy(form,true,'Submitting…');
+    if(statusNode)statusNode.textContent='Sending your registration…';
+    try{
+      if(window.location.protocol==='file:'){
+        if(statusNode)statusNode.textContent='Registration submitted. Opening secure payment…';
+        submitToHiddenFrame(form,stripeUrl);
+        return;
+      }
+      await submitLeadAjax(form);
+      if(statusNode)statusNode.textContent='Registration received. Opening secure payment…';
+      window.location.assign(stripeUrl);
+    }catch(error){
+      if(statusNode)statusNode.textContent=error&&error.message?error.message:'We could not send the registration. Please try again.';
+      setPaidFormBusy(form,false);
+    }
+  }
+
+  async function submitLeadOnly(form,statusNode){
+    if(!form.checkValidity()){form.reportValidity();return;}
+    const honeypot=form.querySelector('input[name="website"]');
+    if(honeypot&&honeypot.value)return;
+    setPaidFormBusy(form,true,'Submitting…');
+    if(statusNode)statusNode.textContent='Sending your inquiry…';
+    try{
+      if(window.location.protocol==='file:'){
+        const frame=document.createElement('iframe');frame.name='du-formsubmit-'+Date.now();frame.hidden=true;document.body.appendChild(frame);form.target=frame.name;form.submit();
+      }else{
+        await submitLeadAjax(form);
+      }
+      if(statusNode)statusNode.textContent='Inquiry received. Coach Du will follow up with next steps.';
+      const button=form.querySelector('[type="submit"]');if(button){button.textContent='Submitted ✓';button.disabled=true;}
+    }catch(error){
+      if(statusNode)statusNode.textContent=error&&error.message?error.message:'We could not send the inquiry. Please try again.';
+      setPaidFormBusy(form,false);
+    }
+  }
+
+  window.DUPaidFlow={submitLeadThenRedirect,submitLeadOnly,submitToHiddenFrame};
+})();
+</script>
+<script>
+(function(){
   const paidEvaluationStripeUrl='https://buy.stripe.com/8x200ibuv9kX6kh3Zv5os05';
+  const soccerForm=document.getElementById('soccerInquiryForm');
+  const soccerStatus=soccerForm?soccerForm.querySelector('.soccer-form-note'):null;
+  if(soccerForm){
+    soccerForm.addEventListener('submit',async function(event){
+      event.preventDefault();
+      await window.DUPaidFlow.submitLeadThenRedirect(soccerForm,paidEvaluationStripeUrl,soccerStatus);
+    });
+  }
+
   const trackPathway=document.getElementById('track-pathway-select');
   const trackNext=document.getElementById('trackInquiryNext');
   const trackForm=document.getElementById('trackInquiryForm');
@@ -3316,6 +3407,17 @@ document.addEventListener('click',function(e){
   if(trackPathway){
     trackPathway.addEventListener('change',syncTrackInquiryNext);
     syncTrackInquiryNext();
+  }
+  if(trackForm){
+    trackForm.addEventListener('submit',async function(event){
+      event.preventDefault();
+      const isPaid=trackPathway&&trackPathway.value==='Performance Evaluation — $65';
+      if(isPaid){
+        await window.DUPaidFlow.submitLeadThenRedirect(trackForm,paidEvaluationStripeUrl,trackNote);
+      }else{
+        await window.DUPaidFlow.submitLeadOnly(trackForm,trackNote);
+      }
+    });
   }
 })();
 </script>
@@ -3408,7 +3510,7 @@ document.addEventListener('click',function(e){
       const input=document.createElement('input'); input.type='hidden'; input.name=name; input.value=value; previewForm.appendChild(input);
     });
     document.body.appendChild(previewForm);
-    previewForm.submit();
+    window.DUPaidFlow.submitToHiddenFrame(previewForm,stripeUrl);
   }
 
   form.addEventListener('submit',async function(event){
