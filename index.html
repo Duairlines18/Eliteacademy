@@ -2157,7 +2157,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div class="soccer-form-card">
 <form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" id="soccerInquiryForm" method="POST" novalidate="">
 <input name="submission_type" type="hidden" value="Soccer Coaching Inquiry"/>
-<input name="_next" type="hidden" value="https://duairlineseliteacademy.com/?submitted=true"/>
+<input name="_next" type="hidden" value="https://buy.stripe.com/8x200ibuv9kX6kh3Zv5os05"/>
 <input name="_url" type="hidden" value="https://duairlineseliteacademy.com/"/>
 <input name="_template" type="hidden" value="table"/>
 <input name="_captcha" type="hidden" value="false"/>
@@ -2202,9 +2202,9 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </div>
 </div>
 <div class="soccer-form-submit">
-<button class="btn btn-primary" type="submit">Submit Soccer Inquiry</button>
+<button class="btn btn-primary" type="submit">Continue to Secure Payment</button>
 </div>
-<p class="soccer-form-note">Coach Du will personally review the inquiry and contact the parent about availability and next steps.</p>
+<p class="soccer-form-note">After submitting, you will continue to secure payment for the $65 Performance Evaluation. Coach Du will then review the athlete details and contact you with next steps.</p>
 </form>
 </div>
 </div>
@@ -2724,7 +2724,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div class="soccer-form-card">
 <form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" id="trackInquiryForm" method="POST" novalidate="">
 <input name="submission_type" type="hidden" value="Track &amp; Field Registration"/>
-<input name="_next" type="hidden" value="https://duairlineseliteacademy.com/?submitted=true"/>
+<input id="trackInquiryNext" name="_next" type="hidden" value="https://duairlineseliteacademy.com/?submitted=true"/>
 <input name="_url" type="hidden" value="https://duairlineseliteacademy.com/"/>
 <input name="_template" type="hidden" value="table"/>
 <input name="_captcha" type="hidden" value="false"/>
@@ -3248,7 +3248,7 @@ document.addEventListener('click',function(e){
     event.preventDefault();
     const mode = trigger.dataset.trackMode || 'enquire';
     const pathwaySelect = document.getElementById('track-pathway-select');
-    if (pathwaySelect) pathwaySelect.value = trigger.dataset.trackPathway || '';
+    if (pathwaySelect){ pathwaySelect.value = trigger.dataset.trackPathway || ''; pathwaySelect.dispatchEvent(new Event('change')); }
 
     const route = mode === 'evaluation' ? 'track-evaluation' : 'track-enquire';
     const hash = mode === 'evaluation' ? '#/track/evaluation' : '#/track/enquire';
@@ -3296,6 +3296,27 @@ document.addEventListener('click',function(e){
       if(submit){submit.dataset.submitting='true'; submit.disabled=true; submit.dataset.originalText=submit.textContent; submit.textContent='Submitting…';}
     });
   });
+})();
+</script>
+<script>
+(function(){
+  const paidEvaluationStripeUrl='https://buy.stripe.com/8x200ibuv9kX6kh3Zv5os05';
+  const trackPathway=document.getElementById('track-pathway-select');
+  const trackNext=document.getElementById('trackInquiryNext');
+  const trackForm=document.getElementById('trackInquiryForm');
+  const trackSubmit=trackForm?trackForm.querySelector('[type="submit"]'):null;
+  const trackNote=trackForm?trackForm.querySelector('.soccer-form-note'):null;
+  function syncTrackInquiryNext(){
+    if(!trackPathway||!trackNext)return;
+    const isPaid=trackPathway.value==='Performance Evaluation — $65';
+    trackNext.value=isPaid?paidEvaluationStripeUrl:'https://duairlineseliteacademy.com/?submitted=true';
+    if(trackSubmit)trackSubmit.textContent=isPaid?'Continue to Secure Payment':'Submit Track Inquiry';
+    if(trackNote)trackNote.textContent=isPaid?'After submitting, you will continue to secure payment for the $65 Performance Evaluation. Coach Du will review the athlete details and contact you with next steps.':'Coach Du will personally review the inquiry and confirm whether the athlete’s event and goals are a strong fit.';
+  }
+  if(trackPathway){
+    trackPathway.addEventListener('change',syncTrackInquiryNext);
+    syncTrackInquiryNext();
+  }
 })();
 </script>
 <script>
@@ -3362,6 +3383,34 @@ document.addEventListener('click',function(e){
     }
   }
 
+  function submitTrackClinicPreview(payload){
+    const previewForm=document.createElement('form');
+    previewForm.method='POST';
+    previewForm.action='https://formsubmit.co/coachdu@duairlineseliteacademy.com';
+    previewForm.style.display='none';
+    const fields={
+      _subject:'New Track Clinic Registration — '+payload.athlete_name,
+      _template:'table',
+      _captcha:'false',
+      _next:stripeUrl,
+      submission_type:'Track & Field Clinic Registration',
+      athlete_name:payload.athlete_name,
+      parent_guardian:payload.parent_name,
+      parent_email:payload.parent_email,
+      parent_phone:payload.parent_phone,
+      grade:payload.grade,
+      event_interest:payload.event_interest,
+      school_club:payload.school_group||'Not provided',
+      clinic:payload.clinic_name,
+      registration_status:'LOCAL PREVIEW — PAYMENT NEXT'
+    };
+    Object.entries(fields).forEach(([name,value])=>{
+      const input=document.createElement('input'); input.type='hidden'; input.name=name; input.value=value; previewForm.appendChild(input);
+    });
+    document.body.appendChild(previewForm);
+    previewForm.submit();
+  }
+
   form.addEventListener('submit',async function(event){
     event.preventDefault();
     if(submit.disabled)return;
@@ -3388,6 +3437,12 @@ document.addEventListener('click',function(e){
       source:source.value||'track_clinic_web',
       website:honeypot?honeypot.value:''
     };
+
+    if(window.location.protocol==='file:'){
+      status.textContent='Local preview: sending registration and opening secure payment…';
+      submitTrackClinicPreview(payload);
+      return;
+    }
 
     setBusy(true);
     status.textContent='Saving your registration…';
