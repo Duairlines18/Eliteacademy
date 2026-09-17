@@ -2283,20 +2283,20 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <h4 class="club-reg-section-title">Secure Payment</h4>
 <div class="club-reg-preview" id="clubPaymentNotice">
 <strong>$25 for the Friday session.</strong><br/>
-            Submit the registration first. Secure payment will be enabled once the updated $25 payment link is connected.
+            Submit the registration first, then you will continue directly to secure $25 payment.
           </div>
 </div>
 <div class="club-reg-grid" style="margin-top:1rem">
 <div class="club-reg-field full"><label for="clubTypedName">Typed parent or guardian name</label><input id="clubTypedName" name="typed_parent_name" required=""/></div>
 </div>
-<label class="club-consent"><input id="clubAgreement" name="registration_consent" required="" type="checkbox" value="Yes"/><span id="clubAgreementText">I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for the selected Friday session. I understand that the session requires at least 6 confirmed athletes to proceed and is limited to 12 athletes. Payment details will be provided once the updated session payment link is active.</span></label>
+<label class="club-consent"><input id="clubAgreement" name="registration_consent" required="" type="checkbox" value="Yes"/><span id="clubAgreementText">I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for the selected Friday session. I understand that the session requires at least 6 confirmed athletes to proceed and is limited to 12 athletes. After registration, you will continue directly to secure $25 payment.</span></label>
 <div class="club-submit-row"><button class="btn btn-primary" id="clubSubmitButton" type="submit">Submit Registration</button><span class="club-form-status" id="clubFormStatus">Registration is pending until payment is received and verified.</span></div>
 </form>
 </div>
 <div aria-live="polite" class="club-confirmation" id="clubConfirmation">
 <p class="eyebrow center">Registration Complete</p>
 <h3 id="clubConfirmationTitle">Registration Received</h3>
-<p id="clubConfirmationMessage">Thank you. Your Friday registration has been received. Payment details will be sent separately once the group is confirmed.</p>
+<p id="clubConfirmationMessage">Thank you. Your Friday registration has been received. Continue to secure payment to complete the reservation.</p>
 <div class="club-confirmation-summary" id="clubConfirmationSummary"></div>
 <a class="btn btn-primary" data-route="home" href="#/">Return Home</a>
 </div>
@@ -2319,7 +2319,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div aria-live="polite" class="club-confirmation show" id="stripeReturnConfirmation">
 <p class="eyebrow center">Registration Complete</p>
 <h3 id="stripeReturnTitle">Registration Received</h3>
-<p id="stripeReturnMessage">Thank you. Your Friday registration has been received. Payment details will be sent separately once the group is confirmed.</p>
+<p id="stripeReturnMessage">Thank you. Your Friday registration has been received. Continue to secure payment to complete the reservation.</p>
 <div class="club-confirmation-summary" id="stripeReturnSummary"></div>
 <a class="btn btn-primary" data-route="home" href="#/">Return Home</a>
 </div>
@@ -3485,7 +3485,7 @@ document.addEventListener('click',function(e){
     }
   }
 
-  function submitTrackClinicPreview(payload){
+  function submitTrackClinicFallback(payload){
     const previewForm=document.createElement('form');
     previewForm.method='POST';
     previewForm.action='https://formsubmit.co/coachdu@duairlineseliteacademy.com';
@@ -3504,7 +3504,7 @@ document.addEventListener('click',function(e){
       event_interest:payload.event_interest,
       school_club:payload.school_group||'Not provided',
       clinic:payload.clinic_name,
-      registration_status:'LOCAL PREVIEW — PAYMENT NEXT'
+      registration_status:'REGISTRATION RECEIVED — PAYMENT NEXT'
     };
     Object.entries(fields).forEach(([name,value])=>{
       const input=document.createElement('input'); input.type='hidden'; input.name=name; input.value=value; previewForm.appendChild(input);
@@ -3542,7 +3542,7 @@ document.addEventListener('click',function(e){
 
     if(window.location.protocol==='file:'){
       status.textContent='Local preview: sending registration and opening secure payment…';
-      submitTrackClinicPreview(payload);
+      submitTrackClinicFallback(payload);
       return;
     }
 
@@ -3564,18 +3564,15 @@ document.addEventListener('click',function(e){
         throw new Error(result.error||'We could not start your registration. Please try again.');
       }
 
-      status.textContent='Registration received. Sending Coach Du your registration…';
-      const emailAttempt=notifyCoach(payload,result.registration_id);
-      const emailNotified=await Promise.race([
-        emailAttempt,
-        new Promise(resolve=>setTimeout(()=>resolve(false),2500))
-      ]);
-      if(!emailNotified) console.warn('Track registration saved; coach email notification may be delayed.');
-      status.textContent='Registration received. Taking you to secure payment…';
+      status.textContent='Registration received. Opening secure payment…';
+      notifyCoach(payload,result.registration_id).then(function(ok){
+        if(!ok) console.warn('Track registration saved; coach email notification may be delayed.');
+      });
       window.location.assign(stripeUrl);
     }catch(error){
-      status.textContent=error && error.message ? error.message : 'We could not start your registration. Please try again.';
-      setBusy(false);
+      console.warn('Track Supabase registration failed; using browser fallback so the parent is not blocked.',error);
+      status.textContent='Opening secure payment…';
+      submitTrackClinicFallback(payload);
     }
   });
 
@@ -3617,7 +3614,7 @@ document.addEventListener('click',function(e){
   const feverUnitedLocation='St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092';
   const cohorts={
     preview:{slug:'preview',value:'Demonstration Cohort',label:'Demonstration Cohort — Director Preview',name:'Demonstration Cohort — Friday Session',session1:'Friday date confirmed with selected team',session2:'',time:'Based on the confirmed team schedule',location:'Partner club training location',price:'Confirmed with club',minimum:'Confirmed with club',maximum:'12',kind:'preview',status:'Preview',paymentUrl:''},
-    feverFri530:{slug:'feverFri530',value:'Fever United — Friday 5:30 PM Session',label:'Friday 5:30 PM Session — Registration Open',name:'Fever United — Friday 5:30 PM Session',session1:'Friday — date confirmed with the club',session2:'',time:'5:30–6:30 PM',location:feverUnitedLocation,price:'$25 per athlete for this session',minimum:'6 confirmed athletes',maximum:'12 athletes',kind:'registration',status:'Registration Open — payment link pending',paymentUrl:''}
+    feverFri530:{slug:'feverFri530',value:'Fever United — Friday 5:30 PM Session',label:'Friday 5:30 PM Session — Registration Open',name:'Fever United — Friday 5:30 PM Session',session1:'Friday — date confirmed with the club',session2:'',time:'5:30–6:30 PM',location:feverUnitedLocation,price:'$25 per athlete for this session',minimum:'6 confirmed athletes',maximum:'12 athletes',kind:'registration',status:'Registration Open — secure payment next',paymentUrl:'https://buy.stripe.com/14AcN4cyz54H241brX5os01'}
   };
 
   function currentCohort(){
@@ -3658,8 +3655,8 @@ document.addEventListener('click',function(e){
     if(paymentMethod)paymentMethod.value='Stripe';
     subject.value=club.value==='Fever United'?'New Fever United Friday Registration — DU Airlines':'New Club Registration — DU Airlines Elite Academy';
     submitButton.textContent='Submit Friday Registration';
-    status.textContent='Register first. Coach Du will send the $25 payment link once the Friday group is confirmed.';
-    agreementText.textContent='I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for one Friday session. I understand that the session requires at least 6 confirmed athletes to proceed and is limited to 12 athletes. I understand that payment is $25 per athlete for the session and that payment details will be sent separately until the updated Stripe link is connected.';
+    status.textContent='Register your athlete, then continue directly to secure $25 payment.';
+    agreementText.textContent='I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for one Friday session. I understand that the session requires at least 6 confirmed athletes to proceed and is limited to 12 athletes. I understand that payment is $25 per athlete and I will continue to secure payment after registration.';
   }
 
   function setProcessing(processing, text){
@@ -3695,6 +3692,18 @@ document.addEventListener('click',function(e){
     return payload;
   }
 
+  function submitFeverFallback(meta){
+    const frame=document.createElement('iframe');
+    frame.name='du-fever-submit-'+Date.now();
+    frame.hidden=true;
+    frame.setAttribute('aria-hidden','true');
+    document.body.appendChild(frame);
+    form.target=frame.name;
+    form.submit();
+    status.textContent='Registration sent. Opening secure payment…';
+    window.setTimeout(function(){window.location.assign(meta.paymentUrl);},350);
+  }
+
   function showLocalConfirmation(meta,kind){
     const card=document.getElementById('clubRegistrationCard');
     const confirmation=document.getElementById('clubConfirmation');
@@ -3705,8 +3714,8 @@ document.addEventListener('click',function(e){
     card.style.display='none'; confirmation.classList.add('show');
     if(kind==='registration'){
       title.textContent='Friday registration received.';
-      message.textContent='Thank you. Your athlete is registered for the Friday group. Coach Du will send the $25 payment link once the minimum group is confirmed.';
-      summary.innerHTML='<div><span>Session</span><strong>'+meta.name+'</strong></div><div><span>Price</span><strong>$25 per athlete</strong></div><div><span>Minimum</span><strong>6 confirmed athletes</strong></div><div><span>Payment</span><strong>Link sent separately</strong></div>';
+      message.textContent='Thank you. Your athlete registration has been received. Opening secure payment now.';
+      summary.innerHTML='<div><span>Session</span><strong>'+meta.name+'</strong></div><div><span>Price</span><strong>$25 per athlete</strong></div><div><span>Minimum</span><strong>6 confirmed athletes</strong></div><div><span>Payment</span><strong>Secure Stripe checkout</strong></div>';
     }else{
       title.textContent='Preview registration received.';
       message.textContent='The director preview registration was received. No live payment is required.';
@@ -3743,7 +3752,7 @@ document.addEventListener('click',function(e){
     if(meta.kind==='preview'){
       autoresponse.value='Hello '+parentName+',\n\nYour partner-club preview registration has been received.\n\nAthlete: '+athleteName+'\nSelected cohort: '+meta.name+'\nStatus: Preview only — no payment collected.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
     }else{
-      autoresponse.value='Hello '+parentName+',\n\nYour Friday Speed & Movement registration has been received.\n\nParent: '+parentName+'\nAthlete: '+athleteName+'\nClub: '+club.value+'\nSession: '+meta.name+'\nDate: '+meta.session1+'\nTime: '+meta.time+'\nLocation: '+meta.location+'\nPrice: $25 per athlete\nMinimum: 6 confirmed athletes\nMaximum: 12 athletes\nPayment: Coach Du will send the payment link once the group is confirmed.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
+      autoresponse.value='Hello '+parentName+',\n\nYour Friday Speed & Movement registration has been received.\n\nParent: '+parentName+'\nAthlete: '+athleteName+'\nClub: '+club.value+'\nSession: '+meta.name+'\nDate: '+meta.session1+'\nTime: '+meta.time+'\nLocation: '+meta.location+'\nPrice: $25 per athlete\nMinimum: 6 confirmed athletes\nMaximum: 12 athletes\nPayment: Secure Stripe checkout opens immediately after registration.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
     }
 
     setProcessing(true,'Submitting…');
@@ -3751,10 +3760,20 @@ document.addEventListener('click',function(e){
 
     try{
       await submitViaFormSubmit();
+      if(meta.kind==='registration' && meta.paymentUrl){
+        status.textContent='Registration received. Opening secure payment…';
+        window.location.assign(meta.paymentUrl);
+        return;
+      }
       status.textContent='Registration saved successfully.';
       setProcessing(false);
       showLocalConfirmation(meta,meta.kind);
     }catch(error){
+      if(meta.kind==='registration' && meta.paymentUrl){
+        console.warn('Fever AJAX registration failed; using browser form fallback.',error);
+        submitFeverFallback(meta);
+        return;
+      }
       setProcessing(false);
       status.textContent='Registration could not be saved. '+(error&&error.message?error.message:'Please retry.');
       status.setAttribute('role','alert');
