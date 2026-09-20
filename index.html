@@ -2640,7 +2640,13 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <h2 class="head center">Reserve your athlete’s <span class="accent">place</span></h2>
 <p class="lede center">Register for the small-group Long Jump &amp; Triple Jump clinic below. After your details are saved, you’ll be taken securely to Stripe to complete payment.</p>
 <div class="soccer-form-card">
-<form id="trackClinicForm" novalidate="">
+<form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" id="trackClinicForm" method="POST" novalidate="">
+<input name="submission_type" type="hidden" value="Track &amp; Field Clinic Registration"/>
+<input name="_next" type="hidden" value="https://buy.stripe.com/8x200ibuv9kX6kh3Zv5os05"/>
+<input name="_url" type="hidden" value="https://duairlineseliteacademy.com/"/>
+<input name="_template" type="hidden" value="table"/>
+<input name="_captcha" type="hidden" value="false"/>
+<input name="_subject" type="hidden" value="New Track Clinic Registration — DU Airlines Elite Academy"/>
 <input id="trackClinicSource" name="source" type="hidden" value="track_clinic_web"/>
 <input aria-hidden="true" autocomplete="off" class="honeypot" id="trackClinicWebsite" name="website" tabindex="-1" type="text"/>
 <div class="soccer-form-grid">
@@ -3242,7 +3248,6 @@ document.addEventListener('click',function(e){
   const session=document.getElementById('trackClinicSession');
   const school=document.getElementById('trackClinicSchool');
   const source=document.getElementById('trackClinicSource');
-  const stripeUrl='https://buy.stripe.com/8x200ibuv9kX6kh3Zv5os05';
   const clinicNames={
     '2026-10-01-horizontal-jumps':'Thursday, October 1 — Horizontal Jumps Clinic'
   };
@@ -3263,54 +3268,6 @@ document.addEventListener('click',function(e){
     const parts=fullName.trim().replace(/\s+/g,' ').split(' ');
     if(parts.length===1)return {first:parts[0],last:'—'};
     return {first:parts.slice(0,-1).join(' '),last:parts[parts.length-1]};
-  }
-
-  function trackClinicNotificationFields(payload){
-    return {
-      _subject:'New Track Clinic Registration — '+payload.athlete_name+' — Oct 1',
-      _template:'table',
-      _captcha:'false',
-      submission_type:'Track & Field Clinic Registration',
-      athlete_name:payload.athlete_name,
-      parent_guardian:payload.parent_name,
-      parent_email:payload.parent_email,
-      parent_phone:payload.parent_phone,
-      grade:payload.grade,
-      event_interest:payload.event_interest,
-      school_club:payload.school_group||'Not provided',
-      clinic:payload.clinic_name,
-      clinic_date:'Thursday, October 1, 2026',
-      registration_status:'REGISTRATION RECEIVED — PAYMENT NEXT'
-    };
-  }
-
-  async function submitTrackClinicNotification(payload){
-    const data=new FormData();
-    Object.entries(trackClinicNotificationFields(payload)).forEach(([name,value])=>data.append(name,String(value)));
-    const response=await fetch('https://formsubmit.co/ajax/coachdu@duairlineseliteacademy.com',{
-      method:'POST',
-      headers:{'Accept':'application/json'},
-      body:data,
-      keepalive:true
-    });
-    let result={};
-    try{result=await response.json();}catch(_){result={};}
-    const success=response.ok && (result.success===true || String(result.success).toLowerCase()==='true');
-    if(!success)throw new Error(result.message||'Email notification could not be sent.');
-    return result;
-  }
-
-  function submitTrackClinicFallback(payload){
-    const previewForm=document.createElement('form');
-    previewForm.method='POST';
-    previewForm.action='https://formsubmit.co/coachdu@duairlineseliteacademy.com';
-    previewForm.style.display='none';
-    const fields={...trackClinicNotificationFields(payload),_next:stripeUrl};
-    Object.entries(fields).forEach(([name,value])=>{
-      const input=document.createElement('input'); input.type='hidden'; input.name=name; input.value=value; previewForm.appendChild(input);
-    });
-    document.body.appendChild(previewForm);
-    window.DUPaidFlow.submitToHiddenFrame(previewForm,stripeUrl);
   }
 
   form.addEventListener('submit',async function(event){
@@ -3340,45 +3297,26 @@ document.addEventListener('click',function(e){
       website:honeypot?honeypot.value:''
     };
 
-    if(window.location.protocol==='file:'){
-      status.textContent='Local preview: sending registration and opening secure payment…';
-      submitTrackClinicFallback(payload);
-      return;
-    }
-
     setBusy(true);
-    status.textContent='Saving your registration…';
+    status.textContent='Saving registration…';
 
     try{
-      const response=await fetch('https://hiktwkdfvlujszczthdu.supabase.co/functions/v1/clinic-registration',{
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'apikey':'sb_publishable_MKg9hNp7WuDlnK0TnlwwtQ_n8j4-dYx'
-        },
-        body:JSON.stringify(payload)
-      });
-      let result={};
-      try{result=await response.json();}catch(e){result={};}
-      if(!response.ok || result.ok!==true){
-        throw new Error(result.error||'We could not start your registration. Please try again.');
-      }
-
-      status.textContent='Registration saved. Sending confirmation…';
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),5000);
       try{
-        await submitTrackClinicNotification(payload);
-        status.textContent='Registration received. Opening secure payment…';
-        window.location.assign(stripeUrl);
-      }catch(notificationError){
-        console.warn('Track registration saved; browser email notification failed, using form fallback.',notificationError);
-        status.textContent='Registration saved. Opening secure payment…';
-        submitTrackClinicFallback(payload);
-      }
+        await fetch('https://hiktwkdfvlujszczthdu.supabase.co/functions/v1/clinic-registration',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':'sb_publishable_MKg9hNp7WuDlnK0TnlwwtQ_n8j4-dYx'},
+          body:JSON.stringify(payload),
+          signal:controller.signal
+        });
+      }finally{clearTimeout(timer);}
     }catch(error){
-      console.warn('Track Supabase registration failed; using browser fallback so the parent is not blocked.',error);
-      status.textContent='Opening secure payment…';
-      submitTrackClinicFallback(payload);
+      console.warn('Supabase registration save did not complete before FormSubmit handoff.',error);
     }
+
+    status.textContent='Registration received. Continuing to secure payment…';
+    HTMLFormElement.prototype.submit.call(form);
   });
 
   document.addEventListener('click',function(event){
@@ -3387,6 +3325,7 @@ document.addEventListener('click',function(e){
     event.preventDefault();
     history.pushState({route:'track-register'}, '', '#/track/register');
     window.dispatchEvent(new PopStateEvent('popstate'));
+    setTimeout(()=>document.getElementById('track-clinic-form')?.scrollIntoView({behavior:'smooth',block:'start'}),60);
   });
 })();
 </script>
