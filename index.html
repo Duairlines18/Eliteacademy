@@ -2501,7 +2501,6 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <label for="football-pathway-select">Selected Coaching Pathway</label>
 <select id="football-pathway-select" name="Selected Coaching Pathway" required="">
 <option value="">Choose a pathway</option>
-<option value="Individual Athlete Development Inquiry">Individual Athlete Development Inquiry</option>
 <option value="Performance Evaluation — $65">Performance Evaluation — $65</option>
 </select>
 </div>
@@ -2523,7 +2522,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <a href="#track-development">What Athletes Develop</a>
 <a href="#track-outcomes">Outcomes</a>
 <a href="#track-programs">Coaching Pathways</a>
-<a class="track-form-trigger" data-track-mode="enquire" data-track-pathway="Individual Athlete Development Inquiry" href="#/track/enquire">Get Started</a>
+<a class="track-clinic-trigger" data-track-mode="register" href="#/track/register">Clinic Registration</a>
 <a href="#/hub/login">Performance Hub</a>
 </nav>
 <a class="top-cta" data-route="home" href="#/">← Home</a>
@@ -2589,7 +2588,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div class="wrap">
 <p class="eyebrow center">Track &amp; Field Development</p>
 <h2 class="head center">Specialist horizontal jumps support <span class="accent">around the athlete’s environment</span></h2>
-<p class="lede center">Coach Du works with school groups, small athlete groups and individual jumpers through focused technical development rather than fixed public session packages.</p>
+<p class="lede center">Coach Du works with school groups and athletes through focused horizontal-jump clinics and one-on-one performance evaluations.</p>
 <div class="soccer-path-grid">
 <article class="soccer-card feature reveal">
 <div class="program-label">Small-Group Horizontal Jump Development</div>
@@ -2604,19 +2603,6 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <li>Video feedback where appropriate</li>
 </ul>
 <a class="btn btn-primary track-clinic-trigger" data-track-mode="register" href="#/track/register">Register With Your School / Group →</a>
-</article>
-<article class="soccer-card reveal">
-<div class="program-label">Individual Athlete Development</div>
-<h3>Structured support built around the athlete</h3>
-<p>For jumpers and track athletes who may need a more individualized blend of technical coaching, programming, video review and Performance Hub support.</p>
-<ul class="program-list">
-<li>Goal and schedule review</li>
-<li>Event-specific technical priorities</li>
-<li>Speed and movement development</li>
-<li>Individual programming where appropriate</li>
-<li>Clear next-step recommendation</li>
-</ul>
-<a class="btn btn-ghost track-form-trigger" data-track-mode="enquire" data-track-pathway="Individual Athlete Development Inquiry" href="#/track/enquire">Start a Conversation →</a>
 </article>
 <article class="soccer-card reveal">
 <div class="program-label">Performance Evaluation</div>
@@ -2764,7 +2750,6 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <label for="track-pathway-select">Selected Coaching Pathway</label>
 <select id="track-pathway-select" name="Selected Coaching Pathway" required="">
 <option value="">Choose a pathway</option>
-<option value="Individual Athlete Development Inquiry">Individual Athlete Development Inquiry</option>
 <option value="Performance Evaluation — $65">Performance Evaluation — $65</option>
 </select>
 </div>
@@ -2898,13 +2883,12 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 
         let focusSection = null;
         if (route === 'track-register') focusSection = document.getElementById('track-clinic-form');
-        if (route === 'track-enquire' || route === 'track-evaluation') focusSection = document.getElementById('track-form');
+        if (route === 'track-evaluation') focusSection = document.getElementById('track-form');
 
         if (focusSection) {
           trackView.classList.add('track-form-focus');
           focusSection.classList.add('track-focus-active');
           const pathwaySelect = document.getElementById('track-pathway-select');
-          if (pathwaySelect && route === 'track-enquire') pathwaySelect.value = 'Individual Athlete Development Inquiry';
           if (pathwaySelect && route === 'track-evaluation') pathwaySelect.value = 'Performance Evaluation — $65';
         }
       }
@@ -2920,7 +2904,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
     if (location.hash === '#/registration-complete') return 'registration-complete';
     if (location.hash === '#/football') return 'home';
     if (location.hash === '#/track/register') return 'track-register';
-    if (location.hash === '#/track/enquire') return 'track-enquire';
+    if (location.hash === '#/track/enquire') return 'track';
     if (location.hash === '#/track/evaluation') return 'track-evaluation';
     if (location.hash === '#/track') return 'track';
     if (location.hash === '#/professional-performance') return 'professional';
@@ -3281,16 +3265,11 @@ document.addEventListener('click',function(e){
     return {first:parts.slice(0,-1).join(' '),last:parts[parts.length-1]};
   }
 
-  function submitTrackClinicFallback(payload){
-    const previewForm=document.createElement('form');
-    previewForm.method='POST';
-    previewForm.action='https://formsubmit.co/coachdu@duairlineseliteacademy.com';
-    previewForm.style.display='none';
-    const fields={
-      _subject:'New Track Clinic Registration — '+payload.athlete_name,
+  function trackClinicNotificationFields(payload){
+    return {
+      _subject:'New Track Clinic Registration — '+payload.athlete_name+' — Oct 1',
       _template:'table',
       _captcha:'false',
-      _next:stripeUrl,
       submission_type:'Track & Field Clinic Registration',
       athlete_name:payload.athlete_name,
       parent_guardian:payload.parent_name,
@@ -3300,8 +3279,33 @@ document.addEventListener('click',function(e){
       event_interest:payload.event_interest,
       school_club:payload.school_group||'Not provided',
       clinic:payload.clinic_name,
+      clinic_date:'Thursday, October 1, 2026',
       registration_status:'REGISTRATION RECEIVED — PAYMENT NEXT'
     };
+  }
+
+  async function submitTrackClinicNotification(payload){
+    const data=new FormData();
+    Object.entries(trackClinicNotificationFields(payload)).forEach(([name,value])=>data.append(name,String(value)));
+    const response=await fetch('https://formsubmit.co/ajax/coachdu@duairlineseliteacademy.com',{
+      method:'POST',
+      headers:{'Accept':'application/json'},
+      body:data,
+      keepalive:true
+    });
+    let result={};
+    try{result=await response.json();}catch(_){result={};}
+    const success=response.ok && (result.success===true || String(result.success).toLowerCase()==='true');
+    if(!success)throw new Error(result.message||'Email notification could not be sent.');
+    return result;
+  }
+
+  function submitTrackClinicFallback(payload){
+    const previewForm=document.createElement('form');
+    previewForm.method='POST';
+    previewForm.action='https://formsubmit.co/coachdu@duairlineseliteacademy.com';
+    previewForm.style.display='none';
+    const fields={...trackClinicNotificationFields(payload),_next:stripeUrl};
     Object.entries(fields).forEach(([name,value])=>{
       const input=document.createElement('input'); input.type='hidden'; input.name=name; input.value=value; previewForm.appendChild(input);
     });
@@ -3360,8 +3364,16 @@ document.addEventListener('click',function(e){
         throw new Error(result.error||'We could not start your registration. Please try again.');
       }
 
-      status.textContent='Registration received. Opening secure payment…';
-      window.location.assign(stripeUrl);
+      status.textContent='Registration saved. Sending confirmation…';
+      try{
+        await submitTrackClinicNotification(payload);
+        status.textContent='Registration received. Opening secure payment…';
+        window.location.assign(stripeUrl);
+      }catch(notificationError){
+        console.warn('Track registration saved; browser email notification failed, using form fallback.',notificationError);
+        status.textContent='Registration saved. Opening secure payment…';
+        submitTrackClinicFallback(payload);
+      }
     }catch(error){
       console.warn('Track Supabase registration failed; using browser fallback so the parent is not blocked.',error);
       status.textContent='Opening secure payment…';
