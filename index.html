@@ -2991,18 +2991,22 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
   }
 
   function routeFromHash(){
-    if (location.hash === '#/soccer') return 'soccer';
-    if (location.hash === '#/club-registration') return 'club-registration';
-    if (location.hash === '#/registration-complete') return 'registration-complete';
-    if (location.hash === '#/football') return 'home';
-    if (location.hash === '#/track/register') return 'track-register';
-    if (location.hash === '#/track/enquire') return 'track';
-    if (location.hash === '#/track/evaluation') return 'track-evaluation';
-    if (location.hash === '#/track') return 'track';
-    if (location.hash === '#/professional-performance') return 'professional';
-    if (location.hash === '#/professional-join') { location.hash='#/hub/login/professional'; return 'hub'; }
-    if (location.hash === '#/professional-hub') { location.hash='#/hub/login/professional'; return 'hub'; }
-    if (location.hash === '#/hub' || location.hash.startsWith('#/hub/')) return 'hub';
+    // Ignore optional route query parameters (for example ?source=manager-name)
+    // when deciding which SPA view to show. The Fever registration flow reads
+    // the source parameter separately and stores it with the registration.
+    const hashPath=(location.hash||'').split('?')[0];
+    if (hashPath === '#/soccer') return 'soccer';
+    if (hashPath === '#/club-registration') return 'club-registration';
+    if (hashPath === '#/registration-complete') return 'registration-complete';
+    if (hashPath === '#/football') return 'home';
+    if (hashPath === '#/track/register') return 'track-register';
+    if (hashPath === '#/track/enquire') return 'track';
+    if (hashPath === '#/track/evaluation') return 'track-evaluation';
+    if (hashPath === '#/track') return 'track';
+    if (hashPath === '#/professional-performance') return 'professional';
+    if (hashPath === '#/professional-join') { location.hash='#/hub/login/professional'; return 'hub'; }
+    if (hashPath === '#/professional-hub') { location.hash='#/hub/login/professional'; return 'hub'; }
+    if (hashPath === '#/hub' || hashPath.startsWith('#/hub/')) return 'hub';
     return 'home';
   }
 
