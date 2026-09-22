@@ -1328,6 +1328,81 @@ font:inherit;
 .club-confirmation-summary div{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-bottom:1px solid var(--hair-soft)}
 .club-confirmation-summary div:last-child{border-bottom:0}.club-confirmation-summary span{color:var(--sage)}
 @media(min-width:720px){.club-reg-overview{grid-template-columns:repeat(3,minmax(0,1fr))}.club-reg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.club-payment-options{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* ===== Fever United Friday — premium mobile booking flow ===== */
+.fever-reg-portal{padding-block:clamp(1.4rem,5vw,3.2rem);min-height:calc(100vh - 58px)}
+.fever-reg-shell{max-width:680px;margin-inline:auto}
+.fever-reg-intro{margin:0 0 1.15rem}
+.fever-partner-lockup{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-bottom:.8rem;color:var(--gold);font-size:.66rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.fever-partner-lockup .x{color:var(--sage-dim);font-weight:400}
+.fever-reg-intro h2{font-family:var(--serif);font-size:clamp(2rem,8.5vw,3rem);line-height:1.02;letter-spacing:-.02em;margin:0 0 .5rem;color:var(--cream)}
+.fever-reg-tagline{margin:0;color:var(--sage);font-size:.9rem}
+.fever-event-card{margin:1.15rem 0 1.35rem;padding:1rem 1.05rem;border:1px solid var(--hair);border-radius:10px;background:linear-gradient(180deg,rgba(20,50,34,.82),rgba(10,28,20,.72));box-shadow:0 20px 50px -42px rgba(199,162,90,.75)}
+.fever-event-top{display:flex;align-items:center;justify-content:space-between;gap:.85rem;padding-bottom:.8rem;margin-bottom:.8rem;border-bottom:1px solid var(--hair-soft)}
+.fever-event-date{font-weight:650;color:var(--cream);font-size:.9rem}
+.fever-event-price{color:var(--gold-soft);font-weight:700;font-size:.9rem;white-space:nowrap}
+.fever-location{display:grid;gap:.16rem}
+.fever-location strong{color:var(--cream);font-size:.9rem;line-height:1.3}
+.fever-location span{color:var(--sage);font-size:.82rem;line-height:1.35}
+.fever-step-label{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:0 0 .35rem}
+.fever-step-title{font-family:var(--serif);font-size:1.45rem;line-height:1.15;margin:0 0 .8rem;color:var(--cream)}
+.fever-session-grid{display:grid;grid-template-columns:1fr;gap:.72rem;margin-bottom:1.15rem}
+.fever-session{width:100%;text-align:left;border:1px solid rgba(255,255,255,.13);border-radius:9px;background:#0b2016;color:var(--cream);padding:1rem 1.05rem;cursor:pointer;font:inherit;transition:border-color .16s ease,background .16s ease,transform .16s ease,box-shadow .16s ease}
+.fever-session:hover{border-color:rgba(199,162,90,.55)}
+.fever-session:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.fever-session[aria-pressed="true"]{border-color:var(--gold);background:linear-gradient(180deg,rgba(199,162,90,.12),rgba(11,32,22,.92));box-shadow:0 14px 32px -28px rgba(199,162,90,.9);transform:translateY(-1px)}
+.fever-session-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.fever-session-time{font-family:var(--serif);font-size:1.28rem;font-weight:600}
+.fever-session-check{width:1.4rem;height:1.4rem;border-radius:50%;border:1px solid rgba(255,255,255,.18);display:grid;place-items:center;color:transparent;font-size:.75rem;flex:0 0 auto}
+.fever-session[aria-pressed="true"] .fever-session-check{border-color:var(--gold);background:var(--gold);color:var(--ink)}
+.fever-session[disabled]{cursor:not-allowed;opacity:.56;transform:none;box-shadow:none;border-color:rgba(255,255,255,.09)}
+.fever-session[disabled] .fever-session-check{display:none}
+.fever-session[disabled] .fever-session-meta{color:var(--sage-dim)}
+.fever-session[disabled] .fever-session-dot{background:#a66;opacity:.9}
+.fever-session-meta{display:flex;align-items:center;gap:.45rem;margin-top:.28rem;color:var(--sage);font-size:.76rem}
+.fever-session-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.85}
+.fever-form-wrap{max-height:0;opacity:0;overflow:hidden;pointer-events:none;transform:translateY(4px);transition:max-height .35s ease,opacity .22s ease,transform .22s ease}
+.fever-form-wrap.show{max-height:1300px;opacity:1;overflow:visible;pointer-events:auto;transform:none}
+.fever-reg-card{padding:1.05rem;border-radius:10px;background:var(--ink);border:1px solid var(--hair)}
+.fever-form-section{margin-top:1.15rem}
+.fever-form-section:first-child{margin-top:0}
+.fever-form-section h3{font-family:var(--serif);font-size:1.12rem;color:var(--gold-soft);margin:0 0 .7rem}
+.fever-field-stack{display:grid;gap:.75rem}
+.fever-field{display:grid;gap:.36rem}
+.fever-field label{font-size:.75rem;font-weight:650;color:var(--cream)}
+.fever-field input{width:100%;min-height:50px;background:#0b2016;color:var(--cream);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:.78rem .85rem;font:inherit;transition:border-color .15s ease,box-shadow .15s ease}
+.fever-field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,162,90,.13)}
+.fever-field input::placeholder{color:#687b70}
+.fever-consent{display:flex;gap:.65rem;align-items:flex-start;margin:1rem 0 .9rem;color:var(--sage);font-size:.78rem;line-height:1.45}
+.fever-consent input{margin-top:.18rem;accent-color:var(--gold)}
+.fever-consent button{padding:0;border:0;background:none;color:var(--gold-soft);font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.fever-pay-summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.75rem 0 .85rem;border-top:1px solid var(--hair-soft);color:var(--sage);font-size:.78rem}
+.fever-pay-summary strong{color:var(--cream);font-size:.92rem}
+.fever-submit{width:100%;min-height:52px;border-radius:7px;font-weight:700;font-size:.93rem}
+.fever-submit:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.fever-secure-note{display:flex;justify-content:center;align-items:center;gap:.4rem;margin:.65rem 0 0;color:var(--sage-dim);font-size:.72rem}
+.fever-form-status{min-height:1.25rem;margin:.65rem 0 0;color:var(--sage);font-size:.76rem;text-align:center}
+.fever-form-status[role="alert"]{color:#f1b6ad}
+.fever-terms{border:0;border-radius:12px;padding:0;background:var(--ink);color:var(--cream);width:min(92vw,520px);box-shadow:0 28px 80px rgba(0,0,0,.45)}
+.fever-terms::backdrop{background:rgba(4,12,8,.72);backdrop-filter:blur(3px)}
+.fever-terms-inner{padding:1.25rem}
+.fever-terms h3{font-family:var(--serif);color:var(--gold-soft);margin:0 0 .65rem;font-size:1.35rem}
+.fever-terms p{color:var(--sage);font-size:.86rem;line-height:1.6;margin:.5rem 0}
+.fever-terms-close{width:100%;margin-top:.9rem}
+.fever-return-actions{display:grid;gap:.7rem;max-width:360px;margin:1.2rem auto 0}
+.fever-return-actions .btn{width:100%}
+@media(min-width:560px){
+  .fever-session-grid{grid-template-columns:1fr 1fr}
+  .fever-field-stack.two{grid-template-columns:1fr 110px}
+  .fever-reg-card{padding:1.3rem}
+}
+@media(max-width:430px){
+  .fever-reg-portal{padding-top:1rem}
+  .fever-reg-intro h2{font-size:clamp(2rem,10vw,2.55rem)}
+  .fever-event-card{margin-top:1rem}
+  .fever-reg-card{padding:.95rem}
+  .fever-session{padding:.9rem}
+}
 </style>
 <style>
 /* ===== Focused mobile containment + club-registration UX pass ===== */
@@ -2221,87 +2296,101 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <a class="top-cta" data-route="soccer" href="#/soccer">← Soccer</a>
 </div>
 </header>
-<section class="club-reg-portal" id="club-registration">
-<div class="wrap club-reg-shell">
-<div class="club-reg-hero">
-<p class="eyebrow center">Partner Club Registration</p>
-<h2>Friday Speed &amp; Movement Session</h2>
-<p class="lede center">Select your approved club and cohort below to register your athlete.</p>
+<section class="club-reg-portal fever-reg-portal" id="club-registration">
+<div class="wrap fever-reg-shell">
+<div class="fever-reg-intro">
+<div class="fever-partner-lockup"><span>DU Airlines Elite Academy</span><span class="x">×</span><span>Fever United</span></div>
+<h2>Friday Speed &amp; Movement</h2>
+<p class="fever-reg-tagline">Speed • Change of Direction • Movement Quality</p>
 </div>
-<div class="club-reg-card" id="clubRegistrationCard">
-<p class="eyebrow">Partner-Club Registration</p>
-<h3>Register your athlete</h3>
-<p class="lede">Select your approved club and Friday cohort to view the session time, location and registration requirements.</p>
-<form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" id="integratedClubForm" method="POST" novalidate="">
-<input id="clubSubmissionType" name="submission_type" type="hidden" value="Club Registration"/>
+<div class="fever-event-card" aria-label="Friday session details">
+<div class="fever-event-top">
+<span class="fever-event-date">Friday, September 25</span>
+<span class="fever-event-price">$25 / athlete</span>
+</div>
+<div class="fever-location">
+<strong>St. Martin-in-the-Fields Episcopal Church</strong>
+<span>223 S Pearson Ln, Southlake, TX 76092</span>
+</div>
+</div>
+<div id="clubRegistrationCard">
+<p class="fever-step-label">Step 1</p>
+<h3 class="fever-step-title">Choose your session</h3>
+<div class="fever-session-grid" role="group" aria-label="Choose a Friday session">
+<button class="fever-session" data-session="feverFri530" id="feverSession530" type="button" aria-pressed="false">
+<span class="fever-session-row"><span class="fever-session-time">5:30–6:30 PM</span><span class="fever-session-check" aria-hidden="true">✓</span></span>
+<span class="fever-session-meta"><span class="fever-session-dot"></span>Limited availability · 12 athlete cap</span>
+</button>
+<button class="fever-session" data-session="feverFri630" id="feverSession630" type="button" aria-pressed="false">
+<span class="fever-session-row"><span class="fever-session-time">6:30–7:30 PM</span><span class="fever-session-check" aria-hidden="true">✓</span></span>
+<span class="fever-session-meta"><span class="fever-session-dot"></span>Limited availability · 12 athlete cap</span>
+</button>
+</div>
+<div class="fever-form-wrap" id="feverFormWrap">
+<form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" class="fever-reg-card" id="integratedClubForm" method="POST" novalidate="">
+<input id="clubSubmissionType" name="submission_type" type="hidden" value="Fever United Friday Registration"/>
 <input name="_url" type="hidden" value="https://duairlineseliteacademy.com/"/>
 <input name="_template" type="hidden" value="table"/>
 <input name="_captcha" type="hidden" value="false"/>
 <input aria-hidden="true" autocomplete="off" name="_honey" style="position:absolute;left:-9999px;opacity:0;pointer-events:none" tabindex="-1" type="text" value=""/>
 <input id="clubAutoresponse" name="_autoresponse" type="hidden" value=""/>
 <input id="clubSubmissionDate" name="submission_date" type="hidden"/>
-<input id="clubSubject" name="_subject" type="hidden" value="New Club Registration — DU Airlines Elite Academy"/>
-<input id="clubRegistrationStatus" name="registration_status" type="hidden" value="Pending Verification"/>
-<input id="clubPaymentStatus" name="payment_status" type="hidden" value="Pending Payment"/>
+<input id="clubSubject" name="_subject" type="hidden" value="New Fever United Friday Registration — DU Airlines"/>
+<input id="clubRegistrationStatus" name="registration_status" type="hidden" value="Registration Received — Payment Pending"/>
+<input id="clubPaymentStatus" name="payment_status" type="hidden" value="Awaiting Payment"/>
 <input id="clubPaymentMethod" name="payment_method" type="hidden" value="Stripe"/>
 <input id="clubPaymentLink" name="payment_link" type="hidden" value=""/>
-<input id="clubSession1" name="session_1" type="hidden" value=""/>
+<input id="clubSession1" name="session_1" type="hidden" value="Friday, September 25, 2026"/>
 <input id="clubSession2" name="session_2" type="hidden" value=""/>
 <input id="clubSessionTime" name="session_time" type="hidden" value=""/>
-<input id="clubProgramLocation" name="program_location" type="hidden" value=""/>
-<input id="clubTotalPrice" name="total_price" type="hidden" value=""/>
+<input id="clubProgramLocation" name="program_location" type="hidden" value="St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092"/>
+<input id="clubTotalPrice" name="total_price" type="hidden" value="$25 per athlete"/>
 <input id="clubActivationMinimum" name="activation_minimum" type="hidden" value=""/>
-<input id="clubMaximumCapacity" name="maximum_capacity" type="hidden" value=""/>
-<h4 class="club-reg-section-title">Select Your Club</h4>
-<div class="club-reg-grid">
-<div class="club-reg-field">
-<label for="integratedClub">Club</label>
-<select id="integratedClub" name="club" required="">
-<option value="">Select your club</option>
-<option value="Partner Club Preview">Partner Club Preview</option>
-<option value="Fever United">Fever United</option>
-</select>
-</div>
-<div class="club-reg-field">
-<label for="integratedCohort">Cohort or time preference</label>
-<select disabled="" id="integratedCohort" name="cohort" required=""><option value="">Select a club first</option></select>
+<input id="clubMaximumCapacity" name="maximum_capacity" type="hidden" value="12 athletes"/>
+<input id="integratedClub" name="club" type="hidden" value="Fever United"/>
+<input id="integratedCohort" name="cohort" type="hidden" value=""/>
+<input id="clubSource" name="source" type="hidden" value="club_web"/>
+<div class="fever-form-section">
+<p class="fever-step-label">Step 2</p>
+<h3>Who’s training Friday?</h3>
+<div class="fever-field-stack two">
+<div class="fever-field"><label for="clubAthleteName">Athlete full name</label><input autocomplete="name" id="clubAthleteName" name="athlete_name" placeholder="Athlete full name" required=""/></div>
+<div class="fever-field"><label for="clubAthleteAge">Age</label><input id="clubAthleteAge" inputmode="numeric" max="19" min="6" name="athlete_age" placeholder="Age" required="" type="number"/></div>
 </div>
 </div>
-<div class="club-reg-preview" hidden="" id="integratedCohortDetails"></div>
-<h4 class="club-reg-section-title">Parent Information</h4>
-<div class="club-reg-grid">
-<div class="club-reg-field"><label for="clubParentName">Parent or guardian full name</label><input id="clubParentName" name="parent_name" required=""/></div>
-<div class="club-reg-field"><label for="clubParentEmail">Parent email address</label><input autocomplete="email" id="clubParentEmail" name="email" required="" type="email"/></div>
-<div class="club-reg-field"><label for="clubParentPhone">Parent phone number</label><input autocomplete="tel" id="clubParentPhone" name="parent_phone" required="" type="tel"/></div>
+<div class="fever-form-section">
+<h3>Your details</h3>
+<div class="fever-field-stack">
+<div class="fever-field"><label for="clubParentName">Parent / guardian name</label><input autocomplete="name" id="clubParentName" name="parent_name" placeholder="Full name" required=""/></div>
+<div class="fever-field"><label for="clubParentEmail">Email</label><input autocomplete="email" id="clubParentEmail" inputmode="email" name="email" placeholder="you@example.com" required="" type="email"/></div>
+<div class="fever-field"><label for="clubParentPhone">Mobile number</label><input autocomplete="tel" id="clubParentPhone" inputmode="tel" name="parent_phone" placeholder="(555) 555-5555" required="" type="tel"/></div>
 </div>
-<h4 class="club-reg-section-title">Athlete Information</h4>
-<div class="club-reg-grid">
-<div class="club-reg-field"><label for="clubAthleteName">Athlete full name</label><input id="clubAthleteName" name="athlete_name" required=""/></div>
-<div class="club-reg-field"><label for="clubAthleteAge">Athlete age</label><input id="clubAthleteAge" max="19" min="6" name="athlete_age" required="" type="number"/></div>
 </div>
-<div id="clubPaymentSection">
-<h4 class="club-reg-section-title">Secure Payment</h4>
-<div class="club-reg-preview" id="clubPaymentNotice">
-<strong>$25 for the Friday session.</strong><br/>
-            Submit the registration first, then you will continue directly to secure $25 payment.
-          </div>
-</div>
-<div class="club-reg-grid" style="margin-top:1rem">
-<div class="club-reg-field full"><label for="clubTypedName">Typed parent or guardian name</label><input id="clubTypedName" name="typed_parent_name" required=""/></div>
-</div>
-<label class="club-consent"><input id="clubAgreement" name="registration_consent" required="" type="checkbox" value="Yes"/><span id="clubAgreementText">I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for the selected Friday session. I understand that the session requires at least 6 confirmed athletes to proceed and is limited to 12 athletes. After registration, you will continue directly to secure $25 payment.</span></label>
-<div class="club-submit-row"><button class="btn btn-primary" id="clubSubmitButton" type="submit">Submit Registration</button><span class="club-form-status" id="clubFormStatus">Registration is pending until payment is received and verified.</span></div>
+<label class="fever-consent"><input id="clubAgreement" name="registration_consent" required="" type="checkbox" value="Yes"/><span>I am authorized to register this athlete and agree to the <button id="feverTermsOpen" type="button">session terms</button>.</span></label>
+<div class="fever-pay-summary"><span id="feverSelectedSummary">Selected session</span><strong>$25</strong></div>
+<button class="btn btn-primary fever-submit" id="clubSubmitButton" type="submit">Continue to Payment — $25</button>
+<p class="fever-secure-note"><span aria-hidden="true">🔒</span> Secure payment via Stripe</p>
+<p aria-live="polite" class="fever-form-status" id="clubFormStatus"></p>
 </form>
 </div>
+</div>
 <div aria-live="polite" class="club-confirmation" id="clubConfirmation">
-<p class="eyebrow center">Registration Complete</p>
-<h3 id="clubConfirmationTitle">Registration Received</h3>
-<p id="clubConfirmationMessage">Thank you. Your Friday registration has been received. Continue to secure payment to complete the reservation.</p>
+<p class="eyebrow center">Registration Saved</p>
+<h3 id="clubConfirmationTitle">Your spot is saved.</h3>
+<p id="clubConfirmationMessage">Opening secure payment now.</p>
 <div class="club-confirmation-summary" id="clubConfirmationSummary"></div>
-<a class="btn btn-primary" data-route="home" href="#/">Return Home</a>
 </div>
 </div>
 </section>
+<dialog class="fever-terms" id="feverTermsDialog">
+<div class="fever-terms-inner">
+<h3>Friday Session Terms</h3>
+<p>By registering, you confirm that you are authorized to register the athlete for this Du Airlines Elite Academy session with Fever United.</p>
+<p>Training participation is subject to normal club and venue expectations. Please share any relevant medical or participation restrictions directly with Coach Du before the session.</p>
+<p>Registration is for one athlete and one selected Friday session. Payment is $25 per athlete.</p>
+<button class="btn btn-primary fever-terms-close" id="feverTermsClose" type="button">Got it</button>
+</div>
+</dialog>
 </div>
 <div class="site-view" hidden="" id="registration-complete-view">
 <header class="topbar">
@@ -2317,11 +2406,14 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <section class="club-reg-portal">
 <div class="wrap club-reg-shell">
 <div aria-live="polite" class="club-confirmation show" id="stripeReturnConfirmation">
-<p class="eyebrow center">Registration Complete</p>
-<h3 id="stripeReturnTitle">Registration Received</h3>
-<p id="stripeReturnMessage">Thank you. Your Friday registration has been received. Continue to secure payment to complete the reservation.</p>
+<p class="eyebrow center">Friday Registration</p>
+<h3 id="stripeReturnTitle">You’re all set for Friday.</h3>
+<p id="stripeReturnMessage">We’ll see you Friday. Your session details are below.</p>
 <div class="club-confirmation-summary" id="stripeReturnSummary"></div>
-<a class="btn btn-primary" data-route="home" href="#/">Return Home</a>
+<div class="fever-return-actions">
+<a class="btn btn-primary" href="#/club-registration" id="registerAnotherAthlete">Register Another Athlete</a>
+<a class="btn btn-ghost" data-route="home" href="#/">Return Home</a>
+</div>
 </div>
 </div>
 </section>
@@ -3372,88 +3464,136 @@ document.addEventListener('click',function(e){
 </script>
 <script>
 (function(){
+  const form=document.getElementById('integratedClubForm');
+  if(!form)return;
+
   const club=document.getElementById('integratedClub');
   const cohort=document.getElementById('integratedCohort');
-  const details=document.getElementById('integratedCohortDetails');
-  const form=document.getElementById('integratedClubForm');
+  const formWrap=document.getElementById('feverFormWrap');
+  const sessionButtons=[].slice.call(document.querySelectorAll('.fever-session[data-session]'));
   const status=document.getElementById('clubFormStatus');
   const submitButton=document.getElementById('clubSubmitButton');
-  const paymentSection=document.getElementById('clubPaymentSection');
-  const agreementText=document.getElementById('clubAgreementText');
-  const submissionType=document.getElementById('clubSubmissionType');
-  const registrationStatus=document.getElementById('clubRegistrationStatus');
-  const paymentStatus=document.getElementById('clubPaymentStatus');
-  const paymentMethod=document.getElementById('clubPaymentMethod');
   const paymentLink=document.getElementById('clubPaymentLink');
   const autoresponse=document.getElementById('clubAutoresponse');
-  const subject=document.getElementById('clubSubject');
-  const session1=document.getElementById('clubSession1');
-  const session2=document.getElementById('clubSession2');
   const sessionTime=document.getElementById('clubSessionTime');
-  const programLocation=document.getElementById('clubProgramLocation');
-  const totalPrice=document.getElementById('clubTotalPrice');
-  const activationMinimum=document.getElementById('clubActivationMinimum');
-  const maximumCapacity=document.getElementById('clubMaximumCapacity');
-  if(!club||!cohort||!form)return;
+  const sourceField=document.getElementById('clubSource');
+  const selectedSummary=document.getElementById('feverSelectedSummary');
+  const termsDialog=document.getElementById('feverTermsDialog');
+  const termsOpen=document.getElementById('feverTermsOpen');
+  const termsClose=document.getElementById('feverTermsClose');
 
   const feverUnitedLocation='St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092';
-  const cohorts={
-    preview:{slug:'preview',value:'Demonstration Cohort',label:'Demonstration Cohort — Director Preview',name:'Demonstration Cohort — Friday Session',session1:'Friday date confirmed with selected team',session2:'',time:'Based on the confirmed team schedule',location:'Partner club training location',price:'Confirmed with club',minimum:'Confirmed with club',maximum:'12',kind:'preview',status:'Preview',paymentUrl:''},
-    feverFri530:{slug:'feverFri530',value:'Fever United — Friday 5:30 PM Session',label:'Friday 5:30 PM Session — Registration Open',name:'Fever United — Friday 5:30 PM Session',session1:'Friday — date confirmed with the club',session2:'',time:'5:30–6:30 PM',location:feverUnitedLocation,price:'$25 per athlete for this session',minimum:'6 confirmed athletes',maximum:'12 athletes',kind:'registration',status:'Registration Open — secure payment next',paymentUrl:'https://buy.stripe.com/14AcN4cyz54H241brX5os01'}
+  const sessionDate='Friday, September 25, 2026';
+  const sessions={
+    feverFri530:{
+      slug:'feverFri530',
+      value:'Fever United — Friday 5:30 PM Session',
+      name:'Fever United — Friday 5:30 PM Session',
+      time:'5:30–6:30 PM',
+      paymentUrl:'https://buy.stripe.com/9B6dR8dCDcx93858fL5os06'
+    },
+    feverFri630:{
+      slug:'feverFri630',
+      value:'Fever United — Friday 6:30 PM Session',
+      name:'Fever United — Friday 6:30 PM Session',
+      time:'6:30–7:30 PM',
+      paymentUrl:'https://buy.stripe.com/4gMbJ0buvgNp8spcw15os07'
+    }
   };
+  const clubRegistrationEndpoint='https://hiktwkdfvlujszczthdu.supabase.co/functions/v1/club-registration';
+  const supabasePublishableKey='sb_publishable_MKg9hNp7WuDlnK0TnlwwtQ_n8j4-dYx';
+  const sessionCapacity=12;
+  const capacityState={};
 
-  function currentCohort(){
-    return Object.values(cohorts).find(function(c){return c.value===cohort.value}) || null;
-  }
+  let selectedSession=null;
 
-  function setHidden(meta){
-    session1.value=meta?meta.session1:'';
-    session2.value=meta?meta.session2:'';
-    sessionTime.value=meta?meta.time:'';
-    programLocation.value=meta?meta.location:'';
-    totalPrice.value=meta?meta.price:'';
-    activationMinimum.value=meta?meta.minimum:'';
-    maximumCapacity.value=meta?meta.maximum:'';
-    if(paymentLink)paymentLink.value=meta&&meta.paymentUrl?meta.paymentUrl:'';
-  }
+  function safeStorageGet(key){try{return sessionStorage.getItem(key)||'';}catch(e){return '';}}
+  function safeStorageSet(key,value){try{sessionStorage.setItem(key,value);}catch(e){}}
 
-  function configureFor(meta){
-    if(!meta){details.hidden=true;if(paymentSection)paymentSection.hidden=true;return;}
-    setHidden(meta);
-    details.innerHTML='<strong>'+meta.name+'</strong><br>'+meta.session1+(meta.session2?'<br>'+meta.session2:'')+'<br>Time: '+meta.time+'<br>Location: '+meta.location+'<br>Price: '+meta.price+'<br>Minimum: '+meta.minimum+'<br>Maximum: '+meta.maximum+'<br>Status: '+meta.status;
-    details.hidden=false;
+  const params=new URLSearchParams(window.location.search);
+  const hashQuery=(window.location.hash.split('?')[1]||'');
+  const hashParams=new URLSearchParams(hashQuery);
+  const incomingSource=(params.get('source')||hashParams.get('source')||'club_web').trim().slice(0,80);
+  if(sourceField)sourceField.value=incomingSource||'club_web';
 
-    if(meta.kind==='preview'){
-      if(paymentSection)paymentSection.hidden=true;
-      submissionType.value='Club Registration Preview'; registrationStatus.value='Preview'; paymentStatus.value='Not Applicable — Preview';
-      if(paymentMethod)paymentMethod.value=''; if(paymentLink)paymentLink.value='';
-      subject.value='Partner Club Registration Preview — DU Airlines';
-      submitButton.textContent='Submit Preview Registration'; status.textContent='Director preview — no live payment is collected.';
-      agreementText.textContent='I confirm that the information provided is accurate and understand that this is a director preview registration and does not create a paid athlete reservation.';
+  function currentSession(){return selectedSession&&sessions[selectedSession]?sessions[selectedSession]:null;}
+
+  function buttonForSession(slug){return sessionButtons.find(function(button){return button.dataset.session===slug;})||null;}
+
+  function updateSessionAvailability(slug,state){
+    const button=buttonForSession(slug);
+    const meta=sessions[slug];
+    if(!button||!meta)return;
+    const label=button.querySelector('.fever-session-meta');
+    const remaining=Math.max(0,Number(state&&state.remaining));
+    const full=!!(state&&state.full);
+    capacityState[slug]={remaining:remaining,full:full};
+    button.disabled=full;
+    button.setAttribute('aria-disabled',full?'true':'false');
+    if(full){
+      button.setAttribute('aria-pressed','false');
+      if(label)label.innerHTML='<span class="fever-session-dot"></span>FULL · Choose the other session';
+      if(selectedSession===slug){
+        selectedSession=null;
+        cohort.value='';
+        sessionTime.value='';
+        paymentLink.value='';
+        if(formWrap)formWrap.classList.remove('show');
+        if(selectedSummary)selectedSummary.textContent='';
+      }
       return;
     }
-
-    if(paymentSection)paymentSection.hidden=false;
-    submissionType.value=club.value==='Fever United'?'Fever United Friday Registration':'Club Registration';
-    registrationStatus.value='Registration Received — Payment Link Pending';
-    paymentStatus.value='Payment Link Pending';
-    if(paymentMethod)paymentMethod.value='Stripe';
-    subject.value=club.value==='Fever United'?'New Fever United Friday Registration — DU Airlines':'New Club Registration — DU Airlines Elite Academy';
-    submitButton.textContent='Submit Friday Registration';
-    status.textContent='Register your athlete, then continue directly to secure $25 payment.';
-    agreementText.textContent='I confirm that the information provided is accurate, that I am the athlete’s parent or legal guardian, and that I am registering the athlete for one Friday session. I understand that the session requires at least 6 confirmed athletes to proceed and is limited to 12 athletes. I understand that payment is $25 per athlete and I will continue to secure payment after registration.';
+    if(label){
+      const copy=remaining<=3&&remaining>0?remaining+' spot'+(remaining===1?'':'s')+' left':'Spots available';
+      label.innerHTML='<span class="fever-session-dot"></span>'+copy+' · '+sessionCapacity+' athlete cap';
+    }
   }
 
-  function setProcessing(processing, text){
+  async function refreshCapacity(){
+    try{
+      const url=clubRegistrationEndpoint+'?club_name='+encodeURIComponent('Fever United')+'&session_label='+encodeURIComponent(sessionDate);
+      const response=await fetch(url,{headers:{'apikey':supabasePublishableKey,'Accept':'application/json'},cache:'no-store'});
+      const result=await response.json();
+      if(!response.ok||result.ok!==true)return;
+      Object.keys(sessions).forEach(function(slug){
+        const meta=sessions[slug];
+        const state=result.sessions&&result.sessions[meta.time];
+        const count=state?Number(state.count||0):0;
+        updateSessionAvailability(slug,{remaining:Math.max(sessionCapacity-count,0),full:count>=sessionCapacity});
+      });
+    }catch(error){
+      console.warn('Capacity check unavailable; final capacity will still be enforced at registration.',error);
+    }
+  }
+
+  function selectSession(slug,options){
+    const meta=sessions[slug];
+    if(!meta)return;
+    if(capacityState[slug]&&capacityState[slug].full)return;
+    selectedSession=slug;
+    cohort.value=meta.value;
+    sessionTime.value=meta.time;
+    paymentLink.value=meta.paymentUrl;
+    sessionButtons.forEach(function(button){
+      const active=button.dataset.session===slug;
+      button.setAttribute('aria-pressed',active?'true':'false');
+    });
+    if(selectedSummary)selectedSummary.textContent=meta.time+' · Friday, Sep 25';
+    if(formWrap)formWrap.classList.add('show');
+  }
+
+  sessionButtons.forEach(function(button){
+    button.addEventListener('click',function(){selectSession(button.dataset.session);});
+  });
+
+  if(termsOpen&&termsDialog){termsOpen.addEventListener('click',function(){if(typeof termsDialog.showModal==='function')termsDialog.showModal();else termsDialog.setAttribute('open','');});}
+  if(termsClose&&termsDialog){termsClose.addEventListener('click',function(){if(typeof termsDialog.close==='function')termsDialog.close();else termsDialog.removeAttribute('open');});}
+  if(termsDialog){termsDialog.addEventListener('click',function(event){if(event.target===termsDialog&&typeof termsDialog.close==='function')termsDialog.close();});}
+
+  function setProcessing(processing,text){
     submitButton.disabled=processing;
     submitButton.dataset.submitting=processing?'true':'false';
-    if(processing){
-      submitButton.dataset.originalText=submitButton.dataset.originalText||submitButton.textContent;
-      submitButton.textContent=text||'Preparing secure payment…';
-    }else if(submitButton.dataset.originalText){
-      submitButton.textContent=submitButton.dataset.originalText;
-      delete submitButton.dataset.originalText;
-    }
+    submitButton.textContent=processing?(text||'Saving Your Spot…'):'Continue to Payment — $25';
   }
 
   function ajaxEndpoint(){
@@ -3465,155 +3605,174 @@ document.addEventListener('click',function(e){
     const response=await fetch(ajaxEndpoint(),{
       method:'POST',
       headers:{'Accept':'application/json'},
+      keepalive:true,
       body:new FormData(form)
     });
     let payload={};
     try{payload=await response.json();}catch(e){payload={};}
-    const success=response.ok && (payload.success===true || String(payload.success).toLowerCase()==='true');
-    if(!success){
-      const message=payload.message||'We could not send the notification. Please try again.';
-      throw new Error(message);
-    }
+    const success=response.ok&&(payload.success===true||String(payload.success).toLowerCase()==='true');
+    if(!success)throw new Error(payload.message||'Notification could not be sent.');
     return payload;
   }
 
   async function submitClubRegistration(payload){
-    const response=await fetch('https://hiktwkdfvlujszczthdu.supabase.co/functions/v1/club-registration',{
+    const response=await fetch(clubRegistrationEndpoint,{
       method:'POST',
       headers:{
         'Content-Type':'application/json',
-        'apikey':'sb_publishable_MKg9hNp7WuDlnK0TnlwwtQ_n8j4-dYx'
+        'apikey':supabasePublishableKey
       },
       body:JSON.stringify(payload)
     });
     let result={};
     try{result=await response.json();}catch(e){result={};}
-    if(!response.ok||result.ok!==true)throw new Error(result.error||'We could not save the registration. Please try again.');
+    if(!response.ok||result.ok!==true){
+      const error=new Error(result.error||'We couldn’t save your registration. Please try again.');
+      error.code=result.code||'';
+      throw error;
+    }
     return result;
   }
 
-  function submitFeverFallback(meta){
-    const frame=document.createElement('iframe');
-    frame.name='du-fever-submit-'+Date.now();
-    frame.hidden=true;
-    frame.setAttribute('aria-hidden','true');
-    document.body.appendChild(frame);
-    form.target=frame.name;
-    form.submit();
-    status.textContent='Registration sent. Opening secure payment…';
-    window.setTimeout(function(){window.location.assign(meta.paymentUrl);},350);
+  function rememberForReturn(meta,parentName,athleteName,parentEmail,parentPhone,athleteAge){
+    const data={
+      athleteName:athleteName,
+      athleteAge:athleteAge,
+      parentName:parentName,
+      parentEmail:parentEmail,
+      parentPhone:parentPhone,
+      sessionSlug:meta.slug,
+      sessionTime:meta.time,
+      sessionDate:sessionDate,
+      location:feverUnitedLocation,
+      source:sourceField?sourceField.value:'club_web'
+    };
+    safeStorageSet('du_fever_last_registration',JSON.stringify(data));
+    safeStorageSet('du_fever_contact',JSON.stringify({parentName:parentName,parentEmail:parentEmail,parentPhone:parentPhone,sessionSlug:meta.slug}));
   }
 
-  function showLocalConfirmation(meta,kind){
-    const card=document.getElementById('clubRegistrationCard');
-    const confirmation=document.getElementById('clubConfirmation');
-    const title=document.getElementById('clubConfirmationTitle');
-    const message=document.getElementById('clubConfirmationMessage');
-    const summary=document.getElementById('clubConfirmationSummary');
-    if(!card||!confirmation)return;
-    card.style.display='none'; confirmation.classList.add('show');
-    if(kind==='registration'){
-      title.textContent='Friday registration received.';
-      message.textContent='Thank you. Your athlete registration has been received. Opening secure payment now.';
-      summary.innerHTML='<div><span>Session</span><strong>'+meta.name+'</strong></div><div><span>Price</span><strong>$25 per athlete</strong></div><div><span>Minimum</span><strong>6 confirmed athletes</strong></div><div><span>Payment</span><strong>Secure Stripe checkout</strong></div>';
-    }else{
-      title.textContent='Preview registration received.';
-      message.textContent='The director preview registration was received. No live payment is required.';
-      summary.innerHTML='<div><span>Status</span><strong>Preview only</strong></div>';
-    }
-    confirmation.scrollIntoView({behavior:'smooth',block:'start'});
+  function restoreRepeatRegistration(){
+    let contact=null;
+    try{contact=JSON.parse(safeStorageGet('du_fever_contact')||'null');}catch(e){contact=null;}
+    if(!contact)return;
+    const parentName=document.getElementById('clubParentName');
+    const parentEmail=document.getElementById('clubParentEmail');
+    const parentPhone=document.getElementById('clubParentPhone');
+    if(parentName&&!parentName.value)parentName.value=contact.parentName||'';
+    if(parentEmail&&!parentEmail.value)parentEmail.value=contact.parentEmail||'';
+    if(parentPhone&&!parentPhone.value)parentPhone.value=contact.parentPhone||'';
+    if(contact.sessionSlug&&sessions[contact.sessionSlug])selectSession(contact.sessionSlug,{silent:true});
   }
 
-  club.addEventListener('change',function(){
-    cohort.disabled=!club.value;
-    if(!club.value){cohort.innerHTML='<option value="">Select a club first</option>';details.hidden=true;setHidden(null);if(paymentSection)paymentSection.hidden=true;return;}
-    if(club.value==='Fever United'){
-      cohort.innerHTML='<option value="">Select a Fever United Friday session</option><option value="'+cohorts.feverFri530.value+'">'+cohorts.feverFri530.label+'</option>';
-    }else{
-      cohort.innerHTML='<option value="">Select your team or training cohort</option><option value="'+cohorts.preview.value+'">'+cohorts.preview.label+'</option>';
-    }
-    details.hidden=true; setHidden(null); if(paymentSection)paymentSection.hidden=true;
-  });
-
-  cohort.addEventListener('change',function(){cohort.setCustomValidity('');configureFor(currentCohort());});
+  restoreRepeatRegistration();
+  refreshCapacity();
 
   form.addEventListener('submit',async function(event){
     event.preventDefault();
-    if(submitButton.dataset.submitting==='true') return;
+    if(submitButton.dataset.submitting==='true')return;
 
-    const meta=currentCohort();
-    if(!meta){cohort.setCustomValidity('Please select a cohort or time preference.');cohort.reportValidity();return;}
-    cohort.setCustomValidity('');
-    if(!form.checkValidity()){form.reportValidity();return;}
+    const meta=currentSession();
+    if(!meta){
+      status.textContent='Choose a session time first.';
+      status.setAttribute('role','alert');
+      sessionButtons[0]?.focus();
+      return;
+    }
+
+    if(!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+
+    const honeypot=form.querySelector('input[name="_honey"]');
+    if(honeypot&&honeypot.value)return;
 
     document.getElementById('clubSubmissionDate').value=new Date().toISOString();
     const parentName=document.getElementById('clubParentName').value.trim();
+    const parentEmail=document.getElementById('clubParentEmail').value.trim();
+    const parentPhone=document.getElementById('clubParentPhone').value.trim();
     const athleteName=document.getElementById('clubAthleteName').value.trim();
-    if(meta.kind==='preview'){
-      autoresponse.value='Hello '+parentName+',\n\nYour partner-club preview registration has been received.\n\nAthlete: '+athleteName+'\nSelected cohort: '+meta.name+'\nStatus: Preview only — no payment collected.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
-    }else{
-      autoresponse.value='Hello '+parentName+',\n\nYour Friday Speed & Movement registration has been received.\n\nParent: '+parentName+'\nAthlete: '+athleteName+'\nClub: '+club.value+'\nSession: '+meta.name+'\nDate: '+meta.session1+'\nTime: '+meta.time+'\nLocation: '+meta.location+'\nPrice: $25 per athlete\nMinimum: 6 confirmed athletes\nMaximum: 12 athletes\nPayment: Secure Stripe checkout opens immediately after registration.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
-    }
+    const athleteAge=Number(document.getElementById('clubAthleteAge').value||0);
 
-    setProcessing(true,'Submitting…');
+    autoresponse.value='Hi '+parentName+',\n\n'+athleteName+' is registered for the Du Airlines × Fever United Friday Speed & Movement session.\n\nDate: '+sessionDate+'\nTime: '+meta.time+'\nLocation: '+feverUnitedLocation+'\nPrice: $25\n\nComplete secure payment through the Stripe checkout that opens next.\n\nCoach Du\ncoachdu@duairlineseliteacademy.com';
+
+    setProcessing(true,'Saving Your Spot…');
+    status.removeAttribute('role');
     status.textContent='Saving registration…';
 
     try{
-      if(meta.kind==='registration'){
-        const payload={
-          club_name:club.value,
-          cohort_name:cohort.value,
-          session_label:meta.session1,
-          session_time:meta.time,
-          program_location:meta.location,
-          price_cents:2500,
-          parent_name:parentName,
-          parent_email:document.getElementById('clubParentEmail').value.trim(),
-          parent_phone:document.getElementById('clubParentPhone').value.trim(),
-          athlete_name:athleteName,
-          athlete_age:Number(document.getElementById('clubAthleteAge').value||0),
-          source:'club_web',
-          website:form.querySelector('input[name="_honey"]')?.value||''
-        };
-        await submitClubRegistration(payload);
-        submitViaFormSubmit().catch(function(error){console.warn('Club registration saved; email notification may be delayed.',error);});
-        if(meta.paymentUrl){
-          status.textContent='Registration received. Opening secure payment…';
-          window.location.assign(meta.paymentUrl);
-          return;
-        }
-      }else{
-        await submitViaFormSubmit();
+      const payload={
+        club_name:'Fever United',
+        cohort_name:meta.value,
+        session_label:sessionDate,
+        session_time:meta.time,
+        program_location:feverUnitedLocation,
+        price_cents:2500,
+        parent_name:parentName,
+        parent_email:parentEmail,
+        parent_phone:parentPhone,
+        athlete_name:athleteName,
+        athlete_age:athleteAge,
+        source:sourceField?sourceField.value:'club_web',
+        website:honeypot?honeypot.value:''
+      };
+
+      const registrationResult=await submitClubRegistration(payload);
+      if(Number.isFinite(Number(registrationResult.remaining_spots))){
+        updateSessionAvailability(meta.slug,{remaining:Number(registrationResult.remaining_spots),full:Number(registrationResult.remaining_spots)<=0});
       }
-      status.textContent='Registration saved successfully.';
-      setProcessing(false);
-      showLocalConfirmation(meta,meta.kind);
+      rememberForReturn(meta,parentName,athleteName,parentEmail,parentPhone,athleteAge);
+
+      // Give the coach notification a short, bounded opportunity to complete before leaving the page.
+      // Registration has already been saved in Supabase, so notification trouble never loses the lead.
+      try{
+        await Promise.race([
+          submitViaFormSubmit(),
+          new Promise(function(resolve){setTimeout(resolve,1800);})
+        ]);
+      }catch(notificationError){
+        console.warn('Registration saved; email notification may be delayed.',notificationError);
+      }
+
+      setProcessing(true,'Opening Secure Payment…');
+      status.textContent='Registration saved. Opening secure payment…';
+      window.location.assign(meta.paymentUrl);
     }catch(error){
       setProcessing(false);
-      status.textContent='Registration could not be saved. '+(error&&error.message?error.message:'Please retry.');
+      if(error&&error.code==='SESSION_FULL'){
+        updateSessionAvailability(meta.slug,{remaining:0,full:true});
+        status.textContent=meta.time+' is now full. Please choose the other Friday session.';
+        status.setAttribute('role','alert');
+        const other=sessionButtons.find(function(button){return !button.disabled;});
+        if(other)other.focus();
+        refreshCapacity();
+        return;
+      }
+      status.textContent=(error&&error.message)||'We couldn’t save your registration. Please try again.';
       status.setAttribute('role','alert');
     }
   });
 
-  // Stripe Payment Link return page. The website does not alter payment_status here;
-  // Stripe remains the source of truth for payment confirmation/reconciliation.
-  const params=new URLSearchParams(window.location.search);
-  if(params.get('payment')==='success'){
-    const slug=params.get('cohort');
-    const meta=slug&&cohorts[slug]?cohorts[slug]:null;
-    const returnSummary=document.getElementById('stripeReturnSummary');
-    const returnTitle=document.getElementById('stripeReturnTitle');
-    const returnMessage=document.getElementById('stripeReturnMessage');
-    if(returnSummary&&returnTitle&&returnMessage){
-      if(meta&&meta.kind==='active'){
-        returnTitle.textContent='Registration Received';
-        returnMessage.textContent='Registration Complete. Additional session details will be sent by email.';
-        returnSummary.innerHTML='<div><span>Cohort</span><strong>'+meta.name+'</strong></div><div><span>Session 1</span><strong>'+meta.session1+'</strong></div><div><span>Session 2</span><strong>'+meta.session2+'</strong></div><div><span>Time</span><strong>'+meta.time+'</strong></div><div><span>Location</span><strong>'+meta.location+'</strong></div>';
-      }else{
-        returnTitle.textContent='Payment confirmation received.';
-        returnMessage.textContent='Thank you. Additional session details will be sent by email.';
-      }
-    }
+  // Populate the site's payment-return screen when Stripe is configured to return here.
+  let last=null;
+  try{last=JSON.parse(safeStorageGet('du_fever_last_registration')||'null');}catch(e){last=null;}
+  const returnSummary=document.getElementById('stripeReturnSummary');
+  const returnTitle=document.getElementById('stripeReturnTitle');
+  const returnMessage=document.getElementById('stripeReturnMessage');
+  if(returnSummary&&returnTitle&&returnMessage&&last){
+    returnTitle.textContent='You’re all set for Friday.';
+    returnMessage.textContent='We’ll see you Friday. Your session details are below.';
+    returnSummary.innerHTML='<div><span>Athlete</span><strong>'+last.athleteName+'</strong></div><div><span>Time</span><strong>'+last.sessionTime+'</strong></div><div><span>Date</span><strong>Friday, September 25</strong></div><div><span>Location</span><strong>St. Martin-in-the-Fields Episcopal Church</strong></div><div><span>Address</span><strong>223 S Pearson Ln, Southlake, TX 76092</strong></div>';
+  }
+
+  const registerAnother=document.getElementById('registerAnotherAthlete');
+  if(registerAnother){
+    registerAnother.addEventListener('click',function(){
+      const athleteName=document.getElementById('clubAthleteName');
+      const athleteAge=document.getElementById('clubAthleteAge');
+      if(athleteName)athleteName.value='';
+      if(athleteAge)athleteAge.value='';
+    });
   }
 })();
 </script>
