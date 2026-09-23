@@ -272,6 +272,44 @@
   .track-form-back:hover{color:var(--cream)}
   #track-view.track-form-focus .section-compact{padding-top:clamp(2rem,5vw,4rem);padding-bottom:clamp(3rem,7vw,5rem)}
 
+  /* ---------- Soccer + Track offer cleanup (targeted) ---------- */
+  #soccer-view #programs,
+  #track-view #track-programs{
+    padding-top:clamp(2.6rem,6vw,4.6rem);
+    padding-bottom:clamp(2.8rem,6vw,4.8rem);
+  }
+  #soccer-view #programs .lede.center,
+  #track-view #track-programs .lede.center{
+    max-width:54ch;
+    margin-bottom:1.45rem;
+  }
+  #soccer-view #programs .club-team-pathway{margin-top:1.2rem}
+  #soccer-view #programs .soccer-eval-wrap{margin-top:1.2rem}
+  #track-view #track-programs .soccer-path-grid{gap:1.1rem}
+  #track-view #track-programs .soccer-card{padding:clamp(1.35rem,3vw,1.9rem)}
+  #track-view #track-programs .program-list{margin-bottom:1.25rem}
+
+  /* Keep registration mechanics intact, but remove forms from the normal offer journey. */
+  #soccer-view #soccer-form{display:none}
+  #soccer-view #soccer-form.soccer-booking-open{display:block}
+  #track-view:not(.track-form-focus) > #track-clinic-form,
+  #track-view:not(.track-form-focus) > #track-form{display:none}
+
+  @media(max-width:720px){
+    #soccer-view #programs,
+    #track-view #track-programs{
+      padding-top:2.25rem;
+      padding-bottom:2.5rem;
+    }
+    #soccer-view #programs .lede.center,
+    #track-view #track-programs .lede.center{margin-bottom:1.1rem}
+    #soccer-view #programs .club-team-pathway,
+    #soccer-view #programs .soccer-eval-wrap{margin-top:1rem}
+    #track-view #track-programs .soccer-path-grid{gap:.9rem}
+    #track-view #track-programs .soccer-card .btn,
+    #soccer-view #programs .btn{width:100%;justify-content:center}
+  }
+
   /* ---------- pathways ---------- */
   .paths{display:grid;gap:1.4rem}
   @media(min-width:820px){ .paths{grid-template-columns:1fr 1fr} }
@@ -2170,9 +2208,9 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </section>
 <section class="section-compact" id="programs" style="background:var(--ink);border-block:1px solid var(--hair)">
 <div class="wrap">
-<p class="eyebrow center">Soccer Coaching Pathways</p>
-<h2 class="head center">Choose the pathway that fits <span class="accent">your athlete</span></h2>
-<p class="lede center">Every athlete receives the same coaching philosophy. The difference is simply the level of commitment.</p>
+<p class="eyebrow center">Soccer Performance</p>
+<h2 class="head center">Two clear ways to <span class="accent">get started</span></h2>
+<p class="lede center">Individual athlete? Start with a $65 Performance Evaluation. Club athlete? Join an approved club or team session.</p>
 <article aria-labelledby="club-team-title" class="club-team-pathway reveal">
 <div class="club-path-top">
 <span class="club-path-kicker">Approved Partner Clubs &amp; Teams</span>
@@ -2183,15 +2221,11 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </div>
 </div>
 <div class="club-path-content">
-<p>A focused Friday speed and movement session for youth soccer athletes registering through an approved partner club or team.</p>
+<p>A focused Friday session for youth soccer athletes registering through an approved partner club or team.</p>
 <ul class="club-feature-list">
-<li>One Friday session</li>
-<li>Small-group development</li>
-<li>Groups of 8–12 athletes</li>
-<li>First-step acceleration</li>
-<li>Sprint mechanics</li>
-<li>Fast feet</li>
-<li>Running efficiency</li>
+<li>Small groups of 8–12 athletes</li>
+<li>First-step acceleration &amp; sprint mechanics</li>
+<li>Fast feet &amp; running efficiency</li>
 <li>Explosive movement</li>
 <li>Technical coaching</li>
 </ul>
@@ -2208,7 +2242,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <div class="soccer-eval-copy">
 <span class="program-label">One-to-One Assessment</span>
 <h3>Performance Evaluation</h3>
-<p>A focused one-on-one session to assess how your athlete moves, identify the highest-priority development areas and recommend the right next step.</p>
+<p>A one-on-one assessment of movement and sprint mechanics, with clear technical feedback and personalized next steps.</p>
 <div class="soccer-eval-points" aria-label="Evaluation includes">
 <span>Movement &amp; sprint assessment</span>
 <span>Technical feedback</span>
@@ -2226,9 +2260,9 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </section>
 <section class="section-compact" id="soccer-form">
 <div class="wrap">
-<p class="eyebrow center">Soccer Registration</p>
+<p class="eyebrow center">Performance Evaluation Booking</p>
 <h2 class="head center">Tell us about <span class="accent">your athlete</span></h2>
-<p class="lede center">Complete the form and Coach Du will follow up with availability and the best next step.</p>
+<p class="lede center">Complete the form to continue to secure payment for the $65 one-on-one evaluation.</p>
 <div class="soccer-form-card">
 <form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" id="soccerInquiryForm" method="POST" novalidate="">
 <input name="submission_type" type="hidden" value="Soccer Coaching Inquiry"/>
@@ -2679,36 +2713,34 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <section class="section-compact" id="track-programs" style="background:var(--ink);border-block:1px solid var(--hair)">
 <div class="wrap">
 <p class="eyebrow center">Track &amp; Field Development</p>
-<h2 class="head center">Specialist horizontal jumps support <span class="accent">around the athlete’s environment</span></h2>
-<p class="lede center">Coach Du works with school groups and athletes through focused horizontal-jump clinics and one-on-one performance evaluations.</p>
+<h2 class="head center">Two clear ways to <span class="accent">work with Coach Du</span></h2>
+<p class="lede center">Individual athlete? Start with a $65 Performance Evaluation. School or athlete group? Register for a focused horizontal-jumps clinic.</p>
 <div class="soccer-path-grid">
 <article class="soccer-card feature reveal">
-<div class="program-label">Small-Group Horizontal Jump Development</div>
-<h3>Long jump and triple jump clinics for school and athlete groups</h3>
-<p>Focused specialist coaching designed to complement the athlete’s existing school or team programme.</p>
+<div class="program-label">Small-Group / Clinic Development</div>
+<h3>Long Jump &amp; Triple Jump Clinics</h3>
+<p>Focused small-group technical coaching for school and athlete groups.</p>
 <ul class="program-list">
-<li>Long jump and triple jump development</li>
+<li>Long jump &amp; triple jump development</li>
 <li>Approach-run consistency</li>
-<li>Takeoff and landing mechanics</li>
-<li>Acceleration and sprint mechanics</li>
+<li>Takeoff &amp; landing mechanics</li>
+<li>Acceleration &amp; sprint mechanics</li>
 <li>Small-group technical coaching</li>
-<li>Video feedback where appropriate</li>
 </ul>
-<a class="btn btn-primary track-clinic-trigger" data-track-mode="register" href="#/track/register">Register With Your School / Group →</a>
+<a class="btn btn-primary track-clinic-trigger" data-track-mode="register" href="#/track/register">Register for a Group Clinic →</a>
 </article>
 <article class="soccer-card reveal">
-<div class="program-label">Performance Evaluation</div>
+<div class="program-label">One-to-One Assessment</div>
 <div class="program-price">$65</div>
-<h3>A clear starting point</h3>
-<p>A one-on-one assessment designed to identify technical priorities and the best development pathway.</p>
+<h3>Performance Evaluation</h3>
+<p>A focused assessment to identify movement, sprint or event priorities and the clearest next step.</p>
 <ul class="program-list">
 <li>Movement assessment</li>
 <li>Event or sprint assessment</li>
 <li>Technical feedback</li>
-<li>Goal discussion</li>
 <li>Personalized recommendations</li>
 </ul>
-<a class="btn btn-ghost track-form-trigger" data-track-mode="evaluation" data-track-pathway="Performance Evaluation — $65" href="#/track/evaluation">Book Performance Evaluation →</a>
+<a class="btn btn-ghost track-form-trigger" data-track-mode="evaluation" data-track-pathway="Performance Evaluation — $65" href="#/track/evaluation">Book Your Evaluation →</a>
 </article>
 </div>
 </div>
@@ -2907,6 +2939,10 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 
       homeView.hidden = !isHome;
       soccerView.hidden = !isSoccer;
+      if (isSoccer) {
+        const soccerBookingStep = document.getElementById('soccer-form');
+        if (soccerBookingStep) soccerBookingStep.classList.remove('soccer-booking-open');
+      }
       if (clubRegistrationView) clubRegistrationView.hidden = !isClubRegistration;
       if (registrationCompleteView) registrationCompleteView.hidden = !isRegistrationComplete;
       footballView.hidden = !isFootball;
@@ -3105,6 +3141,10 @@ document.addEventListener('click',function(e){
     const formSection = document.getElementById('soccer-form');
     const pathwaySelect = document.getElementById('soccer-pathway-select');
     const soccerView = document.getElementById('soccer-view');
+
+    if (formSection) {
+      formSection.classList.add('soccer-booking-open');
+    }
 
     if (pathwaySelect) {
       pathwaySelect.value = trigger.dataset.soccerPathway || '';
