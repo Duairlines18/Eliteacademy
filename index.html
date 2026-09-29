@@ -2388,7 +2388,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </div>
 <div class="fever-event-card" aria-label="Friday session details">
 <div class="fever-event-top">
-<span class="fever-event-date">Friday, September 25</span>
+<span class="fever-event-date">Friday, October 2</span>
 <span class="fever-event-price">$25 / athlete</span>
 </div>
 <div class="fever-location">
@@ -2401,7 +2401,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <h3 class="fever-step-title">Choose your session</h3>
 <div class="fever-session-grid" role="group" aria-label="Choose a Friday session">
 <button class="fever-session" data-session="feverFri530" id="feverSession530" type="button" aria-pressed="false">
-<span class="fever-session-row"><span class="fever-session-time">5:30–6:30 PM</span><span class="fever-session-check" aria-hidden="true">✓</span></span>
+<span class="fever-session-row"><span class="fever-session-time">5:45–6:45 PM</span><span class="fever-session-check" aria-hidden="true">✓</span></span>
 <span class="fever-session-meta"><span class="fever-session-dot"></span>Limited availability · 12 athlete cap</span>
 </button>
 <button class="fever-session" data-session="feverFri630" id="feverSession630" type="button" aria-pressed="false" aria-disabled="true" disabled>
@@ -2423,7 +2423,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <input id="clubPaymentStatus" name="payment_status" type="hidden" value="Awaiting Payment"/>
 <input id="clubPaymentMethod" name="payment_method" type="hidden" value="Stripe"/>
 <input id="clubPaymentLink" name="payment_link" type="hidden" value=""/>
-<input id="clubSession1" name="session_1" type="hidden" value="Friday, September 25, 2026"/>
+<input id="clubSession1" name="session_1" type="hidden" value="Friday, October 2, 2026"/>
 <input id="clubSession2" name="session_2" type="hidden" value=""/>
 <input id="clubSessionTime" name="session_time" type="hidden" value=""/>
 <input id="clubProgramLocation" name="program_location" type="hidden" value="St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092"/>
@@ -3648,13 +3648,13 @@ document.addEventListener('click',function(e){
   const termsClose=document.getElementById('feverTermsClose');
 
   const feverUnitedLocation='St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092';
-  const sessionDate='Friday, September 25, 2026';
+  const sessionDate='Friday, October 2, 2026';
   const sessions={
     feverFri530:{
       slug:'feverFri530',
-      value:'Fever United — Friday 5:30 PM Session',
-      name:'Fever United — Friday 5:30 PM Session',
-      time:'5:30–6:30 PM',
+      value:'Fever United — Friday 5:45 PM Session',
+      name:'Fever United — Friday 5:45 PM Session',
+      time:'5:45–6:45 PM',
       paymentUrl:'https://buy.stripe.com/9B6dR8dCDcx93858fL5os06'
     },
     feverFri630:{
@@ -3669,7 +3669,7 @@ document.addEventListener('click',function(e){
   const supabasePublishableKey='sb_publishable_MKg9hNp7WuDlnK0TnlwwtQ_n8j4-dYx';
   const sessionCapacity=12;
   const capacityState={};
-  const closedSessionSlug='feverFri630'; // September 25 only; update with the next Friday's schedule.
+  const closedSessionSlug='feverFri630'; // Closed legacy slot; update only if a second Friday session reopens.
 
   let selectedSession=null;
 
@@ -3745,7 +3745,7 @@ document.addEventListener('click',function(e){
       const active=button.dataset.session===slug;
       button.setAttribute('aria-pressed',active?'true':'false');
     });
-    if(selectedSummary)selectedSummary.textContent=meta.time+' · Friday, Sep 25';
+    if(selectedSummary)selectedSummary.textContent=meta.time+' · Friday, Oct 2';
     if(formWrap)formWrap.classList.add('show');
   }
 
@@ -3909,7 +3909,7 @@ document.addEventListener('click',function(e){
       setProcessing(false);
       if(error&&(error.code==='SESSION_FULL'||error.code==='SESSION_CLOSED')){
         updateSessionAvailability(meta.slug,{remaining:0,full:true,closed:error.code==='SESSION_CLOSED'});
-        status.textContent=error.code==='SESSION_CLOSED'?'Registration is closed for '+meta.time+'. Please choose 5:30 PM.':meta.time+' is now full. Please choose the other Friday session.';
+        status.textContent=error.code==='SESSION_CLOSED'?'Registration is closed for '+meta.time+'. Please choose 5:45 PM.':meta.time+' is now full. Please choose the other Friday session.';
         status.setAttribute('role','alert');
         const other=sessionButtons.find(function(button){return !button.disabled;});
         if(other)other.focus();
@@ -3930,7 +3930,7 @@ document.addEventListener('click',function(e){
   if(returnSummary&&returnTitle&&returnMessage&&last){
     returnTitle.textContent='You’re all set for Friday.';
     returnMessage.textContent='We’ll see you Friday. Your session details are below.';
-    returnSummary.innerHTML='<div><span>Athlete</span><strong>'+last.athleteName+'</strong></div><div><span>Time</span><strong>'+last.sessionTime+'</strong></div><div><span>Date</span><strong>Friday, September 25</strong></div><div><span>Location</span><strong>St. Martin-in-the-Fields Episcopal Church</strong></div><div><span>Address</span><strong>223 S Pearson Ln, Southlake, TX 76092</strong></div>';
+    returnSummary.innerHTML='<div><span>Athlete</span><strong>'+last.athleteName+'</strong></div><div><span>Time</span><strong>'+last.sessionTime+'</strong></div><div><span>Date</span><strong>Friday, October 2</strong></div><div><span>Location</span><strong>St. Martin-in-the-Fields Episcopal Church</strong></div><div><span>Address</span><strong>223 S Pearson Ln, Southlake, TX 76092</strong></div>';
   }
 
   const registerAnother=document.getElementById('registerAnotherAthlete');
