@@ -2397,16 +2397,12 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </div>
 </div>
 <div id="clubRegistrationCard">
-<p class="fever-step-label">Step 1</p>
-<h3 class="fever-step-title">Choose your session</h3>
-<div class="fever-session-grid" role="group" aria-label="Choose a Friday session">
-<button class="fever-session" data-session="feverFri530" id="feverSession530" type="button" aria-pressed="false">
+<p class="fever-step-label">Friday Session</p>
+<h3 class="fever-step-title">Your session</h3>
+<div class="fever-session-grid" role="group" aria-label="Friday session">
+<button class="fever-session" data-session="feverFri530" id="feverSession530" type="button" aria-pressed="true">
 <span class="fever-session-row"><span class="fever-session-time">5:45–6:45 PM</span><span class="fever-session-check" aria-hidden="true">✓</span></span>
 <span class="fever-session-meta"><span class="fever-session-dot"></span>Limited availability · 12 athlete cap</span>
-</button>
-<button class="fever-session" data-session="feverFri630" id="feverSession630" type="button" aria-pressed="false" aria-disabled="true" disabled>
-<span class="fever-session-row"><span class="fever-session-time">6:30–7:30 PM</span><span class="fever-session-check" aria-hidden="true">✓</span></span>
-<span class="fever-session-meta"><span class="fever-session-dot"></span>Registration closed</span>
 </button>
 </div>
 <div class="fever-form-wrap" id="feverFormWrap">
@@ -3656,20 +3652,12 @@ document.addEventListener('click',function(e){
       name:'Fever United — Friday 5:45 PM Session',
       time:'5:45–6:45 PM',
       paymentUrl:'https://buy.stripe.com/9B6dR8dCDcx93858fL5os06'
-    },
-    feverFri630:{
-      slug:'feverFri630',
-      value:'Fever United — Friday 6:30 PM Session',
-      name:'Fever United — Friday 6:30 PM Session',
-      time:'6:30–7:30 PM',
-      paymentUrl:'https://buy.stripe.com/4gMbJ0buvgNp8spcw15os07'
     }
   };
   const clubRegistrationEndpoint='https://hiktwkdfvlujszczthdu.supabase.co/functions/v1/club-registration';
   const supabasePublishableKey='sb_publishable_MKg9hNp7WuDlnK0TnlwwtQ_n8j4-dYx';
   const sessionCapacity=12;
   const capacityState={};
-  const closedSessionSlug='feverFri630'; // Closed legacy slot; update only if a second Friday session reopens.
 
   let selectedSession=null;
 
@@ -3692,7 +3680,7 @@ document.addEventListener('click',function(e){
     if(!button||!meta)return;
     const label=button.querySelector('.fever-session-meta');
     const remaining=Math.max(0,Number(state&&state.remaining));
-    const closed=slug===closedSessionSlug||!!(state&&state.closed);
+    const closed=!!(state&&state.closed);
     const full=closed||!!(state&&state.full);
     capacityState[slug]={remaining:remaining,full:full,closed:closed};
     button.disabled=full;
@@ -3735,7 +3723,7 @@ document.addEventListener('click',function(e){
 
   function selectSession(slug,options){
     const meta=sessions[slug];
-    if(!meta||slug===closedSessionSlug)return;
+    if(!meta)return;
     if(capacityState[slug]&&capacityState[slug].full)return;
     selectedSession=slug;
     cohort.value=meta.value;
@@ -3831,7 +3819,7 @@ document.addEventListener('click',function(e){
     if(contact.sessionSlug&&sessions[contact.sessionSlug])selectSession(contact.sessionSlug,{silent:true});
   }
 
-  updateSessionAvailability(closedSessionSlug,{remaining:0,full:true,closed:true});
+  selectSession('feverFri530',{silent:true});
   restoreRepeatRegistration();
   refreshCapacity();
 
@@ -3841,7 +3829,7 @@ document.addEventListener('click',function(e){
 
     const meta=currentSession();
     if(!meta){
-      status.textContent='Choose a session time first.';
+      status.textContent='This Friday session is currently unavailable.';
       status.setAttribute('role','alert');
       sessionButtons[0]?.focus();
       return;
@@ -3909,10 +3897,8 @@ document.addEventListener('click',function(e){
       setProcessing(false);
       if(error&&(error.code==='SESSION_FULL'||error.code==='SESSION_CLOSED')){
         updateSessionAvailability(meta.slug,{remaining:0,full:true,closed:error.code==='SESSION_CLOSED'});
-        status.textContent=error.code==='SESSION_CLOSED'?'Registration is closed for '+meta.time+'. Please choose 5:45 PM.':meta.time+' is now full. Please choose the other Friday session.';
+        status.textContent=error.code==='SESSION_CLOSED'?'Registration is closed for this Friday session.':meta.time+' is now full.';
         status.setAttribute('role','alert');
-        const other=sessionButtons.find(function(button){return !button.disabled;});
-        if(other)other.focus();
         refreshCapacity();
         return;
       }
