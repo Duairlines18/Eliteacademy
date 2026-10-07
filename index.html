@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>DU Airlines Elite Academy — Speed, Movement &amp; Horizontal Jumps</title>
-<meta content="Developing faster, more explosive and more confident athletes through specialist coaching, structured programming and performance development — in person and remotely." name="description"/><meta content="website" property="og:type"/><meta content="Du Airlines" property="og:site_name"/><meta content="Du Airlines Professional Performance" property="og:title"/><meta content="Structured performance training for busy professionals — 3 sessions per week, 45 minutes or less, built for the gym, home or travel." property="og:description"/><meta content="https://duairlineseliteacademy.com/#/professional-performance" property="og:url"/><meta content="summary" name="twitter:card"/><meta content="Du Airlines Professional Performance" name="twitter:title"/><meta content="Structured performance training for busy professionals — 3 sessions per week, 45 minutes or less, built for the gym, home or travel." name="twitter:description"/>
+<meta content="Developing faster, more explosive and more confident athletes through specialist coaching, structured programming and performance development — in person and remotely." name="description"/><meta content="website" property="og:type"/><meta content="Du Airlines" property="og:site_name"/><meta content="Fever United | Soccer Performance Registration" property="og:title"/><meta content="Register for Du Airlines × Fever United soccer performance sessions. Every Friday, 5:45–6:45 PM in Southlake, TX." property="og:description"/><meta content="https://duairlineseliteacademy.com/#/club-registration" property="og:url"/><meta content="summary" name="twitter:card"/><meta content="Fever United | Soccer Performance Registration" name="twitter:title"/><meta content="Register for Du Airlines × Fever United soccer performance sessions. Every Friday, 5:45–6:45 PM in Southlake, TX." name="twitter:description"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
@@ -2388,7 +2388,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 </div>
 <div class="fever-event-card" aria-label="Friday session details">
 <div class="fever-event-top">
-<span class="fever-event-date">Friday, October 2</span>
+<span class="fever-event-date">Every Friday</span>
 <span class="fever-event-price">$25 / athlete</span>
 </div>
 <div class="fever-location">
@@ -2419,7 +2419,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
 <input id="clubPaymentStatus" name="payment_status" type="hidden" value="Awaiting Payment"/>
 <input id="clubPaymentMethod" name="payment_method" type="hidden" value="Stripe"/>
 <input id="clubPaymentLink" name="payment_link" type="hidden" value=""/>
-<input id="clubSession1" name="session_1" type="hidden" value="Friday, October 2, 2026"/>
+<input id="clubSession1" name="session_1" type="hidden" value="Every Friday"/>
 <input id="clubSession2" name="session_2" type="hidden" value=""/>
 <input id="clubSessionTime" name="session_time" type="hidden" value=""/>
 <input id="clubProgramLocation" name="program_location" type="hidden" value="St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092"/>
@@ -3644,7 +3644,7 @@ document.addEventListener('click',function(e){
   const termsClose=document.getElementById('feverTermsClose');
 
   const feverUnitedLocation='St. Martin-in-the-Fields Episcopal Church, 223 S Pearson Ln, Southlake, TX 76092';
-  const sessionDate='Friday, October 2, 2026';
+  const sessionDate='Every Friday';
   const sessions={
     feverFri530:{
       slug:'feverFri530',
@@ -3733,7 +3733,7 @@ document.addEventListener('click',function(e){
       const active=button.dataset.session===slug;
       button.setAttribute('aria-pressed',active?'true':'false');
     });
-    if(selectedSummary)selectedSummary.textContent=meta.time+' · Friday, Oct 2';
+    if(selectedSummary)selectedSummary.textContent=meta.time+' · Every Friday';
     if(formWrap)formWrap.classList.add('show');
   }
 
@@ -3916,7 +3916,7 @@ document.addEventListener('click',function(e){
   if(returnSummary&&returnTitle&&returnMessage&&last){
     returnTitle.textContent='You’re all set for Friday.';
     returnMessage.textContent='We’ll see you Friday. Your session details are below.';
-    returnSummary.innerHTML='<div><span>Athlete</span><strong>'+last.athleteName+'</strong></div><div><span>Time</span><strong>'+last.sessionTime+'</strong></div><div><span>Date</span><strong>Friday, October 2</strong></div><div><span>Location</span><strong>St. Martin-in-the-Fields Episcopal Church</strong></div><div><span>Address</span><strong>223 S Pearson Ln, Southlake, TX 76092</strong></div>';
+    returnSummary.innerHTML='<div><span>Athlete</span><strong>'+last.athleteName+'</strong></div><div><span>Time</span><strong>'+last.sessionTime+'</strong></div><div><span>Date</span><strong>Every Friday</strong></div><div><span>Location</span><strong>St. Martin-in-the-Fields Episcopal Church</strong></div><div><span>Address</span><strong>223 S Pearson Ln, Southlake, TX 76092</strong></div>';
   }
 
   const registerAnother=document.getElementById('registerAnotherAthlete');
