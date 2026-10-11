@@ -7,6 +7,7 @@ create or replace function public.admin_update_workout_block(
   p_week_number integer,
   p_block_id uuid,
   p_content jsonb,
+  p_expected_content jsonb,
   p_allow_shared boolean default false
 ) returns jsonb language plpgsql security definer set search_path=''
 as $$
@@ -45,6 +46,9 @@ begin
  join public.training_days d on d.id=b.training_day_id
  where b.id=p_block_id and d.programme_week_id=v_week.id for update of b;
  if not found then raise exception 'Block does not belong to the requested programme week'; end if;
+ if v_block.content is distinct from p_expected_content then
+   raise exception 'Workout changed since preview; refresh before editing';
+ end if;
  -- Count effective recipients: direct programme OR cohort programme.
  select count(*) into v_owner_count from public.athletes a
  left join public.cohorts c on c.id=a.cohort_id
@@ -92,10 +96,10 @@ begin
  return jsonb_build_object('status','WORKOUT_BLOCK_VERIFIED',
  'athlete_id',p_athlete_id,'programme_id',p_programme_id,
  'week',p_week_number,'block_id',p_block_id,'affected_other_athletes',v_owner_count,
- 'content',p_content);
+ 'content',p_content,'previous_content',v_block.content);
 end;
 $$;
-revoke all on function public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,boolean)
+revoke all on function public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,jsonb,boolean)
  from public,anon,authenticated;
 grant execute on function public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,boolean)
  to service_role;
