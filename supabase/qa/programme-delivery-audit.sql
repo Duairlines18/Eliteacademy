@@ -1,0 +1,2 @@
+-- Read-only check for mismatches between athlete assignments and delivered cohorts.
+select a.id as athlete_id, a.display_name, a.programme_id as assigned_programme, c.programme_id as delivered_programme, a.current_week as assigned_week, c.current_week as delivered_week, case when a.programme_id is distinct from c.programme_id or a.current_week is distinct from c.current_week then 'MISMATCH' else 'MATCH' end as assignment_check from public.athletes a left join public.cohorts c on c.id=a.cohort_id order by a.display_name;
