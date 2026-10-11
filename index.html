@@ -4353,7 +4353,7 @@ document.addEventListener('click',function(e){
         lines.push('- '+String(item.title||'Exercise')+(item.dosage?' — '+item.dosage:'')+(item.rest?' · Rest: '+item.rest:''));
       });
     });
-    return lines.join('\\n');
+    return lines.join('\n');
   }
   function schoolAthleteDelivery(sections,sessionData){
     // Show only the selected school Form. Keep the original order and dosages.
@@ -4366,9 +4366,9 @@ document.addEventListener('click',function(e){
       const warmup=isSchoolWarmupSection(section);
       const rows=items.map(item=>{
         const dosage=String(item.dosage||'').trim(),rest=String(item.rest||'').trim();
-        const displayDose=dosage||(/(?:\\d+\\s*[×x]\\s*\\d+|\\d+\\s*m\\b|\\d+\\s*sec|\\d+\\s*each)/i.test(String(item.title||''))?'':'Dose not specified');
+        const displayDose=dosage||(/(?:\d+\s*[×x]\s*\d+|\d+\s*m\b|\d+\s*sec|\d+\s*each)/i.test(String(item.title||''))?'':'Dose not specified');
         const video=item.videoUrl||item.videoId&&('https://www.youtube.com/shorts/'+encodeURIComponent(item.videoId));
-        const safeDemo=video&&/^https:\\/\\/(?:www\\.)?(?:youtube\\.com|youtu\\.be|youtube-nocookie\\.com)\\//i.test(video);
+        const safeDemo=video&&/^https:\/\/(?:www\.)?(?:youtube\.com|youtu\.be|youtube-nocookie\.com)\//i.test(video);
         const tips=[item.cue,item.description,item.avoid&&'Avoid: '+item.avoid].filter(Boolean);
         return '<div class="hub-athlete-movement"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+(displayDose?'<strong>'+escapeHtml(displayDose)+'</strong>':'')+'</div>'+(rest?'<small>Rest: '+escapeHtml(rest)+'</small>':'')+(safeDemo?'<a class="hub-athlete-demo" href="'+escapeHtml(video)+'" target="_blank" rel="noopener noreferrer">▶ Watch demo</a>':'')+(tips.length?'<details class="hub-athlete-tips"><summary>Technique tips</summary><p>'+tips.map(escapeHtml).join(' · ')+'</p></details>':'')+'</div>';
       }).join('');
@@ -4597,7 +4597,7 @@ document.addEventListener('click',function(e){
   }
   function compactSchoolWeek(p){
     const sessions=Array.isArray(p.sessions)?p.sessions:[];
-    return '<nav class="hub-athlete-day-picker" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(\/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':'')+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
+    return '<nav class="hub-athlete-day-picker" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':'')+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
   }
   function weekBlock(p,athlete=false){
     // One shared week navigation for staff, school athletes, parents and private athletes.
@@ -4713,11 +4713,11 @@ document.addEventListener('click',function(e){
   window.addEventListener('hashchange',()=>closeHubVideo(true));
   window.addEventListener('popstate',()=>closeHubVideo(true));
 
-  document.addEventListener('click',function(event){
+  document.addEventListener('click',async function(event){
     const copyButton=event.target.closest('[data-athlete-copy]');
     if(copyButton&&isSchoolReferenceViewer()&&session()?.role!=='staff'){
       event.preventDefault();
-      const id=decodeURIComponent((location.hash.match(/^#\\/hub\\/session\\/([^?]+)/)||[])[1]||'');
+      const id=decodeURIComponent((location.hash.match(/^#\/hub\/session\/([^?]+)/)||[])[1]||'');
       const active=programme().sessions.find(x=>String(x.id)===id);
       if(!active)return;
       const workout=normalizeWorkoutSession(active,EXERCISES);
