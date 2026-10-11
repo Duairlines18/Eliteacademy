@@ -61,7 +61,7 @@ assert.match(schoolRoot.innerHTML,/Watch Split Squat demonstration/);
 schoolRoot.handlers.click({target:{closest:()=>({dataset:{action:'videos'}})}});
 assert.doesNotMatch(schoolRoot.innerHTML,/Watch Split Squat demonstration/);
 assert.match(schoolRoot.innerHTML,/Watch demos/);
-assert.match(schoolRoot.innerHTML,/movement-list/);
+assert.doesNotMatch(schoolRoot.innerHTML,/movement-list/);
 schoolRoot.handlers.click({target:{closest:()=>({dataset:{action:'videos'}})}});
 assert.match(schoolRoot.innerHTML,/Watch Split Squat demonstration/);
 
