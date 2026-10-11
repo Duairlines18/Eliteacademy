@@ -87,3 +87,38 @@ assert.equal(api.privateSelfServeViewer(),true);
 context.HUB_STATE.audience='parent';
 assert.equal(api.privateSelfServeViewer(),false);
 console.log('Athlete five-minute sheet QA passed: script syntax, 4-day navigation, Form isolation, warm-up collapsed, dosage, safe demos, copy text, school-only scope and mobile layout.');
+
+
+// Private-athlete regression: exact embedded exercise codes must resolve to the
+// approved video and a clean prescription, without inventing a dosage.
+const normalizeSrc=extract('  function normalizedTextItem(', '  function expandTextWorkoutItem(');
+const normalizeContext={
+  parsedGroup:v=>({text:String(v),group:''}),cleanLegacyExerciseText:v=>String(v).trim(),
+  leadingDosage:v=>({dosage:'',text:v}),legacyExerciseMatch:()=>null,
+  textPrescription:v=>({title:v,dosage:'',rest:'',type:'text'}),
+  coachingParts:()=>({cue:'',avoid:''})
+};
+vm.createContext(normalizeContext);
+vm.runInContext(normalizeSrc+';globalThis.normalize=normalizedTextItem;',normalizeContext);
+const verified=[
+ {code:'STR02',name:'Step-Up',videoUrl:'https://www.youtube.com/shorts/Tdn9-s7-YPc'},
+ {code:'MOB01',name:'90/90 Hip Rotation',videoUrl:'https://www.youtube.com/shorts/pW9QAqCau3Y'},
+ {code:'MOB04',name:'Diaphragmatic Breathing',videoUrl:'https://www.youtube.com/shorts/gSrUPWTSU-g'}
+];
+for(const [raw,name,dose,code] of [
+ ['Step-Up (STR02) 2 × 8/leg','Step-Up','2 × 8/leg','STR02'],
+ ['90/90 Hip Rotation (MOB01) 2 × 6/side','90/90 Hip Rotation','2 × 6/side','MOB01'],
+ ['Diaphragmatic Breathing (MOB04) 2–3 min','Diaphragmatic Breathing','2–3 min','MOB04']
+]){
+ const item=normalizeContext.normalize(raw,0,0,verified);
+ assert.equal(item.title,name);assert.equal(item.dosage,dose);
+ assert.equal(item.code,code);assert.match(item.videoUrl,/^https:\/\/www\.youtube\.com\/shorts\//);
+ const rendered=api.schoolAthleteDelivery([{title:'Strength',items:[item]}],{title:'Test'});
+ assert.match(rendered,/▶ Watch demo/);assert.doesNotMatch(rendered,/\(STR02\)|\(MOB01\)|\(MOB04\)|Dose not specified/);
+}
+const unknown=normalizeContext.normalize('Unknown exercise (BAD99) 2 × 8',0,0,verified);
+assert.equal(unknown.videoUrl,'');
+assert.doesNotMatch(api.schoolAthleteDelivery([{title:'Session',items:[unknown]}],{}),/▶ Watch demo/);
+assert.match(app,/total>=week&&total>1/,'invalid week totals must not be shown');
+assert.match(app,/const displayDose=dosage;/,'no invented dose placeholders');
+console.log('Private athlete exact-code video and dose regression QA passed.');
