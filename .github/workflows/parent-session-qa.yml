@@ -14,5 +14,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: node --check parent-qa/session-card-polish.js
       - run: node parent-qa/parent-session.test.cjs
+      - run: node parent-qa/session-card-polish.test.cjs
       - run: node athlete-qa/athlete-sheet.test.cjs
