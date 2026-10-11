@@ -128,7 +128,12 @@ assert.match(app,/if\(HUB_STATE\.audience==='parent'\)return renderParentSimpleD
 assert.match(app,/function parentTrainingDays\(/,'parent-only day picker exists');
 assert.match(app,/warmup\?'Game Warm-Up'/,'game warm-up has clear label');
 assert.match(app,/parentAthlete\?parentTrainingDays\(p,s\.id\):compactAthleteWeek\(p,s\.id\)/,'parent session navigation uses parent picker');
-assert.match(app,/privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)return schoolAthleteDelivery/,'parent gets compact workout with demos');
+assert.match(app,/if\(mode==='quick'\)return .*schoolAthleteDelivery\(sections,sessionData\)/,'parent quick view retains compact workout and demos');
+assert.match(app,/Guided Workout<\/button>/,'parent guided toggle is present');
+assert.match(app,/guidedCard\(items\[cursor\]/,'parent guided mode uses original step-by-step card');
+assert.match(app,/data-completion-toggle/,'guided completion control remains present');
+assert.match(app,/saveWorkoutCompletion\(sessionKey,itemKey,next\)/,'completion persists through existing backend');
+assert.match(app,/data-guided-next/,'guided next navigation remains present');
 assert.match(app,/privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)\&\&session\(\)\?\.role!=='staff'/,'parent can copy workout');
 assert.match(app,/\(privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)\?\[\]/,'parent copy omits school training group');
 console.log('Parent four-day simplicity regression QA passed.');
