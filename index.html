@@ -4028,6 +4028,7 @@ document.addEventListener('click',function(e){
   @media(min-width:720px){.hub-role-grid{grid-template-columns:1fr 1fr}.hub-dashboard-grid,.hub-review-grid{grid-template-columns:1fr 1fr}.hub-dashboard-actions{grid-template-columns:repeat(2,1fr)}.hub-summary-grid{grid-template-columns:repeat(3,1fr)}.hub-athlete-grid{grid-template-columns:1fr 1fr}.hub-choice-grid{grid-template-columns:repeat(3,1fr)}}
   @media(min-width:980px){.hub-dashboard-actions{grid-template-columns:repeat(3,1fr)}.hub-athlete-grid{grid-template-columns:repeat(3,1fr)}.hub-video-grid{grid-template-columns:repeat(3,1fr)!important}}
 </style>
+<script src="/coach-command/coach-command.js"></script>
 <script id="performance-hub-app">
 (function(){
   'use strict';
@@ -4570,10 +4571,19 @@ document.addEventListener('click',function(e){
 
   function renderStaffDashboard(){
     const p=programme();
-    const content='<section class="hub-field-home-head"><span class="hub-week-label">COACH FIELD VIEW</span><h1>'+escapeHtml(p.school)+'</h1><p>'+escapeHtml(p.title||'')+'</p></section>'
+    if(session()?.role==='staff' && window.DuCoachCommand && HUB_STATE.cohort && p){
+      root.innerHTML=shell('<section id="du-coach-command-root" aria-label="Coach Command"></section>','dashboard');
+      try{
+        window.DuCoachCommand.mount(root.querySelector('#du-coach-command-root'),{
+          role:'staff',cohort:HUB_STATE.cohort,programme:p,exercises:EXERCISES
+        });
+        return;
+      }catch(error){console.error('Coach Command unavailable; using original staff view.',error);}
+    }
+    const fallback='<section class="hub-field-home-head"><span class="hub-week-label">COACH FIELD VIEW</span><h1>'+escapeHtml(p.school)+'</h1><p>'+escapeHtml(p.title||'')+'</p></section>'
       +weekBlock(p)
       +'<div class="hub-field-footer-links"><a href="#/hub/coach-feedback">Weekly coach feedback →</a><a href="#/hub/library">Movement library →</a></div>';
-    root.innerHTML=shell(content,'dashboard');
+    root.innerHTML=shell(fallback,'dashboard');
   }
 
   function renderCurrentWeek(){const p=programme();root.innerHTML=shell('<div class="hub-field-day-header"><a href="#/hub/staff">← Coach home</a><h1>Current Week</h1></div>'+weekBlock(p)+(p.coachGuidance?'<details class="hub-field-optional"><summary>Coach guidance</summary><p>'+escapeHtml(p.coachGuidance)+'</p></details>':''),'week');}
