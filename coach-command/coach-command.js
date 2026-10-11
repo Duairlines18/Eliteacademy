@@ -45,7 +45,7 @@
       for(const ex of demoCatalog){
         const title=txt(ex.title).toLowerCase();
         if(!title||title.length<5||seen.has(title))continue;
-        const escaped=title.split('').map(ch=>'\\\\^$.*+?()[]{}|'.includes(ch)?'\\\\'+ch:ch).join('');
+        const escaped=title.split('').map(ch=>'^$.*+?()[]{}|'.includes(ch)?String.fromCharCode(92)+ch:ch).join('');
         const match=new RegExp('(^|[^a-z])'+escaped+'(?=$|[^a-z])','i').test(source);
         if(!match)continue;
         const url=safeVideo(ex.videoUrl||(ex.videoId?'https://www.youtube.com/watch?v='+ex.videoId:''));
