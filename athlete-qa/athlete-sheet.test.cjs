@@ -11,7 +11,7 @@ assert.ok(app,'Hub application script must exist');
 const extract=(start,end)=>{const a=app.indexOf(start),b=app.indexOf(end,a+start.length);assert.ok(a>=0&&b>a,start);return app.slice(a,b);};
 const source=extract('  function compactSchoolWeek(p){','  function weekBlock(')
   +extract('  function visibleNormalizedSections(workout){','  function flattenedWorkoutItems(')
-  +extract('  function athleteCopyText(sessionData,sections){','  function renderWorkoutExperience(')
+  +extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')
   +';globalThis.testApi={compactSchoolWeek,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';
 let selected='Form 2';
 const context={
