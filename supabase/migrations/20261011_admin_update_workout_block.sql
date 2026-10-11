@@ -39,6 +39,8 @@ begin
       and c.programme_id=p_programme_id and c.status='live')) then
    raise exception 'Programme is not assigned to athlete';
  end if;
+ if not exists(select 1 from public.programmes p where p.id=p_programme_id and p.status='live')
+ then raise exception 'Programme is not live'; end if;
  select * into v_week from public.programme_weeks
  where programme_id=p_programme_id and week_number=p_week_number and tier_id is null
  and p_week_number = case when v_athlete.athlete_type='private' and v_athlete.programme_id is not null
