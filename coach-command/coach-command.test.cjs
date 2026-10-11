@@ -27,7 +27,7 @@ root.handlers.click({target:{closest:()=>({dataset:{day:'0'}})}});
 assert.match(root.innerHTML,/Full Workout/);
 assert.match(root.innerHTML,/Pogos/);
 assert.match(root.innerHTML,/2 x 10/);
-assert.match(root.innerHTML,/Video/);
+assert.match(root.innerHTML,/Watch Pogos demonstration/);
 root.handlers.click({target:{closest:()=>({dataset:{day:'2'}})}});
 assert.match(root.innerHTML,/OPTIONAL EXTRA/);
 root.handlers.click({target:{closest:()=>({dataset:{action:'back'}})}});
