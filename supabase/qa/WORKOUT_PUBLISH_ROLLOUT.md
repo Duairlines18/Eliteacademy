@@ -58,3 +58,9 @@ Existing Hub UI remains unchanged. This branch stages:
 - Set the `DU_ADMIN_USER_IDS` Edge Function environment variable to that verified UUID (not the email); configure the environment variable only in the server-side secrets manager.
 - Verify a normal parent JWT receives 403 and the verified admin JWT can preview before authorizing any write.
 - No Auth account has been created or granted privileges by this documentation change.
+
+## Existing administrator Auth record (user-provided screenshot, Oct 11)
+- Existing Supabase Auth user: `coachdu@duairlineseliteacademy.com`, user UUID `ecc90043-119b-4985-b3ac-b4fef2930728`.
+- Do not create a duplicate Auth user. Verify `email_confirmed_at` and a successful Auth sign-in before enabling admin privileges.
+- After verification, configure server-side `DU_ADMIN_USER_IDS` with this UUID; do not put this value or any credentials into public HTML.
+- User record presence alone is not proof of a verified email or functioning login.
