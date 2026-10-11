@@ -1,0 +1,22 @@
+name: Coach Command QA
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'coach-command/**'
+      - '.github/workflows/coach-command-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  coach-command:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: node --check coach-command/coach-command.js
+      - name: Run coach workflow tests
+        run: node coach-command/coach-command.test.cjs
