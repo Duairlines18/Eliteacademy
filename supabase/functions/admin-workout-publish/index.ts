@@ -6,10 +6,13 @@ const url = Deno.env.get('SUPABASE_URL') || '';
 const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const adminIds = new Set((Deno.env.get('DU_ADMIN_USER_IDS') || '').split(',').map(x=>x.trim()).filter(Boolean));
 const db = createClient(url, serviceKey, {auth:{persistSession:false,autoRefreshToken:false}});
+// Bearer-token authorization is checked independently of CORS. No cookies or credentials.
+const cors={'access-control-allow-origin':'*','access-control-allow-headers':'authorization, x-client-info, apikey, content-type','access-control-allow-methods':'POST, OPTIONS'};
 const json = (status:number,data:unknown)=>new Response(JSON.stringify(data),{
-  status,headers:{'content-type':'application/json','cache-control':'no-store'}
+  status,headers:{...cors,'content-type':'application/json','cache-control':'no-store'}
 });
 Deno.serve(async req=>{
+  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:cors});
   if(req.method!=='POST')return json(405,{code:'METHOD_NOT_ALLOWED'});
   if(!url||!serviceKey||!adminIds.size)return json(503,{code:'ADMIN_NOT_CONFIGURED'});
   const bearer=req.headers.get('authorization')||'';
