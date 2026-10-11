@@ -63,7 +63,7 @@ const other=api.visibleNormalizedSections({sections});
 assert.equal(other[1].items.length,1);
 assert.match(api.athleteCopyText({day:'Day 1',title:'Training'},other),/3 × 12/);
 assert.doesNotMatch(api.athleteCopyText({day:'Day 1',title:'Training'},other),/2 × 10/);
-assert.match(app,/if\(isSchoolReferenceViewer\(\)\|\|privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)return schoolAthleteDelivery\(sections,sessionData\)/);
+assert.match(app,/if\(isSchoolReferenceViewer\(\)\|\|privateSelfServeViewer\(\)\)return schoolAthleteDelivery\(sections,sessionData\)/,'school and private views retain compact sheet');
 assert.match(app,/const schoolAthlete=isSchoolReferenceViewer\(\)&&session\(\)\?\.role!=='staff'/);
 assert.match(app,/navigator\.clipboard\?\.writeText/);
 assert.match(app,/data-athlete-copy-status/);
