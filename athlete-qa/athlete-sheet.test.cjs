@@ -9,10 +9,10 @@ scripts.forEach((script,index)=>assert.doesNotThrow(()=>new vm.Script(script,{fi
 const app=scripts.find(x=>x.includes('function schoolAthleteDelivery('));
 assert.ok(app,'Hub application script must exist');
 const extract=(start,end)=>{const a=app.indexOf(start),b=app.indexOf(end,a+start.length);assert.ok(a>=0&&b>a,start);return app.slice(a,b);};
-const source=extract('  function compactSchoolWeek(p){','  function weekBlock(')
+const source=extract('  function compactAthleteWeek(p,activeId){','  function weekBlock(')
   +extract('  function visibleNormalizedSections(workout){','  function flattenedWorkoutItems(')
   +extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')
-  +';globalThis.testApi={compactSchoolWeek,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';
+  +';globalThis.testApi={compactAthleteWeek,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';
 let selected='Form 2';
 const context={
   escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
@@ -26,7 +26,7 @@ const context={
   hubPhaseRows:()=>'<span>optional reference</span>'
 };
 vm.createContext(context);vm.runInContext(source,context);const api=context.testApi;
-const week=api.compactSchoolWeek({sessions:[
+const week=api.compactAthleteWeek({sessions:[
  {id:'one',day:'Day 1',title:'Acceleration',duration:'60m'},
  {id:'two',day:'Day 2',title:'Capacity'},
  {id:'three',day:'Day 3',title:'Strength'},
@@ -34,6 +34,8 @@ const week=api.compactSchoolWeek({sessions:[
 assert.equal((week.match(/hub-athlete-day-choice/g)||[]).length,4);
 assert.match(week,/Optional/);
 assert.match(week,/Weekly focus/);
+assert.match(api.compactAthleteWeek({sessions:[{id:'one',day:'Day 1'}]},'one'),/hub-athlete-day-choice selected/);
+assert.match(app,/function compactSchoolWeek\(p\)/);
 assert.doesNotMatch(week,/CURRENT PROGRAMME|60m/);
 const sections=[
  {title:'Standard Warm-Up',order:1,items:[{title:'200m easy jog',dosage:'100m out + 100m back',group:''},{title:'Split Squat',dosage:'2 × 6',group:'Form 2'},{title:'Split Squat',dosage:'3 × 8',group:'Form 3'}]},
