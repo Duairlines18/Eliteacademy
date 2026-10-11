@@ -12,11 +12,13 @@ const extract=(start,end)=>{const a=app.indexOf(start),b=app.indexOf(end,a+start
 const source=extract('  function compactSchoolWeek(p){','  function weekBlock(')
   +extract('  function visibleNormalizedSections(workout){','  function flattenedWorkoutItems(')
   +extract('  function athleteCopyText(sessionData,sections){','  function renderWorkoutExperience(')
-  +';globalThis.testApi={compactSchoolWeek,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery};';
+  +';globalThis.testApi={compactSchoolWeek,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';
 let selected='Form 2';
 const context={
   escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
   encodeURIComponent,
+  HUB_STATE:{audience:'school'},
+  session:()=>({role:'athlete'}),
   schoolGroup:()=>selected,
   isSharedSchoolViewer:()=>true,
   deliverySections:sections=>sections,
@@ -59,11 +61,27 @@ const other=api.visibleNormalizedSections({sections});
 assert.equal(other[1].items.length,1);
 assert.match(api.athleteCopyText({day:'Day 1',title:'Training'},other),/3 × 12/);
 assert.doesNotMatch(api.athleteCopyText({day:'Day 1',title:'Training'},other),/2 × 10/);
-assert.match(app,/if\(isSchoolReferenceViewer\(\)\)return schoolAthleteDelivery\(sections,sessionData\)/);
+assert.match(app,/if\(isSchoolReferenceViewer\(\)\|\|privateSelfServeViewer\(\)\)return schoolAthleteDelivery\(sections,sessionData\)/);
 assert.match(app,/const schoolAthlete=isSchoolReferenceViewer\(\)&&session\(\)\?\.role!=='staff'/);
 assert.match(app,/navigator\.clipboard\?\.writeText/);
 assert.match(app,/data-athlete-copy-status/);
 assert.match(html,/hub-athlete-day-picker/);
 assert.match(html,/hub-athlete-warmup/);
 assert.match(html,/hub-athlete-demo/);
+assert.match(app,/if\(privateSelfServeViewer\(\)\)return renderPrivateAthleteCompact\(\)/);
+assert.match(app,/if\(copyButton&&\(isSchoolReferenceViewer\(\)\|\|privateSelfServeViewer\(\)\)/);
+context.HUB_STATE.audience='private-athlete';
+assert.equal(api.privateSelfServeViewer(),true);
+const privateWorkout=[{title:'Day 1 Strength',items:[{title:'Split Squat',dosage:'3 × 6',rest:'90s'},{title:'Calf Raise',dosage:'2 × 10'}]}];
+const privateSheet=api.schoolAthleteDelivery(privateWorkout,{title:'Day 1'});
+assert.match(privateSheet,/data-athlete-copy/);
+assert.match(privateSheet,/3 × 6/);
+assert.doesNotMatch(privateSheet,/Training group:/);
+const privateCopy=api.athleteCopyText({day:'Day 1',title:'Strength',duration:'40 min'},privateWorkout);
+assert.match(privateCopy,/Split Squat — 3 × 6 · Rest: 90s/);
+assert.doesNotMatch(privateCopy,/Training group:/);
+context.HUB_STATE.audience='professional';
+assert.equal(api.privateSelfServeViewer(),true);
+context.HUB_STATE.audience='parent';
+assert.equal(api.privateSelfServeViewer(),false);
 console.log('Athlete five-minute sheet QA passed: script syntax, 4-day navigation, Form isolation, warm-up collapsed, dosage, safe demos, copy text, school-only scope and mobile layout.');
