@@ -60,7 +60,7 @@
       const raw=txt(ex.title||p.exerciseCode);
       // Tier-based school text stays unchanged, but semicolon-separated movements
       // become a readable vertical list. No exercise dosage is inferred or rewritten.
-      const match=raw.match(/^(Form\\s+\\d+|Lower\\s+6|Upper\\s+6)\\s*[—–-]\\s*(.+)$/i);
+      const match=raw.match(/^(Form\s+\d+|Lower\s+6|Upper\s+6)\s*[—–-]\s*(.+)$/i);
       if(match&&match[2].includes(';')){
         const entries=match[2].split(';').map(x=>x.trim()).filter(Boolean);
         return '<div class="tier-label">'+esc(match[1])+'</div><ul class="movement-list">'+entries.map(item=>'<li>'+esc(item)+'</li>').join('')+'</ul>';
