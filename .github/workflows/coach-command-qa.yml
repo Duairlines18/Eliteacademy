@@ -4,6 +4,7 @@ on:
     paths:
       - 'index.html'
       - 'coach-command/**'
+      - 'athlete-qa/**'
       - '.github/workflows/coach-command-qa.yml'
   workflow_dispatch:
 permissions:
@@ -20,3 +21,5 @@ jobs:
         run: node --check coach-command/coach-command.js
       - name: Run coach workflow tests
         run: node coach-command/coach-command.test.cjs
+      - name: Principal QA school athlete sheet
+        run: node athlete-qa/athlete-sheet.test.cjs
