@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const html=fs.readFileSync('index.html','utf8');
-const scripts=[...html.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].map(m=>m[1]).filter(Boolean);
+const scripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).filter(Boolean);
 for(const script of scripts){if(script.trim())new vm.Script(script);}
 const app=scripts.find(s=>s.includes('function parentTrainingDays('));
 assert.ok(app,'Hub app script found');
@@ -18,7 +18,7 @@ const sessions=[
 ctx.p={title:'Andria Volleyball Development',sessions,weeklyObjective:'Move well and control landings'};
 const nav=ctx.api.parentTrainingDays(ctx.p);
 assert.equal((nav.match(/hub-parent-session-card/g)||[]).length,4,'four published session cards');
-for(const s of sessions)assert.match(nav,new RegExp(s.title.replace(/^Day \\d+ — /,'')),'uses published workout heading');
+for(const s of sessions)assert.match(nav,new RegExp(s.title.replace(/^Day \d+ — /,'')),'uses published workout heading');
 assert.match(nav,/15–20 min/);assert.match(nav,/25–30 min/);assert.match(nav,/8–10 min/);
 assert.doesNotMatch(nav,/Day 1 — Day 1/);
 assert.match(ctx.api.parentTrainingDays(ctx.p,'two'),/hub-parent-session-card selected/);
