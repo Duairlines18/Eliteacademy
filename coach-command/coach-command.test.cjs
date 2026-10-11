@@ -37,6 +37,21 @@ assert.doesNotMatch(unauthorized.children[1].innerHTML,/Private Person/);
 const authorized=makeEl();mount(authorized,fixture,{rosterVerified:true,roster:[{cohort_id:'school-1',display_name:'Athlete A',access_status:'active'}]});
 assert.match(authorized.children[1].innerHTML,/Athlete A/);
 assert.match(authorized.children[1].innerHTML,/1\/1/);
+// School tier sheets use human-readable text, not library exercise codes.
+const schoolFixture={...fixture,programme:{...fixture.programme,sessions:[{
+  id:'school-day',day:'Day 1',title:'Strength for Forms',requirement:'Mandatory',
+  itemSections:[{title:'Main Strength',items:['Form 2 — 2 x 6 split squat; 2 x 8 single-leg glute bridge; 2 x 10 calf raise','Form 3 — acceleration runs']}]
+}]},exercises:[
+  {code:'STR01',title:'Split Squat',videoUrl:'https://www.youtube.com/shorts/fq72qz8JHtU'},
+  {code:'ACT02',title:'Single-Leg Glute Bridge',videoUrl:'https://www.youtube.com/shorts/zZD--pmOBLM'},
+  {code:'ANK01',title:'Calf Raise',videoUrl:'https://www.youtube.com/shorts/C3BmRILCdK8'}
+]};
+const schoolHost=makeEl();mount(schoolHost,schoolFixture);const schoolRoot=schoolHost.children[1];
+schoolRoot.handlers.click({target:{closest:()=>({dataset:{day:'0'}})}});
+assert.match(schoolRoot.innerHTML,/Watch Split Squat demonstration/);
+assert.match(schoolRoot.innerHTML,/Watch Single-Leg Glute Bridge demonstration/);
+assert.match(schoolRoot.innerHTML,/Watch Calf Raise demonstration/);
+assert.doesNotMatch(schoolRoot.innerHTML,/Watch Acceleration Runs demonstration/);
 assert.match(html,/src="\/coach-command\/coach-command\.js"/);
 assert.match(html,/session\(\)\?\.role==='staff' && window\.DuCoachCommand/);
 assert.match(html,/using original staff view/);
