@@ -64,3 +64,12 @@ Existing Hub UI remains unchanged. This branch stages:
 - Do not create a duplicate Auth user. Verify `email_confirmed_at` and a successful Auth sign-in before enabling admin privileges.
 - After verification, configure server-side `DU_ADMIN_USER_IDS` with this UUID; do not put this value or any credentials into public HTML.
 - User record presence alone is not proof of a verified email or functioning login.
+
+## Deployment progress — 2026-10-11
+- Confirmed Coach Du's existing Supabase Auth user has a verified email.
+- Applied migration `admin_update_workout_block_20261011` successfully to the live Supabase project. Initial attempt failed because the grant signature omitted the expected-content argument; corrected and reapplied successfully.
+- Deployed `admin-workout-publish` Edge Function version 1 with `verify_jwt=true`; function status ACTIVE.
+- **Not enabled for publishing yet:** `DU_ADMIN_USER_IDS` server-side secret must be configured with the verified administrator's Auth UUID through Supabase Dashboard -> Edge Functions -> Secrets. There is no secret-management action available through the current integration. Until configured, endpoint returns `ADMIN_NOT_CONFIGURED` (503).
+- No live athlete workout blocks were edited, no production GitHub branch was pushed, and no authenticated publish/readback/rollback test was performed.
+- After secret configuration: test preview with Coach Du JWT, non-admin rejection, a reversible QA-only block edit with explicit target confirmation and snapshot, readback, restore, then check rendered Hub.
+- Function rollback: disable/delete `admin-workout-publish` in Supabase. Database rollback (after checking dependencies): `DROP FUNCTION IF EXISTS public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,jsonb,boolean);` Do not run rollback casually while requests are in flight.
