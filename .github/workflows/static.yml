@@ -33,6 +33,19 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Include responsive session cards in deployed HTML
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("index.html")
+          html = path.read_text(encoding="utf-8")
+          marker = '<link rel="stylesheet" href="/parent-qa/session-card-polish.css">'
+          scripts = '<script defer src="/parent-qa/session-card-polish.js"></script>'
+          assert '</head>' in html, 'Cannot safely add session card assets'
+          if marker not in html:
+              html = html.replace('</head>', marker + '\n' + scripts + '\n</head>', 1)
+          path.write_text(html, encoding="utf-8")
+          PY
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
