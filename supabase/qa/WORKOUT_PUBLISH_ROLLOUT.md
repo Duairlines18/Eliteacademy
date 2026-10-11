@@ -48,3 +48,13 @@ Existing Hub UI remains unchanged. This branch stages:
 - Shared programme edits change every recipient of that programme. Do not use for individual exceptions.
 - No persistent audit history table was added. The RPC returns `previous_content` to the authorized caller; record it securely before proceeding.
 - For youth athletes, do not automatically advance training when recent illness/pain feedback needs coaching review.
+
+## Administrator identity decision (Oct 2026)
+- Designated Coach Du administrator email: `coachdu@duairlineseliteacademy.com`.
+- Keep `duchenge28@gmail.com` as Parent Access/test account, not administrator.
+- The Supabase dashboard owner's email is separate from Supabase Auth users.
+- Do NOT add email string comparisons to the Edge Function and do NOT put admin email, Auth user IDs, access tokens or service-role secrets in public client HTML.
+- First create/sign in to a verified Supabase Auth account for the business email using the normal supported flow. Look up its Auth user UUID in the protected Supabase Auth dashboard.
+- Set the `DU_ADMIN_USER_IDS` Edge Function environment variable to that verified UUID (not the email); configure the environment variable only in the server-side secrets manager.
+- Verify a normal parent JWT receives 403 and the verified admin JWT can preview before authorizing any write.
+- No Auth account has been created or granted privileges by this documentation change.
