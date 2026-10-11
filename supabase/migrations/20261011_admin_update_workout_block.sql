@@ -109,5 +109,5 @@ end;
 $$;
 revoke all on function public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,jsonb,boolean)
  from public,anon,authenticated;
-grant execute on function public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,boolean)
+grant execute on function public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,jsonb,boolean)
  to service_role;
