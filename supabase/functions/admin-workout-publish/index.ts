@@ -34,7 +34,9 @@ Deno.serve(async req=>{
   const {data:cohort}=athlete.cohort_id
     ? await db.from('cohorts').select('id,programme_id,current_week,status').eq('id',athlete.cohort_id).maybeSingle()
     : {data:null};
-  if(athlete.programme_id!==programmeId&&cohort?.programme_id!==programmeId)
+  if((athlete.athlete_type==='private'&&athlete.programme_id)
+    ? athlete.programme_id!==programmeId
+    : cohort?.programme_id!==programmeId||cohort?.status!=='live')
     return json(409,{code:'TARGET_PROGRAMME_MISMATCH'});
   const {data:week,error:we}=await db.from('programme_weeks')
     .select('id,programme_id,week_number,status,verification_status,published_at')
