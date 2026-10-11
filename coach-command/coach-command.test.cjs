@@ -65,7 +65,7 @@ assert.match(schoolRoot.innerHTML,/movement-list/);
 schoolRoot.handlers.click({target:{closest:()=>({dataset:{action:'videos'}})}});
 assert.match(schoolRoot.innerHTML,/Watch Split Squat demonstration/);
 
-assert.match(html,/src="\/coach-command\/coach-command\.js"/);
+assert.match(html,/src="\/coach-command\/coach-command\.js\?v=[a-zA-Z0-9-]+"/);
 assert.match(html,/session\(\)\?\.role==='staff' && window\.DuCoachCommand/);
 assert.match(html,/using original staff view/);
 const script=html.match(/<script id="performance-hub-app">([\s\S]*?)<\/script>/);
