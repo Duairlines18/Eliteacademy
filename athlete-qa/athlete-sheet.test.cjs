@@ -134,7 +134,7 @@ assert.match(app,/data-workout-mode=\\"quick\\"/,'quick view switch available');
 assert.match(app,/function guidedCard\(/,'guided step-by-step card exists');
 assert.match(app,/data-guided-next/,'guided next step available');
 assert.match(app,/data-guided-prev/,'guided previous step available');
-assert.match(app,/data-guided-complete/,'guided completion control available');
+assert.match(app,/data-completion-toggle/,'guided completion control available');
 assert.match(app,/privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)\&\&session\(\)\?\.role!=='staff'/,'parent can copy workout');
 assert.match(app,/\(privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)\?\[\]/,'parent copy omits school training group');
 console.log('Parent four-day simplicity regression QA passed.');
