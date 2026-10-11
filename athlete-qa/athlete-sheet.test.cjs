@@ -122,3 +122,13 @@ assert.doesNotMatch(api.schoolAthleteDelivery([{title:'Session',items:[unknown]}
 assert.match(app,/total>=week&&total>1/,'invalid week totals must not be shown');
 assert.match(app,/const displayDose=dosage;/,'no invented dose placeholders');
 console.log('Private athlete exact-code video and dose regression QA passed.');
+
+assert.match(app,/function renderParentSimpleDashboard\(/,'parent compact dashboard exists');
+assert.match(app,/if\(HUB_STATE\.audience==='parent'\)return renderParentSimpleDashboard\(\)/,'parent does not render old cards, guide or history');
+assert.match(app,/function parentTrainingDays\(/,'parent-only day picker exists');
+assert.match(app,/warmup\?'Game Warm-Up'/,'game warm-up has clear label');
+assert.match(app,/parentAthlete\?parentTrainingDays\(p,s\.id\):compactAthleteWeek\(p,s\.id\)/,'parent session navigation uses parent picker');
+assert.match(app,/privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)return schoolAthleteDelivery/,'parent gets compact workout with demos');
+assert.match(app,/privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)\&\&session\(\)\?\.role!=='staff'/,'parent can copy workout');
+assert.match(app,/\(privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)\?\[\]/,'parent copy omits school training group');
+console.log('Parent four-day simplicity regression QA passed.');
