@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {validateDelivery} from './validate-delivery.mjs';
+const fixture=()=>({athlete:{cohort_id:'c',programme_id:'p',current_week:5,access_status:'active'},cohort:{id:'c',programme_id:'p',current_week:5,status:'live'},week:{programme_id:'p',week_number:5,status:'live',verification_status:'verified',published_at:'2026-10-11'},days:[{id:'d'}],blocks:[{training_day_id:'d',content:{prescriptions:[{exerciseCode:'STR01',dosage:'2 x 8'}]}}],exercises:[{code:'STR01',active:true,video_id:'abc'}]});
+test('valid published prescription',()=>assert.equal(validateDelivery(fixture()).ok,true));
+test('wrong athlete programme blocked',()=>{const x=fixture();x.athlete.programme_id='wrong';assert.equal(validateDelivery(x).ok,false)});
+test('unpublished week blocked',()=>{const x=fixture();x.week.published_at=null;assert.equal(validateDelivery(x).ok,false)});
+test('suspended athlete blocked',()=>{const x=fixture();x.athlete.access_status='suspended';assert.equal(validateDelivery(x).ok,false)});
+test('missing exercise blocked',()=>{const x=fixture();x.exercises=[];assert.equal(validateDelivery(x).ok,false)});
+test('missing video warned',()=>{const x=fixture();x.exercises[0].video_id=null;const r=validateDelivery(x);assert.equal(r.ok,true);assert.deepEqual(r.warnings,['NO_DEMO_VIDEO:STR01'])});
+test('incomplete dosage blocked',()=>{const x=fixture();x.blocks[0].content.prescriptions[0].dosage='';assert.equal(validateDelivery(x).ok,false)});
+test('empty training day blocked',()=>{const x=fixture();x.blocks=[];assert.equal(validateDelivery(x).ok,false)});
+test('wrong cohort blocked',()=>{const x=fixture();x.athlete.cohort_id='other';assert.equal(validateDelivery(x).ok,false)});
