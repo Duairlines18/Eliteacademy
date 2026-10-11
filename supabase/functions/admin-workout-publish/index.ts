@@ -34,10 +34,15 @@ Deno.serve(async req=>{
   const {data:cohort}=athlete.cohort_id
     ? await db.from('cohorts').select('id,programme_id,current_week,status').eq('id',athlete.cohort_id).maybeSingle()
     : {data:null};
+  if(athlete.access_status!=='active')return json(409,{code:'ATHLETE_NOT_ACTIVE'});
   if((athlete.athlete_type==='private'&&athlete.programme_id)
     ? athlete.programme_id!==programmeId
     : cohort?.programme_id!==programmeId||cohort?.status!=='live')
     return json(409,{code:'TARGET_PROGRAMME_MISMATCH'});
+  const {data:programme,error:pe}=await db.from('programmes').select('id,status').eq('id',programmeId).maybeSingle();
+  if(pe||programme?.status!=='live')return json(409,{code:'PROGRAMME_NOT_LIVE'});
+  const currentWeek=(athlete.athlete_type==='private'&&athlete.programme_id)?athlete.current_week:cohort?.current_week;
+  if(currentWeek!==weekNumber)return json(409,{code:'NOT_CURRENT_WEEK'});
   const {data:week,error:we}=await db.from('programme_weeks')
     .select('id,programme_id,week_number,status,verification_status,published_at')
     .eq('programme_id',programmeId).eq('week_number',weekNumber).is('tier_id',null)
