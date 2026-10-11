@@ -63,11 +63,12 @@ Deno.serve(async req=>{
   if(!body.confirmTarget||body.confirmTarget!==athleteId)
     return json(409,{code:'TARGET_CONFIRMATION_REQUIRED'});
   if(otherRecipients&&!body.confirmShared)return json(409,{code:'SHARED_PROGRAMME_CONFIRMATION_REQUIRED'});
+  if(!Object.hasOwn(body,'expectedContent'))return json(409,{code:'PREVIEW_REQUIRED'});
   if(!body.content||typeof body.content!=='object'||Array.isArray(body.content))
     return json(400,{code:'CONTENT_OBJECT_REQUIRED'});
   const {data:result,error:writeError}=await db.rpc('admin_update_workout_block',{
     p_athlete_id:athleteId,p_programme_id:programmeId,p_week_number:weekNumber,
-    p_block_id:blockId,p_content:body.content,p_allow_shared:body.confirmShared===true
+    p_block_id:blockId,p_content:body.content,p_expected_content:body.expectedContent,p_allow_shared:body.confirmShared===true
   });
   if(writeError)return json(409,{code:'WRITE_REJECTED',message:writeError.message});
   return json(200,result);
