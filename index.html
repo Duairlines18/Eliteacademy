@@ -1913,7 +1913,22 @@ footer,
 .hub-athlete-tips{margin-top:.35rem}.hub-athlete-tips summary{cursor:pointer;color:#aaa;font-size:.75rem}.hub-athlete-tips p{font-size:.75rem;color:#bbb;margin:.3rem 0}
 @media(max-width:420px){.hub-athlete-day-picker{gap:.3rem}.hub-athlete-day-choice{min-height:55px}.hub-athlete-movement-line{grid-template-columns:minmax(0,1fr) auto}.hub-athlete-movement-line strong{max-width:7.2rem}}
 
-</style></head>
+</style><style id="du-responsive-training-cards">
+/* Scoped athlete and parent training navigation: no programme or guided-workout changes. */
+.hub-parent-session-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin:20px 0!important}
+.hub-parent-session-grid .hub-parent-session-card{position:relative;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-start!important;min-width:0!important;min-height:152px!important;height:auto!important;padding:17px!important;gap:10px!important;border:1px solid #493b30!important;border-radius:14px!important;background:#1c1718!important;text-align:left!important;text-decoration:none!important;box-sizing:border-box!important}
+.hub-parent-session-grid .hub-parent-session-card.selected{border-color:#cba75c!important;background:#292117!important}
+.hub-parent-session-card .hub-parent-session-eyebrow{color:#d0a959!important;font-size:12px!important;font-weight:700!important;letter-spacing:.1em!important;padding-right:30px!important}
+.hub-parent-session-card .hub-parent-session-icon{position:absolute;top:15px;right:16px;color:#cba75c;font-size:23px;line-height:1}
+.hub-parent-session-grid .hub-parent-session-card strong{display:block;color:#f7f2eb!important;font-size:clamp(15px,2vw,19px)!important;line-height:1.28!important;overflow-wrap:break-word!important;max-width:100%;padding:0!important}
+.hub-parent-session-grid .hub-parent-session-card small{margin-top:auto!important;color:#bdb2aa!important;font-size:13px!important}
+.hub-parent-session-arrow{position:absolute;bottom:15px;right:16px;color:#cba75c}
+.hub-parent-session-card:hover{border-color:#b79555!important;background:#28201c!important}
+.hub-parent-session-card:focus-visible{outline:3px solid #e3bf76!important;outline-offset:3px!important}
+@media(min-width:900px){.hub-parent-session-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:980px}.hub-parent-session-grid .hub-parent-session-card{min-height:155px!important;padding:22px!important}}
+@media(max-width:390px){.hub-parent-session-grid{gap:9px!important}.hub-parent-session-grid .hub-parent-session-card{padding:12px!important;min-height:150px!important}.hub-parent-session-grid .hub-parent-session-card strong{font-size:15px!important}.hub-parent-session-card .hub-parent-session-icon{right:12px;top:12px}}
+</style>
+</head>
 <body id="top">
 <div class="site-view" id="home-view">
 <!-- ================= TOP BAR ================= -->
@@ -4688,7 +4703,7 @@ document.addEventListener('click',function(e){
     const intro='<section class="hub-field-intro hub-athlete-compact-intro"><span class="hub-week-label">MY TRAINING</span><h1>'+escapeHtml(displayName)+'</h1><p>'+escapeHtml(a.programme||p.title||'Your programme')+' · '+escapeHtml(weekLabel(p))+'</p></section>';
     const note=a.coachNotes?'<details class="hub-field-note"><summary>Coach Du note</summary><p>'+escapeHtml(a.coachNotes)+'</p></details>':'';
     const actions='<div class="hub-field-links"><a href="#/hub/library">Movement library →</a><a href="#/hub/feedback">Athlete check-in →</a></div>';
-    root.innerHTML=shell(intro+preparing+compactSchoolWeek({...p,sessions})+note+'<details class="hub-field-note"><summary>Training history</summary>'+historyBlock()+'</details>'+actions,'dashboard');
+    root.innerHTML=shell(intro+preparing+parentTrainingDays({...p,sessions})+note+'<details class="hub-field-note"><summary>Training history</summary>'+historyBlock()+'</details>'+actions,'dashboard');
   }
   function parentSessionLabel(item,index){
     const raw=String(item.day||'Day '+(index+1));
@@ -4703,7 +4718,8 @@ document.addEventListener('click',function(e){
     const sessions=Array.isArray(p.sessions)?p.sessions:[];
     return '<nav class="hub-athlete-day-picker hub-parent-session-grid" aria-label="Choose training day">'+sessions.map((item,index)=>{
       const label=parentSessionLabel(item,index),title=parentSessionHeading(item,index),active=String(activeId||'')===String(item.id);
-      return '<a class="hub-athlete-day-choice hub-parent-session-card'+(active?' selected':'')+'" href="#/hub/session/'+encodeURIComponent(item.id)+'" aria-label="'+escapeHtml(label+': '+title)+'"><span class="hub-parent-session-eyebrow">'+escapeHtml(label)+'</span><strong>'+escapeHtml(title)+'</strong>'+(item.duration?'<small class="hub-parent-session-duration">'+escapeHtml(item.duration)+'</small>':'')+'<span class="hub-parent-session-arrow" aria-hidden="true">↗</span></a>';
+      const icon=/warm.?up|game/i.test(label+' '+title)?'⚡':/recover|reset|mobility|breath/i.test(title)?'◌':/speed|sprint|run|accel/i.test(title)?'↗':/strength|core|control/i.test(title)?'✦':'◎';
+      return '<a class="hub-athlete-day-choice hub-parent-session-card'+(active?' selected':'')+'" href="#/hub/session/'+encodeURIComponent(item.id)+'" aria-label="'+escapeHtml(label+': '+title)+'"><span class="hub-parent-session-eyebrow">'+escapeHtml(label)+'</span><span class="hub-parent-session-icon" aria-hidden="true">'+icon+'</span><strong>'+escapeHtml(title)+'</strong>'+(item.duration?'<small class="hub-parent-session-duration">'+escapeHtml(item.duration)+'</small>':'')+'<span class="hub-parent-session-arrow" aria-hidden="true">↗</span></a>';
     }).join('')+'</nav>';
   }
   function renderParentSimpleDashboard(){
