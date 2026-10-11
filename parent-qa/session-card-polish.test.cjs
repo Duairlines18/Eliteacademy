@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),vm=require('node:vm');
+const css=fs.readFileSync('parent-qa/session-card-polish.css','utf8');
+const js=fs.readFileSync('parent-qa/session-card-polish.js','utf8');
+new vm.Script(js);
+assert.ok(css.includes('repeat(2,minmax(0,1fr))'));
+assert.ok(css.includes('repeat(4,minmax(0,1fr))'));
+assert.ok(css.includes('focus-visible'));
+assert.ok(css.includes('prefers-reduced-motion'));
+assert.ok(js.includes('card.textContent'));
+assert.ok(!js.includes('innerHTML ='));
+console.log('Responsive session card QA passed');

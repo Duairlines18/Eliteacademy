@@ -1,0 +1,41 @@
+/* Presentation-only enhancement. No programme, auth or workout state changes. */
+.hub-parent-session-card{
+  position:relative!important;box-sizing:border-box!important;
+  min-width:0!important;min-height:172px!important;
+  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+  justify-content:flex-start!important;gap:10px!important;
+  padding:20px 18px!important;border-radius:17px!important;
+  background:linear-gradient(150deg,#231c1c 0%,#151213 100%)!important;
+  border:1px solid rgba(199,157,80,.35)!important;
+  transition:border-color .18s ease,transform .18s ease!important;
+  overflow-wrap:anywhere!important;
+}
+.hub-parent-session-card.selected{background:linear-gradient(145deg,#302419,#201915)!important;border-color:#d0a956!important}
+.hub-parent-session-card:hover{border-color:#d0a956!important}
+.hub-parent-session-card:focus-visible{outline:3px solid #d0a956!important;outline-offset:3px!important}
+.hub-parent-session-card::after{content:"↗";position:absolute;right:15px;bottom:14px;color:#d0a956;font-size:21px;line-height:1}
+.hub-parent-session-card::before{content:"✦";position:absolute;right:15px;top:14px;color:#d0a956;font-size:23px;line-height:1;opacity:.92}
+.hub-parent-session-card[data-session-icon="recovery"]::before{content:"☾"}
+.hub-parent-session-card[data-session-icon="movement"]::before{content:"↝"}
+.hub-parent-session-card[data-session-icon="strength"]::before{content:"◆"}
+.hub-parent-session-card[data-session-icon="running"]::before{content:"➜"}
+.hub-parent-session-card[data-session-icon="core"]::before{content:"◉"}
+.hub-parent-session-card[data-session-icon="warmup"]::before{content:"⚡"}
+.hub-parent-session-card > *{max-width:100%;min-width:0}
+@media(max-width:700px){
+  :is(div,section,nav):has(> .hub-parent-session-card){
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:11px!important;align-items:stretch!important;
+  }
+  .hub-parent-session-card{min-height:148px!important;padding:15px 13px 35px!important;gap:9px!important}
+  .hub-parent-session-card::before{right:12px;top:12px;font-size:19px}
+  .hub-parent-session-card::after{right:11px;bottom:10px;font-size:18px}
+}
+@media(min-width:701px){
+  :is(div,section,nav):has(> .hub-parent-session-card){
+    display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:16px!important;align-items:stretch!important;
+  }
+  .hub-parent-session-card{min-height:180px!important;padding:22px 19px 37px!important}
+}
+@media(prefers-reduced-motion:reduce){.hub-parent-session-card{transition:none!important}}
