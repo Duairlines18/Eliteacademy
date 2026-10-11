@@ -1879,7 +1879,15 @@ footer,
 .hub-field-tech summary{font-size:.72rem;padding:.3rem 0}
 @media(max-width:480px){.hub-field-day{grid-template-columns:3.5rem minmax(0,1fr);gap:.45rem}.hub-field-day-time{grid-column:2}.hub-field-movement-main strong{max-width:8rem}.hub-field-week-top h2{font-size:1rem}}
 </style>
-<style id="hub-principal-qa-v5">.hub-field-optional{margin:.7rem 0;padding:.7rem;border:1px solid rgba(130,145,165,.25);border-radius:10px}.hub-field-optional>summary{font-size:.85rem;font-weight:650;cursor:pointer}.hub-field-optional>p{font-size:.84rem;line-height:1.5}.hub-field-optional .hub-section{margin-top:.65rem}.hub-field-optional-history{margin:.5rem 0}</style></head>
+<style id="hub-principal-qa-v5">.hub-field-optional{margin:.7rem 0;padding:.7rem;border:1px solid rgba(130,145,165,.25);border-radius:10px}.hub-field-optional>summary{font-size:.85rem;font-weight:650;cursor:pointer}.hub-field-optional>p{font-size:.84rem;line-height:1.5}.hub-field-optional .hub-section{margin-top:.65rem}.hub-field-optional-history{margin:.5rem 0}</style><style id="hub-one-sheet">
+.hub-unified-field{margin-top:.6rem}.hub-unified-overview{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;padding:.7rem .85rem;border:1px solid #4c4030;border-radius:10px;margin-bottom:.75rem;font-size:.83rem}.hub-unified-overview span{color:#c6a45e;font-size:.75rem}
+.hub-unified-phase{border:1px solid #3a352e;border-radius:12px;padding:.7rem .75rem;margin:.65rem 0;background:#111}.hub-unified-phase-title{display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.35rem}.hub-unified-phase-title h3{font-size:.99rem;color:#d2ad61;margin:0}.hub-unified-phase-title span{font-size:.68rem;color:#a8a39c}.hub-unified-shared .hub-field-movement{padding:.4rem 0}.hub-unified-dose-list{margin-top:.35rem}.hub-unified-movement{border-top:1px solid #302c27;padding:.55rem 0}.hub-unified-movement-name{font-size:.85rem;font-weight:600;margin-bottom:.45rem}.hub-unified-doses{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.3rem}.hub-unified-dose-cell{background:#1b1916;border-radius:7px;padding:.45rem .4rem;min-width:0}.hub-unified-dose-cell small{display:block;font-size:.65rem;color:#c7a25b;margin-bottom:.25rem;overflow-wrap:anywhere}.hub-unified-dose-cell strong{display:block;font-size:.8rem;color:#f0eae0;overflow-wrap:anywhere}.hub-unified-help .hub-field-movement{border:0;padding:0}.hub-unified-help .hub-field-movement-main{display:none}.hub-unified-help .hub-field-tech{margin:.15rem 0 0}.hub-unified-references{margin:.8rem 0;padding:.65rem .8rem;border:1px solid #3a352e;border-radius:10px}.hub-unified-references>summary{color:#c6a45e;cursor:pointer;font-size:.85rem}.hub-unified-references .hub-field-movement{padding:.4rem 0}
+@media(max-width:400px){.hub-unified-doses{gap:.2rem}.hub-unified-dose-cell{padding:.4rem .25rem}.hub-unified-dose-cell small{font-size:.6rem}.hub-unified-dose-cell strong{font-size:.73rem}}
+</style><style id="hub-school-athlete-one-sheet">
+.hub-athlete-one-sheet{margin:.45rem 0}.hub-athlete-summary{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.35rem;font-size:.87rem;font-weight:650;margin-bottom:.65rem}.hub-athlete-summary span{font-size:.72rem;font-weight:400;color:#aaa49c}
+.hub-athlete-phase{border:1px solid #39342e;border-radius:11px;padding:.7rem .8rem;margin:.65rem 0;background:#111}.hub-athlete-phase-heading{display:flex;justify-content:space-between;align-items:center;gap:.4rem;margin-bottom:.3rem}.hub-athlete-phase-heading h3{font-size:.98rem;color:#d2ad61;margin:0}.hub-athlete-phase-heading span{font-size:.7rem;color:#aaa49c}.hub-athlete-movement{padding:.52rem 0;border-top:1px solid #2f2d29}.hub-athlete-movement-line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.55rem;align-items:start;font-size:.86rem;line-height:1.35}.hub-athlete-movement-line strong{font-size:.81rem;text-align:right;max-width:10rem}.hub-athlete-movement>small{font-size:.7rem;color:#aaa49c}.hub-athlete-help .hub-field-movement{border:0;padding:0}.hub-athlete-help .hub-field-movement-main{display:none}.hub-athlete-help .hub-field-tech{margin:.1rem 0}.hub-athlete-references{border:1px solid #39342e;border-radius:9px;padding:.7rem .8rem;margin:.7rem 0}.hub-athlete-references summary{color:#d2ad61;font-size:.83rem;cursor:pointer}
+@media(max-width:420px){.hub-athlete-phase{padding:.65rem}.hub-athlete-movement-line strong{max-width:7.7rem}}
+</style></head>
 <body id="top">
 <div class="site-view" id="home-view">
 <!-- ================= TOP BAR ================= -->
@@ -4281,15 +4289,57 @@ document.addEventListener('click',function(e){
   function staffAllGroupsExperience(sessionData){
     const workout=normalizeWorkoutSession(sessionData,EXERCISES),sections=deliverySections(workout.sections);
     const groups=[...new Set(sections.flatMap(section=>(section.items||[]).map(item=>item.group).filter(Boolean)))];
-    const sharedCount=sections.reduce((n,section)=>n+(section.items||[]).filter(item=>!item.group).length,0);
-    // Unlabelled prescriptions are shown once, never silently assigned to every cohort.
-    const shared=sharedCount?'<section class="hub-field-cohort-block"><h3>Movements without a cohort label</h3><p class="hub-field-context">These have no cohort assignment in the current programme. Confirm who should perform them.</p>'+hubPhases(sections,'','shared')+'</section>':'';
-    const body=groups.map(group=>'<section class="hub-field-cohort-block"><h3>'+escapeHtml(group)+'</h3>'+hubPhases(sections,group,'cohort')+'</section>').join('');
-    const warning=!groups.length?'<p class="hub-field-context">No explicit cohort labels found. Check the published programme before delivery.</p>':'';
-    return '<div class="hub-field-delivery"><p class="hub-field-context">Coach field sheet · '+groups.length+' labelled cohort'+(groups.length===1?'':'s')+'</p>'+warning+shared+body+'</div>';
+    const norm=v=>String(v||'').trim().toLowerCase().replace(/\\s+/g,' ');
+    const isReference=section=>/Additional movement references/i.test(String(section.title||''));
+    const phases=sections.filter(section=>!isReference(section));
+    const references=sections.filter(isReference);
+    const html=phases.map(section=>{
+      const items=section.items||[];
+      const shared=items.filter(item=>!item.group);
+      const labelled=items.filter(item=>!!item.group);
+      // Same exercise is one row, but every group's distinct dose is retained.
+      const movementRows=[];
+      labelled.forEach(item=>{
+        const key=norm(item.code||item.title);
+        let entry=movementRows.find(r=>r.key===key);
+        if(!entry){entry={key,title:item.title,items:[]};movementRows.push(entry);}
+        entry.items.push(item);
+      });
+      const sharedHtml=shared.length?'<div class="hub-unified-shared">'+hubPhaseRows(shared)+'</div>':'';
+      const cohortHtml=movementRows.length?'<div class="hub-unified-dose-list">'+movementRows.map(row=>{
+        const doses=groups.map(group=>{
+          const item=row.items.find(i=>norm(i.group)===norm(group));
+          return '<div class="hub-unified-dose-cell"><small>'+escapeHtml(group)+'</small><strong>'+escapeHtml(item?(item.dosage||item.dose||'See prescription'):'—')+'</strong></div>';
+        }).join('');
+        const demo=hubPhaseRows([row.items[0]]);
+        return '<div class="hub-unified-movement"><div class="hub-unified-movement-name">'+escapeHtml(row.title)+'</div><div class="hub-unified-doses">'+doses+'</div><div class="hub-unified-help">'+demo+'</div></div>';
+      }).join('')+'</div>':'';
+      if(!sharedHtml&&!cohortHtml)return '';
+      return '<section class="hub-unified-phase"><div class="hub-unified-phase-title"><h3>'+escapeHtml(section.title)+'</h3><span>'+items.length+' prescribed entries</span></div>'+sharedHtml+cohortHtml+'</section>';
+    }).join('');
+    const referenceHtml=references.length?'<details class="hub-unified-references"><summary>Movement reference library ('+references.reduce((n,x)=>n+(x.items||[]).length,0)+')</summary>'+references.map(section=>hubPhaseRows(section.items||[])).join('')+'</details>':'';
+    return '<div class="hub-field-delivery hub-unified-field"><div class="hub-unified-overview"><strong>One training sheet</strong><span>'+groups.map(escapeHtml).join(' · ')+'</span></div>'+html+referenceHtml+'</div>';
   }
   function schoolAthleteDelivery(sections,sessionData){
-    return '<div class="hub-field-delivery hub-field-athlete"><p class="hub-field-context">Your assigned session · tap Technique only when you need help</p>'+hubPhases(deliverySections(sections),'')+'</div>';
+    // The existing selected cohort has already been applied by visibleNormalizedSections.
+    // Keep every prescribed item in programme order; separate optional reference-only entries.
+    const source=deliverySections(sections);
+    const reference=source.filter(section=>/Additional movement references/i.test(String(section.title||'')));
+    const prescribed=source.filter(section=>!/Additional movement references/i.test(String(section.title||'')));
+    const phases=prescribed.map(section=>{
+      const items=section.items||[];
+      if(!items.length)return '';
+      return '<section class="hub-athlete-phase"><div class="hub-athlete-phase-heading"><h3>'+escapeHtml(section.title)+'</h3><span>'+items.length+' movements</span></div><div class="hub-athlete-phase-list">'+items.map(item=>{
+        const dosage=String(item.dosage||'').trim();
+        const rest=String(item.rest||'').trim();
+        const displayDose=dosage||(/(?:\d+\s*[×x]\s*\d+|\d+\s*m\b|\d+\s*sec|\d+\s*each)/i.test(String(item.title||''))?'':'Dose not specified');
+        const help=!!(item.videoUrl||item.videoId||item.description||item.cue||item.avoid||item.purpose);
+        const technique=help?hubPhaseRows([item]).replace(/<div class="hub-field-movement-main">[\s\S]*?<\/div>/,''):'';
+        return '<div class="hub-athlete-movement"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+(displayDose?'<strong>'+escapeHtml(displayDose)+'</strong>':'')+'</div>'+(rest?'<small>Rest: '+escapeHtml(rest)+'</small>':'')+(help?'<div class="hub-athlete-help">'+technique+'</div>':'')+'</div>';
+      }).join('')+'</div></section>';
+    }).join('');
+    const library=reference.length?'<details class="hub-athlete-references"><summary>Optional movement references</summary>'+reference.map(section=>hubPhaseRows(section.items||[])).join('')+'</details>':'';
+    return '<div class="hub-field-delivery hub-athlete-one-sheet"><div class="hub-athlete-summary">Your training today <span>Follow in order · tap Technique for help</span></div>'+phases+library+'</div>';
   }
 
   function renderWorkoutExperience(sessionData){if(session()?.role==='staff'&&isSchoolReferenceViewer())return staffAllGroupsExperience(sessionData);const workout=normalizeWorkoutSession(sessionData,EXERCISES);if(requiresGroupSelection(workout))return groupPicker()+'<div class="hub-empty-state"><strong>Choose your training group first.</strong><br>Your group controls the dosage shown in this workout.</div>';const sections=visibleNormalizedSections(workout),items=flattenedWorkoutItems(sections),readOnly=session()?.role==='staff';if(!items.length)return groupPicker()+'<div class="hub-empty-state">This session is being prepared.</div>';if(isSchoolReferenceViewer())return groupPicker()+schoolAthleteDelivery(sections,sessionData);const completed=items.filter(item=>isWorkoutComplete(workout.id,item.key)).length,percent=Math.round((completed/items.length)*100),allDone=completed===items.length;let cursor=Number.isInteger(GUIDED_CURSOR[workout.id])?GUIDED_CURSOR[workout.id]:items.findIndex(item=>!isWorkoutComplete(workout.id,item.key));if(cursor<0)cursor=items.length-1;cursor=Math.max(0,Math.min(items.length-1,cursor));GUIDED_CURSOR[workout.id]=cursor;const mode=readOnly?'quick':WORKOUT_MODE,toolbar='<div class="hub-workout-toolbar"><div class="hub-workout-progress"><strong>'+completed+'/'+items.length+'</strong><div class="hub-progress-track"><div class="hub-progress-fill" style="width:'+percent+'%"></div></div><span class="hub-progress-count">'+percent+'%</span></div>'+(!readOnly?'<div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="guided" class="'+(mode==='guided'?'active':'')+'">Guided</button><button type="button" data-workout-mode="quick" class="'+(mode==='quick'?'active':'')+'">Quick View</button></div>':'')+'</div>';const complete=allDone?'<div class="hub-workout-complete"><strong>✓ Workout Complete</strong><span>Strong work. Your session is saved.</span></div>':'';if(mode==='quick')return groupPicker()+'<div class="hub-workout-experience quick">'+toolbar+complete+quickView(workout.id,sections,readOnly,false,sessionData)+'</div>';const active=items[cursor];return groupPicker()+'<div class="hub-workout-experience guided">'+toolbar+complete+'<div class="hub-guided-layout"><div>'+guidedCard(active,active.sectionTitle,cursor,items.length,workout.id)+'</div><aside class="hub-guided-rail" aria-label="Workout overview">'+quickView(workout.id,sections,readOnly,true,sessionData)+'</aside></div></div>';}
