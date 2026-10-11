@@ -41,6 +41,8 @@ begin
  end if;
  select * into v_week from public.programme_weeks
  where programme_id=p_programme_id and week_number=p_week_number and tier_id is null
+ and p_week_number = case when v_athlete.athlete_type='private' and v_athlete.programme_id is not null
+   then v_athlete.current_week else (select c.current_week from public.cohorts c where c.id=v_athlete.cohort_id) end
  and status in ('live','completed') and verification_status='verified'
  and published_at is not null;
  if not found then raise exception 'Target week is not published and verified'; end if;
@@ -69,6 +71,8 @@ begin
    then raise exception 'Prescriptions must be an array'; end if;
  if p_content ? 'exerciseCodes' and jsonb_typeof(p_content->'exerciseCodes')<>'array'
    then raise exception 'Exercise codes must be an array'; end if;
+ if p_content ? 'items' and jsonb_typeof(p_content->'items')<>'array' then
+   raise exception 'Items must be an array'; end if;
  select count(*) into v_bad_dosage from jsonb_array_elements(
    case when jsonb_typeof(p_content->'prescriptions')='array'
    then p_content->'prescriptions' else '[]'::jsonb end) p
