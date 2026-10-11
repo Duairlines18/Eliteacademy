@@ -32,9 +32,11 @@ begin
  if not found then raise exception 'Athlete not found'; end if;
  if v_athlete.access_status<>'active' then raise exception 'Athlete is not active'; end if;
  -- Direct private athletes are identified by programme_id, cohort accounts by cohort.
- if v_athlete.programme_id is distinct from p_programme_id
-   and not exists(select 1 from public.cohorts c where c.id=v_athlete.cohort_id
-     and c.programme_id=p_programme_id) then
+ if (v_athlete.athlete_type='private' and v_athlete.programme_id is not null
+      and v_athlete.programme_id is distinct from p_programme_id)
+   or (not (v_athlete.athlete_type='private' and v_athlete.programme_id is not null)
+      and not exists(select 1 from public.cohorts c where c.id=v_athlete.cohort_id
+      and c.programme_id=p_programme_id and c.status='live')) then
    raise exception 'Programme is not assigned to athlete';
  end if;
  select * into v_week from public.programme_weeks
