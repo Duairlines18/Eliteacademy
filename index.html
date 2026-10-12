@@ -4284,7 +4284,7 @@ document.addEventListener('click',function(e){
 
   const LEGACY_EXERCISE_ALIASES={'double leg pogos':'two leg pogos','calf raises':'calf raise','high knee hip rotation':'high knee hip rotation out','leg swing front and back':'leg swing front back','leg swing side to side':'leg swing side side','walking lunge with rotation':'walking lunge rotation','broad jump and stick':'broad jump stick','single leg hop and stick':'single leg hop stick','jump and stick':'jump squat stick','hamstring kicks':'straight leg hamstring kick','soleus hold':'bent knee soleus hold','single leg bridge':'single leg glute bridge','hip lock':'hip lock hold','quarter squat iso':'quarter squat iso hold','hamstring bridge':'hamstring bridge iso hold','pogos':'two leg pogos','fast feet to run':'fast feet run','calf iso':'calf iso hold','hip rotation':'high knee hip rotation out'};
   function cleanLegacyExerciseText(value){let text=String(value||'').trim().replace(/^📹\s*Coach Review\s*[—:-]\s*/i,'');text=text.replace(/^Leg Swing\s+[—–]\s+Front and Back\s+[—–]\s+/i,'Leg Swing Front / Back — ');text=text.replace(/^Leg Swing\s+[—–]\s+Side to Side\s+[—–]\s+/i,'Leg Swing Side / Side — ');return text;}
-  function legacyExerciseMatch(value,exercises=EXERCISES){const text=cleanLegacyExerciseText(value),first=(text.split(/\s+[—–]\s+/)[0]||text).trim();let key=simpleText(first);key=LEGACY_EXERCISE_ALIASES[key]||key;return (Array.isArray(exercises)?exercises:[]).find(ex=>simpleText(ex.title||ex.name)===key)||null;}
+  function legacyExerciseMatch(value,exercises=EXERCISES){const text=cleanLegacyExerciseText(value),first=(text.split(/\s+[—–]\s+/)[0]||text).trim();let key=simpleText(first).replace(/\s*\([a-z]{2,8}\d{2,3}\)\s*$/i,'');key=LEGACY_EXERCISE_ALIASES[key]||key;return (Array.isArray(exercises)?exercises:[]).find(ex=>simpleText(ex.title||ex.name)===key)||null;}
   function leadingDosage(value){const text=String(value||'').trim(),match=text.match(/^((?:\d+(?:\s*[–-]\s*\d+)?\s*[×x]\s*)?\d+(?:\s*[–-]\s*\d+)?(?:\s*(?:s|sec|secs|seconds?))?(?:\s*(?:each|per)\s+side)?)\s+(.+)$/i);return match?{dosage:match[1].trim(),text:match[2].trim()}:{dosage:'',text};}
   function normalizedTextItem(raw,order,index,exercises,subIndex=null){
     const parsed=parsedGroup(raw),cleanText=cleanLegacyExerciseText(parsed.text),lead=leadingDosage(cleanText);
@@ -4293,7 +4293,11 @@ document.addEventListener('click',function(e){
     const tag=cleanText.match(/\(([A-Z]{2,8}\d{2,3})\)/i);
     const coded=tag?list.find(ex=>String(ex.code||'').toUpperCase()===tag[1].toUpperCase()):null;
     const directMatch=legacyExerciseMatch(cleanText,exercises),leadMatch=lead.dosage?legacyExerciseMatch(lead.text,exercises):null;
-    const matched=coded||directMatch||leadMatch,useLead=Boolean(leadMatch&&!directMatch&&!coded);
+    // Some school prescriptions contain several exercises in one text row. Match each
+    // separated segment to the same approved library used by private/parent access.
+    // Resolve from the full library as a fallback when a session payload is partial.
+    const fullLibraryMatch=(!coded&&!directMatch&&!leadMatch)?legacyExerciseMatch(lead.dosage?lead.text:cleanText,EXERCISES):null;
+    const matched=coded||directMatch||leadMatch||fullLibraryMatch,useLead=Boolean((leadMatch||fullLibraryMatch)&&lead.dosage&&!directMatch&&!coded);
     const display=textPrescription(cleanText),parts=coachingParts(matched?.coachingNote||'');
     const key=subIndex===null?'i:'+order+':'+index:'i:'+order+':'+index+':'+subIndex;
     const trailing=coded?cleanText.slice(cleanText.indexOf(tag[0])+tag[0].length).trim().replace(/^[—–:-]\s*/,''):'';
@@ -4301,7 +4305,7 @@ document.addEventListener('click',function(e){
       title:coded?(coded.title||coded.name||cleanText.replace(tag[0],'').trim()):(matched?.title||matched?.name||display.title),
       dosage:coded?(trailing||display.dosage):useLead?lead.dosage:display.dosage,
       rest:display.rest,cue:parts.cue,avoid:parts.avoid,description:matched?.description||'',
-      purpose:matched?.purpose||'',videoId:matched?.videoId||'',videoUrl:matched?.videoUrl||'',
+      purpose:matched?.purpose||'',videoId:matched?.videoId||'',videoUrl:matched?.videoUrl||(matched?.videoId?'https://www.youtube.com/watch?v='+encodeURIComponent(matched.videoId):''),
       group:parsed.group,rawIndex:index};
   }
   function expandTextWorkoutItem(raw,order,index,exercises){const parsed=parsedGroup(raw),segments=parsed.text.split(';').map(x=>x.trim()).filter(Boolean);if(segments.length<=1)return [normalizedTextItem(raw,order,index,exercises,null)];return segments.map((segment,subIndex)=>normalizedTextItem((parsed.group?parsed.group+' — ':'')+segment,order,index,exercises,subIndex));}
