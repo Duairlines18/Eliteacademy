@@ -4703,7 +4703,7 @@ document.addEventListener('click',function(e){
     const intro='<section class="hub-field-intro hub-athlete-compact-intro"><span class="hub-week-label">MY TRAINING</span><h1>'+escapeHtml(displayName)+'</h1><p>'+escapeHtml(a.programme||p.title||'Your programme')+' · '+escapeHtml(weekLabel(p))+'</p></section>';
     const note=a.coachNotes?'<details class="hub-field-note"><summary>Coach Du note</summary><p>'+escapeHtml(a.coachNotes)+'</p></details>':'';
     const actions='<div class="hub-field-links"><a href="#/hub/library">Movement library →</a><a href="#/hub/feedback">Athlete check-in →</a></div>';
-    root.innerHTML=shell(intro+preparing+parentTrainingDays({...p,sessions})+note+'<details class="hub-field-note"><summary>Training history</summary>'+historyBlock()+'</details>'+actions,'dashboard');
+    root.innerHTML=shell(intro+weekBrowser(p)+preparing+parentTrainingDays({...p,sessions})+note+'<details class="hub-field-note"><summary>Training history</summary>'+historyBlock()+'</details>'+actions,'dashboard');
   }
   function parentSessionLabel(item,index){
     const raw=String(item.day||'Day '+(index+1));
