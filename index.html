@@ -4855,10 +4855,17 @@ document.addEventListener('click',function(e){
         const {data,error}=await client.auth.getSession();
         if(error||!data?.session?.access_token)throw Error('Parent session expired');
         if(!panel.isConnected||!window.DuTechniqueReviewMount)throw Error('Technique Review unavailable');
-        await window.DuTechniqueReviewMount({
-          role:'parent',root:panel,supabase:client,jwt:data.session.access_token,
-          exercises:EXERCISES.map(ex=>({id:ex.id,name:ex.title||ex.name||ex.code})),enabled:true
-        });
+        const linked=await authEdgePost('technique-review-parent',{action:'linked'});
+        const athletes=linked.athletes||[];
+        if(!athletes.length){panel.remove();return;}
+        for(const athlete of athletes){
+          if(!panel.isConnected)return;
+          const childPanel=document.createElement('div');panel.append(childPanel);
+          await window.DuTechniqueReviewMount({
+            role:'parent',root:childPanel,supabase:client,jwt:data.session.access_token,
+            athleteId:athlete.id,enabled:true
+          });
+        }
       };
       runParent().catch(error=>{console.warn('Parent Technique Review unavailable',error);panel.remove();});
     }
