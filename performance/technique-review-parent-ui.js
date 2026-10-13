@@ -10,16 +10,14 @@ export function mountParentTechniqueReview({root,api,athleteId,exercises=[],uplo
   try{
    const {submissions=[]}=await api('list',{athleteId});
    const context=await api('context',{athleteId});
-   if(context.weekId&&context.exercises?.length){
-    const label=document.createElement('label');label.textContent='Exercise to film';
-    const select=document.createElement('select');for(const item of context.exercises){const option=document.createElement('option');option.value=item.id;option.textContent=item.name;select.append(option);}
+   if(context.weekId){
     const input=document.createElement('input');input.type='file';input.accept='video/mp4,video/quicktime';input.setAttribute('aria-label','Select technique video');
     const button=document.createElement('button');button.type='button';button.textContent='Upload video for Coach Du';
     button.onclick=async()=>{const file=input.files?.[0];if(!file){status.textContent='Choose a video first.';return;}if(file.size>25*1024*1024){status.textContent='Maximum 25 MB.';return;}
-     button.disabled=true;try{status.textContent='Uploading…';const slot=await api('reserve',{athleteId,weekId:context.weekId,exerciseId:select.value});await uploadSigned({path:slot.path,token:slot.token,file});status.textContent='Validating video…';await api('finalize',{athleteId,id:slot.id});await refresh();}
+     button.disabled=true;try{status.textContent='Uploading…';const slot=await api('reserve',{athleteId,weekId:context.weekId});await uploadSigned({path:slot.path,token:slot.token,file});status.textContent='Validating video…';await api('finalize',{athleteId,id:slot.id});await refresh();}
      catch(error){status.textContent=error instanceof Error?error.message:'Upload failed';}finally{button.disabled=false;}};
     const hint=document.createElement('p');hint.textContent='Maximum 15 seconds, 25 MB, and 3 videos per athlete each week.';
-    label.append(select);upload.append(label,input,button,hint);
+    upload.append(input,button,hint);
    }
    status.textContent=submissions.length?'Your athlete’s submitted technique videos.':'No technique videos submitted yet.';
    for(const clip of submissions){
