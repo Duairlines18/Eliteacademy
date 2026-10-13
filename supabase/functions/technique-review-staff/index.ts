@@ -17,21 +17,15 @@ Deno.serve(async req=>{
   const scoped=await authorizeSchoolCoach(client,token,['athletes','context'].includes(body.action)?undefined:body.athleteId);
   const {cohort,athlete,session}=scoped;
   if(body.action==='context'){
-   const {data:week}=await client.from('programme_weeks').select('id').eq('programme_id',cohort.programme_id).eq('week_number',body.weekNumber).eq('status','live').maybeSingle();
-   return reply(200,{weekId:week?.id||null});
-  }
-  if(body.action==='context'){
-   const {data:week,error}=await client.from('programme_weeks').select('id,week_number').eq('programme_id',cohort.programme_id).eq('status','live').eq('week_number',Number(body.weekNumber)).limit(1).maybeSingle();
-   if(error||!week)return reply(409,{error:'No live programme week'});
-   return reply(200,{weekId:week.id,weekNumber:week.week_number});
-  }
-  if(body.action==='athletes'){
-   const {data,error}=await client.from('athletes').select('id,display_name,full_name').eq('cohort_id',cohort.id).eq('access_status','active').limit(100);
-   if(error)throw error;
-   return reply(200,{athletes:data||[]});
-  }
-  if(!athlete)return reply(403,{error:'Select an assigned athlete'});
-  if(body.action==='list'){
+      const weekNumber=Number(body.weekNumber);
+      if(!Number.isInteger(weekNumber)||weekNumber<1||weekNumber>100)return reply(400,{error:'Invalid week'});
+      const {data:week,error:weekError}=await client.from('programme_weeks').select('id,week_number').eq('programme_id',cohort.programme_id).eq('week_number',weekNumber).eq('status','live').maybeSingle();
+      if(weekError||!week)return reply(409,{error:'No live programme week'});
+      const {data:exercises,error:exerciseError}=await client.from('exercises').select('id,code,name').eq('active',true).order('display_order').limit(300);
+      if(exerciseError)throw exerciseError;
+      return reply(200,{weekId:week.id,weekNumber:week.week_number,exercises:exercises||[]});
+    }
+    if(body.action==='list'){
    const {data,error}=await client.from('technique_video_requests').select('id,programme_week_id,exercise_id,instruction_override,status').eq('athlete_id',athlete.id).limit(40);
    if(error)throw error;
    return reply(200,{requests:data||[]});
