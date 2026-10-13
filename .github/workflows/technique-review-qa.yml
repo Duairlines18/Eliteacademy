@@ -1,0 +1,31 @@
+name: Technique Review QA
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/technique-review-**/**'
+      - 'supabase/qa/technique-review-**'
+      - 'performance/technique-review-**'
+      - '.github/workflows/technique-review-qa.yml'
+  push:
+    branches: [feature/technique-review-pilot]
+jobs:
+  media-and-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Check video duration tests
+        run: deno test supabase/qa/technique-review-media.test.ts
+      - name: Check Edge Function TypeScript
+        run: |
+          deno check supabase/functions/technique-review-private/index.ts
+          deno check supabase/functions/technique-review-staff/index.ts
+          deno check supabase/functions/technique-review-admin/index.ts
+      - name: Check browser modules
+        run: |
+          node --check performance/technique-review-ui.js
+          node --check performance/technique-review-school-ui.js
+          node --check performance/technique-review-admin-ui.js
+          node --check performance/technique-review-bridge.js
