@@ -4806,12 +4806,27 @@ document.addEventListener('click',function(e){
     // Technique Review is strictly opt-in; existing school-code login remains intact.
     if(window.DU_TECHNIQUE_REVIEW_ENABLED===true
       && (route==='/'||route==='/staff'||route==='/athlete')
-      && (active.role==='staff'||(active.mode==='account'&&active.audience==='private-athlete'))){
+      && (active.role==='staff'||(active.mode==='account'&&['private-athlete','parent'].includes(active.audience)))){
       const panel=document.createElement('div');
       panel.id='du-technique-review-panel';
       root.querySelector('.hub-shell')?.append(panel);
-      const role=active.role==='staff'?'staff':'athlete';
+      const role=active.role==='staff'?'staff':active.audience==='parent'?'parent':'athlete';
       const run=async()=>{
+        if(role==='parent'){
+          const linked=await authEdgePost('technique-review-parent',{action:'linked'});
+          const athletes=linked.athletes||[];
+          if(!athletes.length){panel.remove();return;}
+          if(!window.DuTechniqueReviewMount)throw Error('Technique Review module not ready');
+          const client=accountClient();
+          const account=await client.auth.getSession();
+          const jwt=account?.data?.session?.access_token;
+          if(!jwt)throw Error('Parent account session expired');
+          for(const athlete of athletes){
+            const section=document.createElement('div');panel.append(section);
+            await window.DuTechniqueReviewMount({role:'parent',root:section,supabase:client,jwt,athleteId:athlete.id,exercises:[],enabled:true});
+          }
+          return;
+        }
         const apiHeaders=role==='staff'?{'x-du-session':active.token}:{};
         const ctx=role==='staff'
           ?await edgePost('technique-review-staff',{action:'context',weekNumber:programme().week},apiHeaders)
