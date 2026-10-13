@@ -4844,7 +4844,7 @@ document.addEventListener('click',function(e){
       run().catch(error=>{console.warn('Technique Review unavailable',error);panel.remove();});
     }
     // Parent read-only review: the API resolves the linked athlete from the JWT.
-    if(window.DU_TECHNIQUE_REVIEW_ENABLED===true
+    if(window.DU_TECHNIQUE_REVIEW_ENABLED!==false
       && (route==='/'||route==='/athlete')
       && active.mode==='account'&&active.audience==='parent'){
       const panel=document.createElement('div');
