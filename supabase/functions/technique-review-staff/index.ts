@@ -11,7 +11,8 @@ Deno.serve(async req=>{
  const reply=(status:number,data:unknown)=>new Response(JSON.stringify(data),{status,headers});
  if(req.method==='OPTIONS')return new Response('',{headers});
  if(req.method!=='POST')return reply(405,{error:'Method not allowed'});
- if(Deno.env.get('TECHNIQUE_REVIEW_ENABLED')!=='true')return reply(404,{error:'Feature disabled'});
+
+
  try {
   const client=db(), token=req.headers.get('x-du-session')||'',body=await req.json();
   const scoped=await authorizeSchoolCoach(client,token,['athletes','context'].includes(body.action)?undefined:body.athleteId);
