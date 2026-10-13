@@ -16,6 +16,10 @@ Deno.serve(async req=>{
   const client=db(), token=req.headers.get('x-du-session')||'',body=await req.json();
   const scoped=await authorizeSchoolCoach(client,token,body.action==='athletes'?undefined:body.athleteId);
   const {cohort,athlete,session}=scoped;
+  if(body.action==='context'){
+   const {data:week}=await client.from('programme_weeks').select('id').eq('programme_id',cohort.programme_id).eq('week_number',body.weekNumber).eq('status','live').maybeSingle();
+   return reply(200,{weekId:week?.id||null});
+  }
   if(body.action==='athletes'){
    const {data,error}=await client.from('athletes').select('id,display_name,full_name').eq('cohort_id',cohort.id).eq('access_status','active').limit(100);
    if(error)throw error;
