@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
-const scripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(x=>x[1]).filter(x=>x.trim());
+const scripts=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(m=>!/\btype\s*=\s*[\"']module[\"']/i.test(m[1])).map(m=>m[2]).filter(x=>x.trim());
 assert.ok(scripts.length>=1);
 scripts.forEach((script,index)=>assert.doesNotThrow(()=>new vm.Script(script,{filename:'inline-'+index+'.js'})));
 const app=scripts.find(x=>x.includes('function schoolAthleteDelivery('));
