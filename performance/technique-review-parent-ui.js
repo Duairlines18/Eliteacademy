@@ -1,6 +1,6 @@
 // Read-only parent Technique Review. Uses the existing parent account JWT.
 export function mountParentTechniqueReview({root,api,athleteId,exercises=[]}){
- if(!root||!athleteId||typeof api!=='function')throw Error('Parent review dependencies unavailable');
+ if(!root||typeof api!=='function')throw Error('Parent review dependencies unavailable');
  const section=document.createElement('section');section.setAttribute('aria-label','Parent Technique Review');
  const title=document.createElement('h3');title.textContent='Technique Review';
  const status=document.createElement('p');status.setAttribute('role','status');
