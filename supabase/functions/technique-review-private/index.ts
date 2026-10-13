@@ -30,6 +30,22 @@ Deno.serve(async request=>{
       if(se)throw se;
       return reply(200,{requests,submissions});
     }
+    if(body.action==='playback'){
+      if(!uuid(body.id))fail('Invalid video');
+      const {data:clip}=await db.from('technique_video_submissions').select('object_key').eq('id',body.id).eq('athlete_id',athlete.id).eq('upload_state','ready').maybeSingle();
+      if(!clip?.object_key)fail('Video not available',404);
+      const {data:signed,error:signedError}=await db.storage.from(BUCKET).createSignedUrl(clip.object_key,60);
+      if(signedError||!signed)fail('Playback unavailable',503);
+      return reply(200,{url:signed.signedUrl,expiresInSeconds:60});
+    }
+    if(body.action==='feedback'){
+      if(!uuid(body.id))fail('Invalid video');
+      const {data:clip}=await db.from('technique_video_submissions').select('id').eq('id',body.id).eq('athlete_id',athlete.id).eq('upload_state','ready').maybeSingle();
+      if(!clip)fail('Video not available',404);
+      const {data:feedback,error:feedbackError}=await db.from('technique_video_feedback').select('correction,positive_cue,created_at').eq('submission_id',body.id).order('created_at',{ascending:false}).limit(10);
+      if(feedbackError)throw feedbackError;
+      return reply(200,{feedback});
+    }
     if(body.action==='reserve'){
       if(!uuid(body.weekId)||!uuid(body.exerciseId))fail('Invalid week or exercise');
       const {data:week}=await db.from('programme_weeks').select('id,status').eq('id',body.weekId).eq('programme_id',athlete.programme_id).maybeSingle();
