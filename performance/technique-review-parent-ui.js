@@ -1,14 +1,26 @@
-// Read-only parent Technique Review. Uses the existing parent account JWT.
-export function mountParentTechniqueReview({root,api,athleteId,exercises=[]}){
+// Parent Technique Review with linked-athlete upload. Uses the existing parent account JWT.
+export function mountParentTechniqueReview({root,api,athleteId,exercises=[],uploadSigned}){
  if(!root||typeof api!=='function')throw Error('Parent review dependencies unavailable');
  const section=document.createElement('section');section.setAttribute('aria-label','Parent Technique Review');
  const title=document.createElement('h3');title.textContent='Technique Review';
  const status=document.createElement('p');status.setAttribute('role','status');
- const history=document.createElement('div');section.append(title,status,history);root.append(section);
+ const history=document.createElement('div');const upload=document.createElement('div');section.append(title,status,upload,history);root.append(section);
  async function refresh(){
-  status.textContent='Loading technique feedback…';history.replaceChildren();
+  status.textContent='Loading technique feedback…';history.replaceChildren();upload.replaceChildren();
   try{
    const {submissions=[]}=await api('list',{athleteId});
+   const context=await api('context',{athleteId});
+   if(context.weekId&&context.exercises?.length){
+    const label=document.createElement('label');label.textContent='Exercise to film';
+    const select=document.createElement('select');for(const item of context.exercises){const option=document.createElement('option');option.value=item.id;option.textContent=item.name;select.append(option);}
+    const input=document.createElement('input');input.type='file';input.accept='video/mp4,video/quicktime';input.setAttribute('aria-label','Select technique video');
+    const button=document.createElement('button');button.type='button';button.textContent='Upload video for Coach Du';
+    button.onclick=async()=>{const file=input.files?.[0];if(!file){status.textContent='Choose a video first.';return;}if(file.size>25*1024*1024){status.textContent='Maximum 25 MB.';return;}
+     button.disabled=true;try{status.textContent='Uploading…';const slot=await api('reserve',{athleteId,weekId:context.weekId,exerciseId:select.value});await uploadSigned({path:slot.path,token:slot.token,file});status.textContent='Validating video…';await api('finalize',{athleteId,id:slot.id});await refresh();}
+     catch(error){status.textContent=error instanceof Error?error.message:'Upload failed';}finally{button.disabled=false;}};
+    const hint=document.createElement('p');hint.textContent='Maximum 15 seconds, 25 MB, and 3 videos per athlete each week.';
+    label.append(select);upload.append(label,input,button,hint);
+   }
    status.textContent=submissions.length?'Your athlete’s submitted technique videos.':'No technique videos submitted yet.';
    for(const clip of submissions){
     const card=document.createElement('article');
