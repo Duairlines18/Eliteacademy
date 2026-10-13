@@ -4,14 +4,15 @@
 import { mountSchoolTechniqueReview } from './technique-review-school-ui.js';
 import { mountTechniqueReview } from './technique-review-ui.js';
 import { mountTechniqueReviewAdmin } from './technique-review-admin-ui.js';
+import { mountParentTechniqueReview } from './technique-review-parent-ui.js';
 
-export async function attachTechniqueReview({role,root,supabase,sessionToken,jwt,weekId,exercises=[],athletes=[],programmeWeeks=[],enabled=false}) {
+export async function attachTechniqueReview({role,root,supabase,sessionToken,jwt,weekId,exercises=[],athletes=[],programmeWeeks=[],athleteId,enabled=false}) {
  if(!enabled)return null;
  if(!root||!supabase)throw Error('Technique Review dependencies unavailable');
  const url=supabase.supabaseUrl||supabase.url;
  const key=supabase.supabaseKey||supabase.key;
  if(!url||!key)throw Error('Missing Supabase connection');
- const slug=role==='staff'?'technique-review-staff':role==='admin'?'technique-review-admin':'technique-review-private';
+ const slug=role==='staff'?'technique-review-staff':role==='admin'?'technique-review-admin':role==='parent'?'technique-review-parent':'technique-review-private';
  const api=async(action,payload={})=>{
   const headers={'content-type':'application/json','apikey':key};
   if(role==='staff'){
@@ -32,6 +33,7 @@ export async function attachTechniqueReview({role,root,supabase,sessionToken,jwt
   if(error)throw error;
  };
  if(role==='staff')return mountSchoolTechniqueReview({root,api,weekId,exercises,uploadSigned});
+ if(role==='parent')return mountParentTechniqueReview({root,api,athleteId,exercises});
  if(role==='admin')return mountTechniqueReviewAdmin({root,api,athletes,programmeWeeks,exercises});
  if(role==='athlete')return mountTechniqueReview({root,api,weekId,exercises,uploadSigned});
  return null;
