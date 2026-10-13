@@ -17,6 +17,11 @@ Deno.serve(async req=>{
   const {data:{user},error:authError}=await client.auth.getUser(token);
   if(authError||!user)return reply(401,{error:'Invalid session'});
   const body=await req.json();
+  if(body.action==='linked'){
+   const {data:athletes,error}=await client.from('athletes').select('id,display_name,full_name').eq('parent_user_id',user.id).eq('athlete_type','private').eq('access_status','active').limit(20);
+   if(error)throw error;
+   return reply(200,{athletes:athletes||[]});
+  }
   const athleteId=body.athleteId;
   if(athleteId!=null&&!uuid(athleteId))return reply(400,{error:'Invalid athlete'});
   const {data:athlete,error:athleteError}=await client.from('athletes').select('id,display_name,full_name').eq('parent_user_id',user.id).eq('athlete_type','private').eq('access_status','active').limit(2);
