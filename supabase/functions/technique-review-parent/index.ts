@@ -18,17 +18,18 @@ Deno.serve(async req=>{
   if(authError||!user)return reply(401,{error:'Invalid session'});
   const body=await req.json();
   const athleteId=body.athleteId;
-  if(!uuid(athleteId))return reply(400,{error:'Invalid athlete'});
-  const {data:athlete,error:athleteError}=await client.from('athletes').select('id,display_name,full_name').eq('id',athleteId).eq('parent_user_id',user.id).eq('athlete_type','private').eq('access_status','active').maybeSingle();
-  if(athleteError||!athlete)return reply(403,{error:'Parent access not authorized'});
+  if(athleteId!=null&&!uuid(athleteId))return reply(400,{error:'Invalid athlete'});
+  const {data:athlete,error:athleteError}=await client.from('athletes').select('id,display_name,full_name').eq('parent_user_id',user.id).eq('athlete_type','private').eq('access_status','active').limit(2);
+  if(athleteError||!athlete||athlete.length!==1|| (athleteId&&athlete[0].id!==athleteId))return reply(403,{error:'Parent access not authorized'});
+  const linkedAthlete=athlete[0];
   if(body.action==='list'){
-   const {data:submissions,error}=await client.from('technique_video_submissions').select('id,exercise_id,programme_week_id,review_state,created_at').eq('athlete_id',athlete.id).eq('upload_state','ready').order('created_at',{ascending:false}).limit(30);
+   const {data:submissions,error}=await client.from('technique_video_submissions').select('id,exercise_id,programme_week_id,review_state,created_at').eq('athlete_id',linkedAthlete.id).eq('upload_state','ready').order('created_at',{ascending:false}).limit(30);
    if(error)throw error;
-   return reply(200,{athlete:{id:athlete.id,name:athlete.display_name||athlete.full_name},submissions:submissions||[]});
+   return reply(200,{athlete:{id:linkedAthlete.id,name:linkedAthlete.display_name||linkedAthlete.full_name},submissions:submissions||[]});
   }
   if(body.action==='playback'||body.action==='feedback'){
    if(!uuid(body.id))return reply(400,{error:'Invalid video'});
-   const {data:clip}=await client.from('technique_video_submissions').select('id,object_key').eq('id',body.id).eq('athlete_id',athlete.id).eq('upload_state','ready').maybeSingle();
+   const {data:clip}=await client.from('technique_video_submissions').select('id,object_key').eq('id',body.id).eq('athlete_id',linkedAthlete.id).eq('upload_state','ready').maybeSingle();
    if(!clip)return reply(404,{error:'Video not found'});
    if(body.action==='feedback'){
     const {data:feedback,error}=await client.from('technique_video_feedback').select('positive_cue,correction,created_at').eq('submission_id',clip.id).order('created_at',{ascending:false}).limit(10);
