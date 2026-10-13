@@ -28,7 +28,7 @@ Deno.serve(async request=>{
       return reply(200,{weekId:week?.id||null});
     }
     if(body.action==='context'){
-      const {data:week,error}=await db.from('programme_weeks').select('id,week_number').eq('programme_id',athlete.programme_id).eq('status','live').order('week_number',{ascending:false}).limit(1).maybeSingle();
+      const {data:week,error}=await db.from('programme_weeks').select('id,week_number').eq('programme_id',athlete.programme_id).eq('status','live').eq('week_number',Number(body.weekNumber)).limit(1).maybeSingle();
       if(error||!week)return reply(409,{error:'No live programme week'});
       return reply(200,{weekId:week.id,weekNumber:week.week_number});
     }
