@@ -25,7 +25,12 @@ Deno.serve(async req=>{
       if(exerciseError)throw exerciseError;
       return reply(200,{weekId:week.id,weekNumber:week.week_number,exercises:exercises||[]});
     }
-    if(body.action==='list'){
+    if(body.action==='athletes'){
+   const {data:athletes,error}=await client.from('athletes').select('id,full_name,display_name').eq('cohort_id',cohort.id).eq('athlete_type','school').eq('access_status','active').order('full_name').limit(100);
+   if(error)throw error;
+   return reply(200,{athletes:athletes||[]});
+  }
+  if(body.action==='list'){
    const {data,error}=await client.from('technique_video_requests').select('id,programme_week_id,exercise_id,instruction_override,status').eq('athlete_id',athlete.id).limit(40);
    if(error)throw error;
    return reply(200,{requests:data||[]});
