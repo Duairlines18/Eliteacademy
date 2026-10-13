@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const html=fs.readFileSync('index.html','utf8');
-const scripts=[...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)].filter(m=>!/\\btype\\s*=\\s*[\"']module[\"']/i.test(m[1])).map(m=>m[2]).filter(Boolean);
+const scripts=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(m=>!/\btype\s*=\s*[\"']module[\"']/i.test(m[1])).map(m=>m[2]).filter(Boolean);
 for(const script of scripts){if(script.trim())new vm.Script(script);}
 const app=scripts.find(s=>s.includes('function parentTrainingDays('));
 assert.ok(app,'Hub app script found');
