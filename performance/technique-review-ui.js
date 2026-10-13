@@ -22,7 +22,7 @@ export function mountTechniqueReview({root,api,weekId,exercises,uploadSigned}) {
     setStatus('Loading requests…');requests.replaceChildren();
     try {
       const data=await api('list',{});
-      const items=(data.requests||[]).filter(r=>r.programme_week_id===weekId&&r.status==='open');
+      const items=(data.requests||[]).filter(r=>(!weekId||r.programme_week_id===weekId)&&r.status==='open');
       if(!items.length)setStatus('No video requested this week.');
       else setStatus('Record up to 15 seconds. Maximum three accepted videos per week.');
       for(const req of items){
@@ -37,7 +37,7 @@ export function mountTechniqueReview({root,api,weekId,exercises,uploadSigned}) {
           if(file.size>25*1024*1024)return setStatus('Maximum file size is 25 MB.');
           button.disabled=true;setStatus('Preparing secure upload…');
           try {
-            const slot=await api('reserve',{weekId,exerciseId:req.exercise_id,requestId:req.id});
+            const slot=await api('reserve',{weekId:req.programme_week_id,exerciseId:req.exercise_id,requestId:req.id});
             setStatus('Uploading video…');
             await uploadSigned({path:slot.path,token:slot.token,file});
             setStatus('Checking video duration…');
