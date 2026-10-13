@@ -4823,7 +4823,7 @@ document.addEventListener('click',function(e){
         await window.DuTechniqueReviewMount({
           role,root:panel,supabase:client,sessionToken:role==='staff'?active.token:undefined,
           jwt:role==='athlete'?account?.data?.session?.access_token:undefined,
-          weekId:ctx.weekId,exercises:EXERCISES,enabled:true
+          weekId:ctx.weekId,exercises:ctx.exercises||[],enabled:true
         });
       };
       run().catch(error=>{console.warn('Technique Review unavailable',error);panel.remove();});
