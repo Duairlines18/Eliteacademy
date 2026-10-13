@@ -32,15 +32,6 @@ Deno.serve(async request=>{
       if(exerciseError)throw exerciseError;
       return reply(200,{weekId:week.id,weekNumber:week.week_number,exercises:exercises||[]});
     }
-    if(body.action==='context'){
-      const number=Number(body.weekNumber);
-      if(!Number.isInteger(number)||number<1||number>100)return reply(400,{error:'Invalid week'});
-      const {data:week}=await db.from('programme_weeks').select('id').eq('programme_id',athlete.programme_id).eq('week_number',number).in('status',['live','completed']).maybeSingle();
-      if(!week)return reply(404,{error:'Week unavailable'});
-      const {data:exercises,error}=await db.from('exercises').select('id,name,code').limit(500);
-      if(error)throw error;
-      return reply(200,{weekId:week.id,exercises:exercises||[]});
-    }
     if(body.action==='list'){
       const {data:requests,error:re}=await db.from('technique_video_requests').select('id,programme_week_id,exercise_id,instruction_override,status').eq('athlete_id',athlete.id).order('created_at',{ascending:false}).limit(30);
       if(re)throw re;
