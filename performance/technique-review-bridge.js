@@ -26,7 +26,7 @@ export async function attachTechniqueReview({role,root,supabase,sessionToken,jwt
   if(!response.ok)throw Error(data.error||'Technique Review unavailable');
   return data;
  };
- const uploadSigned=async({path,token,file})=>{
+ if((role==='staff'||role==='athlete')&&!weekId){const context=await api('context',{});weekId=context.weekId;}\n const uploadSigned=async({path,token,file})=>{
   const {error}=await supabase.storage.from('technique-review').uploadToSignedUrl(path,token,file,{contentType:file.type||'video/mp4'});
   if(error)throw error;
  };
