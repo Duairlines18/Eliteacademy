@@ -69,8 +69,12 @@ create or replace function public.reserve_technique_video_slot(
 ) returns uuid language plpgsql security invoker set search_path = public as $$
 declare v_id uuid; v_programme_id uuid; v_cohort_id uuid; v_count integer;
 begin
-  select programme_id, cohort_id into v_programme_id, v_cohort_id from public.athletes where id=p_athlete_id for update;\n  if v_programme_id is null and v_cohort_id is not null then\n    select programme_id into v_programme_id from public.cohorts where id=v_cohort_id;\n  end if;
+  select programme_id, cohort_id into v_programme_id, v_cohort_id
+    from public.athletes where id=p_athlete_id for update;
   if not found then raise exception 'Athlete not found'; end if;
+  if v_programme_id is null and v_cohort_id is not null then
+    select programme_id into v_programme_id from public.cohorts where id=v_cohort_id;
+  end if;
   if not exists(select 1 from public.programme_weeks where id=p_programme_week_id and programme_id=v_programme_id)
     then raise exception 'Programme week does not belong to athlete'; end if;
   if p_request_id is not null and not exists (
