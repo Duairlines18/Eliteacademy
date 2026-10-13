@@ -23,10 +23,9 @@ Deno.serve(async req=>{
    return reply(200,{athletes:athletes||[]});
   }
   const athleteId=body.athleteId;
-  if(athleteId!=null&&!uuid(athleteId))return reply(400,{error:'Invalid athlete'});
-  const {data:athlete,error:athleteError}=await client.from('athletes').select('id,display_name,full_name').eq('parent_user_id',user.id).eq('athlete_type','private').eq('access_status','active').limit(2);
-  if(athleteError||!athlete||athlete.length!==1|| (athleteId&&athlete[0].id!==athleteId))return reply(403,{error:'Parent access not authorized'});
-  const linkedAthlete=athlete[0];
+  if(!uuid(athleteId))return reply(400,{error:'Invalid athlete'});
+  const {data:linkedAthlete,error:athleteError}=await client.from('athletes').select('id,display_name,full_name').eq('id',athleteId).eq('parent_user_id',user.id).eq('athlete_type','private').eq('access_status','active').maybeSingle();
+  if(athleteError||!linkedAthlete)return reply(403,{error:'Parent access not authorized'});
   if(body.action==='list'){
    const {data:submissions,error}=await client.from('technique_video_submissions').select('id,exercise_id,programme_week_id,review_state,created_at').eq('athlete_id',linkedAthlete.id).eq('upload_state','ready').order('created_at',{ascending:false}).limit(30);
    if(error)throw error;
