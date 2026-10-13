@@ -4804,7 +4804,7 @@ document.addEventListener('click',function(e){
     else if(route.startsWith('/library/'))renderCategory(route.split('/')[2]);
     else renderNotFound();
     // Technique Review is strictly opt-in; existing school-code login remains intact.
-    if(window.DU_TECHNIQUE_REVIEW_ENABLED===true
+    if(true /* Technique Review enabled: authorized roles only */
       && (route==='/'||route==='/staff'||route==='/athlete')
       && (active.role==='staff'||(active.mode==='account'&&['private-athlete','parent'].includes(active.audience)))){
       const panel=document.createElement('div');
