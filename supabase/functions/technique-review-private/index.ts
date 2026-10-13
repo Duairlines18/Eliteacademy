@@ -58,7 +58,7 @@ Deno.serve(async request=>{
     if(body.action==='reserve'){
       if(!uuid(body.weekId)||!uuid(body.exerciseId))fail('Invalid week or exercise');
       const {data:week}=await db.from('programme_weeks').select('id,status').eq('id',body.weekId).eq('programme_id',athlete.programme_id).maybeSingle();
-      if(!week||week.status!=='live')fail('Week unavailable',403);
+      if(!week||!['live','completed'].includes(week.status))fail('Week unavailable',403);
       const {data:exercise}=await db.from('exercises').select('id').eq('id',body.exerciseId).eq('active',true).maybeSingle();
       if(!exercise)fail('Exercise unavailable');
       const requestId=body.requestId||null;
