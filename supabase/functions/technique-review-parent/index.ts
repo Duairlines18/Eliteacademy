@@ -29,23 +29,15 @@ Deno.serve(async req=>{
   if(athleteError||!linkedAthlete)return reply(403,{error:'Parent access not authorized'});
   if(body.action==='context'){
    const {data:week}=await client.from('programme_weeks').select('id,week_number').eq('programme_id',(await client.from('athletes').select('programme_id').eq('id',athleteId).single()).data?.programme_id).eq('status','live').order('week_number',{ascending:false}).limit(1).maybeSingle();
-   const {data:exercises}=await client.from('exercises').select('id,name,code').eq('active',true).order('display_order').limit(300);
-   return reply(200,{weekId:week?.id||null,exercises:exercises||[]});
+   return reply(200,{weekId:week?.id||null});
   }
   if(body.action==='reserve'){
-   if(!uuid(body.weekId)||!uuid(body.exerciseId))return reply(400,{error:'Invalid week or exercise'});
+   if(!uuid(body.weekId))return reply(400,{error:'Invalid week'});
    const {data:record}=await client.from('athletes').select('programme_id').eq('id',athleteId).single();
    const {data:week}=await client.from('programme_weeks').select('id').eq('id',body.weekId).eq('programme_id',record?.programme_id).in('status',['live','completed']).maybeSingle();
    if(!week)return reply(403,{error:'Week unavailable'});
-   const {data:exercise}=await client.from('exercises').select('id').eq('id',body.exerciseId).eq('active',true).maybeSingle();
-   if(!exercise)return reply(400,{error:'Exercise unavailable'});
-   const requestId=body.requestId||null;
-   if(requestId){
-    if(!uuid(requestId))return reply(400,{error:'Invalid request'});
-    const {data:request}=await client.from('technique_video_requests').select('id').eq('id',requestId).eq('athlete_id',athleteId).eq('programme_week_id',body.weekId).eq('exercise_id',body.exerciseId).eq('status','open').maybeSingle();
-    if(!request)return reply(403,{error:'Request mismatch'});
-   }
-   const {data:id,error:reservationError}=await client.rpc('reserve_technique_video_slot',{p_athlete_id:athleteId,p_programme_week_id:body.weekId,p_uploaded_by:'parent:'+user.id,p_request_id:requestId,p_exercise_id:body.exerciseId});
+   const requestId=null;
+   const {data:id,error:reservationError}=await client.rpc('reserve_technique_video_slot',{p_athlete_id:athleteId,p_programme_week_id:body.weekId,p_uploaded_by:'parent:'+user.id,p_request_id:null,p_exercise_id:null});
    if(reservationError||!id)return reply(409,{error:'Weekly limit reached or reservation failed'});
    const path=athleteId+'/'+body.weekId+'/'+id+'.mp4';
    const {data:upload,error:uploadError}=await client.storage.from('technique-review').createSignedUploadUrl(path);
