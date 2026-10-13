@@ -4804,7 +4804,7 @@ document.addEventListener('click',function(e){
     else if(route.startsWith('/library/'))renderCategory(route.split('/')[2]);
     else renderNotFound();
     // Technique Review is available to authenticated Hub roles; existing logins are unchanged.
-    if(true /* Technique Review enabled: authorized roles only */
+    if(false /* Technique Review retired: preserve existing athlete programmes */
       && (route==='/'||route==='/staff'||route==='/athlete')
       && (active.role==='staff'||(active.mode==='account'&&['private-athlete','parent'].includes(active.audience)))){
       const panel=document.createElement('div');
@@ -5035,8 +5035,7 @@ document.addEventListener('click',function(e){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script type="module">
-import { attachTechniqueReview } from '/performance/technique-review-bridge.js';
-window.DuTechniqueReviewMount=attachTechniqueReview;
+window.DU_TECHNIQUE_REVIEW_ENABLED=false;
 </script>
 </body>
 </html>
