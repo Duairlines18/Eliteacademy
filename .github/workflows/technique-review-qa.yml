@@ -23,9 +23,11 @@ jobs:
           deno check supabase/functions/technique-review-private/index.ts
           deno check supabase/functions/technique-review-staff/index.ts
           deno check supabase/functions/technique-review-admin/index.ts
+          deno check supabase/functions/technique-review-parent/index.ts
       - name: Check browser modules
         run: |
           node --check performance/technique-review-ui.js
           node --check performance/technique-review-school-ui.js
           node --check performance/technique-review-admin-ui.js
+          node --check performance/technique-review-parent-ui.js
           node --check performance/technique-review-bridge.js
