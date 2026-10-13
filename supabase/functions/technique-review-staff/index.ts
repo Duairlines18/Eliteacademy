@@ -14,7 +14,7 @@ Deno.serve(async req=>{
  if(Deno.env.get('TECHNIQUE_REVIEW_ENABLED')!=='true')return reply(404,{error:'Feature disabled'});
  try {
   const client=db(), token=req.headers.get('x-du-session')||'',body=await req.json();
-  const scoped=await authorizeSchoolCoach(client,token,body.action==='athletes'?undefined:body.athleteId);
+  const scoped=await authorizeSchoolCoach(client,token,['athletes','context'].includes(body.action)?undefined:body.athleteId);
   const {cohort,athlete,session}=scoped;
   if(body.action==='context'){
    const {data:week}=await client.from('programme_weeks').select('id').eq('programme_id',cohort.programme_id).eq('week_number',body.weekNumber).eq('status','live').maybeSingle();
