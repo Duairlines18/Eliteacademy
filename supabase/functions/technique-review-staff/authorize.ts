@@ -10,9 +10,12 @@ export async function authorizeSchoolCoach(db: any, token: string, athleteId?: s
   if (!code || code.status !== 'active' || code.code_type !== 'staff' || code.cohort_id !== session.cohort_id || (code.expires_at && Date.parse(code.expires_at) <= Date.now())) throw Error('Access revoked');
   const { data: cohort } = await db.from('cohorts').select('id,programme_id,status').eq('id', session.cohort_id).maybeSingle();
   if (!cohort || cohort.status !== 'live' || !cohort.programme_id) throw Error('Cohort unavailable');
-  if (!code.staff_id) throw Error('Staff assignment required');
-  const { data: assignment } = await db.from('staff_cohorts').select('staff_id').eq('staff_id', code.staff_id).eq('cohort_id', cohort.id).maybeSingle();
-  if (!assignment) throw Error('Coach not assigned');
+  // Existing school staff codes are cohort-scoped and may intentionally be shared.
+  // If a code identifies an individual staff member, enforce their assignment too.
+  if (code.staff_id) {
+    const { data: assignment } = await db.from('staff_cohorts').select('staff_id').eq('staff_id', code.staff_id).eq('cohort_id', cohort.id).maybeSingle();
+    if (!assignment) throw Error('Coach not assigned');
+  }
   let athlete = null;
   if (athleteId) {
     const { data } = await db.from('athletes').select('id,cohort_id,access_status').eq('id', athleteId).eq('cohort_id', cohort.id).eq('access_status', 'active').maybeSingle();
