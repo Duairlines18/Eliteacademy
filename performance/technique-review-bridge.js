@@ -33,7 +33,7 @@ export async function attachTechniqueReview({role,root,supabase,sessionToken,jwt
   if(error)throw error;
  };
  if(role==='staff')return mountSchoolTechniqueReview({root,api,weekId,exercises,uploadSigned});
- if(role==='parent')return mountParentTechniqueReview({root,api,athleteId,exercises});
+ if(role==='parent')return mountParentTechniqueReview({root,api,athleteId,exercises,uploadSigned});
  if(role==='admin')return mountTechniqueReviewAdmin({root,api,athletes,programmeWeeks,exercises});
  if(role==='athlete')return mountTechniqueReview({root,api,weekId,exercises,uploadSigned});
  return null;
