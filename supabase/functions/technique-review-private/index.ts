@@ -5,7 +5,7 @@ const MAX=25*1024*1024,BUCKET='technique-review';
 const ORIGINS=new Set(['https://duairlineseliteacademy.com','https://www.duairlineseliteacademy.com']);
 const client=()=>createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false}});
 const uuid=(x:unknown)=>typeof x==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x);
-const fail=(message:string,status=400):never=>{throw Object.assign(new Error(message),{status});};
+function fail(message:string,status=400):never {throw Object.assign(new Error(message),{status});}
 Deno.serve(async request=>{
   const origin=request.headers.get('origin')||'';
   if(!ORIGINS.has(origin))return new Response('Forbidden',{status:403});
