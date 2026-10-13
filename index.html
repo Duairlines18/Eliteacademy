@@ -4803,6 +4803,31 @@ document.addEventListener('click',function(e){
     else if(route==='/warm-up')renderWarmup();
     else if(route.startsWith('/library/'))renderCategory(route.split('/')[2]);
     else renderNotFound();
+    // Technique Review is strictly opt-in; existing school-code login remains intact.
+    if(window.DU_TECHNIQUE_REVIEW_ENABLED===true
+      && (route==='/'||route==='/staff'||route==='/athlete')
+      && (active.role==='staff'||(active.mode==='account'&&active.audience==='private-athlete'))){
+      const panel=document.createElement('div');
+      panel.id='du-technique-review-panel';
+      root.querySelector('.hub-shell')?.append(panel);
+      const role=active.role==='staff'?'staff':'athlete';
+      const run=async()=>{
+        const apiHeaders=role==='staff'?{'x-du-session':active.token}:{};
+        const ctx=role==='staff'
+          ?await edgePost('technique-review-staff',{action:'context',weekNumber:programme().week},apiHeaders)
+          :await authEdgePost('technique-review-private',{action:'context',weekNumber:programme().week});
+        if(!ctx.weekId||!panel.isConnected)return;
+        if(!window.DuTechniqueReviewMount)throw Error('Technique Review module not ready');
+        const client=accountClient();
+        const account=role==='athlete'?await client.auth.getSession():null;
+        await window.DuTechniqueReviewMount({
+          role,root:panel,supabase:client,sessionToken:role==='staff'?active.token:undefined,
+          jwt:role==='athlete'?account?.data?.session?.access_token:undefined,
+          weekId:ctx.weekId,exercises:EXERCISES,enabled:true
+        });
+      };
+      run().catch(error=>{console.warn('Technique Review unavailable',error);panel.remove();});
+    }
     window.scrollTo(0,0);
   }
 
@@ -4968,5 +4993,9 @@ document.addEventListener('click',function(e){
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script type="module">
+import { attachTechniqueReview } from '/performance/technique-review-bridge.js';
+window.DuTechniqueReviewMount=attachTechniqueReview;
+</script>
 </body>
 </html>
