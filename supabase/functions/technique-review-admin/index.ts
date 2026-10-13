@@ -9,7 +9,8 @@ Deno.serve(async req=>{
  const reply=(status:number,body:unknown)=>new Response(JSON.stringify(body),{status,headers});
  if(req.method==='OPTIONS')return new Response('',{headers});
  if(req.method!=='POST')return reply(405,{error:'Method not allowed'});
- if(Deno.env.get('TECHNIQUE_REVIEW_ENABLED')!=='true')return reply(404,{error:'Feature unavailable'});
+
+
  try{
   const jwt=req.headers.get('authorization')?.replace(/^Bearer /,'');
   if(!jwt)return reply(401,{error:'Sign in required'});
