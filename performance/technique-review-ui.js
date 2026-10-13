@@ -10,7 +10,8 @@ export function mountTechniqueReview({root,api,weekId,exercises,uploadSigned}) {
   const heading=document.createElement('h3');heading.textContent='Technique Review';
   const message=document.createElement('p');message.setAttribute('role','status');
   const requests=document.createElement('div');
-  node.append(heading,message,requests);root.append(node);
+  const history=document.createElement('div');history.setAttribute('aria-label','Your technique review history');
+  node.append(heading,message,requests,history);root.append(node);
   const filmingHint=exercise=>{
     const name=(exercise?.name||'').toLowerCase();
     if(/sprint|acceleration|approach|broad jump|takeoff|triple jump|pogo/.test(name))return 'Film from the side. Keep your full body and landing in frame.';
@@ -19,12 +20,22 @@ export function mountTechniqueReview({root,api,weekId,exercises,uploadSigned}) {
   };
   const setStatus=text=>{message.textContent=text;};
   async function refresh(){
-    setStatus('Loading requests…');requests.replaceChildren();
+    setStatus('Loading requests…');requests.replaceChildren();history.replaceChildren();
     try {
       const data=await api('list',{});
       const items=(data.requests||[]).filter(r=>(!weekId||r.programme_week_id===weekId)&&r.status==='open');
       if(!items.length)setStatus('No video requested this week.');
       else setStatus('Record up to 15 seconds. Maximum three accepted videos per week.');
+      for(const submission of (data.submissions||[]).filter(x=>!weekId||x.programme_week_id===weekId)){
+        const card=document.createElement('article');
+        const name=document.createElement('strong');name.textContent=(exercises.find(x=>x.id===submission.exercise_id)?.name||'Technique video')+' — '+(submission.review_state==='reviewed'?'Reviewed':'Awaiting review');
+        const feedback=document.createElement('div');
+        if(submission.review_state==='reviewed'){
+          try{const result=await api('feedback',{id:submission.id});for(const item of result.feedback||[]){const p=document.createElement('p');p.textContent=(item.positive_cue?'What went well: '+item.positive_cue+' | ':'')+'Next correction: '+item.correction;feedback.append(p);}}
+          catch{feedback.textContent='Feedback temporarily unavailable.';}
+        }
+        card.append(name,feedback);history.append(card);
+      }
       for(const req of items){
         const exercise=exercises.find(x=>x.id===req.exercise_id);
         const wrap=document.createElement('div');
