@@ -23,19 +23,4 @@ export async function authorizeSchoolCoach(db: any, token: string, athleteId?: s
     athlete = data;
   }
   return { session, cohort, athlete };
-}  // Current school staff access codes are cohort-scoped and have no staff_id.
-  // Preserve that established school-code flow. If an identity is attached,
-  // require an explicit staff-cohort assignment as an additional restriction.
-  const staffId=session.staff_id||code.staff_id;
-  if(staffId){
-    const {data:assignment}=await db.from('staff_cohorts').select('staff_id').eq('staff_id',staffId).eq('cohort_id',cohort.id).maybeSingle();
-    if(!assignment)throw Error('Coach not assigned');
-  }
-  let athlete = null;
-  if (athleteId) {
-    const { data } = await db.from('athletes').select('id,cohort_id,access_status').eq('id', athleteId).eq('cohort_id', cohort.id).eq('access_status', 'active').maybeSingle();
-    if (!data) throw Error('Athlete not in assigned cohort');
-    athlete = data;
-  }
-  return { session, cohort, athlete };
 }
