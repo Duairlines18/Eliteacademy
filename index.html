@@ -4828,6 +4828,25 @@ document.addEventListener('click',function(e){
       };
       run().catch(error=>{console.warn('Technique Review unavailable',error);panel.remove();});
     }
+    // Parent read-only review: the API resolves the linked athlete from the JWT.
+    if(window.DU_TECHNIQUE_REVIEW_ENABLED===true
+      && (route==='/'||route==='/athlete')
+      && active.mode==='account'&&active.audience==='parent'){
+      const panel=document.createElement('div');
+      panel.id='du-technique-review-parent-panel';
+      root.querySelector('.hub-shell')?.append(panel);
+      const runParent=async()=>{
+        const client=accountClient();
+        const {data,error}=await client.auth.getSession();
+        if(error||!data?.session?.access_token)throw Error('Parent session expired');
+        if(!panel.isConnected||!window.DuTechniqueReviewMount)throw Error('Technique Review unavailable');
+        await window.DuTechniqueReviewMount({
+          role:'parent',root:panel,supabase:client,jwt:data.session.access_token,
+          exercises:EXERCISES.map(ex=>({id:ex.id,name:ex.title||ex.name||ex.code})),enabled:true
+        });
+      };
+      runParent().catch(error=>{console.warn('Parent Technique Review unavailable',error);panel.remove();});
+    }
     window.scrollTo(0,0);
   }
 
