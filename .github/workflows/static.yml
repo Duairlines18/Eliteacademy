@@ -47,6 +47,24 @@ jobs:
               html = html.replace('</head>', marker + '\n' + scripts + '\n' + bridge + '\n</head>', 1)
           if bridge not in html:
               html = html.replace('</head>', bridge + '\n</head>', 1)
+          # Owner-only route at the exact pending-programme state. Do not affect other members.
+          needle = "  function renderAccountStatus(audience,error){"
+          replacement = """  function renderAccountStatus(audience,error){
+    if(audience==='professional' && error?.code==='NO_ASSIGNMENT'){
+      const client=accountClient();
+      if(client){
+        client.auth.getSession().then(({data})=>{
+          const email=data?.session?.user?.email?.toLowerCase();
+          if(email==='coachdu@duairlineseliteacademy.com'){
+            location.replace('/performance/');
+          }
+        }).catch(()=>{});
+      }
+    }
+"""
+          assert needle in html, 'Hub status handler missing'
+          if replacement not in html:
+              html = html.replace(needle, replacement, 1)
           path.write_text(html, encoding="utf-8")
           PY
       - name: Upload artifact
