@@ -41,9 +41,12 @@ jobs:
           html = path.read_text(encoding="utf-8")
           marker = '<link rel="stylesheet" href="/parent-qa/session-card-polish.css">'
           scripts = '<script defer src="/parent-qa/session-card-polish.js"></script>'
+          bridge = '<script defer src="/performance/coachdu-hub-bridge.js"></script>'
           assert '</head>' in html, 'Cannot safely add session card assets'
           if marker not in html:
-              html = html.replace('</head>', marker + '\n' + scripts + '\n</head>', 1)
+              html = html.replace('</head>', marker + '\n' + scripts + '\n' + bridge + '\n</head>', 1)
+          if bridge not in html:
+              html = html.replace('</head>', bridge + '\n</head>', 1)
           path.write_text(html, encoding="utf-8")
           PY
       - name: Upload artifact
