@@ -27,6 +27,11 @@ Deno.serve(async request=>{
       const {data:week}=await db.from('programme_weeks').select('id').eq('programme_id',athlete.programme_id).eq('week_number',body.weekNumber).eq('status','live').maybeSingle();
       return reply(200,{weekId:week?.id||null});
     }
+    if(body.action==='context'){
+      const {data:week,error}=await db.from('programme_weeks').select('id,week_number').eq('programme_id',athlete.programme_id).eq('status','live').order('week_number',{ascending:false}).limit(1).maybeSingle();
+      if(error||!week)return reply(409,{error:'No live programme week'});
+      return reply(200,{weekId:week.id,weekNumber:week.week_number});
+    }
     if(body.action==='list'){
       const {data:requests,error:re}=await db.from('technique_video_requests').select('id,programme_week_id,exercise_id,instruction_override,status').eq('athlete_id',athlete.id).order('created_at',{ascending:false}).limit(30);
       if(re)throw re;
