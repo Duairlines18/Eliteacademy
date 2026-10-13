@@ -24,13 +24,13 @@ Deno.serve(async request=>{
     if(ae||!athlete||athlete.access_status!=='active')fail('Athlete not authorized',403);
     const body=await request.json();
     if(body.action==='context'){
-      const {data:week}=await db.from('programme_weeks').select('id').eq('programme_id',athlete.programme_id).eq('week_number',body.weekNumber).eq('status','live').maybeSingle();
-      return reply(200,{weekId:week?.id||null});
-    }
-    if(body.action==='context'){
-      const {data:week,error}=await db.from('programme_weeks').select('id,week_number').eq('programme_id',athlete.programme_id).eq('status','live').eq('week_number',Number(body.weekNumber)).limit(1).maybeSingle();
-      if(error||!week)return reply(409,{error:'No live programme week'});
-      return reply(200,{weekId:week.id,weekNumber:week.week_number});
+      const weekNumber=Number(body.weekNumber);
+      if(!Number.isInteger(weekNumber)||weekNumber<1||weekNumber>100)return reply(400,{error:'Invalid week'});
+      const {data:week,error:weekError}=await db.from('programme_weeks').select('id,week_number').eq('programme_id',athlete.programme_id).eq('week_number',weekNumber).eq('status','live').maybeSingle();
+      if(weekError||!week)return reply(409,{error:'No live programme week'});
+      const {data:exercises,error:exerciseError}=await db.from('exercises').select('id,code,name').eq('active',true).order('display_order').limit(300);
+      if(exerciseError)throw exerciseError;
+      return reply(200,{weekId:week.id,weekNumber:week.week_number,exercises:exercises||[]});
     }
     if(body.action==='list'){
       const {data:requests,error:re}=await db.from('technique_video_requests').select('id,programme_week_id,exercise_id,instruction_override,status').eq('athlete_id',athlete.id).order('created_at',{ascending:false}).limit(30);
