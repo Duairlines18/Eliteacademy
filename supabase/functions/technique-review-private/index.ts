@@ -23,6 +23,10 @@ Deno.serve(async request=>{
     const {data:athlete,error:ae}=await db.from('athletes').select('id,programme_id,access_status').eq('athlete_user_id',user.id).eq('athlete_type','private').maybeSingle();
     if(ae||!athlete||athlete.access_status!=='active')fail('Athlete not authorized',403);
     const body=await request.json();
+    if(body.action==='context'){
+      const {data:week}=await db.from('programme_weeks').select('id').eq('programme_id',athlete.programme_id).eq('week_number',body.weekNumber).eq('status','live').maybeSingle();
+      return reply(200,{weekId:week?.id||null});
+    }
     if(body.action==='list'){
       const {data:requests,error:re}=await db.from('technique_video_requests').select('id,programme_week_id,exercise_id,instruction_override,status').eq('athlete_id',athlete.id).order('created_at',{ascending:false}).limit(30);
       if(re)throw re;
