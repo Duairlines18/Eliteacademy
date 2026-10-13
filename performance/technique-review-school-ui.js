@@ -28,7 +28,7 @@ export function mountSchoolTechniqueReview({root,api,weekId,exercises,uploadSign
   message.textContent='Loading video requests…';
   try{
    const {requests:items=[]}=await api('list',{athleteId:select.value});
-   const open=items.filter(x=>x.status==='open'&&x.programme_week_id===weekId);
+   const open=items.filter(x=>x.status==='open'&&(!weekId||x.programme_week_id===weekId));
    message.textContent=open.length?'Videos are limited to 15 seconds and three per athlete per week.':'No video requested for this athlete this week.';
    for(const request of open){
     const exercise=exercises.find(x=>x.id===request.exercise_id);
@@ -43,7 +43,7 @@ export function mountSchoolTechniqueReview({root,api,weekId,exercises,uploadSign
      button.disabled=true;
      try{
       message.textContent='Preparing private upload…';
-      const slot=await api('reserve',{athleteId:select.value,weekId,exerciseId:request.exercise_id,requestId:request.id});
+      const slot=await api('reserve',{athleteId:select.value,weekId:request.programme_week_id,exerciseId:request.exercise_id,requestId:request.id});
       message.textContent='Uploading…';
       await uploadSigned({path:slot.path,token:slot.token,file:clip});
       message.textContent='Verifying duration…';
