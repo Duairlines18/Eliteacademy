@@ -2,27 +2,27 @@
 export function mountParentTechniqueReview({root,api,athleteId,exercises=[],uploadSigned}){
  if(!root||typeof api!=='function')throw Error('Parent review dependencies unavailable');
  const section=document.createElement('section');section.className='du-technique-card';section.setAttribute('aria-label','Parent Technique Review');
- const eyebrow=document.createElement('div');eyebrow.className='du-technique-eyebrow';eyebrow.textContent='COACH DU • VIDEO ANALYSIS';const title=document.createElement('h3');title.textContent='Technique Review';const subtitle=document.createElement('p');subtitle.className='du-technique-subtitle';subtitle.textContent='Share a short clip. Get focused coaching feedback.';
+ const eyebrow=document.createElement('div');eyebrow.className='du-technique-eyebrow';eyebrow.textContent='COACH DU • VIDEO ANALYSIS';const title=document.createElement('h3');title.textContent='Technique Review';const subtitle=document.createElement('p');subtitle.className='du-technique-subtitle';subtitle.textContent='Upload a short video of your movement. Coach Du will review it and share simple feedback to help you improve.';
  const status=document.createElement('p');status.setAttribute('role','status');
  const history=document.createElement('div');history.className='du-technique-history';const upload=document.createElement('div');upload.className='du-technique-upload';status.className='du-technique-status';section.append(eyebrow,title,subtitle,upload,status,history);root.append(section);
  async function refresh(){
   status.textContent='Loading technique feedback…';history.replaceChildren();upload.replaceChildren();
   try{
-   const {submissions=[]}=await api('list',{athleteId});
+   if(!athleteId){const linked=await api('linked',{});athleteId=linked.athletes?.[0]?.id;if(!athleteId){status.textContent='No athlete linked to this parent account yet.';return;}}const {submissions=[]}=await api('list',{athleteId});
    const context=await api('context',{athleteId});
    if(context.weekId){
-    const input=document.createElement('input');input.type='file';input.accept='video/mp4,video/quicktime';input.id='du-technique-file-'+athleteId;input.className='du-technique-file';input.setAttribute('aria-label','Select technique video');const pick=document.createElement('label');pick.className='du-technique-picker';pick.htmlFor=input.id;const pickIcon=document.createElement('span');pickIcon.className='du-technique-camera';pickIcon.textContent='↥';const pickTitle=document.createElement('strong');pickTitle.textContent='Choose a video';const pickDetail=document.createElement('span');pickDetail.textContent='Tap to select or record a clip';pick.append(pickIcon,pickTitle,pickDetail);input.addEventListener('change',()=>{pickTitle.textContent=input.files?.[0]?.name||'Choose a video';pickDetail.textContent=input.files?.[0]?'Ready to send for review':'Tap to select or record a clip';});
-    const button=document.createElement('button');button.type='button';button.textContent='Send to Coach Du →';button.className='du-technique-submit';
+    const input=document.createElement('input');input.type='file';input.accept='video/mp4,video/quicktime';input.id='du-technique-file-'+athleteId;input.className='du-technique-file';input.setAttribute('aria-label','Select technique video');const pick=document.createElement('label');pick.className='du-technique-picker';pick.htmlFor=input.id;const pickIcon=document.createElement('span');pickIcon.className='du-technique-camera';pickIcon.textContent='↥';const pickTitle=document.createElement('strong');pickTitle.textContent='Upload your video';const pickDetail=document.createElement('span');pickDetail.textContent='Tap here to choose a video from your phone';pick.append(pickIcon,pickTitle,pickDetail);input.addEventListener('change',()=>{pickTitle.textContent=input.files?.[0]?.name||'Upload your video';pickDetail.textContent=input.files?.[0]?'Ready to send for review':'Tap to select or record a clip';});
+    const button=document.createElement('button');button.type='button';button.textContent='Send Video to Coach Du →';button.className='du-technique-submit';
     button.onclick=async()=>{const file=input.files?.[0];if(!file){status.textContent='Choose a video first.';return;}if(file.size>25*1024*1024){status.textContent='Maximum 25 MB.';return;}
      button.disabled=true;try{status.textContent='Uploading…';const slot=await api('reserve',{athleteId,weekId:context.weekId});await uploadSigned({path:slot.path,token:slot.token,file});status.textContent='Validating video…';await api('finalize',{athleteId,id:slot.id});await refresh();}
      catch(error){status.textContent=error instanceof Error?error.message:'Upload failed';}finally{button.disabled=false;}};
     const hint=document.createElement('p');hint.textContent='Max 3 videos per week';hint.className='du-technique-hint';
     upload.append(input,pick,button,hint);
    }
-   status.textContent=submissions.length?'Your video reviews':'Your videos will appear here after upload.';
+   status.textContent=submissions.length?'Your video reviews':'Once uploaded, your video will appear here while Coach Du reviews it.';
    for(const clip of submissions){
     const card=document.createElement('article');card.className='du-technique-history-card';
-    const name=document.createElement('strong');name.textContent=(exercises.find(x=>x.id===clip.exercise_id)?.name||'Technique video')+' — '+(clip.review_state==='reviewed'?'Reviewed':'Awaiting review');
+    const name=document.createElement('strong');name.textContent='Video — '+(clip.review_state==='reviewed'?'Reviewed':'Awaiting review');
     const playback=document.createElement('button');playback.type='button';playback.textContent='Watch clip →';playback.className='du-technique-watch';
     const video=document.createElement('video');video.controls=true;video.playsInline=true;video.preload='none';video.style.maxWidth='100%';video.hidden=true;
     playback.onclick=async()=>{playback.disabled=true;try{const {url}=await api('playback',{athleteId,id:clip.id});video.src=url;video.hidden=false;video.load();}catch(e){status.textContent=e instanceof Error?e.message:'Video unavailable';}finally{playback.disabled=false;}};
