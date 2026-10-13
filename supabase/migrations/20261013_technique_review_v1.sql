@@ -88,3 +88,8 @@ begin
 end $$;
 revoke all on function public.reserve_technique_video_slot(uuid,uuid,text,uuid,uuid) from public, anon, authenticated;
 grant execute on function public.reserve_technique_video_slot(uuid,uuid,text,uuid,uuid) to service_role;
+
+-- Storage remains private. Only service-role APIs issue scoped signed URLs.
+insert into storage.buckets (id,name,public,file_size_limit,allowed_mime_types)
+values ('technique-review','technique-review',false,26214400,array['video/mp4','video/quicktime'])
+on conflict (id) do update set public=false,file_size_limit=26214400,allowed_mime_types=array['video/mp4','video/quicktime'];
