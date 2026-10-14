@@ -1,6 +1,24 @@
 // Parent Technique Review with linked-athlete upload. Uses the existing parent account JWT.
 export function mountParentTechniqueReview({root,api,athleteId,exercises=[],uploadSigned}){
  if(!root||typeof api!=='function')throw Error('Parent review dependencies unavailable');
+
+ async function optimizeVideo(file,onProgress){
+  if(file.size<=12*1024*1024)return file;
+  if(!('MediaRecorder' in window)||!('captureStream' in HTMLCanvasElement.prototype))return file;
+  const video=document.createElement('video');video.muted=true;video.playsInline=true;video.preload='auto';const url=URL.createObjectURL(file);video.src=url;
+  try{
+   await new Promise((resolve,reject)=>{video.onloadedmetadata=resolve;video.onerror=()=>reject(Error('Video cannot be opened'));});
+   if(!Number.isFinite(video.duration)||video.duration>20.25||video.duration<=0)return file;
+   const mime=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x));
+   if(!mime||!mime.startsWith('video/mp4'))return file;
+   const scale=Math.min(1,720/Math.max(video.videoWidth,video.videoHeight));const canvas=document.createElement('canvas');canvas.width=Math.max(2,Math.round(video.videoWidth*scale/2)*2);canvas.height=Math.max(2,Math.round(video.videoHeight*scale/2)*2);const ctx=canvas.getContext('2d');if(!ctx)return file;
+   const stream=canvas.captureStream(24);const original=video.captureStream?.()||video.mozCaptureStream?.();if(original)for(const track of original.getAudioTracks())stream.addTrack(track);
+   const chunks=[];const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:1300000,audioBitsPerSecond:64000});recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+   const done=new Promise((resolve,reject)=>{recorder.onstop=resolve;recorder.onerror=()=>reject(Error('Video conversion failed'))});
+   const draw=()=>{if(video.paused||video.ended)return;ctx.drawImage(video,0,0,canvas.width,canvas.height);requestAnimationFrame(draw)};
+   recorder.start(1000);await video.play();draw();onProgress?.('Optimizing video for upload…');await new Promise((resolve,reject)=>{video.onended=resolve;video.onerror=()=>reject(Error('Video playback failed'))});recorder.stop();await done;const blob=new Blob(chunks,{type:'video/mp4'});return blob.size>0&&blob.size<file.size?new File([blob],file.name.replace(/\\.[^.]+$/,'.mp4'),{type:'video/mp4'}):file;
+  }catch{return file;}finally{video.pause();URL.revokeObjectURL(url)}
+ }
  const section=document.createElement('section');section.className='du-technique-card';section.setAttribute('aria-label','Parent Technique Review');
  const eyebrow=document.createElement('div');eyebrow.className='du-technique-eyebrow';eyebrow.textContent='COACH DU • VIDEO ANALYSIS';const title=document.createElement('h3');title.textContent='Technique Review';const subtitle=document.createElement('p');subtitle.className='du-technique-subtitle';subtitle.textContent='Upload a short video of your movement. Coach Du will review it and share simple feedback to help you improve.';
  const status=document.createElement('p');status.setAttribute('role','status');
@@ -14,7 +32,7 @@ export function mountParentTechniqueReview({root,api,athleteId,exercises=[],uplo
     const input=document.createElement('input');input.type='file';input.accept='video/mp4,video/quicktime';input.id='du-technique-file-'+athleteId;input.className='du-technique-file';input.setAttribute('aria-label','Select technique video');const pick=document.createElement('label');pick.className='du-technique-picker';pick.htmlFor=input.id;const pickIcon=document.createElement('span');pickIcon.className='du-technique-camera';pickIcon.textContent='↥';const pickTitle=document.createElement('strong');pickTitle.textContent='Upload your video';const pickDetail=document.createElement('span');pickDetail.textContent='Tap here to choose a video from your phone';pick.append(pickIcon,pickTitle,pickDetail);input.addEventListener('change',()=>{pickTitle.textContent=input.files?.[0]?.name||'Upload your video';pickDetail.textContent=input.files?.[0]?'Ready to send for review':'Tap to select or record a clip';});
     const button=document.createElement('button');button.type='button';button.textContent='Send Video to Coach Du →';button.className='du-technique-submit';
     button.onclick=async()=>{const file=input.files?.[0];if(!file){status.textContent='Choose a video first.';return;}if(file.size>35*1024*1024){status.textContent='This video is over 35 MB. On iPhone, trim it in Photos, or share a smaller copy, then try again.';return;}
-     button.disabled=true;try{status.textContent='Preparing upload… Please keep this page open.';const slot=await api('reserve',{athleteId,weekId:context.weekId,mimeType:file.type});status.textContent='Sending '+Math.round(file.size/1024/1024)+' MB video… Please keep this page open.';await Promise.race([uploadSigned({path:slot.path,token:slot.token,file}),new Promise((_,reject)=>setTimeout(()=>reject(Error('Upload timed out. Try a shorter clip or smaller file on Wi-Fi.')),90000))]);status.textContent='Checking video…';await api('finalize',{athleteId,id:slot.id});await refresh();}
+     button.disabled=true;try{status.textContent='Preparing upload… Please keep this page open.';const sendFile=await optimizeVideo(file,message=>status.textContent=message);if(sendFile.size>35*1024*1024)throw Error('Video is too large. Please trim or reduce resolution in Photos.');const slot=await api('reserve',{athleteId,weekId:context.weekId,mimeType:sendFile.type});status.textContent='Sending '+Math.max(1,Math.round(sendFile.size/1024/1024))+' MB video… Please keep this page open.';await Promise.race([uploadSigned({path:slot.path,token:slot.token,file:sendFile}),new Promise((_,reject)=>setTimeout(()=>reject(Error('Upload timed out. Try a shorter clip or smaller file on Wi-Fi.')),90000))]);status.textContent='Checking video…';await api('finalize',{athleteId,id:slot.id});await refresh();status.textContent='Video sent successfully! Coach Du can now review it.';}
      catch(error){status.textContent=error instanceof Error?error.message:'Upload failed';}finally{button.disabled=false;}};
     const hint=document.createElement('p');hint.textContent='Up to 20 seconds · 35 MB · 3 videos per week. For large iPhone videos, trim in Photos before uploading.';hint.className='du-technique-hint';
     upload.append(input,pick,button,hint);
