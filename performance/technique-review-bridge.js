@@ -1,3 +1,4 @@
+import {mountSchoolSimpleReview} from './school-simple-review.js';
 // Technique Review integration bridge for the existing academy screens.
 // Existing school-code login is unchanged. Call this only after the relevant
 // role screen is mounted and its existing auth/session state is available.
@@ -27,12 +28,12 @@ export async function attachTechniqueReview({role,root,supabase,sessionToken,jwt
   if(!response.ok)throw Error(data.error||'Technique Review unavailable');
   return data;
  };
- if((role==='staff'||role==='athlete')&&!weekId){const context=await api('context',{});weekId=context.weekId;}
+ if(role==='athlete'&&!weekId){const context=await api('context',{});weekId=context.weekId;}
  const uploadSigned=async({path,token,file})=>{
   const {error}=await supabase.storage.from('technique-review').uploadToSignedUrl(path,token,file,{contentType:file.type||'video/mp4'});
   if(error)throw error;
  };
- if(role==='staff')return mountSchoolTechniqueReview({root,api,weekId,exercises,uploadSigned});
+ if(role==='staff'){const schoolApi=async(action,payload={})=>{const response=await fetch(url+'/functions/v1/school-technique-review',{method:'POST',headers:{'content-type':'application/json','apikey':key,'x-du-session':sessionToken},body:JSON.stringify({action,...payload})});const data=await response.json();if(!response.ok)throw Error(data.error||'School video unavailable');return data};return mountSchoolSimpleReview({root,api:schoolApi,uploadSigned});}
  if(role==='parent')return mountParentTechniqueReview({root,api,athleteId,exercises,uploadSigned});
  if(role==='admin')return mountTechniqueReviewAdmin({root,api,athletes,programmeWeeks,exercises});
  if(role==='athlete')return mountTechniqueReview({root,api,weekId,exercises,uploadSigned});
