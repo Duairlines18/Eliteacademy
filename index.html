@@ -4803,45 +4803,22 @@ document.addEventListener('click',function(e){
     else if(route==='/warm-up')renderWarmup();
     else if(route.startsWith('/library/'))renderCategory(route.split('/')[2]);
     else renderNotFound();
-    // Technique Review is available to authenticated Hub roles; existing logins are unchanged.
-    if(false /* Technique Review retired: preserve existing athlete programmes */
-      && (route==='/'||route==='/staff'||route==='/athlete')
-      && (active.role==='staff'||(active.mode==='account'&&['private-athlete','parent'].includes(active.audience)))){
-      const panel=document.createElement('div');
-      panel.id='du-technique-review-panel';
-      root.querySelector('.hub-shell')?.append(panel);
-      const role=active.role==='staff'?'staff':active.audience==='parent'?'parent':'athlete';
-      const run=async()=>{
-        if(role==='parent'){
-          const linked=await authEdgePost('technique-review-parent',{action:'linked'});
-          const athletes=linked.athletes||[];
-          if(!athletes.length){panel.remove();return;}
-          if(!window.DuTechniqueReviewMount)throw Error('Technique Review module not ready');
-          const client=accountClient();
-          const account=await client.auth.getSession();
-          const jwt=account?.data?.session?.access_token;
-          if(!jwt)throw Error('Parent account session expired');
-          for(const athlete of athletes){
-            const section=document.createElement('div');panel.append(section);
-            await window.DuTechniqueReviewMount({role:'parent',root:section,supabase:client,jwt,athleteId:athlete.id,exercises:[],enabled:true});
-          }
-          return;
-        }
-        const apiHeaders=role==='staff'?{'x-du-session':active.token}:{};
-        const ctx=role==='staff'
-          ?await edgePost('technique-review-staff',{action:'context',weekNumber:programme().week},apiHeaders)
-          :await authEdgePost('technique-review-private',{action:'context',weekNumber:programme().week});
-        if(!ctx.weekId||!panel.isConnected)return;
-        if(!window.DuTechniqueReviewMount)throw Error('Technique Review module not ready');
-        const client=accountClient();
-        const account=role==='athlete'?await client.auth.getSession():null;
-        await window.DuTechniqueReviewMount({
-          role,root:panel,supabase:client,sessionToken:role==='staff'?active.token:undefined,
-          jwt:role==='athlete'?account?.data?.session?.access_token:undefined,
-          weekId:ctx.weekId,exercises:ctx.exercises||[],enabled:true
+    // School coach Technique Review: independent of individual athlete assignments.
+    if(active.role==='staff' && (route==='/'||route==='/staff')){
+      const shellNode=root.querySelector('.hub-shell');
+      if(shellNode){
+        const panel=document.createElement('section');
+        panel.id='du-school-technique-review';
+        panel.style.cssText='max-width:1040px;margin:24px auto;padding:0 18px';
+        shellNode.append(panel);
+        import('/performance/technique-review-bridge.js').then(async module=>{
+          if(!panel.isConnected)return;
+          await module.attachTechniqueReview({role:'staff',root:panel,supabase:accountClient(),sessionToken:active.token,enabled:true});
+        }).catch(error=>{
+          console.error('School Technique Review could not load',error);
+          if(panel.isConnected)panel.textContent='School video review is temporarily unavailable. Please refresh or contact Coach Du.';
         });
-      };
-      run().catch(error=>{console.warn('Technique Review unavailable',error);panel.remove();});
+      }
     }
     // Parent read-only review: the API resolves the linked athlete from the JWT.
     if(window.DU_TECHNIQUE_REVIEW_ENABLED!==false
