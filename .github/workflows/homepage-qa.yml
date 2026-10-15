@@ -1,0 +1,35 @@
+name: Premium homepage QA
+on:
+  pull_request:
+    paths: ['index.html', 'homepage-qa/**', '.github/workflows/homepage-qa.yml']
+  push:
+    branches: [main, homepage-premium-redesign-review]
+    paths: ['index.html', 'homepage-qa/**', '.github/workflows/homepage-qa.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  homepage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check homepage and protected integration baseline
+        run: node homepage-qa/homepage.test.cjs
+      - name: Run existing Hub regression tests
+        run: |
+          node coach-command/coach-command.test.cjs
+          node athlete-qa/athlete-sheet.test.cjs
+          node parent-qa/parent-session.test.cjs
+          node parent-qa/session-card-polish.test.cjs
+          node --test supabase/qa/*.test.mjs
+      - name: Install browser test tooling
+        run: |
+          npm install --no-save playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Check mobile and desktop flows
+        run: node homepage-qa/browser.test.cjs
