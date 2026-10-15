@@ -51,10 +51,15 @@ const {chromium}=require('playwright');
  await page.keyboard.press('Home');ok(await page.locator('[data-premium-role="athlete"]').getAttribute('aria-selected')==='true',`${width}: keyboard Home selects athlete`);
  if(width<=899){
  const track=page.locator('#premium-story-grid');await track.scrollIntoViewIfNeeded();
- const box=await track.boundingBox();const y=Math.max(100,Math.min(800,box.y+box.height/2));
+ const box=await track.boundingBox();const y=Math.max(box.y+20,Math.min(800,box.y+box.height/2));
+ const startX=box.x+box.width*.8,endX=box.x+20;
  const cdp=await context.newCDPSession(page);
- await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:width-55,y}]});
- for(let step=1;step<=8;step++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:width-55-(width-100)*step/8,y}]});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:startX,y}]});
+ // Pace a real finger gesture; zero-duration moves can be coalesced by CI Chromium.
+ for(let step=1;step<=8;step++){
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:startX+(endX-startX)*step/8,y}]});
+ await page.waitForTimeout(25);
+ }
  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
  await page.waitForFunction(()=>document.getElementById('premium-story-grid').scrollLeft>50);
  ok(await track.evaluate(e=>e.scrollLeft)>50,`${width}: touch swipe moves athlete stories`);
