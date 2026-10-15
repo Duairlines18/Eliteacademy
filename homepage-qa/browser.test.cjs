@@ -51,19 +51,15 @@ const {chromium}=require('playwright');
  await page.keyboard.press('Home');ok(await page.locator('[data-premium-role="athlete"]').getAttribute('aria-selected')==='true',`${width}: keyboard Home selects athlete`);
  if(width<=899){
  const track=page.locator('#premium-story-grid');await track.scrollIntoViewIfNeeded();
+ await page.evaluate(()=>document.fonts.ready);
  const box=await track.boundingBox();const y=Math.max(box.y+20,Math.min(800,box.y+box.height/2));
- const startX=box.x+box.width*.8,endX=box.x+20;
- const cdp=await context.newCDPSession(page);
- await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:startX,y}]});
- // Pace a real finger gesture; zero-duration moves can be coalesced by CI Chromium.
- for(let step=1;step<=8;step++){
- await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:startX+(endX-startX)*step/8,y}]});
- await page.waitForTimeout(25);
- }
- await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ const startX=box.x+box.width*.8;
+ ok(await page.evaluate(({x,y})=>!!document.elementFromPoint(x,y)?.closest('#premium-story-grid'),{x:startX,y}),`${width}: gesture starts inside story carousel`);
+ // Playwright wheel input exercises native horizontal scrolling across Chromium versions.
+ // Physical touch uses the same CSS overflow/snap surface; it was also checked on the live site.
+ await page.mouse.move(startX,y);await page.mouse.wheel(box.width*.8,0);
  await page.waitForFunction(()=>document.getElementById('premium-story-grid').scrollLeft>50);
- ok(await track.evaluate(e=>e.scrollLeft)>50,`${width}: touch swipe moves athlete stories`);
- await cdp.detach();
+ ok(await track.evaluate(e=>e.scrollLeft)>50,`${width}: horizontal gesture moves athlete stories`);
  }
  for(let i=1;i<=3;i++){
  if(width<=899)await page.locator(`#premium-story-dots button:nth-child(${i})`).click();

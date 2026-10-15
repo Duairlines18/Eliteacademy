@@ -25,7 +25,7 @@ node homepage-qa/browser.test.cjs
 The browser test starts its own local HTTP server and checks 375, 390, 430, 768
 and 1440px viewports. It exercises section links, expanding credentials, both
 sport routes, all four role-specific login screens, keyboard tabs, each story
-modal, and the original partnership form. It also simulates touch swipes, verifies all
+modal, and the original partnership form. It also exercises native horizontal scrolling, verifies all
 three photos load, and checks dialog bounds, page scroll position, Escape,
 close-button behavior and focus restoration. It checks for horizontal overflow,
 uncaught JavaScript errors and homepage content leaking onto other routes.
