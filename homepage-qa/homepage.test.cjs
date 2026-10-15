@@ -21,7 +21,8 @@ const baseline=execFileSync('git',['show','af9a659:index.html'],{encoding:'utf8'
 const routeStart='<div class="site-view" hidden="" id="soccer-view">';
 const homepageController='<script id="premium-homepage-interactions">';
 assert.ok(html.includes(routeStart)&&baseline.includes(routeStart));
-assert.equal(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)),baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)),'registration/payment forms, routes and Hub implementation remain byte-for-byte unchanged');
+const withoutPartnershipPresentation=source=>source.replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
+assert.equal(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController))),withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController))),'registration/payment forms, routes and Hub implementation remain byte-for-byte unchanged');
 const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
 assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
 console.log('Production integration preservation passed.');

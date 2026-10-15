@@ -2034,6 +2034,44 @@ footer,
 #home-view .premium-story-dots{display:flex;gap:.6rem}
 
 }
+
+/* Final editorial polish: compact rhythm, swipeable stories and contained inquiry. */
+#home-view .premium-credentials{padding:2.75rem 0 2rem}
+#home-view .premium-proof,#home-view .premium-pathways,#home-view .premium-hub,#home-view .partnership-section{padding:3.5rem 0}
+#home-view .premium-story-grid{margin-top:1.5rem}
+#home-view .premium-story-grid .story-card{min-height:0;padding:1.35rem}
+#home-view .premium-story-heading{display:flex;align-items:center;gap:.9rem;margin-bottom:.8rem}
+#home-view .premium-story-heading h3{font-size:1.2rem;margin:0}
+#home-view .premium-story-avatar{width:64px;height:72px;flex:0 0 64px;border-radius:5px;object-fit:cover;object-position:center 25%;border:1px solid var(--hair);background:var(--ink)}
+#home-view .premium-story-grid .story-open{padding-top:1rem;margin-top:auto}
+#home-view .premium-role-tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:.35rem;margin-top:1.5rem;max-width:100%}
+#home-view .premium-role-tabs::-webkit-scrollbar{display:none}
+#home-view .premium-role-tabs button{flex:1 0 auto;padding:.75rem .7rem;min-height:44px}
+#home-view .premium-role-panel{padding:clamp(1.25rem,3vw,2rem);gap:1rem}
+#home-view .premium-role-panel ul{margin:.75rem 0;line-height:1.75}
+#home-view .partnership-copy .lede{max-width:65ch;line-height:1.7}
+#home-view .partnership-copy .btn{margin-top:1rem}
+#home-view #partnershipInquiry{position:fixed;inset:0;width:min(680px,calc(100% - 2rem));max-height:calc(100svh - 2rem);margin:auto;padding:0;border:1px solid var(--hair);border-radius:12px;overflow-y:auto;overscroll-behavior:contain;background:var(--ink);color:var(--cream);text-align:left;box-shadow:0 24px 100px #0008}
+#home-view #partnershipInquiry[hidden]{display:none}
+#home-view #partnershipInquiry::backdrop{background:rgba(3,13,8,.8);backdrop-filter:blur(5px)}
+#home-view #partnershipInquiry .partnership-form-card{border:0;border-radius:0;padding:clamp(1.25rem,4vw,2rem)}
+#home-view #closePartnershipForm{position:sticky;top:0;float:right;z-index:2;width:44px;height:44px;margin:-.25rem -.25rem .5rem .5rem;border:1px solid var(--hair);border-radius:50%;background:var(--green-2);color:var(--cream);font-size:1.7rem;cursor:pointer}
+#home-view #partnership-dialog-title{max-width:80%;margin-bottom:1rem}
+#home-view #partnershipInquiry :is(input:not([type=checkbox]),select,textarea){width:100%;max-width:100%;border:1px solid var(--hair);border-radius:5px;background:var(--green);color:var(--cream);font:400 16px var(--sans);padding:.8rem;min-height:46px;color-scheme:dark}
+#home-view #partnershipInquiry textarea{display:block;min-height:110px;resize:vertical}
+#home-view #partnershipInquiry .soccer-form-submit .btn{white-space:normal;width:100%}
+@media(max-width:899px){
+#home-view .premium-proof,#home-view .premium-pathways,#home-view .premium-hub,#home-view .partnership-section{padding:2.5rem 0}
+#home-view .premium-credentials{padding:2rem 0}
+#home-view .premium-story-grid{gap:.75rem;touch-action:pan-x pan-y;overscroll-behavior-x:contain}
+#home-view .premium-story-grid .story-card{flex:0 0 90%;max-width:90%}
+#home-view .premium-story-heading h3{font-size:1.12rem}
+#home-view .premium-role-tabs button{font-size:.74rem;padding:.7rem .55rem}
+#home-view .premium-role-panel h3{font-size:1.65rem}
+#home-view .premium-role-panel p{margin:.6rem 0}
+#home-view .premium-role-panel .btn{margin-top:.4rem}
+#home-view .partnership-copy .lede{font-size:.91rem}
+}
 </style></head>
 <body id="top">
 <div class="site-view" id="home-view">
@@ -2043,7 +2081,7 @@ footer,
 <section class="premium-credentials" id="credentials" aria-label="Championship credentials"><div class="wrap"><p class="eyebrow">CHAMPIONSHIP EXPERIENCE</p><div class="premium-cred-grid"><div class="premium-cred"><strong>2×</strong><span>NCAA Division I Champion</span></div><div class="premium-cred"><strong>World</strong><span>Championships Finalist</span></div><div class="premium-cred"><strong>African</strong><span>Senior Silver Medalist</span></div></div><details class="premium-more"><summary>Explore all credentials <span aria-hidden="true">+</span></summary><div class="premium-more-grid"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div></details></div></section>
 <section class="section-tight premium-proof" id="stories"><div class="wrap"><p class="eyebrow">PROVEN ATHLETE DEVELOPMENT</p><h2 class="head">Real progress. <span class="accent">Lasting impact.</span></h2><p class="lede">Three athlete journeys. Measurable breakthroughs. Development beyond the result.</p><div class="premium-story-shell"><div class="story-grid premium-story-grid" id="premium-story-grid"><article class="story-card reveal">
 
-<h3>From Plumtree, Zimbabwe to NCAA Division I</h3>
+<div class="premium-story-heading"><img class="premium-story-avatar" width="64" height="72" alt="" loading="lazy"/><h3>From Plumtree, Zimbabwe to NCAA Division I</h3></div>
 <div class="story-result">13.00m → 15.86m</div>
 <div class="story-feet">42'8" → 52'0"</div>
 <p class="story-quote">“Coach Du became more than a coach to me. He became a mentor and a brother.”</p>
@@ -2052,7 +2090,7 @@ footer,
 </article>
 <article class="story-card reveal">
 
-<h3>Two Events. Two Personal Bests. One Breakthrough.</h3>
+<div class="premium-story-heading"><img class="premium-story-avatar" width="64" height="72" alt="" loading="lazy"/><h3>Two Events. Two Personal Bests. One Breakthrough.</h3></div>
 <div class="story-result">TJ 14.27m → 15.40m</div>
 <div class="story-feet">46'10" → 50'6"</div>
 <div class="story-result" style="font-size:1.05rem">LJ 6.50m → 7.08m</div>
@@ -2063,7 +2101,7 @@ footer,
 </article>
 <article class="story-card reveal">
 
-<h3>From District Level to National Championship Qualifier</h3>
+<div class="premium-story-heading"><img class="premium-story-avatar" width="64" height="72" alt="" loading="lazy"/><h3>From District Level to National Championship Qualifier</h3></div>
 <div class="story-result">800m: 2:10 → 2:01</div>
 <p class="story-quote">“Coach Du helped me believe in myself when I did not fully believe in my own ability.”</p>
 <p>800m Athlete · Kutama College</p>
@@ -2080,10 +2118,10 @@ footer,
 <p class="lede">Partner with Du Airlines to bring structured performance development into your existing programme — combining progressive programming, movement and speed development, exercise education, specialist support and remote performance resources.<br/><br/><strong style="color:var(--cream)">Built for schools, clubs and teams — with your coaches remaining central to delivery.</strong></p>
 <button aria-controls="partnershipInquiry" aria-expanded="false" class="btn btn-primary" id="openPartnershipForm" type="button">Partner With DU Airlines</button>
 </div>
-<div class="partnership-form-wrap" hidden="" id="partnershipInquiry">
-<div class="partnership-form-card">
+<dialog class="partnership-form-wrap" hidden="" id="partnershipInquiry" aria-labelledby="partnership-dialog-title">
+<div class="partnership-form-card"><button type="button" id="closePartnershipForm" aria-label="Close partnership inquiry">×</button>
 <p class="eyebrow">Partnership Inquiry</p>
-<h3>Start a partnership conversation</h3>
+<h3 id="partnership-dialog-title">Start a partnership conversation</h3>
 <form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" id="partnershipForm" method="POST" novalidate="">
 <input name="submission_type" type="hidden" value="Partnership Inquiry"/>
 <input name="_next" type="hidden" value="https://duairlineseliteacademy.com/?submitted=true"/>
@@ -2109,7 +2147,7 @@ footer,
 <p aria-live="polite" class="form-status" id="partnershipStatus" role="status"></p>
 </form>
 </div>
-</div>
+</dialog>
 </div>
 </section>
 <!-- ================= FOOTER ================= -->
@@ -3399,11 +3437,29 @@ document.addEventListener('click',function(e){
   const openButton=document.getElementById('openPartnershipForm');
   const panel=document.getElementById('partnershipInquiry');
   if(openButton && panel){
+    let previousOverflow='';
+    function closePartnership(){if(panel.open)panel.close();}
     openButton.addEventListener('click',function(){
-      const opening=panel.hasAttribute('hidden');
-      if(opening){panel.removeAttribute('hidden'); openButton.setAttribute('aria-expanded','true'); panel.scrollIntoView({behavior:'smooth',block:'start'});}
-      else{panel.setAttribute('hidden',''); openButton.setAttribute('aria-expanded','false');}
+      if(panel.open){closePartnership();return;}
+      previousOverflow=document.body.style.overflow;
+      panel.hidden=false;panel.showModal();panel.scrollTop=0;
+      openButton.setAttribute('aria-expanded','true');
+      document.body.style.overflow='hidden';
+      document.getElementById('partner-name').focus({preventScroll:true});
     });
+    document.getElementById('closePartnershipForm').addEventListener('click',closePartnership);
+    panel.addEventListener('click',function(event){
+      if(event.target!==panel)return;
+      const box=panel.getBoundingClientRect();
+      if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)closePartnership();
+    });
+    panel.addEventListener('close',function(){
+      panel.hidden=true;openButton.setAttribute('aria-expanded','false');
+      document.body.style.overflow=previousOverflow;
+      openButton.focus({preventScroll:true});
+    });
+    function closeOnRoute(){if(location.hash.startsWith('#/')&&location.hash!=='#/')closePartnership();}
+    window.addEventListener('hashchange',closeOnRoute);window.addEventListener('popstate',closeOnRoute);
   }
 
   const method=document.getElementById('partner-contact');
@@ -5034,7 +5090,11 @@ private:{eyebrow:'PRIVATE ATHLETE ACCESS',title:'A programme built around you.',
 const tabs=Array.from(document.querySelectorAll('#home-view [data-premium-role]'));
 function selectRole(key){const r=roles[key];if(!r)return;tabs.forEach(b=>{b.setAttribute('aria-selected',String(b.dataset.premiumRole===key));b.tabIndex=b.dataset.premiumRole===key?0:-1});document.getElementById('premium-role-eyebrow').textContent=r.eyebrow;document.getElementById('premium-role-title').textContent=r.title;document.getElementById('premium-role-description').textContent=r.description;document.getElementById('premium-role-features').innerHTML=r.features.map(x=>'<li>'+x+'</li>').join('');document.getElementById('premium-role-panel').setAttribute('aria-labelledby','premium-tab-'+key);const link=document.getElementById('premium-role-link');link.href=r.url;link.innerHTML=r.label+' <span aria-hidden="true">↗</span>';}
 tabs.forEach((b,i)=>{b.addEventListener('click',()=>selectRole(b.dataset.premiumRole));b.addEventListener('keydown',e=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();const next=tabs[e.key==='Home'?0:e.key==='End'?tabs.length-1:(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];next.focus();selectRole(next.dataset.premiumRole)}})});
-const track=document.getElementById('premium-story-grid');const dots=Array.from(document.querySelectorAll('#premium-story-dots button'));const cards=track?Array.from(track.querySelectorAll('.story-card')):[];let current=0;function show(i){if(!track||!cards.length)return;current=(i+cards.length)%cards.length;track.scrollTo({left:cards[current].offsetLeft-cards[0].offsetLeft,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});dots.forEach((b,j)=>b.setAttribute('aria-current',String(j===current)))}document.getElementById('premium-story-prev')?.addEventListener('click',()=>show(current-1));document.getElementById('premium-story-next')?.addEventListener('click',()=>show(current+1));dots.forEach((b,i)=>b.addEventListener('click',()=>show(i)));track?.addEventListener('scroll',()=>{if(!cards.length)return;let i=Math.round(track.scrollLeft/Math.max(1,cards[0].getBoundingClientRect().width));current=Math.min(cards.length-1,Math.max(0,i));dots.forEach((b,j)=>b.setAttribute('aria-current',String(j===current)))},{passive:true});
+document.querySelectorAll('#premium-story-grid .premium-story-avatar').forEach((image,i)=>{
+ const original=document.querySelector('#story'+(i+1)+' img');
+ if(original){image.src=original.src;image.alt=original.alt;}
+});
+const track=document.getElementById('premium-story-grid');const dots=Array.from(document.querySelectorAll('#premium-story-dots button'));const cards=track?Array.from(track.querySelectorAll('.story-card')):[];let current=0;function show(i){if(!track||!cards.length)return;current=(i+cards.length)%cards.length;track.scrollTo({left:cards[current].offsetLeft-cards[0].offsetLeft,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});dots.forEach((b,j)=>b.setAttribute('aria-current',String(j===current)))}document.getElementById('premium-story-prev')?.addEventListener('click',()=>show(current-1));document.getElementById('premium-story-next')?.addEventListener('click',()=>show(current+1));dots.forEach((b,i)=>b.addEventListener('click',()=>show(i)));track?.addEventListener('scroll',()=>{if(!cards.length)return;let nearest=0,distance=Infinity;cards.forEach((card,i)=>{const d=Math.abs(track.scrollLeft-(card.offsetLeft-cards[0].offsetLeft));if(d<distance){distance=d;nearest=i;}});current=nearest;dots.forEach((b,j)=>b.setAttribute('aria-current',String(j===current)))},{passive:true});
 })();
 </script></body>
 </html>

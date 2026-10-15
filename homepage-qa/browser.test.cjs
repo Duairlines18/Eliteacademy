@@ -9,7 +9,7 @@ const {chromium}=require('playwright');
  const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage','--no-zygote','--single-process']}: {})});
  let checks=0;const ok=(v,msg)=>{assert.ok(v,msg);checks++;};
  try{
- const context=await browser.newContext({reducedMotion:'reduce'});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const context=await browser.newContext({reducedMotion:'reduce',hasTouch:true});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
  for(const width of [375,390,430,768,1440]){
  await page.setViewportSize({width,height:900});errors.length=0;
  await page.goto(base,{waitUntil:'load'});
@@ -22,6 +22,10 @@ const {chromium}=require('playwright');
  ok(!broken.length,`${width}: all homepage section links resolve: ${broken}`);
  const hero=await page.locator('.premium-hero').boundingBox(),title=await page.locator('.premium-hero h1').boundingBox();
  ok(title.y+title.height<=hero.y+hero.height,`${width}: hero heading fits`);
+ const roleRows=await page.locator('[data-premium-role]').evaluateAll(items=>items.map(e=>Math.round(e.getBoundingClientRect().top)));
+ ok(new Set(roleRows).size===1,`${width}: Hub roles stay in one horizontal row`);
+ ok(await page.locator('.premium-story-avatar').count()===3,`${width}: existing athlete photos reused`);
+ ok(await page.locator('.premium-story-avatar').evaluateAll(images=>images.every(e=>(e.getAttribute('src')||'').startsWith('data:image/'))),`${width}: every athlete photo has its original source`);
  const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: all seven credentials available`);ok(await page.locator('.premium-more-grid span').count()===4,`${width}: four additional credentials`);
  await page.locator('.premium-path-details summary').click();
  for(const sport of ['soccer','track']){
@@ -45,12 +49,35 @@ const {chromium}=require('playwright');
  }
  await page.locator('[data-premium-role="athlete"]').focus();await page.keyboard.press('End');ok(await page.locator('[data-premium-role="private"]').getAttribute('aria-selected')==='true',`${width}: keyboard End selects private athlete`);
  await page.keyboard.press('Home');ok(await page.locator('[data-premium-role="athlete"]').getAttribute('aria-selected')==='true',`${width}: keyboard Home selects athlete`);
+ if(width<=899){
+ const track=page.locator('#premium-story-grid');await track.scrollIntoViewIfNeeded();
+ const box=await track.boundingBox();const y=Math.max(100,Math.min(800,box.y+box.height/2));
+ const cdp=await context.newCDPSession(page);
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:width-55,y}]});
+ for(let step=1;step<=8;step++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:width-55-(width-100)*step/8,y}]});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await page.waitForFunction(()=>document.getElementById('premium-story-grid').scrollLeft>50);
+ ok(await track.evaluate(e=>e.scrollLeft)>50,`${width}: touch swipe moves athlete stories`);
+ await cdp.detach();
+ }
  for(let i=1;i<=3;i++){
  if(width<=899)await page.locator(`#premium-story-dots button:nth-child(${i})`).click();
+ await page.locator('.premium-story-avatar').nth(i-1).scrollIntoViewIfNeeded();
+ await page.waitForFunction(n=>document.querySelectorAll('.premium-story-avatar')[n].naturalWidth>0,i-1);
+ ok(await page.locator('.premium-story-avatar').nth(i-1).evaluate(e=>e.complete&&e.naturalWidth>0),`${width}: athlete ${i} photo loads`);
  await page.locator(`#premium-story-grid [data-story="story${i}"]`).click();ok(await page.locator(`#story${i}`).isVisible(),`${width}: story ${i} opens`);await page.keyboard.press('Escape');ok(!await page.locator(`#story${i}`).isVisible(),`${width}: story ${i} closes`);
  }
+ await page.locator('#openPartnershipForm').scrollIntoViewIfNeeded();const beforeDialog=await page.evaluate(()=>scrollY);
  await page.locator('#openPartnershipForm').click();ok(await page.locator('#partnershipForm').isVisible(),`${width}: original inquiry form opens`);
  ok(await page.locator('#partnershipForm').getAttribute('action')==='https://formsubmit.co/coachdu@duairlineseliteacademy.com',`${width}: original inquiry destination`);
+ ok(await page.locator('#partnershipInquiry').evaluate(e=>e.tagName==='DIALOG'&&e.open),`${width}: partnership opens in a contained dialog`);
+ ok(Math.abs((await page.evaluate(()=>scrollY))-beforeDialog)<2,`${width}: partnership does not scroll the page`);
+ const dialog=await page.locator('#partnershipInquiry').boundingBox();ok(dialog.y>=0&&dialog.y+dialog.height<=902,`${width}: dialog stays inside viewport`);
+ await page.locator('#partner-message').scrollIntoViewIfNeeded();
+ ok(await page.locator('#partner-message').evaluate(e=>getComputedStyle(e).backgroundColor!=='rgb(255, 255, 255)'),`${width}: message field matches green theme`);
+ await page.keyboard.press('Escape');ok(!await page.locator('#partnershipInquiry').isVisible(),`${width}: partnership closes with Escape`);
+ ok(await page.locator('#openPartnershipForm').evaluate(e=>document.activeElement===e),`${width}: focus returns to partnership button`);
+ await page.locator('#openPartnershipForm').click();await page.locator('#closePartnershipForm').click();ok(!await page.locator('#partnershipInquiry').isVisible(),`${width}: visible close button works`);
  for(const [route,view] of Object.entries({'club-registration':'club-registration-view','registration-complete':'registration-complete-view','track/register':'track-view','track/evaluation':'track-view','professional-performance':'professional-view'})){
  await page.goto(base+'/#/'+route);await page.locator('#'+view).waitFor({state:'visible'});
  ok(await page.locator('#'+view).isVisible(),`${width}: existing ${route} route renders`);
