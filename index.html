@@ -1985,77 +1985,122 @@ footer,
 #home-view .story-grid>.story-card{flex:0 0 min(87vw,350px);scroll-snap-align:start}
 }
 @media(prefers-reduced-motion:reduce){#home-view .da-role-tabs button{transition:none}#home-view .story-grid{scroll-behavior:auto}}
+</style><style id="da-premium-homepage">
+/* Homepage-only refinements; existing app and its route styles are unchanged. */
+#home-view .topbar .row{min-height:72px}#home-view .top-cta{white-space:nowrap}
+#home-view .hero-media{min-height:clamp(670px,92vh,900px);background-position:center,center 27%;background-size:cover}
+#home-view .hero-inner{min-height:clamp(670px,92vh,900px);display:flex;align-items:flex-end;padding-bottom:clamp(65px,10vh,125px)}
+#home-view .hero-title{font-family:var(--serif);font-size:clamp(2.9rem,6.3vw,6.7rem);max-width:1000px;line-height:1.06;letter-spacing:-.045em}
+#home-view .hero-title .accent{display:block;font-style:italic;color:var(--gold-soft);font-weight:500}
+#home-view .hero-kicker{letter-spacing:.26em}
+#home-view .hero-positioning{font:600 .83rem var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--gold-soft);margin-top:1.5rem}
+#home-view .hero-sub{max-width:660px}
+#home-view .creds .creds-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+#home-view .da-credentials-more{text-align:center;margin:1.3rem auto 0;max-width:760px}
+#home-view .da-credentials-more summary{display:inline-flex;align-items:center;gap:1rem;cursor:pointer;color:var(--gold-soft);font:500 .85rem var(--sans);padding:.8rem}
+#home-view .da-credentials-more summary::marker{content:''}
+#home-view .da-credentials-more[open] summary span{transform:rotate(45deg)}
+#home-view .da-extra-credentials{display:grid;grid-template-columns:repeat(2,1fr);gap:.65rem;margin-top:1rem}
+#home-view .da-extra-credentials span{padding:1rem;border:1px solid var(--hair);background:var(--green-2);border-radius:6px}
+#home-view .da-hub .wrap{max-width:960px}
+#home-view .da-role-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:2rem auto 1.25rem}
+#home-view .da-role-tabs button{border:1px solid var(--hair);border-radius:100px;background:transparent;color:var(--cream);font:500 .85rem var(--sans);padding:.85rem 1.15rem;cursor:pointer}
+#home-view .da-role-tabs button[aria-selected=true]{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+#home-view .da-role-panel{border:1px solid var(--hair);border-radius:12px;padding:clamp(1.4rem,4vw,2.6rem);background:var(--green-2);text-align:center}
+#home-view .da-role-panel h3{font:600 clamp(1.6rem,3vw,2.2rem) var(--serif);margin:0}
+#home-view .da-role-panel ul{display:flex;flex-wrap:wrap;justify-content:center;gap:.65rem 1.5rem;padding:0;margin:1.4rem 0 1.8rem;list-style:none}
+#home-view .da-role-panel li{color:var(--sage);font-size:.87rem}
+#home-view .da-role-panel li::before{content:'✓';color:var(--gold);margin-right:.4rem}
+#home-view .da-pathways{background:var(--green)}
+#home-view .da-pathway-list{max-width:850px;margin:2rem auto 0}
+#home-view .da-pathway-list details{border-top:1px solid var(--hair)}
+#home-view .da-pathway-list details:last-child{border-bottom:1px solid var(--hair)}
+#home-view .da-pathway-list summary{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.35rem .5rem;cursor:pointer;font:500 clamp(1.3rem,3vw,2rem) var(--serif)}
+#home-view .da-pathway-list summary::marker{content:''}
+#home-view .da-pathway-list details[open] summary>span:last-child{transform:rotate(45deg)}
+#home-view .da-pathway-detail{padding:0 .5rem 1.6rem;color:var(--sage)}
+#home-view .da-pathway-detail .btn{margin-top:.7rem}
+#home-view #stories{background:var(--ink)!important}
+#home-view .story-card{display:flex;flex-direction:column}
+#home-view .da-story-nav{display:none}
+#home-view .da-story-nav button{border:1px solid var(--hair);background:var(--green-2);color:var(--cream);border-radius:50%;width:42px;height:42px;font-size:1.5rem;cursor:pointer}
+#home-view a:focus-visible,#home-view button:focus-visible,#home-view summary:focus-visible{outline:2px solid var(--gold-soft);outline-offset:4px}
+@media(max-width:760px){
+#home-view .topnav{display:none}
+#home-view .hero-media{min-height:740px;background-position:center,center 17%}
+#home-view .hero-inner{min-height:740px;align-items:flex-end;padding-bottom:48px}
+#home-view .hero-title{font-size:clamp(2.45rem,9vw,4rem);max-width:560px}
+#home-view .hero-positioning{font-size:.69rem}
+#home-view .hero-sub{font-size:.9rem}
+#home-view .creds .creds-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.2rem}
+#home-view .creds .cred{padding:.8rem .3rem}
+#home-view .creds .cred .num{font-size:clamp(1.2rem,4vw,1.9rem)}
+#home-view .creds .cred .lab{font-size:.65rem}
+#home-view .da-extra-credentials{grid-template-columns:1fr}
+#home-view .da-role-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+#home-view .da-role-tabs button{font-size:.78rem}
+#home-view .da-role-panel ul{display:grid;gap:.55rem}
+#home-view .da-story-nav{display:flex;align-items:center;justify-content:flex-end;gap:1rem;margin:1rem 0}
+#home-view #da-story-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:1rem;scrollbar-width:none;overscroll-behavior-inline:contain}
+#home-view #da-story-grid::-webkit-scrollbar{display:none}
+#home-view #da-story-grid>.story-card{flex:0 0 100%;scroll-snap-align:start;min-width:0}
+}
+@media(prefers-reduced-motion:reduce){#home-view #da-story-grid{scroll-behavior:auto}}
 </style></head>
 <body id="top">
 <div class="site-view" id="home-view">
 <!-- ================= TOP BAR ================= -->
 <header class="topbar"><div class="wrap row">
 <a class="wordmark" href="#top">DU AIRLINES <b>ELITE</b> ACADEMY</a>
-<nav aria-label="Primary" class="topnav"><a href="#stories">Athlete Results</a><a href="#sports">Pathways</a><a href="#performance-hub">Performance Hub</a><a href="#partnerships">Partnerships</a></nav>
+<nav aria-label="Primary" class="topnav"><a href="#stories">Athlete Stories</a><a href="#sports">Pathways</a><a href="#performance-hub">Performance Hub</a></nav>
 <a class="top-cta" href="#/hub/login">HUB LOGIN</a>
 </div></header>
 <!-- ================= HERO ================= -->
-<section class="hero"><div aria-label="Coach Du holding an NCAA championship trophy" class="hero-media" role="img"><div class="hero-inner"><div class="wrap">
+<section class="hero"><div aria-label="Coach Du holding the NCAA championship trophy" class="hero-media" role="img"><div class="hero-inner"><div class="wrap">
 <div class="hero-kicker">THE DU AIRLINES STANDARD</div>
-<h1 class="hero-title">Built on championship experience.<span class="accent">Focused on your next breakthrough.</span></h1>
-<p class="hero-position">Elite Athletic Performance &amp; Development</p>
+<h1 class="hero-title">Built on championship experience. <span class="accent">Focused on your next breakthrough.</span></h1>
+<p class="hero-positioning">Elite Athletic Performance &amp; Development</p>
 <p class="hero-sub">Specialist coaching and structured development for athletes, schools and clubs — from emerging talent to elite competition.</p>
 </div></div></div></section>
 <!-- ================= CREDENTIALS ================= -->
-<section aria-label="Championship credentials" class="creds da-credentials"><div class="wrap">
-<div class="creds-grid">
+<section class="creds" aria-label="Championship credentials"><div class="wrap"><div class="creds-grid">
 <div class="cred"><div class="num">2×</div><div class="lab">NCAA Division I Champion</div></div>
 <div class="cred"><div class="num">World</div><div class="lab">Championships Finalist</div></div>
-<div class="cred"><div class="num">Africa</div><div class="lab">Senior Silver Medalist</div></div>
-</div>
-<details class="da-credentials-more"><summary>Explore All Credentials <span aria-hidden="true">+</span></summary><div class="da-credentials-list"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div></details>
-</div></section>
+<div class="cred"><div class="num">African</div><div class="lab">Senior Silver Medalist</div></div>
+</div><details class="da-credentials-more"><summary>Explore All Credentials <span aria-hidden="true">+</span></summary><div class="da-extra-credentials"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div></details></div></section>
 <!-- ================= PERFORMANCE HUB ================= -->
 <section class="section-compact audience-band da-hub" id="performance-hub"><div class="wrap">
-<p class="eyebrow center">Du Airlines Performance Hub</p>
-<h2 class="head center">Expert coaching. Structured development.<span class="accent">One connected platform.</span></h2>
+<p class="eyebrow center">DU AIRLINES PERFORMANCE HUB</p>
+<h2 class="head center">Expert coaching. Structured development. <span class="accent">One connected platform.</span></h2>
 <p class="lede center">Your training, guidance and progress in one connected experience — built for athletes, coaches and parents.</p>
-<div class="da-role-tabs" role="tablist" aria-label="Choose your Performance Hub experience">
-<button type="button" role="tab" id="da-tab-athlete" aria-controls="da-role-panel" aria-selected="true" data-da-role="athlete">Athlete</button>
-<button type="button" role="tab" id="da-tab-coach" aria-controls="da-role-panel" aria-selected="false" tabindex="-1" data-da-role="coach">Coach</button>
-<button type="button" role="tab" id="da-tab-parent" aria-controls="da-role-panel" aria-selected="false" tabindex="-1" data-da-role="parent">Parent</button>
-<button type="button" role="tab" id="da-tab-private" aria-controls="da-role-panel" aria-selected="false" tabindex="-1" data-da-role="private">Private Athlete</button>
+<div class="da-role-tabs" role="tablist" aria-label="Performance Hub access">
+<button type="button" role="tab" aria-selected="true" tabindex="0" data-da-role="athlete">Athlete</button>
+<button type="button" role="tab" aria-selected="false" tabindex="-1" data-da-role="coach">Coach</button>
+<button type="button" role="tab" aria-selected="false" tabindex="-1" data-da-role="parent">Parent</button>
+<button type="button" role="tab" aria-selected="false" tabindex="-1" data-da-role="private">Private Athlete</button>
 </div>
-<div class="da-role-panel" id="da-role-panel" role="tabpanel" aria-labelledby="da-tab-athlete">
-<h3 id="da-role-heading">Your training, clearly organised.</h3>
+<div class="da-role-panel" role="tabpanel" id="da-role-panel" aria-live="polite">
+<h3 id="da-role-title">Athlete Development</h3>
+<p id="da-role-description">Structured training and progression for your week.</p>
 <ul id="da-role-features"><li>Weekly training sheets</li><li>Exercise demonstrations</li><li>Structured progression</li></ul>
-<a id="da-role-link" class="btn btn-primary" href="#/hub/login">Access Athlete Training</a>
-<p class="da-role-note">Sign in using your existing Performance Hub access. Your programme and account remain unchanged.</p>
+<a class="btn btn-primary" id="da-role-access" href="#/hub/login">Access Athlete Hub</a>
 </div></div></section>
 <!-- ================= SPORT PATHWAYS ================= -->
-<section class="section-compact audience-band da-pathways" id="sports"><div class="wrap">
-<p class="eyebrow center">Your Development Pathway</p><h2 class="head center">Find Your <span class="accent">Pathway</span></h2>
+<section class="section-compact da-pathways" id="sports"><div class="wrap">
+<p class="eyebrow center">YOUR NEXT STEP</p><h2 class="head center">Find Your <span class="accent">Pathway</span></h2>
 <p class="lede center">Choose your sport. Discover your next step.</p>
 <div class="da-pathway-list">
-<details><summary>Soccer Development <span aria-hidden="true">+</span></summary><div><p>Build acceleration, movement efficiency and confidence on the pitch.</p><a class="btn btn-primary" data-route="soccer" href="#/soccer">Explore Soccer Development</a></div></details>
-<details><summary>Track &amp; Field <span aria-hidden="true">+</span></summary><div><p>Specialist sprint and horizontal-jump coaching with technical progression.</p><a class="btn btn-primary" data-route="track" href="#/track">Explore Track &amp; Field</a></div></details>
+<details><summary><span>Soccer Development</span><span aria-hidden="true">+</span></summary><div class="da-pathway-detail"><p>Acceleration, movement quality and confidence for developing soccer athletes.</p><a class="btn btn-primary" data-route="soccer" href="#/soccer">Explore Soccer Development</a></div></details>
+<details><summary><span>Track &amp; Field</span><span aria-hidden="true">+</span></summary><div class="da-pathway-detail"><p>Specialist sprint and horizontal-jump coaching.</p><a class="btn btn-primary" data-route="track" href="#/track">Explore Track &amp; Field</a></div></details>
 </div></div></section>
-<!-- ================= THE DU AIRLINES STANDARD ================= -->
-<section class="section-compact standard-section" id="families">
-<div class="wrap">
-<p class="eyebrow center">The DU Airlines Standard</p>
-<h2 class="head center">Trust. Composure. Gratitude. <span class="accent">Execute.</span></h2>
-<p class="lede center">Building confident athletes who stay composed, value the opportunity and execute with purpose.</p>
-<div aria-label="DU Airlines values" class="standard-values">
-<div><strong>Trust</strong><span>Believe in the work.</span></div>
-<div><strong>Composure</strong><span>Stay present under pressure.</span></div>
-<div><strong>Gratitude</strong><span>Respect the opportunity.</span></div>
-<div><strong>Execute</strong><span>Apply what you have learned.</span></div>
-</div>
-</div>
-</section>
+
 <!-- ================= ATHLETE STORIES ================= -->
 <section class="section-tight" id="stories" style="background:var(--ink);border-block:1px solid var(--hair)">
 <div class="wrap">
 <p class="eyebrow">Proven Athlete Development</p>
 <h2 class="head">Results that tell a <span class="accent">bigger story</span></h2>
 <p class="lede">Each story reflects technical improvement, consistent coaching and genuine investment in the person behind the athlete.</p>
-<div class="story-grid" style="margin-top:2rem">
+<div class="da-story-nav"><button type="button" id="da-story-prev" aria-label="Previous athlete story">‹</button><span id="da-story-count">1 / 3</span><button type="button" id="da-story-next" aria-label="Next athlete story">›</button></div><div class="story-grid" id="da-story-grid" style="margin-top:2rem">
 <article class="story-card reveal">
 
 <h3>From Plumtree, Zimbabwe to NCAA Division I</h3>
@@ -2088,69 +2133,23 @@ footer,
 
 </div>
 </section>
-<!-- ================= PARTNERSHIPS ================= -->
-<section class="section partnership-section" id="partnerships">
-<div class="wrap partnership-shell">
-<div class="partnership-copy">
-<p class="eyebrow">For Clubs, Teams &amp; Schools</p>
-<h2 class="head">Give your athletes a competitive <span class="accent">development advantage.</span></h2>
-<p class="lede">Partner with Du Airlines to bring structured performance development into your existing programme — combining progressive programming, movement and speed development, exercise education, specialist support and remote performance resources.<br/><br/><strong style="color:var(--cream)">Built for schools, clubs and teams — with your coaches remaining central to delivery.</strong></p>
-<button aria-controls="partnershipInquiry" aria-expanded="false" class="btn btn-primary" id="openPartnershipForm" type="button">Partner With DU Airlines</button>
-</div>
-<div class="partnership-form-wrap" hidden="" id="partnershipInquiry">
-<div class="partnership-form-card">
-<p class="eyebrow">Partnership Inquiry</p>
-<h3>Start a partnership conversation</h3>
-<form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" id="partnershipForm" method="POST" novalidate="">
-<input name="submission_type" type="hidden" value="Partnership Inquiry"/>
-<input name="_next" type="hidden" value="https://duairlineseliteacademy.com/?submitted=true"/>
-<input name="_url" type="hidden" value="https://duairlineseliteacademy.com/"/>
-<input name="_template" type="hidden" value="table"/>
-<input name="_captcha" type="hidden" value="false"/>
-<input name="_subject" type="hidden" value="New Partnership Inquiry — DU Airlines Elite Academy"/>
-<input class="submitted-at" name="submitted_at" type="hidden" value=""/>
-<input aria-hidden="true" autocomplete="off" class="honeypot" name="website" tabindex="-1" type="text"/>
-<div class="partnership-form-grid">
-<div class="soccer-field"><label for="partner-name">Full name</label><input autocomplete="name" id="partner-name" name="contact_name" required="" type="text"/></div>
-<div class="soccer-field"><label for="partner-org">Organization name</label><input id="partner-org" name="organization_name" required="" type="text"/></div>
-<div class="soccer-field"><label for="partner-role">Role or title</label><input id="partner-role" name="role_title" required="" type="text"/></div>
-<div class="soccer-field"><label for="partner-email">Email address</label><input autocomplete="email" id="partner-email" name="email" required="" type="email"/></div>
-<div class="soccer-field"><label for="partner-phone">Phone number</label><input autocomplete="tel" id="partner-phone" name="phone" required="" type="tel"/></div>
-<div class="soccer-field"><label for="partner-type">Organization type</label><select id="partner-type" name="organization_type" required=""><option value="">Select one</option><option>Soccer club</option><option>Track club</option><option>School</option><option>Team</option><option>Community organization</option><option>Other</option></select></div>
-<div class="soccer-field full"><label for="partner-age">Age group or athletes served</label><input id="partner-age" name="athletes_served" required="" type="text"/></div>
-<div class="soccer-field full"><label for="partner-message">Short message</label><textarea id="partner-message" name="message" required="" rows="4"></textarea></div>
-<div class="soccer-field full"><label for="partner-contact">Preferred contact method</label><select id="partner-contact" name="preferred_contact_method" required=""><option value="">Select one</option><option>Phone</option><option>Email</option><option>Text</option></select></div>
-<label class="contact-consent full" hidden="" id="textConsentWrap"><input id="textConsent" name="text_contact_consent" type="checkbox" value="Yes"/> <span>By selecting Text, I agree to receive direct communication regarding this partnership inquiry. Message and data rates may apply.</span></label>
-</div>
-<div class="soccer-form-submit"><button class="btn btn-primary" type="submit">Request a Partnership Conversation</button></div>
-<p aria-live="polite" class="form-status" id="partnershipStatus" role="status"></p>
-</form>
-</div>
-</div>
-</div>
-</section>
-<script id="da-home-role-selector">
+
+<script id="da-premium-homepage-interactions">
 (function(){
 const roles={
-athlete:{heading:"Your training, clearly organised.",features:["Weekly training sheets","Exercise demonstrations","Structured progression"],cta:"Access Athlete Training"},
-coach:{heading:"Lead your athletes with clarity.",features:["Group training sheets","Coaching cues","Programme oversight"],cta:"Access Coach Hub"},
-parent:{heading:"Stay connected to their development.",features:["Weekly training overview","Guided exercises","Progress visibility"],cta:"Access Parent Hub"},
-private:{heading:"Your personalised performance programme.",features:["Personalised programming","Exercise video library","Coaching feedback and progression"],cta:"Access Private Athlete Hub"}
+athlete:{title:'Athlete Development',description:'Structured training and progression for your week.',features:['Weekly training sheets','Exercise demonstrations','Structured progression'],button:'Access Athlete Hub'},
+coach:{title:'Coach Development',description:'One connected workspace for your athletes and training groups.',features:['Group training sheets','Coaching cues','Programme oversight'],button:'Access Coach Hub'},
+parent:{title:'Parent Access',description:'Stay connected to your athlete’s training and development.',features:['Weekly training overview','Guided exercises','Progress visibility'],button:'Access Parent Hub'},
+private:{title:'Private Athlete Coaching',description:'Your individual programme and coaching support in one place.',features:['Personalised programming','Exercise video library','Coaching feedback and progression'],button:'Access Private Athlete Hub'}
 };
-const tabs=Array.from(document.querySelectorAll("#home-view [data-da-role]"));
-const panel=document.getElementById("da-role-panel"),heading=document.getElementById("da-role-heading"),features=document.getElementById("da-role-features"),link=document.getElementById("da-role-link");
-if(!tabs.length||!panel||!heading||!features||!link)return;
-function select(tab,focus){
-const key=tab.dataset.daRole,role=roles[key];if(!role)return;
-tabs.forEach(t=>{const active=t===tab;t.setAttribute("aria-selected",String(active));t.tabIndex=active?0:-1});
-panel.setAttribute("aria-labelledby",tab.id);heading.textContent=role.heading;features.replaceChildren();
-role.features.forEach(f=>{const li=document.createElement("li");li.textContent=f;features.append(li)});
-link.textContent=role.cta;
-/* Existing role selection and authentication are owned by the live Hub login screen. */
-link.href="#/hub/login";
-if(focus)tab.focus();
-}
-tabs.forEach((tab,i)=>{tab.addEventListener("click",()=>select(tab,false));tab.addEventListener("keydown",e=>{if(!["ArrowRight","ArrowLeft","Home","End"].includes(e.key))return;e.preventDefault();const n=e.key==="Home"?0:e.key==="End"?tabs.length-1:(i+(e.key==="ArrowRight"?1:-1)+tabs.length)%tabs.length;select(tabs[n],true)})});
+const tabs=[...document.querySelectorAll('#home-view [data-da-role]')];
+function selectRole(key){const d=roles[key];if(!d)return;tabs.forEach(t=>{let yes=t.dataset.daRole===key;t.setAttribute('aria-selected',String(yes));t.tabIndex=yes?0:-1;});document.getElementById('da-role-title').textContent=d.title;document.getElementById('da-role-description').textContent=d.description;document.getElementById('da-role-features').replaceChildren(...d.features.map(f=>{const li=document.createElement('li');li.textContent=f;return li;}));const a=document.getElementById('da-role-access');a.textContent=d.button;a.href='#/hub/login';a.dataset.selectedRole=key;}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>selectRole(t.dataset.daRole));t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const next=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];selectRole(next.dataset.daRole);next.focus();}})});
+const grid=document.getElementById('da-story-grid'),cards=grid?[...grid.querySelectorAll('.story-card')]:[],counter=document.getElementById('da-story-count');let idx=0;
+function go(n){if(!cards.length)return;idx=(n+cards.length)%cards.length;cards[idx].scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'nearest',inline:'start'});if(counter)counter.textContent=(idx+1)+' / '+cards.length;}
+document.getElementById('da-story-prev')?.addEventListener('click',()=>go(idx-1));
+document.getElementById('da-story-next')?.addEventListener('click',()=>go(idx+1));
+if(grid&&cards.length){let timer;grid.addEventListener('scroll',()=>{clearTimeout(timer);timer=setTimeout(()=>{const rect=grid.getBoundingClientRect();let best=Infinity;cards.forEach((card,i)=>{let d=Math.abs(card.getBoundingClientRect().left-rect.left);if(d<best){best=d;idx=i;}});if(counter)counter.textContent=(idx+1)+' / '+cards.length;},100);},{passive:true});}
 })();
 </script>
 <!-- ================= FOOTER ================= -->
