@@ -1928,101 +1928,67 @@ footer,
 @media(min-width:900px){.hub-parent-session-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:980px}.hub-parent-session-grid .hub-parent-session-card{min-height:155px!important;padding:22px!important}}
 @media(max-width:390px){.hub-parent-session-grid{gap:9px!important}.hub-parent-session-grid .hub-parent-session-card{padding:12px!important;min-height:150px!important}.hub-parent-session-grid .hub-parent-session-card strong{font-size:15px!important}.hub-parent-session-card .hub-parent-session-icon{right:12px;top:12px}}
 </style>
-<style id="hub-preview-days-css">.hub-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.5rem 0}.hub-preview-day{display:flex;flex-direction:column;min-height:175px;padding:1.2rem;border:1px solid #4a3b2d;border-radius:20px;background:#1e1919;color:#f4eee9;text-decoration:none;position:relative;gap:.8rem}.hub-preview-day span{color:#cda75b;font-size:.78rem;font-weight:700;letter-spacing:.12em}.hub-preview-day strong{font-size:1.15rem;line-height:1.3}.hub-preview-day small{margin-top:auto;color:#bbb2ae}.hub-preview-day b{position:absolute;right:1.1rem;bottom:1rem;color:#cda75b;font-size:1.5rem}@media(max-width:360px){.hub-preview-grid{grid-template-columns:1fr}}.hub-preview-day-icon{position:absolute;top:1rem;right:1.1rem;font-style:normal;color:#cda75b;font-size:1.5rem;line-height:1}.hub-preview-day strong{padding-right:1.2rem}.hub-preview-day:focus-visible{outline:3px solid #e3bf76;outline-offset:3px}</style></head>
+<style id="hub-preview-days-css">.hub-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.5rem 0}.hub-preview-day{display:flex;flex-direction:column;min-height:175px;padding:1.2rem;border:1px solid #4a3b2d;border-radius:20px;background:#1e1919;color:#f4eee9;text-decoration:none;position:relative;gap:.8rem}.hub-preview-day span{color:#cda75b;font-size:.78rem;font-weight:700;letter-spacing:.12em}.hub-preview-day strong{font-size:1.15rem;line-height:1.3}.hub-preview-day small{margin-top:auto;color:#bbb2ae}.hub-preview-day b{position:absolute;right:1.1rem;bottom:1rem;color:#cda75b;font-size:1.5rem}@media(max-width:360px){.hub-preview-grid{grid-template-columns:1fr}}.hub-preview-day-icon{position:absolute;top:1rem;right:1.1rem;font-style:normal;color:#cda75b;font-size:1.5rem;line-height:1}.hub-preview-day strong{padding-right:1.2rem}.hub-preview-day:focus-visible{outline:3px solid #e3bf76;outline-offset:3px}</style><style id="premium-homepage-styles">
+#home-view .premium-hero .hero-media{min-height:clamp(670px,83vh,850px);display:flex;align-items:end}
+#home-view .premium-hero .hero-inner{width:100%;padding:clamp(8rem,23vh,15rem) 0 clamp(2.7rem,8vh,6rem);background:linear-gradient(0deg,rgba(5,26,16,.96),rgba(5,26,16,.55) 40%,rgba(5,26,16,.04) 78%)}
+#home-view .premium-hero .hero-title{max-width:850px;font-family:var(--serif,Georgia,serif);font-weight:500;font-size:clamp(3.2rem,7vw,6.5rem);line-height:1.05;letter-spacing:-.035em;text-wrap:balance}
+#home-view .premium-hero .hero-title .accent{display:block;font-style:italic;color:var(--gold)}
+#home-view .premium-hero .hero-kicker{letter-spacing:.19em;text-transform:uppercase}
+#home-view .premium-hero .hero-sub{max-width:630px;font-size:clamp(.94rem,1.6vw,1.1rem)}
+.premium-hero-position{font-size:.75rem;letter-spacing:.15em;font-weight:700;color:var(--cream);margin:1.4rem 0 .7rem}
+#home-view .premium-credentials,#home-view #stories,#home-view .premium-pathway{background:var(--ink);color:var(--cream)}
+#home-view .premium-credentials{padding:clamp(2rem,5vw,4rem) 0}
+.premium-cred-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:1.25rem 0}
+.premium-cred{border:1px solid var(--hair);background:var(--green-2);border-radius:7px;padding:clamp(1rem,3vw,2rem);text-align:center;display:flex;flex-direction:column;justify-content:center;gap:.65rem}
+.premium-cred strong{font-family:var(--serif,Georgia,serif);font-size:clamp(1.6rem,3vw,3rem);font-weight:500;color:var(--gold)}
+.premium-cred span{font-size:clamp(.7rem,1.5vw,.9rem);line-height:1.4}
+.premium-details{border-top:1px solid var(--hair);margin-top:1rem;color:var(--cream)}
+.premium-details summary{list-style:none;cursor:pointer;padding:1.2rem 0;color:var(--gold);display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.premium-details summary::-webkit-details-marker{display:none}
+.premium-details summary:after{content:"+";font-size:1.5rem;line-height:1;font-family:Arial,sans-serif}
+.premium-details[open] summary:after{content:"−"}
+.premium-details ul{padding:0 0 1rem 1.5rem;line-height:2}
+#home-view #stories{border-block:1px solid var(--hair)}
+#home-view #stories .story-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+#home-view #stories .story-card{min-width:0}
+#home-view #stories .story-label{letter-spacing:.12em}
+#home-view #stories .story-open{cursor:pointer}
+.premium-path-details{border:1px solid var(--hair);border-radius:8px;padding:0 1.4rem;background:var(--green-2)}
+.premium-path-details summary{padding:1.6rem 0}
+.premium-path-details summary strong{font-family:var(--serif,Georgia,serif);font-size:clamp(1.7rem,3vw,2.5rem);font-weight:500;color:var(--cream);display:block}
+.premium-path-details summary small{font-size:.85rem;color:var(--sage);display:block;margin-top:.3rem}
+.premium-path-links{display:grid;gap:.6rem;padding-bottom:1.4rem}
+.premium-path-links a{display:flex;justify-content:space-between;align-items:center;color:var(--cream);text-decoration:none;padding:1.1rem;border:1px solid var(--hair);border-radius:5px}
+.premium-path-links a:hover{background:rgba(214,183,121,.08);border-color:var(--gold)}
+#home-view .premium-hub{background:var(--green-2)}
+.premium-role-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem;margin:2rem 0 1rem}
+.premium-role-tabs button{cursor:pointer;border:1px solid var(--hair);border-radius:5px;background:var(--ink);color:var(--cream);padding:1rem .5rem;font:inherit;font-size:.85rem}
+.premium-role-tabs button[aria-selected="true"]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+.premium-role-panel{background:var(--ink);border:1px solid var(--hair);padding:clamp(1.2rem,3vw,2.2rem);border-radius:7px;max-width:780px}
+.premium-role-panel h3{font-family:var(--serif,Georgia,serif);font-size:clamp(1.7rem,3vw,2.5rem);font-weight:500;color:var(--cream)}
+.premium-role-panel p,.premium-role-panel li{color:var(--sage)}
+.premium-role-panel ul{padding-left:1.25rem;line-height:2}
+#home-view a:focus-visible,#home-view button:focus-visible,#home-view summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+@media(max-width:700px){
+#home-view .premium-hero .hero-media{min-height:750px;background-position:center top}
+#home-view .premium-hero .hero-inner{padding:18rem 0 2.8rem;background:linear-gradient(0deg,rgba(5,26,16,.99),rgba(5,26,16,.78) 37%,rgba(5,26,16,.05) 77%)}
+#home-view .premium-hero .hero-title{font-size:clamp(2.55rem,9vw,4rem);line-height:1.07}
+#home-view .premium-hero .hero-sub{font-size:.94rem}
+.premium-cred-grid{gap:5px}
+.premium-cred{padding:.8rem .3rem;min-height:125px}
+.premium-cred strong{font-size:1.55rem}
+.premium-cred span{font-size:.68rem}
+#home-view #stories .story-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.75rem;scroll-padding:1rem;padding-bottom:1rem;-webkit-overflow-scrolling:touch}
+#home-view #stories .story-card{flex:0 0 87%;scroll-snap-align:start}
+.premium-role-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){#home-view *,#home-view *:before,#home-view *:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style></head>
 <body id="top">
 <div class="site-view" id="home-view">
-<!-- ================= TOP BAR ================= -->
-<header class="topbar">
-<div class="wrap row">
-<a class="wordmark" href="#top">DU AIRLINES <b>ELITE</b> ACADEMY</a>
-<nav aria-label="Primary" class="topnav">
-<a href="#sports">Sport Pathways</a>
-<a href="#families">The DU Airlines Standard</a>
-<a href="#stories">Athlete Stories</a>
-<a href="#partnerships">Partnerships</a>
-<a href="#/hub/login">Performance Hub</a>
-</nav>
-<a class="top-cta" href="#sports">Get started</a>
-</div>
-</header>
-<!-- ================= HERO ================= -->
-<section class="hero">
-<div aria-label="Coach Du holding an NCAA championship trophy" class="hero-media" role="img">
-<div class="hero-inner">
-<div class="wrap">
-<div class="hero-kicker">Speed <span>•</span> Movement <span>•</span> Explosiveness <span>•</span> Jumps</div>
-<h1 class="hero-title">Elite experience. <span class="accent">Youth-focused coaching.</span></h1>
-<p class="hero-sub">Developing faster, more explosive and more confident athletes through specialist coaching, structured programming and performance development — in person and remotely.</p>
-<div class="hero-actions">
-<a class="btn btn-primary" href="#sports">Start your athlete's journey</a>
-<a class="btn btn-ghost" href="#sports">Explore Performance Programs</a>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- ================= CREDENTIALS ================= -->
-<section aria-label="Credentials" class="creds">
-<div class="wrap" style="padding-inline:0">
-<div class="creds-grid">
-<div class="cred"><div class="num">2×</div><div class="lab">NCAA Division I Champion</div></div>
-<div class="cred"><div class="num">TCU</div><div class="lab">Record Holder</div></div>
-<div class="cred"><div class="num">7×</div><div class="lab">World Championships Qualifier</div></div>
-<div class="cred"><div class="num">World</div><div class="lab">Championships Finalist</div></div>
-<div class="cred"><div class="num">Africa</div><div class="lab">Senior Silver Medalist</div></div>
-<div class="cred"><div class="num">Africa Jr.</div><div class="lab">Champion</div></div>
-<div class="cred"><div class="num">Africa Jr.</div><div class="lab">Championships Record Holder</div></div>
-</div>
-</div>
-</section>
-<!-- ================= PERFORMANCE HUB ================= -->
-<section class="section-compact audience-band" id="performance-hub">
-<div class="wrap" style="max-width:760px;text-align:center">
-<p class="eyebrow center">Du Airlines Performance Hub</p>
-<h2 class="head center">Your programme. Your week. <span class="accent">Your progression.</span></h2>
-<p class="lede center">The Du Airlines Performance Hub delivers each athlete or group’s weekly programme, exercise guidance and progression in one clear place.</p>
-<div class="hero-actions" style="margin-top:1.8rem">
-<a class="btn btn-primary" href="#/hub/login">Enter Performance Hub</a>
-</div>
-</div>
-</section>
-<!-- ================= SPORT PATHWAYS ================= -->
-<section class="section-compact audience-band" id="sports">
-<div class="wrap">
-<p class="eyebrow center">Who We Develop</p>
-<h2 class="head center">One standard. Two <span class="accent">development pathways</span></h2>
-<p class="lede center">Du Airlines develops the physical qualities that help athletes express their sport more effectively — while working alongside the coaches and environments already supporting them.</p>
-<div class="sport-grid" style="margin-top:2.3rem">
-<article class="sport-card reveal">
-<div class="sport-tag">Soccer</div>
-<h3>Faster, more complete movers</h3>
-<p>Helping soccer athletes accelerate faster, move more efficiently and compete with confidence.</p>
-<a class="btn btn-primary" data-route="soccer" href="#/soccer">Explore Soccer Development →</a>
-</article>
-<article class="sport-card reveal">
-<div class="sport-tag">Track &amp; Field</div>
-<h3>Technical speed and jumps development</h3>
-<p>Specialized sprint and horizontal-jump coaching for athletes pursuing technical excellence.</p>
-<a class="btn btn-ghost" data-route="track" href="#/track">Explore Track &amp; Field →</a>
-</article>
-</div>
-</div>
-</section>
-<!-- ================= THE DU AIRLINES STANDARD ================= -->
-<section class="section-compact standard-section" id="families">
-<div class="wrap">
-<p class="eyebrow center">The DU Airlines Standard</p>
-<h2 class="head center">Trust. Composure. Gratitude. <span class="accent">Execute.</span></h2>
-<p class="lede center">Building confident athletes who stay composed, value the opportunity and execute with purpose.</p>
-<div aria-label="DU Airlines values" class="standard-values">
-<div><strong>Trust</strong><span>Believe in the work.</span></div>
-<div><strong>Composure</strong><span>Stay present under pressure.</span></div>
-<div><strong>Gratitude</strong><span>Respect the opportunity.</span></div>
-<div><strong>Execute</strong><span>Apply what you have learned.</span></div>
-</div>
-</div>
-</section>
-<!-- ================= ATHLETE STORIES ================= -->
+<header class="topbar"><div class="wrap row"><a class="wordmark" href="#/">DU AIRLINES <b>ELITE</b> ACADEMY</a><nav aria-label="Primary" class="topnav"><a href="#credentials">Credentials</a><a href="#stories">Athlete Results</a><a href="#sports">Pathways</a><a href="#performance-hub">Performance Hub</a></nav><a class="top-cta" href="#/hub/login">HUB LOGIN</a></div></header>
+<section class="hero premium-hero" aria-label="Championship experience"><div class="hero-media" role="img" aria-label="Coach Du raising his NCAA championship trophy"><div class="hero-inner"><div class="wrap"><p class="hero-kicker">THE DU AIRLINES STANDARD</p><h1 class="hero-title">Built on championship experience. <span class="accent">Focused on your next breakthrough.</span></h1><p class="premium-hero-position">ELITE ATHLETIC PERFORMANCE &amp; DEVELOPMENT</p><p class="hero-sub">Specialist coaching and structured development for athletes, schools and clubs — from emerging talent to elite competition.</p></div></div></div></section>
+<section class="premium-credentials" id="credentials" aria-label="Championship credentials"><div class="wrap"><p class="eyebrow">Championship Experience</p><div class="premium-cred-grid"><div class="premium-cred"><strong>2×</strong><span>NCAA Division I Champion</span></div><div class="premium-cred"><strong>World</strong><span>Championships Finalist</span></div><div class="premium-cred"><strong>Africa</strong><span>Senior Silver Medalist</span></div></div><details class="premium-details"><summary>Explore all credentials</summary><ul><li>TCU Record Holder</li><li>7× World Championships Qualifier</li><li>African Junior Champion</li><li>African Junior Championships Record Holder</li></ul></details></div></section>
 <section class="section-tight" id="stories" style="background:var(--ink);border-block:1px solid var(--hair)">
 <div class="wrap">
 <p class="eyebrow">Proven Athlete Development</p>
@@ -2030,7 +1996,7 @@ footer,
 <p class="lede">Each story reflects technical improvement, consistent coaching and genuine investment in the person behind the athlete.</p>
 <div class="story-grid" style="margin-top:2rem">
 <article class="story-card reveal">
-<div class="story-label">Athlete Story 01</div>
+<div class="story-label">ATHLETE DEVELOPMENT</div>
 <h3>From Plumtree, Zimbabwe to NCAA Division I</h3>
 <div class="story-result">13.00m → 15.86m</div>
 <div class="story-feet">42'8" → 52'0"</div>
@@ -2039,7 +2005,7 @@ footer,
 <button class="story-open" data-story="story1" type="button">Read the full story →</button>
 </article>
 <article class="story-card reveal">
-<div class="story-label">Athlete Story 02</div>
+<div class="story-label">ATHLETE DEVELOPMENT</div>
 <h3>Two Events. Two Personal Bests. One Breakthrough.</h3>
 <div class="story-result">TJ 14.27m → 15.40m</div>
 <div class="story-feet">46'10" → 50'6"</div>
@@ -2050,7 +2016,7 @@ footer,
 <button class="story-open" data-story="story2" type="button">Read the full story →</button>
 </article>
 <article class="story-card reveal">
-<div class="story-label">Athlete Story 03</div>
+<div class="story-label">ATHLETE DEVELOPMENT</div>
 <h3>From District Level to National Championship Qualifier</h3>
 <div class="story-result">800m: 2:10 → 2:01</div>
 <p class="story-quote">“Coach Du helped me believe in myself when I did not fully believe in my own ability.”</p>
@@ -2058,10 +2024,12 @@ footer,
 <button class="story-open" data-story="story3" type="button">Read the full story →</button>
 </article>
 </div>
-<div class="section-actions"><a class="btn btn-ghost" href="#stories">View More Success Stories</a></div>
+
 </div>
 </section>
-<!-- ================= PARTNERSHIPS ================= -->
+
+<section class="premium-pathway section-compact" id="sports"><div class="wrap"><p class="eyebrow">Development Programmes</p><details class="premium-details premium-path-details"><summary><span><strong>Find Your Pathway</strong><small>Choose your sport. Discover your next step.</small></span></summary><div class="premium-path-links"><a data-route="soccer" href="#/soccer">Soccer Development <span aria-hidden="true">↗</span></a><a data-route="track" href="#/track">Track &amp; Field <span aria-hidden="true">↗</span></a></div></details></div></section>
+<section class="premium-hub section-compact" id="performance-hub"><div class="wrap"><p class="eyebrow">Du Airlines Performance Hub</p><h2 class="head">Expert coaching. Structured development. <span class="accent">One connected platform.</span></h2><p class="lede">Your training, guidance and progress in one connected experience — built for athletes, coaches and parents.</p><div class="premium-role-tabs" role="tablist" aria-label="Performance Hub experiences"><button type="button" role="tab" aria-selected="true" data-home-tab="athlete">Athlete</button><button type="button" role="tab" aria-selected="false" data-home-tab="coach">Coach</button><button type="button" role="tab" aria-selected="false" data-home-tab="parent">Parent</button><button type="button" role="tab" aria-selected="false" data-home-tab="private-athlete">Private Athlete</button></div><div class="premium-role-panel" role="tabpanel" aria-live="polite"><h3 id="premiumRoleTitle">Your programme. Your week.</h3><p id="premiumRoleDescription">Your assigned training, movement demonstrations and progression in one place.</p><ul id="premiumRoleFeatures"><li>Weekly training sheets</li><li>Exercise demonstrations</li><li>Structured progression</li></ul><button class="btn btn-primary" id="premiumRoleAccess" data-home-access="athlete" type="button">Athlete Access</button></div></div></section><!-- ================= PARTNERSHIPS ================= -->
 <section class="section partnership-section" id="partnerships">
 <div class="wrap partnership-shell">
 <div class="partnership-copy">
@@ -5014,5 +4982,28 @@ document.addEventListener('click',function(e){
 <script type="module">
 window.DU_TECHNIQUE_REVIEW_ENABLED=false;
 </script>
-</body>
+<script id="premium-homepage-interactions">
+(function(){
+var roles={
+athlete:{title:"Your programme. Your week.",desc:"Your assigned training, movement demonstrations and progression in one place.",features:["Weekly training sheets","Exercise demonstrations","Structured progression"],label:"Athlete Access",target:'[data-login-role="athlete"]'},
+coach:{title:"Your team. One clear plan.",desc:"Deliver consistent coaching with organised sessions and practical resources.",features:["Group training sheets","Coaching cues","Programme oversight"],label:"Coach Access",target:'[data-login-role="staff"]'},
+parent:{title:"See the work behind the progress.",desc:"Understand your athlete’s training and support their development.",features:["Weekly training overview","Guided exercises","Progress visibility"],label:"Parent Login",target:'[data-account-role="parent"]'},
+"private-athlete":{title:"Coaching beyond the session.",desc:"Individualised programmes, exercise videos and ongoing coaching feedback.",features:["Personalised programming","Exercise video library","Feedback and progression"],label:"Private Athlete Login",target:'[data-account-role="private-athlete"]'}
+};
+var root=document.getElementById("home-view");if(!root)return;
+root.addEventListener("click",function(e){
+var tab=e.target.closest("[data-home-tab]");
+if(tab){var key=tab.getAttribute("data-home-tab"),d=roles[key];if(!d)return;
+root.querySelectorAll("[data-home-tab]").forEach(function(el){el.setAttribute("aria-selected",String(el===tab))});
+root.querySelector("#premiumRoleTitle").textContent=d.title;
+root.querySelector("#premiumRoleDescription").textContent=d.desc;
+root.querySelector("#premiumRoleFeatures").innerHTML=d.features.map(function(f){return "<li>"+f+"</li>"}).join("");
+var access=root.querySelector("#premiumRoleAccess");access.textContent=d.label;access.setAttribute("data-home-access",key);return}
+var access=e.target.closest("[data-home-access]");if(!access)return;
+var key=access.getAttribute("data-home-access"),d=roles[key];if(!d)return;
+window.location.hash="#/hub/login";
+var tries=0;var timer=setInterval(function(){var target=document.querySelector(d.target);if(target&&target.getClientRects().length){clearInterval(timer);target.click()}else if(++tries>=35){clearInterval(timer)}},100);
+});
+})();
+</script></body>
 </html>
