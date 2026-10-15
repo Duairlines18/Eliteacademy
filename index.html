@@ -1928,86 +1928,113 @@ footer,
 @media(min-width:900px){.hub-parent-session-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:980px}.hub-parent-session-grid .hub-parent-session-card{min-height:155px!important;padding:22px!important}}
 @media(max-width:390px){.hub-parent-session-grid{gap:9px!important}.hub-parent-session-grid .hub-parent-session-card{padding:12px!important;min-height:150px!important}.hub-parent-session-grid .hub-parent-session-card strong{font-size:15px!important}.hub-parent-session-card .hub-parent-session-icon{right:12px;top:12px}}
 </style>
-<style id="hub-preview-days-css">.hub-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.5rem 0}.hub-preview-day{display:flex;flex-direction:column;min-height:175px;padding:1.2rem;border:1px solid #4a3b2d;border-radius:20px;background:#1e1919;color:#f4eee9;text-decoration:none;position:relative;gap:.8rem}.hub-preview-day span{color:#cda75b;font-size:.78rem;font-weight:700;letter-spacing:.12em}.hub-preview-day strong{font-size:1.15rem;line-height:1.3}.hub-preview-day small{margin-top:auto;color:#bbb2ae}.hub-preview-day b{position:absolute;right:1.1rem;bottom:1rem;color:#cda75b;font-size:1.5rem}@media(max-width:360px){.hub-preview-grid{grid-template-columns:1fr}}.hub-preview-day-icon{position:absolute;top:1rem;right:1.1rem;font-style:normal;color:#cda75b;font-size:1.5rem;line-height:1}.hub-preview-day strong{padding-right:1.2rem}.hub-preview-day:focus-visible{outline:3px solid #e3bf76;outline-offset:3px}</style></head>
+<style id="hub-preview-days-css">.hub-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.5rem 0}.hub-preview-day{display:flex;flex-direction:column;min-height:175px;padding:1.2rem;border:1px solid #4a3b2d;border-radius:20px;background:#1e1919;color:#f4eee9;text-decoration:none;position:relative;gap:.8rem}.hub-preview-day span{color:#cda75b;font-size:.78rem;font-weight:700;letter-spacing:.12em}.hub-preview-day strong{font-size:1.15rem;line-height:1.3}.hub-preview-day small{margin-top:auto;color:#bbb2ae}.hub-preview-day b{position:absolute;right:1.1rem;bottom:1rem;color:#cda75b;font-size:1.5rem}@media(max-width:360px){.hub-preview-grid{grid-template-columns:1fr}}.hub-preview-day-icon{position:absolute;top:1rem;right:1.1rem;font-style:normal;color:#cda75b;font-size:1.5rem;line-height:1}.hub-preview-day strong{padding-right:1.2rem}.hub-preview-day:focus-visible{outline:3px solid #e3bf76;outline-offset:3px}</style><style id="da-premium-homepage-v1">
+/* Homepage-only premium refinements. Existing application styles and routing remain unchanged. */
+#home-view .hero-media{min-height:clamp(690px,95vh,920px);background-position:center,center;background-size:cover}
+#home-view .hero-inner{min-height:clamp(690px,95vh,920px);display:flex;align-items:flex-end;padding-bottom:clamp(55px,9vh,110px)}
+#home-view .hero-title{font-family:var(--serif);font-size:clamp(2.65rem,6.4vw,6.3rem);font-weight:600;line-height:1.1;max-width:980px;letter-spacing:-.045em}
+#home-view .hero-title .accent{display:block;font-style:italic;font-weight:500;color:var(--gold-soft)}
+#home-view .hero-kicker{letter-spacing:.23em}
+#home-view .hero-position{color:var(--gold-soft);font-size:.83rem;letter-spacing:.15em;text-transform:uppercase;margin-top:1.3rem}
+#home-view .hero-sub{max-width:650px}
+#home-view .da-credentials{padding:1.5rem 0 2rem}
+#home-view .da-credentials .creds-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+#home-view .da-credentials .cred{min-width:0}
+#home-view .da-credentials-more{max-width:740px;margin:1.3rem auto 0;text-align:center;border-top:1px solid var(--hair);padding-top:1rem}
+#home-view .da-credentials-more summary{cursor:pointer;color:var(--gold-soft);font-size:.8rem;letter-spacing:.1em;list-style:none}
+#home-view .da-credentials-more summary::-webkit-details-marker{display:none}
+#home-view .da-credentials-more summary span{margin-left:.5rem}
+#home-view .da-credentials-more[open] summary span{display:inline-block;transform:rotate(45deg)}
+#home-view .da-credentials-list{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem 1.4rem;padding:1.25rem .5rem;color:var(--cream);font-size:.82rem}
+#home-view .da-hub .wrap{max-width:880px}
+#home-view .da-hub .head .accent{display:block;font-style:italic}
+#home-view .da-role-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem;margin:2.2rem 0 1rem}
+#home-view .da-role-tabs button{font:500 .84rem var(--sans);color:var(--cream);background:transparent;border:1px solid var(--hair);border-radius:6px;padding:1rem .35rem;cursor:pointer;transition:background .2s,border-color .2s}
+#home-view .da-role-tabs button[aria-selected="true"]{background:var(--green-3);border-color:var(--gold);color:var(--gold-soft)}
+#home-view .da-role-panel{border:1px solid var(--hair);background:var(--green-2);border-radius:8px;padding:clamp(1.5rem,4vw,2.8rem);text-align:center}
+#home-view .da-role-panel h3{font:600 clamp(1.45rem,3vw,2rem) var(--serif);margin:0 0 1rem}
+#home-view .da-role-panel ul{display:flex;justify-content:center;flex-wrap:wrap;gap:.5rem 1.6rem;padding:0;list-style:none;margin:0 0 1.6rem}
+#home-view .da-role-panel li{color:var(--sage);font-size:.9rem}
+#home-view .da-role-note{font-size:.75rem;color:var(--sage);margin:1rem 0 0}
+#home-view .da-pathways .wrap{max-width:880px}
+#home-view .da-pathway-list{margin-top:2rem}
+#home-view .da-pathway-list details{border-top:1px solid var(--hair);padding:0 1rem}
+#home-view .da-pathway-list details:last-child{border-bottom:1px solid var(--hair)}
+#home-view .da-pathway-list summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.45rem 0;font:500 clamp(1.3rem,3vw,1.8rem) var(--serif)}
+#home-view .da-pathway-list summary::-webkit-details-marker{display:none}
+#home-view .da-pathway-list summary span{color:var(--gold);font:400 1.5rem var(--sans)}
+#home-view .da-pathway-list details[open] summary span{transform:rotate(45deg)}
+#home-view .da-pathway-list details>div{padding:0 0 1.6rem}
+#home-view .da-pathway-list p{color:var(--sage)}
+#home-view #stories{background:var(--green)!important}
+#home-view .story-card .story-label{display:none}
+#home-view .story-card{border-color:var(--hair);border-radius:8px}
+#home-view .story-card .story-open{min-height:44px}
+#home-view a:focus-visible,#home-view button:focus-visible,#home-view summary:focus-visible{outline:2px solid var(--gold-soft);outline-offset:4px}
+@media(max-width:700px){
+#home-view .hero-media{min-height:760px;background-position:center,center top}
+#home-view .hero-inner{min-height:760px;padding-bottom:48px}
+#home-view .hero-title{font-size:clamp(2.35rem,10vw,3.6rem);max-width:580px}
+#home-view .hero-position{font-size:.69rem}
+#home-view .da-credentials .creds-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.3rem}
+#home-view .da-credentials .cred{padding:.7rem .2rem}
+#home-view .da-credentials .cred .num{font-size:1.15rem}
+#home-view .da-credentials .cred .lab{font-size:.61rem}
+#home-view .da-role-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+#home-view .story-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:1rem;gap:1rem;-webkit-overflow-scrolling:touch;padding-bottom:1rem}
+#home-view .story-grid>.story-card{flex:0 0 min(87vw,350px);scroll-snap-align:start}
+}
+@media(prefers-reduced-motion:reduce){#home-view .da-role-tabs button{transition:none}#home-view .story-grid{scroll-behavior:auto}}
+</style></head>
 <body id="top">
 <div class="site-view" id="home-view">
 <!-- ================= TOP BAR ================= -->
-<header class="topbar">
-<div class="wrap row">
+<header class="topbar"><div class="wrap row">
 <a class="wordmark" href="#top">DU AIRLINES <b>ELITE</b> ACADEMY</a>
-<nav aria-label="Primary" class="topnav">
-<a href="#sports">Sport Pathways</a>
-<a href="#families">The DU Airlines Standard</a>
-<a href="#stories">Athlete Stories</a>
-<a href="#partnerships">Partnerships</a>
-<a href="#/hub/login">Performance Hub</a>
-</nav>
-<a class="top-cta" href="#sports">Get started</a>
-</div>
-</header>
+<nav aria-label="Primary" class="topnav"><a href="#stories">Athlete Results</a><a href="#sports">Pathways</a><a href="#performance-hub">Performance Hub</a><a href="#partnerships">Partnerships</a></nav>
+<a class="top-cta" href="#/hub/login">HUB LOGIN</a>
+</div></header>
 <!-- ================= HERO ================= -->
-<section class="hero">
-<div aria-label="Coach Du holding an NCAA championship trophy" class="hero-media" role="img">
-<div class="hero-inner">
-<div class="wrap">
-<div class="hero-kicker">Speed <span>•</span> Movement <span>•</span> Explosiveness <span>•</span> Jumps</div>
-<h1 class="hero-title">Elite experience. <span class="accent">Youth-focused coaching.</span></h1>
-<p class="hero-sub">Developing faster, more explosive and more confident athletes through specialist coaching, structured programming and performance development — in person and remotely.</p>
-<div class="hero-actions">
-<a class="btn btn-primary" href="#sports">Start your athlete's journey</a>
-<a class="btn btn-ghost" href="#sports">Explore Performance Programs</a>
-</div>
-</div>
-</div>
-</div>
-</section>
+<section class="hero"><div aria-label="Coach Du holding an NCAA championship trophy" class="hero-media" role="img"><div class="hero-inner"><div class="wrap">
+<div class="hero-kicker">THE DU AIRLINES STANDARD</div>
+<h1 class="hero-title">Built on championship experience.<span class="accent">Focused on your next breakthrough.</span></h1>
+<p class="hero-position">Elite Athletic Performance &amp; Development</p>
+<p class="hero-sub">Specialist coaching and structured development for athletes, schools and clubs — from emerging talent to elite competition.</p>
+</div></div></div></section>
 <!-- ================= CREDENTIALS ================= -->
-<section aria-label="Credentials" class="creds">
-<div class="wrap" style="padding-inline:0">
+<section aria-label="Championship credentials" class="creds da-credentials"><div class="wrap">
 <div class="creds-grid">
 <div class="cred"><div class="num">2×</div><div class="lab">NCAA Division I Champion</div></div>
-<div class="cred"><div class="num">TCU</div><div class="lab">Record Holder</div></div>
-<div class="cred"><div class="num">7×</div><div class="lab">World Championships Qualifier</div></div>
 <div class="cred"><div class="num">World</div><div class="lab">Championships Finalist</div></div>
 <div class="cred"><div class="num">Africa</div><div class="lab">Senior Silver Medalist</div></div>
-<div class="cred"><div class="num">Africa Jr.</div><div class="lab">Champion</div></div>
-<div class="cred"><div class="num">Africa Jr.</div><div class="lab">Championships Record Holder</div></div>
 </div>
-</div>
-</section>
+<details class="da-credentials-more"><summary>Explore All Credentials <span aria-hidden="true">+</span></summary><div class="da-credentials-list"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div></details>
+</div></section>
 <!-- ================= PERFORMANCE HUB ================= -->
-<section class="section-compact audience-band" id="performance-hub">
-<div class="wrap" style="max-width:760px;text-align:center">
+<section class="section-compact audience-band da-hub" id="performance-hub"><div class="wrap">
 <p class="eyebrow center">Du Airlines Performance Hub</p>
-<h2 class="head center">Your programme. Your week. <span class="accent">Your progression.</span></h2>
-<p class="lede center">The Du Airlines Performance Hub delivers each athlete or group’s weekly programme, exercise guidance and progression in one clear place.</p>
-<div class="hero-actions" style="margin-top:1.8rem">
-<a class="btn btn-primary" href="#/hub/login">Enter Performance Hub</a>
+<h2 class="head center">Expert coaching. Structured development.<span class="accent">One connected platform.</span></h2>
+<p class="lede center">Your training, guidance and progress in one connected experience — built for athletes, coaches and parents.</p>
+<div class="da-role-tabs" role="tablist" aria-label="Choose your Performance Hub experience">
+<button type="button" role="tab" id="da-tab-athlete" aria-controls="da-role-panel" aria-selected="true" data-da-role="athlete">Athlete</button>
+<button type="button" role="tab" id="da-tab-coach" aria-controls="da-role-panel" aria-selected="false" tabindex="-1" data-da-role="coach">Coach</button>
+<button type="button" role="tab" id="da-tab-parent" aria-controls="da-role-panel" aria-selected="false" tabindex="-1" data-da-role="parent">Parent</button>
+<button type="button" role="tab" id="da-tab-private" aria-controls="da-role-panel" aria-selected="false" tabindex="-1" data-da-role="private">Private Athlete</button>
 </div>
-</div>
-</section>
+<div class="da-role-panel" id="da-role-panel" role="tabpanel" aria-labelledby="da-tab-athlete">
+<h3 id="da-role-heading">Your training, clearly organised.</h3>
+<ul id="da-role-features"><li>Weekly training sheets</li><li>Exercise demonstrations</li><li>Structured progression</li></ul>
+<a id="da-role-link" class="btn btn-primary" href="#/hub/login">Access Athlete Training</a>
+<p class="da-role-note">Sign in using your existing Performance Hub access. Your programme and account remain unchanged.</p>
+</div></div></section>
 <!-- ================= SPORT PATHWAYS ================= -->
-<section class="section-compact audience-band" id="sports">
-<div class="wrap">
-<p class="eyebrow center">Who We Develop</p>
-<h2 class="head center">One standard. Two <span class="accent">development pathways</span></h2>
-<p class="lede center">Du Airlines develops the physical qualities that help athletes express their sport more effectively — while working alongside the coaches and environments already supporting them.</p>
-<div class="sport-grid" style="margin-top:2.3rem">
-<article class="sport-card reveal">
-<div class="sport-tag">Soccer</div>
-<h3>Faster, more complete movers</h3>
-<p>Helping soccer athletes accelerate faster, move more efficiently and compete with confidence.</p>
-<a class="btn btn-primary" data-route="soccer" href="#/soccer">Explore Soccer Development →</a>
-</article>
-<article class="sport-card reveal">
-<div class="sport-tag">Track &amp; Field</div>
-<h3>Technical speed and jumps development</h3>
-<p>Specialized sprint and horizontal-jump coaching for athletes pursuing technical excellence.</p>
-<a class="btn btn-ghost" data-route="track" href="#/track">Explore Track &amp; Field →</a>
-</article>
-</div>
-</div>
-</section>
+<section class="section-compact audience-band da-pathways" id="sports"><div class="wrap">
+<p class="eyebrow center">Your Development Pathway</p><h2 class="head center">Find Your <span class="accent">Pathway</span></h2>
+<p class="lede center">Choose your sport. Discover your next step.</p>
+<div class="da-pathway-list">
+<details><summary>Soccer Development <span aria-hidden="true">+</span></summary><div><p>Build acceleration, movement efficiency and confidence on the pitch.</p><a class="btn btn-primary" data-route="soccer" href="#/soccer">Explore Soccer Development</a></div></details>
+<details><summary>Track &amp; Field <span aria-hidden="true">+</span></summary><div><p>Specialist sprint and horizontal-jump coaching with technical progression.</p><a class="btn btn-primary" data-route="track" href="#/track">Explore Track &amp; Field</a></div></details>
+</div></div></section>
 <!-- ================= THE DU AIRLINES STANDARD ================= -->
 <section class="section-compact standard-section" id="families">
 <div class="wrap">
@@ -2030,7 +2057,7 @@ footer,
 <p class="lede">Each story reflects technical improvement, consistent coaching and genuine investment in the person behind the athlete.</p>
 <div class="story-grid" style="margin-top:2rem">
 <article class="story-card reveal">
-<div class="story-label">Athlete Story 01</div>
+
 <h3>From Plumtree, Zimbabwe to NCAA Division I</h3>
 <div class="story-result">13.00m → 15.86m</div>
 <div class="story-feet">42'8" → 52'0"</div>
@@ -2039,7 +2066,7 @@ footer,
 <button class="story-open" data-story="story1" type="button">Read the full story →</button>
 </article>
 <article class="story-card reveal">
-<div class="story-label">Athlete Story 02</div>
+
 <h3>Two Events. Two Personal Bests. One Breakthrough.</h3>
 <div class="story-result">TJ 14.27m → 15.40m</div>
 <div class="story-feet">46'10" → 50'6"</div>
@@ -2050,7 +2077,7 @@ footer,
 <button class="story-open" data-story="story2" type="button">Read the full story →</button>
 </article>
 <article class="story-card reveal">
-<div class="story-label">Athlete Story 03</div>
+
 <h3>From District Level to National Championship Qualifier</h3>
 <div class="story-result">800m: 2:10 → 2:01</div>
 <p class="story-quote">“Coach Du helped me believe in myself when I did not fully believe in my own ability.”</p>
@@ -2058,7 +2085,7 @@ footer,
 <button class="story-open" data-story="story3" type="button">Read the full story →</button>
 </article>
 </div>
-<div class="section-actions"><a class="btn btn-ghost" href="#stories">View More Success Stories</a></div>
+
 </div>
 </section>
 <!-- ================= PARTNERSHIPS ================= -->
@@ -2102,6 +2129,30 @@ footer,
 </div>
 </div>
 </section>
+<script id="da-home-role-selector">
+(function(){
+const roles={
+athlete:{heading:"Your training, clearly organised.",features:["Weekly training sheets","Exercise demonstrations","Structured progression"],cta:"Access Athlete Training"},
+coach:{heading:"Lead your athletes with clarity.",features:["Group training sheets","Coaching cues","Programme oversight"],cta:"Access Coach Hub"},
+parent:{heading:"Stay connected to their development.",features:["Weekly training overview","Guided exercises","Progress visibility"],cta:"Access Parent Hub"},
+private:{heading:"Your personalised performance programme.",features:["Personalised programming","Exercise video library","Coaching feedback and progression"],cta:"Access Private Athlete Hub"}
+};
+const tabs=Array.from(document.querySelectorAll("#home-view [data-da-role]"));
+const panel=document.getElementById("da-role-panel"),heading=document.getElementById("da-role-heading"),features=document.getElementById("da-role-features"),link=document.getElementById("da-role-link");
+if(!tabs.length||!panel||!heading||!features||!link)return;
+function select(tab,focus){
+const key=tab.dataset.daRole,role=roles[key];if(!role)return;
+tabs.forEach(t=>{const active=t===tab;t.setAttribute("aria-selected",String(active));t.tabIndex=active?0:-1});
+panel.setAttribute("aria-labelledby",tab.id);heading.textContent=role.heading;features.replaceChildren();
+role.features.forEach(f=>{const li=document.createElement("li");li.textContent=f;features.append(li)});
+link.textContent=role.cta;
+/* Existing role selection and authentication are owned by the live Hub login screen. */
+link.href="#/hub/login";
+if(focus)tab.focus();
+}
+tabs.forEach((tab,i)=>{tab.addEventListener("click",()=>select(tab,false));tab.addEventListener("keydown",e=>{if(!["ArrowRight","ArrowLeft","Home","End"].includes(e.key))return;e.preventDefault();const n=e.key==="Home"?0:e.key==="End"?tabs.length-1:(i+(e.key==="ArrowRight"?1:-1)+tabs.length)%tabs.length;select(tabs[n],true)})});
+})();
+</script>
 <!-- ================= FOOTER ================= -->
 <footer>
 <div class="wrap foot">
