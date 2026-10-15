@@ -4142,7 +4142,7 @@ document.addEventListener('click',function(e){
   let HUB_STATE = {programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};
   let WORKOUT_COMPLETIONS=new Map();
   const GUIDED_CURSOR={};
-  let WORKOUT_MODE='quick';
+  let WORKOUT_MODE='guided'; // Parent Access opens step-by-step; Quick View remains available.
   const EXERCISE_CATEGORY_MAP={wu:['warm-up','mobility-recovery'],act:['activation-control','strength'],ank:['ankle-lower-leg'],core:['core'],iso:['strength'],mob:['mobility-recovery'],ply:['plyometric-foundation'],post:['sprint-mechanics','warm-up'],run:['acceleration','warm-up'],spr:['sprint-mechanics','warm-up'],str:['strength'],acc:['acceleration']};
   function normalizeExerciseCategories(raw,existing=[]){const out=[];(Array.isArray(existing)?existing:[]).forEach(x=>{if(x&&!out.includes(x))out.push(x);});(Array.isArray(raw)?raw:[]).forEach(code=>(EXERCISE_CATEGORY_MAP[code]||[code]).forEach(x=>{if(x&&!out.includes(x))out.push(x);}));return out;}
   let EXERCISES = [
