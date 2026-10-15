@@ -2152,6 +2152,47 @@ document.getElementById('da-story-next')?.addEventListener('click',()=>go(idx+1)
 if(grid&&cards.length){let timer;grid.addEventListener('scroll',()=>{clearTimeout(timer);timer=setTimeout(()=>{const rect=grid.getBoundingClientRect();let best=Infinity;cards.forEach((card,i)=>{let d=Math.abs(card.getBoundingClientRect().left-rect.left);if(d<best){best=d;idx=i;}});if(counter)counter.textContent=(idx+1)+' / '+cards.length;},100);},{passive:true});}
 })();
 </script>
+<!-- ================= PARTNERSHIPS ================= -->
+<section class="section partnership-section" id="partnerships">
+<div class="wrap partnership-shell">
+<div class="partnership-copy">
+<p class="eyebrow">For Clubs, Teams &amp; Schools</p>
+<h2 class="head">Give your athletes a competitive <span class="accent">development advantage.</span></h2>
+<p class="lede">Partner with Du Airlines to bring structured performance development into your existing programme — combining progressive programming, movement and speed development, exercise education, specialist support and remote performance resources.<br/><br/><strong style="color:var(--cream)">Built for schools, clubs and teams — with your coaches remaining central to delivery.</strong></p>
+<button aria-controls="partnershipInquiry" aria-expanded="false" class="btn btn-primary" id="openPartnershipForm" type="button">Partner With DU Airlines</button>
+</div>
+<div class="partnership-form-wrap" hidden="" id="partnershipInquiry">
+<div class="partnership-form-card">
+<p class="eyebrow">Partnership Inquiry</p>
+<h3>Start a partnership conversation</h3>
+<form action="https://formsubmit.co/coachdu@duairlineseliteacademy.com" id="partnershipForm" method="POST" novalidate="">
+<input name="submission_type" type="hidden" value="Partnership Inquiry"/>
+<input name="_next" type="hidden" value="https://duairlineseliteacademy.com/?submitted=true"/>
+<input name="_url" type="hidden" value="https://duairlineseliteacademy.com/"/>
+<input name="_template" type="hidden" value="table"/>
+<input name="_captcha" type="hidden" value="false"/>
+<input name="_subject" type="hidden" value="New Partnership Inquiry — DU Airlines Elite Academy"/>
+<input class="submitted-at" name="submitted_at" type="hidden" value=""/>
+<input aria-hidden="true" autocomplete="off" class="honeypot" name="website" tabindex="-1" type="text"/>
+<div class="partnership-form-grid">
+<div class="soccer-field"><label for="partner-name">Full name</label><input autocomplete="name" id="partner-name" name="contact_name" required="" type="text"/></div>
+<div class="soccer-field"><label for="partner-org">Organization name</label><input id="partner-org" name="organization_name" required="" type="text"/></div>
+<div class="soccer-field"><label for="partner-role">Role or title</label><input id="partner-role" name="role_title" required="" type="text"/></div>
+<div class="soccer-field"><label for="partner-email">Email address</label><input autocomplete="email" id="partner-email" name="email" required="" type="email"/></div>
+<div class="soccer-field"><label for="partner-phone">Phone number</label><input autocomplete="tel" id="partner-phone" name="phone" required="" type="tel"/></div>
+<div class="soccer-field"><label for="partner-type">Organization type</label><select id="partner-type" name="organization_type" required=""><option value="">Select one</option><option>Soccer club</option><option>Track club</option><option>School</option><option>Team</option><option>Community organization</option><option>Other</option></select></div>
+<div class="soccer-field full"><label for="partner-age">Age group or athletes served</label><input id="partner-age" name="athletes_served" required="" type="text"/></div>
+<div class="soccer-field full"><label for="partner-message">Short message</label><textarea id="partner-message" name="message" required="" rows="4"></textarea></div>
+<div class="soccer-field full"><label for="partner-contact">Preferred contact method</label><select id="partner-contact" name="preferred_contact_method" required=""><option value="">Select one</option><option>Phone</option><option>Email</option><option>Text</option></select></div>
+<label class="contact-consent full" hidden="" id="textConsentWrap"><input id="textConsent" name="text_contact_consent" type="checkbox" value="Yes"/> <span>By selecting Text, I agree to receive direct communication regarding this partnership inquiry. Message and data rates may apply.</span></label>
+</div>
+<div class="soccer-form-submit"><button class="btn btn-primary" type="submit">Request a Partnership Conversation</button></div>
+<p aria-live="polite" class="form-status" id="partnershipStatus" role="status"></p>
+</form>
+</div>
+</div>
+</div>
+</section>
 <!-- ================= FOOTER ================= -->
 <footer>
 <div class="wrap foot">
@@ -2177,7 +2218,7 @@ if(grid&&cards.length){let timer;grid.addEventListener('scroll',()=>{clearTimeou
 </ul>
 </div>
 </div>
-<div class="foot-bottom">© <span id="yr"></span> DU Airlines Elite Academy. Coached by Coach Du.</div>
+<div class="foot-bottom">Trust. Composure. Gratitude. Execute. &nbsp; © <span id="yr"></span> DU Airlines Elite Academy.</div>
 </footer>
 <script>
   // year
