@@ -17,7 +17,12 @@ console.log('Homepage structure and inline JavaScript syntax passed.');
 // Treat the last production main as an immutable integration baseline. This
 // catches accidental changes to registration, payments, routing and Hub code.
 const {execFileSync}=require('node:child_process');
-const baseline=execFileSync('git',['show','af9a659:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
+let baseline=execFileSync('git',['show','af9a659:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
+// Apply the owner's permanent retirement of the promotional pathway to the baseline.
+assert.doesNotMatch(html,/id="professional-view"|data-route="professional"/);
+baseline=baseline.replace(/<!-- ===== PROFESSIONAL PERFORMANCE: integrated pathway ===== -->[\s\S]*?(?=<script>)/,'');
+baseline=baseline.replace("    if (hashPath === '#/professional-performance') return 'professional';", "    if (['#/professional-performance', '#/professional-join', '#/professional-hub'].includes(hashPath)) { history.replaceState(null, '', '#/'); return 'home'; }");
+for(const route of ['professional-join','professional-hub']) baseline=baseline.replace("    if (hashPath === '#/"+route+"') { location.hash='#/hub/login/professional'; return 'hub'; }\r\n",'');
 const routeStart='<div class="site-view" hidden="" id="soccer-view">';
 const homepageController='<script id="premium-homepage-interactions">';
 assert.ok(html.includes(routeStart)&&baseline.includes(routeStart));
