@@ -1,0 +1,11 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const html=fs.readFileSync('index.html','utf8');
+const app=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).find(s=>s.includes('const EXERCISE_CATEGORY_MAP='));
+const a=app.indexOf('  const EXERCISE_CATEGORY_MAP='),b=app.indexOf('  let EXERCISES',a);
+const ctx={};vm.runInNewContext(app.slice(a,b)+';globalThis.normalize=normalizeExerciseCategories',ctx);
+assert.deepEqual(Array.from(ctx.normalize(['wu','ank'])),['warm-up','mobility-recovery','ankle-lower-leg']);
+assert.deepEqual(Array.from(ctx.normalize(['ank','iso','str'])),['ankle-lower-leg','strength']);
+assert.deepEqual(Array.from(ctx.normalize(['core'],['warm-up','core'])),['core'],'authoritative library tags replace stale fallback category membership');
+const load=app.slice(app.indexOf('  async function loadHubData('),app.indexOf('  function categoryRoute('));
+assert.match(load,/category:normalizeExerciseCategories\(ex.category/,'shared-code users must receive the same category translation as accounts');
+console.log('Exercise category cross-tags and identical shared/account category mapping passed.');
