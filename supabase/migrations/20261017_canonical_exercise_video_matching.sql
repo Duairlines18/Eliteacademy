@@ -18,8 +18,7 @@ BEGIN
     ('single leg bridge','Single-Leg Bridge Hold'),
     ('straight leg hamstring kicks','Straight-Leg Hamstring Kick'),
     ('40m progressive build ups','Progressive 40m Build-Up'),
-    ('snap downs','Snap Down'),
-    ('pogos','Two-Leg Pogos')
+    ('snap downs','Snap Down')
  ), names AS (
    SELECT e.id,e.name,e.video_url,
      trim(regexp_replace(lower(e.name),'[^a-z0-9]+',' ','g')) AS needle
