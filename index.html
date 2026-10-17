@@ -4494,6 +4494,18 @@ document.addEventListener('click',function(e){
   let HUB_VIDEO_LAST_FOCUS=null;
   let HUB_VIDEO_BODY_OVERFLOW='';
   let HUB_VIDEO_HISTORY_PUSHED=false;
+  let HUB_VIDEO_OPEN_HASH='';
+  let HUB_VIDEO_SCROLL_Y=0;
+  // A video modal is not a route. Intercept its browser Back entry before
+  // the site's global popstate handlers rerender the Hub and reset scrolling.
+  window.addEventListener('popstate',function(event){
+    if(!HUB_VIDEO_HISTORY_PUSHED || location.hash!==HUB_VIDEO_OPEN_HASH)return;
+    event.stopImmediatePropagation();
+    const modal=document.getElementById('hubVideoModal');
+    if(modal && !modal.hidden)closeHubVideo(true);
+    else HUB_VIDEO_HISTORY_PUSHED=false;
+    window.requestAnimationFrame(()=>window.scrollTo({top:HUB_VIDEO_SCROLL_Y,behavior:'instant'}));
+  },true);
   function hubVideoModal(){
     let modal=document.getElementById('hubVideoModal');
     if(modal)return modal;
@@ -4535,6 +4547,8 @@ document.addEventListener('click',function(e){
     if(!info)return false;
     const modal=hubVideoModal(),wrap=modal.querySelector('[data-hub-video-frame-wrap]'),titleEl=modal.querySelector('#hubVideoModalTitle'),fallback=modal.querySelector('[data-hub-video-fallback]');
     HUB_VIDEO_LAST_FOCUS=sourceEl||document.activeElement;
+    HUB_VIDEO_OPEN_HASH=location.hash;
+    HUB_VIDEO_SCROLL_Y=window.scrollY;
     HUB_VIDEO_BODY_OVERFLOW=document.body.style.overflow;
     titleEl.textContent=title||'Exercise Demo';
     fallback.href=info.original;
@@ -4558,7 +4572,12 @@ document.addEventListener('click',function(e){
     document.body.style.overflow=HUB_VIDEO_BODY_OVERFLOW;
     const target=HUB_VIDEO_LAST_FOCUS;HUB_VIDEO_LAST_FOCUS=null;
     if(target&&target.isConnected&&typeof target.focus==='function')target.focus({preventScroll:true});
-    if(fromHistory){HUB_VIDEO_HISTORY_PUSHED=false;}else if(HUB_VIDEO_HISTORY_PUSHED&&history&&typeof history.back==='function'){HUB_VIDEO_HISTORY_PUSHED=false;history.back();}
+    window.requestAnimationFrame(()=>window.scrollTo({top:HUB_VIDEO_SCROLL_Y,behavior:'instant'}));
+    if(fromHistory){HUB_VIDEO_HISTORY_PUSHED=false;}
+    else if(HUB_VIDEO_HISTORY_PUSHED&&history&&typeof history.back==='function'){
+      // Keep the flag until popstate so the global router cannot rerender.
+      history.back();
+    }
   }
   function pageHead(eyebrow,title,description,back){return '<a class="hub-back" href="'+(back||'#/hub')+'">← Back</a><div class="hub-page-head"><p class="hub-eyebrow">'+escapeHtml(eyebrow)+'</p><h1>'+escapeHtml(title)+'</h1><p>'+escapeHtml(description)+'</p></div>';}
   function section(title,copy,body){return '<section class="hub-section"><div class="hub-section-head"><div><h2>'+escapeHtml(title)+'</h2>'+(copy?'<p class="hub-section-copy">'+escapeHtml(copy)+'</p>':'')+'</div></div>'+body+'</section>';}
