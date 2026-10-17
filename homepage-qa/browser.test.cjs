@@ -50,15 +50,23 @@ const {chromium}=require('playwright');
  await page.locator('[data-premium-role="athlete"]').focus();await page.keyboard.press('End');ok(await page.locator('[data-premium-role="private"]').getAttribute('aria-selected')==='true',`${width}: keyboard End selects private athlete`);
  await page.keyboard.press('Home');ok(await page.locator('[data-premium-role="athlete"]').getAttribute('aria-selected')==='true',`${width}: keyboard Home selects athlete`);
  if(width<=899){
- const track=page.locator('#premium-story-grid');await track.scrollIntoViewIfNeeded();
+ const track=page.locator('#premium-story-grid');
  await page.evaluate(()=>document.fonts.ready);
+ // Set up the vertical viewport before measuring the native horizontal gesture.
+ await track.evaluate(e=>e.scrollIntoView({block:'center',behavior:'instant'}));
+ await track.hover({position:{x:40,y:40}});
  const box=await track.boundingBox();const y=Math.max(box.y+20,Math.min(800,box.y+box.height/2));
  const startX=box.x+box.width*.8;
  ok(await page.evaluate(({x,y})=>!!document.elementFromPoint(x,y)?.closest('#premium-story-grid'),{x:startX,y}),`${width}: gesture starts inside story carousel`);
  // Playwright wheel input exercises native horizontal scrolling across Chromium versions.
  // Physical touch uses the same CSS overflow/snap surface; it was also checked on the live site.
- await page.mouse.move(startX,y);await page.mouse.wheel(box.width*.8,0);
- await page.waitForFunction(()=>document.getElementById('premium-story-grid').scrollLeft>50);
+ await page.mouse.move(startX,y);
+ // Native scrolling may begin after compositor hit-testing catches up with scrollIntoView.
+ // Send bounded real wheel gestures; never mutate scrollLeft to manufacture a pass.
+ for(let attempt=0;attempt<3;attempt++){
+ await page.mouse.wheel(box.width*.8,0);
+ try{await page.waitForFunction(()=>document.getElementById('premium-story-grid').scrollLeft>50,null,{timeout:2000});break;}catch(error){if(attempt===2)throw error;}
+ }
  ok(await track.evaluate(e=>e.scrollLeft)>50,`${width}: horizontal gesture moves athlete stories`);
  }
  for(let i=1;i<=3;i++){
@@ -79,7 +87,7 @@ const {chromium}=require('playwright');
  await page.keyboard.press('Escape');ok(!await page.locator('#partnershipInquiry').isVisible(),`${width}: partnership closes with Escape`);
  ok(await page.locator('#openPartnershipForm').evaluate(e=>document.activeElement===e),`${width}: focus returns to partnership button`);
  await page.locator('#openPartnershipForm').click();await page.locator('#closePartnershipForm').click();ok(!await page.locator('#partnershipInquiry').isVisible(),`${width}: visible close button works`);
- for(const [route,view] of Object.entries({'club-registration':'club-registration-view','registration-complete':'registration-complete-view','track/register':'track-view','track/evaluation':'track-view','professional-performance':'professional-view'})){
+ for(const [route,view] of Object.entries({'club-registration':'club-registration-view','registration-complete':'registration-complete-view','track/register':'track-view','track/evaluation':'track-view'})){
  await page.goto(base+'/#/'+route);await page.locator('#'+view).waitFor({state:'visible'});
  ok(await page.locator('#'+view).isVisible(),`${width}: existing ${route} route renders`);
  ok(!await page.locator('#home-view').isVisible(),`${width}: homepage hidden on ${route}`);
@@ -87,6 +95,11 @@ const {chromium}=require('playwright');
  if(route==='track/register')ok(await page.locator('#track-clinic-form').isVisible(),`${width}: track registration form available`);
  if(route==='track/evaluation')await page.locator('#track-form').waitFor({state:'visible'});
  if(route==='track/evaluation')ok(await page.locator('#track-form').isVisible(),`${width}: track evaluation form available`);
+ }
+ for(const route of ['professional-performance','professional-join','professional-hub']){
+ await page.goto(base+'/#/'+route);await page.locator('#home-view').waitFor({state:'visible'});
+ ok(await page.locator('#professional-view').count()===0,`${width}: retired ${route} page stays removed`);
+ ok(await page.locator('#home-view').isVisible(),`${width}: retired ${route} returns home`);
  }
  await page.goto(base);
  ok(errors.length===0,`${width}: no uncaught JavaScript errors: ${errors.join('; ')}`);

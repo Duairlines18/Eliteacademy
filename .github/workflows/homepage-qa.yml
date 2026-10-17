@@ -24,6 +24,9 @@ jobs:
         run: |
           node coach-command/coach-command.test.cjs
           node athlete-qa/athlete-sheet.test.cjs
+          node athlete-qa/air-zim.test.cjs
+          node athlete-qa/exercise-categories.test.cjs
+          node coach-command/air-zim.test.cjs
           node parent-qa/parent-session.test.cjs
           node parent-qa/session-card-polish.test.cjs
           node --test supabase/qa/*.test.mjs
