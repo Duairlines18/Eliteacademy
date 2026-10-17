@@ -19,16 +19,6 @@ BEGIN
     ('straight leg hamstring kicks','Straight-Leg Hamstring Kick'),
     ('40m progressive build ups','Progressive 40m Build-Up'),
     ('snap downs','Snap Down')
- ), coded AS (
-   SELECT (p.ord-1)::integer item_index,e.id,e.name,e.video_url
-   FROM jsonb_array_elements(
-      CASE WHEN jsonb_typeof(NEW.content->'prescriptions')='array'
-           THEN NEW.content->'prescriptions' ELSE '[]'::jsonb END
-   ) WITH ORDINALITY p(item,ord)
-   JOIN public.exercises e ON e.code=p.item->>'exerciseCode'
-   WHERE e.active AND nullif(trim(e.video_url),'') IS NOT NULL
-     AND jsonb_typeof(NEW.content->'items')='array'
-     AND p.ord<=jsonb_array_length(NEW.content->'items')
  ), names AS (
    SELECT e.id,e.name,e.video_url,
      trim(regexp_replace(lower(e.name),'[^a-z0-9]+',' ','g')) AS needle
@@ -48,8 +38,7 @@ BEGIN
      ON position(' '||n.needle||' ' IN i.haystack)>0
  ), selected AS (
    SELECT c.* FROM candidates c
-   WHERE NOT EXISTS (SELECT 1 FROM coded k WHERE k.item_index=c.item_index)
-     AND NOT EXISTS (
+   WHERE NOT EXISTS (
      SELECT 1 FROM candidates longer
      WHERE longer.item_index=c.item_index AND longer.id<>c.id
        AND length(longer.needle)>length(c.needle)
@@ -59,7 +48,7 @@ BEGIN
  SELECT coalesce(jsonb_agg(jsonb_build_object(
    'item_index',item_index,'exercise',name,'video_url',video_url
  ) ORDER BY item_index,name),'[]'::jsonb)
- INTO links FROM (SELECT DISTINCT item_index,id,name,video_url FROM selected UNION SELECT item_index,id,name,video_url FROM coded) s;
+ INTO links FROM (SELECT DISTINCT item_index,id,name,video_url FROM selected) s;
  NEW.content=jsonb_set(NEW.content,'{video_links}',links,true);
  RETURN NEW;
 END $$;
