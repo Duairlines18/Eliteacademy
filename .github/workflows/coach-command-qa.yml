@@ -16,10 +16,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
       - name: Check JavaScript syntax
         run: node --check coach-command/coach-command.js
       - name: Run coach workflow tests
         run: node coach-command/coach-command.test.cjs
+      - name: Verify saved school video selection
+        run: node coach-command/saved-video-links.test.mjs
       - name: Principal QA school athlete sheet
         run: node athlete-qa/athlete-sheet.test.cjs
