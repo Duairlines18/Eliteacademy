@@ -2072,7 +2072,8 @@ footer,
 #home-view .premium-role-panel .btn{margin-top:.4rem}
 #home-view .partnership-copy .lede{font-size:.91rem}
 }
-</style></head>
+</style><link rel="stylesheet" href="/performance-journey/journey.css?v=20261017">
+</head>
 <body id="top">
 <div class="site-view" id="home-view">
 <!-- ================= TOP BAR ================= -->
@@ -4488,6 +4489,7 @@ document.addEventListener('click',function(e){
   function nav(active){
     const s=session(); const staff=s?.role==='staff'; const dashboard=staff?'#/hub/staff':'#/hub/athlete';
     const links=staff?[['dashboard',dashboard,'Dashboard'],['week','#/hub/current-week','Current Week'],['library','#/hub/library','Exercise Library'],['notes','#/hub/programme-notes','Programme Notes'],['coach-feedback','#/hub/coach-feedback','Weekly Feedback']]:[['dashboard',dashboard,'My Week'],['library','#/hub/library','Exercise Library'],['feedback','#/hub/feedback','Feedback']];
+    if(HUB_STATE.audience!=='professional')links.splice(1,0,['journey','#/hub/journey',staff?'Group Journey':'My Journey']);
     return '<header class="hub-topbar"><div class="hub-wrap hub-topbar-row"><a class="hub-brand" href="'+dashboard+'">DU AIRLINES <span>PERFORMANCE HUB</span></a><button class="hub-menu-button" type="button" aria-expanded="false" aria-controls="hubNav">Menu</button><nav class="hub-nav" id="hubNav" aria-label="Performance Hub">'+links.map(x=>'<a href="'+x[1]+'"'+(active===x[0]?' aria-current="page"':'')+'>'+x[2]+'</a>').join('')+'<button class="hub-logout" type="button">Log Out</button></nav></div></header>';
   }
   function shell(content,active){return '<div class="hub-shell">'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
@@ -4888,11 +4890,32 @@ document.addEventListener('click',function(e){
     else if(route==='/programme-notes'&&active.role==='staff')renderProgrammeNotes();
     else if(route==='/coach-feedback'&&active.role==='staff')renderCoachFeedback();
     else if(route==='/feedback'&&active.role==='athlete')renderFeedback();
+    else if(route==='/journey'&&HUB_STATE.audience!=='professional')root.innerHTML=shell(pageHead('Performance Journey',active.role==='staff'?'Your group journey':'Your training journey','Your training. Its purpose. Your next direction.',active.role==='staff'?'#/hub/staff':'#/hub/athlete')+'<div id="du-performance-journey"></div>','journey');
     else if(route==='/library')renderLibrary();
     else if(route==='/warm-up')renderWarmup();
     else if(route==='/library/air-zim')renderAssignedAirZim();
     else if(route.startsWith('/library/'))renderCategory(route.split('/')[2]);
     else renderNotFound();
+    // Performance Journey reads its own authorized endpoint; workout/video flows stay independent.
+    if(HUB_STATE.audience!=='professional' && ['/', '/staff', '/athlete', '/journey'].includes(route)){
+      const wrap=root.querySelector('.hub-main > .hub-wrap');
+      if(wrap){
+        let panel=wrap.querySelector('#du-performance-journey');
+        if(!panel){
+          panel=document.createElement('div');panel.id='du-performance-journey';
+          const anchor=wrap.querySelector('.hub-parent-session-grid,.hub-athlete-day-picker,#du-coach-command-root');
+          if(anchor)anchor.insertAdjacentElement('afterend',panel);else wrap.append(panel);
+        }
+        import('/performance-journey/journey-ui.js?v=20261017').then(module=>{
+          if(!panel.isConnected)return;
+          module.mount(panel,{audience:HUB_STATE.audience||active.role,request:body=>{
+            const live=session();
+            if(!live || live.mode!==active.mode || live.audience!==active.audience || live.token!==active.token)throw Error('Session changed');
+            return active.mode==='account'?authEdgePost('performance-journey',{...body,audience:active.audience}):edgePost('performance-journey',body,{'x-du-session':active.token});
+          }});
+        }).catch(()=>{if(panel.isConnected)panel.textContent='Your journey is temporarily unavailable. Your training remains available.';});
+      }
+    }
     // School coach Technique Review: independent of individual athlete assignments.
     if(active.role==='staff' && (route==='/'||route==='/staff')){
       const shellNode=root.querySelector('.hub-shell');
