@@ -26,8 +26,21 @@ for(const route of ['professional-join','professional-hub']) baseline=baseline.r
 const routeStart='<div class="site-view" hidden="" id="soccer-view">';
 const homepageController='<script id="premium-homepage-interactions">';
 assert.ok(html.includes(routeStart)&&baseline.includes(routeStart));
+// Air Zim is an authorized Hub change; its behavior has dedicated athlete/coach tests.
+// Keep the remaining Hub, all public pages and registration code under the original byte check.
+const withoutAirZimPresentation=source=>source
+ .replace(/  \.hub-air-zim-stage\{[^\n]+\n/,'')
+ .replace(/    \{slug:'warm-up',title:[^\n]+\n/, '    WARM_UP_CATEGORY\n')
+ .replace(/    \{slug:'plyometric-foundation',title:[^\n]+\n/,'    LANDING_CATEGORY\n')
+ .replace(/  function normalizeExerciseCategories\([^\n]+\n/,'  CATEGORY_TRANSLATION\n')
+ .replace(/  async function loadHubData\([\s\S]*?(?=  function categoryRoute\()/,'  SHARED_BOOTSTRAP\n')
+ .replace(/  function normalizeWorkoutSession\([\s\S]*?(?=  function visibleNormalizedSections\()/,'  WORKOUT_NORMALIZER\n')
+ .replace(/  function schoolAthleteDelivery\([\s\S]*?(?=  function renderWorkoutExperience\()/,'  ATHLETE_DELIVERY\n')
+ .replace(/  function renderWarmup\([^\n]+\n/,'  WARM_UP_LIBRARY\n');
+const currentProduction=execFileSync('git',['show','ee633b7:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
+assert.equal(html.slice(0,html.indexOf(routeStart)),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains byte-for-byte unchanged');
 const withoutPartnershipPresentation=source=>source.replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
-assert.equal(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController))),withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController))),'registration/payment forms, routes and Hub implementation remain byte-for-byte unchanged');
+assert.equal(withoutAirZimPresentation(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)))),withoutAirZimPresentation(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
 const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
 assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
 console.log('Production integration preservation passed.');

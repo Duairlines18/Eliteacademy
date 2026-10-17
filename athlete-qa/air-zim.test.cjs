@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const html=fs.readFileSync('index.html','utf8');
+const app=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).find(s=>s.includes('function normalizeWorkoutSession('));
+const part=(a,b)=>app.slice(app.indexOf(a),app.indexOf(b,app.indexOf(a)+a.length));
+const ctx={escapeHtml:s=>String(s??''),simpleText:s=>String(s).toLowerCase(),coachingParts:s=>({cue:s,avoid:''}),parsedGroup:s=>({text:s}),expandTextWorkoutItem:()=>[],deliverySections:s=>s,isSchoolWarmupSection:s=>/warm.up/i.test(s.title),hubPhaseRows:()=>''};
+vm.createContext(ctx);vm.runInContext(part('  function normalizeWorkoutSession(', '  function visibleNormalizedSections(')+part('  function schoolAthleteDelivery(', '  function renderWorkoutExperience(')+';globalThis.api={normalizeWorkoutSession,schoolAthleteDelivery};',ctx);
+const exercises=[{code:'RUN01',title:'Progressive stride',videoUrl:'https://www.youtube.com/shorts/demo1'}];
+const s={id:'test',prescriptions:[{sectionTitle:'Air Zim Warm-Up',sectionOrder:1,exerciseCode:'RUN01',dosage:'3 × 40 m',rest:'Walk-back recovery',cues:'[Progressive Striders] Build smoothly.'},{sectionTitle:'Air Zim Warm-Up',sectionOrder:1,exerciseCode:'RUN01',dosage:'1 × 40 m',cues:'[Final Build-Up] Finish relaxed.'}]};
+const workout=ctx.api.normalizeWorkoutSession(s,exercises),out=ctx.api.schoolAthleteDelivery(workout.sections,s);
+assert.equal(workout.sections.length,1);assert.equal(workout.sections[0].items.length,2);
+assert.equal(workout.sections[0].items[0].phase,'Progressive Striders','server-provided stage metadata must survive normalization');
+assert.match(out,/<h4[^>]*>Progressive Striders<\/h4>/);assert.match(out,/<h4[^>]*>Final Build-Up<\/h4>/);
+assert.match(out,/Walk-back recovery/);assert.equal((out.match(/▶ Watch demo/g)||[]).length,2);
+assert.equal((out.match(/<details class="hub-athlete-phase hub-athlete-warmup">/g)||[]).length,1);
+assert.doesNotMatch(html,/title:'Complete Warm-Up'|DU AIRLINES COMPLETE WARM-UP|Follow this sequence in order unless/);
+assert.match(html,/Warm-Up & Mobility Exercises/);
+console.log('Air Zim grouping, ordered repeated exercise, recovery, demos, accordion and library recipe removal passed.');
