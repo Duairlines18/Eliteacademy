@@ -50,8 +50,11 @@ const {chromium}=require('playwright');
  await page.locator('[data-premium-role="athlete"]').focus();await page.keyboard.press('End');ok(await page.locator('[data-premium-role="private"]').getAttribute('aria-selected')==='true',`${width}: keyboard End selects private athlete`);
  await page.keyboard.press('Home');ok(await page.locator('[data-premium-role="athlete"]').getAttribute('aria-selected')==='true',`${width}: keyboard Home selects athlete`);
  if(width<=899){
- const track=page.locator('#premium-story-grid');await track.scrollIntoViewIfNeeded();
+ const track=page.locator('#premium-story-grid');
  await page.evaluate(()=>document.fonts.ready);
+ // Set up the vertical viewport before measuring the native horizontal gesture.
+ await track.evaluate(e=>e.scrollIntoView({block:'center',behavior:'instant'}));
+ await track.hover({position:{x:40,y:40}});
  const box=await track.boundingBox();const y=Math.max(box.y+20,Math.min(800,box.y+box.height/2));
  const startX=box.x+box.width*.8;
  ok(await page.evaluate(({x,y})=>!!document.elementFromPoint(x,y)?.closest('#premium-story-grid'),{x:startX,y}),`${width}: gesture starts inside story carousel`);
