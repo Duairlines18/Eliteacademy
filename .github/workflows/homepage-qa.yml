@@ -25,6 +25,7 @@ jobs:
           node coach-command/coach-command.test.cjs
           node athlete-qa/athlete-sheet.test.cjs
           node athlete-qa/air-zim.test.cjs
+          node athlete-qa/air-zim-tools.test.cjs
           node athlete-qa/exercise-categories.test.cjs
           node coach-command/air-zim.test.cjs
           node parent-qa/parent-session.test.cjs

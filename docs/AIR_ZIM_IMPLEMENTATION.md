@@ -62,3 +62,21 @@ Before any later data rollback, compare the guarded SQL in the private delivery 
 For UI rollback, revert this feature commit through a new reviewed branch. No production UI rollback is needed until deployment. No main-branch push or production deployment is authorized by this implementation.
 
 Existing programme/exercise IDs, JSON prescriptions and protected Edge Function contracts carry into a future Next.js interface unchanged.
+
+## Reusable warm-up tools
+
+Air Zim is a programme resource, never a numbered training day. The assigned
+athlete dashboard offers it below the existing day grid. Each training-day view
+and the exercise-library landing page also link to the same resource. The
+resource route reuses only the Air Zim prescriptions already delivered in the
+validated current programme; it contains no built-in recipe or athlete allowlist.
+Unassigned programme responses produce no shortcut and no recipe on direct access.
+The reference retains the source session warning and reminds athletes that the
+current day's reduced warm-up, rest and return-to-running limits take priority.
+Existing prescribed Air Zim accordions, workouts and day numbering are preserved.
+
+The QA-only standalone preview day was removed and its existing warm-up block
+moved inside the original first workout. This restores the original seven QA
+days. The ten copied main/recovery blocks were unchanged; no athlete programme
+was edited by that correction. Private backup/rollback SQL is retained outside
+this public repository.
