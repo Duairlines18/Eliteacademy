@@ -17,7 +17,7 @@ console.log('Homepage structure and inline JavaScript syntax passed.');
 // Treat the last production main as an immutable integration baseline. This
 // catches accidental changes to registration, payments, routing and Hub code.
 const {execFileSync}=require('node:child_process');
-let baseline=execFileSync('git',['show','af9a659:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
+let baseline=execFileSync('git',['show','86794de:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
 // Apply the owner's permanent retirement of the promotional pathway to the baseline.
 assert.doesNotMatch(html,/id="professional-view"|data-route="professional"/);
 baseline=baseline.replace(/<!-- ===== PROFESSIONAL PERFORMANCE: integrated pathway ===== -->[\s\S]*?(?=<script>)/,'');
@@ -41,9 +41,21 @@ const withoutAirZimPresentation=source=>source
  .replace(/  function schoolAthleteDelivery\([\s\S]*?(?=  function renderWorkoutExperience\()/,'  ATHLETE_DELIVERY\n')
  .replace(/  function renderWarmup\([^\n]+\n/,'  WARM_UP_LIBRARY\n');
 const currentProduction=execFileSync('git',['show','ee633b7:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
-assert.equal(html.slice(0,html.indexOf(routeStart)),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains byte-for-byte unchanged');
+// Approved Journey additions are isolated Hub presentation. Keep every other byte protected.
+const withoutJourneyPresentation=source=>source
+ .replace('<link rel="stylesheet" href="/performance-journey/journey.css?v=20261017">\n','')
+ .replace("    if(HUB_STATE.audience!=='professional')links.splice(1,0,['journey','#/hub/journey',staff?'Group Journey':'My Journey']);\n",'')
+ .replace(/    else if\(route==='\/journey'&&HUB_STATE\.audience!=='professional'\)[^\n]+\n/,'')
+ .replace(/    \/\/ Performance Journey reads its own authorized endpoint; workout\/video flows stay independent\.[\s\S]*?(?=    \/\/ School coach Technique Review: independent of individual athlete assignments\.)/,'');
+const journeyStyles=fs.readFileSync('performance-journey/journey.css','utf8');
+for(const match of journeyStyles.matchAll(/([^{}]+)\{/g)){
+ const selector=match[1].trim();
+ if(selector.startsWith('@media'))continue;
+ assert.ok(selector.split(',').every(part=>part.trim().startsWith('.duj')),'Journey CSS cannot style the public homepage');
+}
+assert.equal(withoutJourneyPresentation(html.slice(0,html.indexOf(routeStart))),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains unchanged except its isolated Hub stylesheet link');
 const withoutPartnershipPresentation=source=>source.replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
-assert.equal(withoutAirZimPresentation(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)))),withoutAirZimPresentation(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
+assert.equal(withoutJourneyPresentation(withoutAirZimPresentation(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController))))),withoutJourneyPresentation(withoutAirZimPresentation(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController))))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
 const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
 assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
 console.log('Production integration preservation passed.');
