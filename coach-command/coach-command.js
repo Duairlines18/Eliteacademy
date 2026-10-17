@@ -34,13 +34,17 @@
     const optional=s=>/optional|extra/i.test(txt(s.requirement))||/optional|extra/i.test(txt(s.day));
     const prescriptions=s=>Array.isArray(s.prescriptions)?s.prescriptions:[];
     const isWarmup=title=>/warm[\s-]?up|preparation|activation/i.test(title);
-    const sections=s=>{const map=new Map();for(const p of prescriptions(s)){const k=txt(p.sectionTitle)||'Workout';if(!map.has(k))map.set(k,[]);map.get(k).push(p);}{const legacy=Array.isArray(s.itemSections)&&s.itemSections.length?s.itemSections:[{title:'Session instructions',items:Array.isArray(s.items)?s.items:[]}];for(const block of legacy){const k=txt(block.title)||'Session instructions';const entries=(Array.isArray(block.items)?block.items:[]).filter(x=>typeof x==='string'&&x.trim()).map(x=>({exerciseCode:x,dosage:'',cues:''}));if(entries.length&&!map.has(k))map.set(k,entries);}}return [...map];};
+    const sections=s=>{const map=new Map();for(const p of prescriptions(s)){const k=txt(p.sectionTitle)||'Workout';if(!map.has(k))map.set(k,[]);map.get(k).push(p);}{const legacy=Array.isArray(s.itemSections)&&s.itemSections.length?s.itemSections:[{title:'Session instructions',items:Array.isArray(s.items)?s.items:[]}];for(const block of legacy){const k=txt(block.title)||'Session instructions';const entries=(Array.isArray(block.items)?block.items:[]).map((x,itemIndex)=>({exerciseCode:x,dosage:'',cues:'',...(Array.isArray(block.videoLinks)?{savedDemos:block.videoLinks.filter(link=>link.itemIndex===itemIndex)}:{})})).filter(p=>typeof p.exerciseCode==='string'&&p.exerciseCode.trim());if(entries.length&&!map.has(k))map.set(k,entries);}}return [...map];};
     // Legacy school workouts are tier-specific text, not exercise-code prescriptions.
     // Only show demo links when a named movement matches the existing video library.
     const demoCatalog=[...exercises.values()].filter(ex=>safeVideo(ex.videoUrl||(ex.videoId?'https://www.youtube.com/watch?v='+ex.videoId:''))).sort((a,b)=>(b.title||'').length-(a.title||'').length);
     function matchingDemos(p){
       const exact=exercises.get(p.exerciseCode);
       if(exact){const url=safeVideo(exact.videoUrl||(exact.videoId?'https://www.youtube.com/watch?v='+exact.videoId:''));return url?[{title:exact.title||p.exerciseCode,url}]:[];}
+      if(Array.isArray(p.savedDemos)){
+        const seen=new Set();return p.savedDemos.flatMap(link=>{const url=safeVideo(link.url),title=txt(link.title),key=title+'|'+url;
+          if(!url||!title||seen.has(key))return [];seen.add(key);return [{title,url}];});
+      }
       const source=txt(p.exerciseCode).toLowerCase(),out=[],seen=new Set();
       for(const ex of demoCatalog){
         const title=txt(ex.title).toLowerCase();
