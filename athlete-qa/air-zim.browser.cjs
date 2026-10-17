@@ -11,7 +11,7 @@ const {chromium}=require('playwright');
  try{for(const fixture of bundles){for(const width of [390,1440]){
   let activeData=fixture.beforeData||fixture.data;
   const context=await browser.newContext({viewport:{width,height:900}});const page=await context.newPage();let videoRequest='';const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.route('**/functions/v1/**',route=>{const body=route.request().postDataJSON()||{};let data=body.action==='profile'?{onboardingComplete:true}:body.action==='bootstrap'?activeData:body.action==='library'?{exercises:fixture.library||fixture.data.exercises}:{completions:[]};return route.fulfill({json:data})});
+  await page.route('**/functions/v1/**',route=>{const body=route.request().postDataJSON()||{};let data=body.action==='profile'?{onboardingComplete:true}:['bootstrap','programme-week'].includes(body.action)?activeData:body.action==='library'?{exercises:fixture.library||fixture.data.exercises}:{completions:[]};return route.fulfill({json:data})});
   await page.route('https://cdn.jsdelivr.net/**',route=>route.fulfill({contentType:'text/javascript',body:"window.supabase={createClient(){return {auth:{getSession:async()=>({data:{session:{access_token:'qa-render-only'}}}),onAuthStateChange(){return {data:{subscription:{unsubscribe(){}}}}}}}}};"}));
   await page.route('https://www.youtube.com/**',route=>{videoRequest=route.request().url();return route.fulfill({contentType:'text/html',body:'<p>Video endpoint intercepted for QA</p>'})});
   await page.route('https://fonts.googleapis.com/**',route=>route.fulfill({body:'',contentType:'text/css'}));
@@ -44,6 +44,58 @@ const {chromium}=require('playwright');
   await warm.locator('a.hub-athlete-demo').first().click();await page.locator('#hubVideoModal').waitFor({state:'visible'});ok(await page.locator('#hubVideoModal iframe').getAttribute('src').then(x=>x.includes('bj8mm2fTEfU')),'correct video opens in modal');await page.keyboard.press('Escape');
   }
   assert.deepEqual(await mainPrescription(page),mainBefore,'all main workout rows and rest remain identical to pre-change rendering');checks++;
+  const base=`http://127.0.0.1:${server.address().port}`;
+  const tool=page.locator('.hub-assigned-warmup-tool');
+  ok(await tool.count()===(fixture.excluded?0:1),'day has one assigned warm-up shortcut only when authorized');
+  await page.goto(base+'/#/hub/athlete',{waitUntil:'domcontentloaded'});
+  if(!fixture.excluded){
+    await page.locator('.hub-parent-session-grid').waitFor();
+    const cards=page.locator('.hub-parent-session-grid .hub-parent-session-card');
+    ok(await cards.count()===fixture.data.programme.sessions.length,'only actual workouts count as training days');
+    ok(!(await cards.allTextContents()).some(x=>/Air Zim|Preview/.test(x)),'Air Zim never occupies a numbered day');
+    ok(await cards.first().locator('.hub-parent-session-eyebrow').innerText()==='DAY 1','first actual workout remains Day 1');
+    ok(await tool.count()===1,'one reusable tool below day grid');
+    ok(await tool.evaluate(e=>e.compareDocumentPosition(document.querySelector('.hub-parent-session-grid'))&Node.DOCUMENT_POSITION_PRECEDING),'tool follows the workout day grid');
+    if(fixture.name==='Coach Du QA'){
+      ok(await cards.count()===7,'QA preview retains original seven days');
+      ok((await cards.first().innerText()).includes('Easy Aerobic Run'),'QA Day 1 is the original aerobic workout');
+    }
+    if(fixture.name==='Coach Du QA'){
+      await page.goto(base+'/#/hub/programme-week/5',{waitUntil:'domcontentloaded'});
+      await page.locator('.hub-preview-grid').waitFor();
+      ok(await page.locator('.hub-preview-day').count()===7,'published QA week retains seven actual days');
+      ok(await tool.count()===1,'published week has one reusable current-programme reference');
+      await page.goto(base+'/#/hub/programme-week/5/day/0',{waitUntil:'domcontentloaded'});
+      await page.locator('.hub-athlete-warmup').waitFor();
+      ok(await tool.count()===1,'published day has reusable warm-up reference');
+    }
+    for(const day of fixture.data.programme.sessions){
+      await page.goto(base+'/#/hub/session/'+day.id,{waitUntil:'domcontentloaded'});
+      await page.locator('.hub-athlete-session-title').waitFor();
+      ok(await tool.count()===1,'warm-up reference reachable from every day including rest without changing its prescription');
+    }
+  }
+  await page.goto(base+'/#/hub/library',{waitUntil:'domcontentloaded'});
+  await page.getByRole('heading',{name:'Explore Exercise Library',exact:true}).waitFor();
+  ok(await tool.count()===(fixture.excluded?0:1),'library offers recipe only with assigned server content');
+  if(!fixture.excluded)await tool.getByRole('link',{name:'Open warm-up →',exact:true}).click();
+  else await page.goto(base+'/#/hub/library/air-zim',{waitUntil:'domcontentloaded'});
+  await page.getByRole('heading',{name:'Air Zim Warm-Up',exact:true}).waitFor();
+  if(fixture.excluded){
+    ok(await page.locator('.hub-athlete-warmup').count()===0,'direct recipe route cannot expose school recipe');
+    ok((await page.locator('#hub-root').innerText()).includes('not assigned'),'unassigned route explains access');
+  }else{
+    const reference=page.locator('.hub-athlete-warmup');
+    await reference.first().waitFor();ok(await reference.count()===1,'one complete reusable recipe');await reference.locator('summary').first().click();
+    ok(await reference.locator('.hub-athlete-movement').count()===16,'tool preserves all 16 entries');
+    const expected=session.prescriptions.filter(p=>p.sectionTitle==='Air Zim Warm-Up');
+    assert.deepEqual(await reference.locator('.hub-athlete-movement-line strong').allTextContents(),expected.map(p=>p.dosage));checks++;
+    const ex=new Map(fixture.data.exercises.map(x=>[x.code,x]));
+    assert.deepEqual(await reference.locator('a.hub-athlete-demo').evaluateAll(xs=>xs.map(x=>x.href)),expected.map(p=>ex.get(p.exerciseCode).videoUrl));checks++;
+    ok((await page.locator('#hub-root').innerText()).includes('return-to-running limits take priority'),'reference retains safety priority');
+    if(session.watch?.includes('hamstring return'))ok((await page.locator('#hub-root').innerText()).includes('not clearance for maximal sprinting'),'Meezy warning survives standalone tool');
+    ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'reusable tool fits viewport');
+  }
   await page.goto(`http://127.0.0.1:${server.address().port}/#/hub/warm-up`,{waitUntil:'domcontentloaded'});await page.getByRole('heading',{name:'Warm-Up & Mobility Exercises',exact:true}).waitFor();
   ok(!(await page.locator('#hub-root').innerText()).includes('COMPLETE WARM-UP'),'legacy recipe route becomes individual exercise category');
   ok(await page.locator('.hub-exercise-card-v3').count()>0,'individual videos retained');

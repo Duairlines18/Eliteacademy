@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const html=fs.readFileSync('index.html','utf8');
+const app=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).find(s=>s.includes('function normalizeWorkoutSession('));
+const start=app.indexOf('  function assignedAirZim('),end=app.indexOf('  function renderLibrary(',start);
+assert.ok(start>=0&&end>start,'assigned warm-up tools must exist');
+const rx={sectionTitle:'Air Zim Warm-Up',exerciseCode:'RUN01',dosage:'server-only prescription',cues:'[Server phase] Server cue'};
+let programme={sessions:[{id:'day-1',title:'Actual workout',watch:'Return-to-running safeguards',prescriptions:[rx,{sectionTitle:'Main',exerciseCode:'MAIN01'}],itemSections:[{title:'Main',items:['KEEP ME']}]}]};
+const root={innerHTML:''};const context={programme:()=>programme,escapeHtml:s=>String(s??''),root,EXERCISES:[],shell:x=>x,pageHead:()=>'',normalizeWorkoutSession:s=>({sections:s.prescriptions}),schoolAthleteDelivery:s=>JSON.stringify(s)};
+vm.createContext(context);vm.runInContext(app.slice(start,end)+';globalThis.api={assignedAirZim,airZimTool,renderAssignedAirZim};',context);
+const before=JSON.stringify(programme),source=context.api.assignedAirZim();
+assert.equal(source.prescriptions.length,1);assert.equal(source.prescriptions[0].dosage,rx.dosage);assert.equal(source.watch,'Return-to-running safeguards');assert.equal(source.itemSections.length,0);assert.equal(JSON.stringify(programme),before,'tool must not mutate training days');
+assert.match(context.api.airZimTool(),/#\/hub\/library\/air-zim/);assert.doesNotMatch(context.api.airZimTool(),/DAY \d|Choose training day/);
+context.api.renderAssignedAirZim();assert.match(root.innerHTML,/server-only prescription/);assert.match(root.innerHTML,/Return-to-running safeguards/);assert.doesNotMatch(root.innerHTML,/KEEP ME/);
+programme={sessions:[]};assert.equal(context.api.assignedAirZim(),null);assert.equal(context.api.airZimTool(),'');context.api.renderAssignedAirZim();assert.doesNotMatch(root.innerHTML,/server-only prescription/);assert.match(root.innerHTML,/not assigned/i);
+console.log('Assigned warm-up tool isolation, reusable recipe, access gating and safeguards passed.');

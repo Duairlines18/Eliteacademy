@@ -29,6 +29,9 @@ assert.ok(html.includes(routeStart)&&baseline.includes(routeStart));
 // Air Zim is an authorized Hub change; its behavior has dedicated athlete/coach tests.
 // Keep the remaining Hub, all public pages and registration code under the original byte check.
 const withoutAirZimPresentation=source=>source
+ .replace(/  function assignedAirZim\([\s\S]*?(?=  function renderLibrary\()/,'')
+ .replace(/\+airZimTool\((?:p)?\)/g,'')
+ .replace(/    else if\(route==='\/library\/air-zim'\)renderAssignedAirZim\(\);\r?\n/,'')
  .replace(/  \.hub-air-zim-stage\{[^\n]+\n/,'')
  .replace(/    \{slug:'warm-up',title:[^\n]+\n/, '    WARM_UP_CATEGORY\n')
  .replace(/    \{slug:'plyometric-foundation',title:[^\n]+\n/,'    LANDING_CATEGORY\n')
