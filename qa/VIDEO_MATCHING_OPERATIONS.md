@@ -8,6 +8,7 @@
 - Do not add a second independent JavaScript fuzzy matcher. If an exercise is missing, add/correct the exercise library record or a narrowly reviewed alias in the SQL migration.
 - Shared school bootstrap retains each block's generated links as `itemSections[].videoLinks`, indexed by its original item row. Coach Command treats this mapping (including an empty mapping) as authoritative and resolves current URLs from the authorized exercise library. Its old title matcher only supports responses cached before this contract.
 - The shorthand `2 × 10 pogos` resolves to Two-Leg Pogos only when the block explicitly selects `PLY03`. It does not substitute for single-leg, lateral or forward/backward variants.
+- `single-leg bridge` means the repetition-based Single-Leg Glute Bridge. An explicit `single-leg bridge hold` keeps Single-Leg Bridge Hold. Run `qa/bridge-video-regression.sql` to verify this distinction inside a rolled-back transaction. Audit every current school block for generated links whose exercise codes are absent, rather than checking only selected sections.
 
 ## When adding or editing a workout
 1. Select the existing exercise code in Control Room. Avoid free-text substitutes for the movement identity.

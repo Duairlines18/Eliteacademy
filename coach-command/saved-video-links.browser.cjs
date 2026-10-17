@@ -12,7 +12,7 @@ const {chromium}=require('playwright');
   await page.setContent('<style>body{background:#090909;margin:12px}</style><div id="test"></div>');
   await page.addScriptTag({path:'coach-command/coach-command.js'});
   await page.evaluate(data=>window.DuCoachCommand.mount(document.getElementById('test'),data),data);
-  for(const [title,expected] of [['Tissue Strength',4],['Reactive Strength',4]]){
+  for(const [title,expected] of [['Main Strength',4],['Tissue Strength',4],['Reactive Strength',4]]){
    const day=data.programme.sessions.findIndex(s=>s.itemSections?.some(b=>b.title===title));
    // Day buttons are available on the team overview.
    if(await page.locator('[data-action="back"]').count())await page.locator('[data-action="back"]').click();
@@ -21,6 +21,10 @@ const {chromium}=require('playwright');
    const rows=section.locator('.exercise');assert.equal(await rows.count(),3);checks++;
    for(let i=0;i<3;i++){
     assert.equal(await rows.nth(i).locator('[data-video]').count(),expected);checks++;
+    if(title==='Main Strength'){
+     assert.equal(await rows.nth(i).getByRole('button',{name:'Watch Single-Leg Glute Bridge demonstration',exact:true}).count(),1);checks++;
+     assert.equal(await rows.nth(i).getByRole('button',{name:'Watch Single-Leg Bridge Hold demonstration',exact:true}).count(),0);checks++;
+    }
     for(const button of await rows.nth(i).locator('[data-video]').all()){
      const target=await button.getAttribute('data-video');
      await button.click();assert.equal(await page.locator('.video iframe').getAttribute('src'),target);checks++;
