@@ -55,7 +55,7 @@ overview=[
  dict(era='SCHOOL YEARS',title='It starts at St George’s.',detail='Harare · learning the triple jump',chapterId='the-beginning'),
  dict(era='2017',title='African U20 champion.',detail='16.30m · World U20 top ten in 2017',chapterId='zimbabwe-to-africa'),
  dict(era='2019 & 2022',title='Two NCAA titles.',detail='US college champion · 17.26m best',chapterId='seventeen-metres'),
- dict(era='AFTER TCU',title='Self-coached. World finalist.',detail='Three years leading his training · 7th at World Indoors 2025',chapterId='coaching-myself'),
+ dict(era='AFTER TCU',title='Self-coached. World finalist.',detail='Three years. Full-time work. Three Worlds. 7th at World Indoors 2025.',chapterId='coaching-myself'),
  dict(era='2024–2026',title='Zimbabwe. The world stage.',detail='African silver · 7th at World Indoors 2025',chapterId='carrying-zimbabwe'),
  dict(era='2026 →',title='The academy. The next generation.',detail='Still competing. Now developing others.',chapterId='the-next-generation')]
 
