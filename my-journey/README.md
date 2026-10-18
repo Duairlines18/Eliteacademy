@@ -34,3 +34,7 @@ No academic records or raw CRM extracts are included. Do not copy the private ca
 - Existing public-page browser regression: `node homepage-qa/browser.test.cjs` using the project’s Playwright environment.
 
 Branch only: `feature/du-airlines-story`. Approval is required before merge or production deployment. No data migrations or Hub changes are required.
+
+## Original photo delivery
+
+Photos now load the original uploaded JPEG bytes at their native dimensions. `photos.json` records `delivery: original` and each source SHA-256. Do not recompress these files or add responsive width descriptors larger than the actual pixel dimensions. Historic WebP derivatives remain for compatibility but are no longer used by the Story images. Preserve eager loading for the hero and lazy loading for chapter photos. The complete original set is about 5.9 MB, fetched as visitors scroll; the hero is about 206 KB. Low-resolution archival sources retain their inherent limits.

@@ -89,7 +89,7 @@ esc=html.escape
 photos={p['id']:p for p in json.loads((root/'photos.json').read_text())}
 def photo(key,cls='',eager=False):
  p=photos[key]
- return f'''<figure class="photo {cls} photo-{key}"><img src="assets/{key}-960.webp" srcset="assets/{key}-480.webp 480w, assets/{key}-960.webp 960w, assets/{key}-1440.webp 1440w" sizes="(min-width: 900px) 55vw, 100vw" width="{p['width']}" height="{p['height']}" alt="{esc(p['alt'])}" loading="{'eager' if eager else 'lazy'}" {'fetchpriority="high"' if eager else ''} decoding="async"><figcaption>{'NOMA PHOTOGRAPHY · FOUNDER-SUPPLIED ARCHIVE' if key=='zimbabwe-runway' else 'CHENGETAYI MAPAYA · PERSONAL ARCHIVE'}</figcaption></figure>'''
+ return f'''<figure class="photo {cls} photo-{key}"><img src="{esc(p['src'])}" width="{p['width']}" height="{p['height']}" alt="{esc(p['alt'])}" loading="{'eager' if eager else 'lazy'}" {'fetchpriority="high"' if eager else ''} decoding="async"><figcaption>{'NOMA PHOTOGRAPHY · FOUNDER-SUPPLIED ARCHIVE' if key=='zimbabwe-runway' else 'CHENGETAYI MAPAYA · PERSONAL ARCHIVE'}</figcaption></figure>'''
 def sourcelinks(ids):
  return ' · '.join(f'<a href="{esc(sources[k]["url"])}">{esc(sources[k]["title"])}</a>' if 'url' in sources[k] else '<span>Founder’s account</span>' for k in ids)
 parts=['''<!doctype html>
@@ -97,7 +97,7 @@ parts=['''<!doctype html>
 <title>The Du Airlines Story — Chengetayi Mapaya</title>
 <meta name="description" content="From St George’s College in Harare to two NCAA titles and the world stage. The story behind Chengetayi Mapaya and Du Airlines Elite Academy.">
 <link rel="canonical" href="https://duairlineseliteacademy.com/my-journey/">
-<meta property="og:title" content="The Du Airlines Story"><meta property="og:description" content="A place on the team. A world beyond it. The journey of Chengetayi Mapaya."><meta property="og:type" content="profile"><meta property="og:url" content="https://duairlineseliteacademy.com/my-journey/"><meta property="og:image" content="https://duairlineseliteacademy.com/my-journey/assets/tcu-belief-1440.webp">
+<meta property="og:title" content="The Du Airlines Story"><meta property="og:description" content="A place on the team. A world beyond it. The journey of Chengetayi Mapaya."><meta property="og:type" content="profile"><meta property="og:url" content="https://duairlineseliteacademy.com/my-journey/"><meta property="og:image" content="https://duairlineseliteacademy.com/my-journey/assets/tcu-belief-original.jpg">
 <meta name="theme-color" content="#0f271c">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
