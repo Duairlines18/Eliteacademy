@@ -42,3 +42,5 @@ Photos now load the original uploaded JPEG bytes at their native dimensions. `ph
 ## TCU recognition
 
 The 2018–19 TCU Athletics Annual Report, PDF page 13, identifies Mapaya and Alex Rybakov as Pop Boone Co-Male Athletes of the Year. The award uses that exact title and year; Big 12 nominations remain separately labelled. The arena insert follows the second NCAA title and uses two owner-supplied original JPEGs without recompression. It documents championship displays in Schollmaier Arena’s Justin Hall of Fame, not Hall of Fame induction. The TCU visitor guide supplies venue context. `story.json.tcuRecognition` retains its copy, images and sources.
+
+The TCU display insert also includes the supplied `IMG_1998.jpeg` wall portrait, preserving the original bytes and full frame. All three photographs have original-image links; the tall portrait sits above the championship pair on small screens.

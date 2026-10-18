@@ -85,7 +85,7 @@ def render_awards(awards):
 
 awards=json.loads((root/'awards.json').read_text())
 
-tcu_recognition=dict(id='tcu-sporting-history',title='Part of TCU’s sporting history.',summary='Inside Schollmaier Arena, Chenge’s 2019 and 2022 NCAA titles are commemorated in the Jane & John Justin Hall of Fame — a space celebrating the university’s sporting achievements.',photos=['schollmaier-2022','schollmaier-2019'],sourceIds=['schollmaier-arena'])
+tcu_recognition=dict(id='tcu-sporting-history',title='Part of TCU’s sporting history.',summary='Inside Schollmaier Arena, Chenge’s 2019 and 2022 NCAA titles are commemorated in the Jane & John Justin Hall of Fame — a space celebrating the university’s sporting achievements.',photos=['tcu-wall-portrait','schollmaier-2022','schollmaier-2019'],sourceIds=['schollmaier-arena'])
 
 data=dict(tcuRecognition=tcu_recognition,awards=awards,title='The Du Airlines Story',lastReviewed='2026-10-18',chapters=chapters,performances=performances,rankings=rankings,sources=sources,overview=overview)
 (root/'story.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
@@ -105,7 +105,7 @@ parts=['''<!doctype html>
 <meta name="theme-color" content="#0f271c">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="story.css?v=20261018-tcu-history"><script src="story.js?v=20261018-finalist" defer></script>
+<link rel="stylesheet" href="story.css?v=20261018-tcu-displays"><script src="story.js?v=20261018-finalist" defer></script>
 </head><body class="du-story"><a class="skip" href="#story-main">Skip to the story</a>
 <header class="masthead"><a class="wordmark" href="https://duairlineseliteacademy.com/">DU AIRLINES <span>ELITE ACADEMY</span></a><nav aria-label="Primary"><a href="https://duairlineseliteacademy.com/">Home</a><a class="current" href="#story-title" aria-current="page">My Journey</a><a href="https://duairlineseliteacademy.com/#/hub/login">Performance Hub <span aria-hidden="true">↗</span></a></nav></header>
 <main id="story-main">
@@ -120,7 +120,7 @@ for i,c in enumerate(chapters):
 <details><summary>{esc(c['storyTitle'])}<span aria-hidden="true">+</span></summary><div class="expanded-story"><p>{esc(c['story'])}</p><p class="archive-note">{esc(c['extra'])}</p><p class="source-note">{sourcelinks(c['sourceIds'])}</p></div></details>
 <div class="chapter-actions" hidden><button type="button" data-share="{c['id']}" aria-label="Share chapter: {esc(c['title'].replace(chr(10),' '))}">Share chapter <span aria-hidden="true">↗</span></button><button type="button" data-copy="{c['id']}" aria-label="Copy story text: {esc(c['title'].replace(chr(10),' '))}">Copy story</button></div></div></article>''')
  if c['id']=='champion-again':
-  parts.append(f'''<aside class="tcu-recognition" id="{tcu_recognition['id']}" aria-labelledby="tcu-history-title"><div class="tcu-recognition-copy"><p class="eyebrow">SCHOLLMAIER ARENA · FORT WORTH</p><h2 id="tcu-history-title">{esc(tcu_recognition['title'])}</h2><p>{esc(tcu_recognition['summary'])}</p><a class="text-link" href="{esc(sources['schollmaier-arena']['url'])}">Inside the Justin Hall of Fame ↗</a></div><div class="tcu-recognition-photos">{''.join(photo(k) for k in tcu_recognition['photos'])}<p class="tcu-photo-link">{' · '.join(f'<a href="{esc(photos[k]["src"])}">View {"2022 banner" if k.endswith("2022") else "2019 display"} ↗</a>' for k in tcu_recognition['photos'])}</p></div></aside>''')
+  parts.append(f'''<aside class="tcu-recognition" id="{tcu_recognition['id']}" aria-labelledby="tcu-history-title"><div class="tcu-recognition-copy"><p class="eyebrow">SCHOLLMAIER ARENA · FORT WORTH</p><h2 id="tcu-history-title">{esc(tcu_recognition['title'])}</h2><p>{esc(tcu_recognition['summary'])}</p><a class="text-link" href="{esc(sources['schollmaier-arena']['url'])}">Inside the Justin Hall of Fame ↗</a></div><div class="tcu-recognition-photos">{''.join(photo(k) for k in tcu_recognition['photos'])}<p class="tcu-photo-link">{' · '.join(f'<a href="{esc(photos[k]["src"])}">{esc(photos[k]["viewLabel"])} ↗</a>' for k in tcu_recognition['photos'])}</p></div></aside>''')
  if i==3:
   parts.append('''<aside class="pullquote"><span class="quote-mark" aria-hidden="true">“</span><blockquote>I just wanted to be on my high school team because it had some swag.</blockquote><p>CHENGETAYI MAPAYA · <a href="https://magazine.tcu.edu/summer-2021/du-mapaya-triple-jump-zimbabwe/">TCU MAGAZINE, SUMMER 2021 ↗</a></p></aside>''')
 parts.append('''<section class="progression" id="the-progression" aria-labelledby="progression-title"><div class="section-heading"><p class="eyebrow">THE PROGRESSION · TRIPLE JUMP</p><h2 id="progression-title">The work, in metres.</h2><p>A journey has breakthroughs and quieter chapters. Every mark has a place.</p></div>

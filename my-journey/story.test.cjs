@@ -18,7 +18,7 @@ test('new page contains no private academic records or unreviewed watermarks',()
   assert.doesNotMatch(s,/2\.591|69\.7%|degree audit|term averages|transcript/i);
  }
  const manifest=JSON.parse(fs.readFileSync('my-journey/photos.json'));
- assert.equal(manifest.length,17);
+ assert.equal(manifest.length,18);
  for(const p of manifest){assert.equal(p.publishAllowed,true);assert.ok(!p.visibleWatermark||p.watermarkType==='photographer-credit');assert.ok(!/getty|alamy/i.test(p.provider));assert.ok(fs.existsSync('my-journey/'+p.src));}
 });
 test('homepage changes are limited to navigation and the authorized pathway arrival',()=>{

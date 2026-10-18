@@ -229,7 +229,8 @@
     "delivery": "original",
     "originalSha256": "258dc7057823207385648c9d956419a1d26f6a244feadb807f12947af1ce85a4",
     "caption": "2022 NCAA TITLE · SCHOLLMAIER ARENA",
-    "responsiveDerivatives": false
+    "responsiveDerivatives": false,
+    "viewLabel": "View 2022 banner"
   },
   {
     "id": "schollmaier-2019",
@@ -246,6 +247,25 @@
     "delivery": "original",
     "originalSha256": "861ec24b9b653736319a09992b6c8f1a8ba00d941c9e4060fb49de00d486c3d1",
     "caption": "2019 NCAA TITLE · SCHOLLMAIER ARENA",
+    "responsiveDerivatives": false,
+    "viewLabel": "View 2019 display"
+  },
+  {
+    "id": "tcu-wall-portrait",
+    "originalFilename": "IMG_1998.jpeg",
+    "src": "assets/tcu-wall-portrait-original.jpg",
+    "width": 1320,
+    "height": 2381,
+    "alt": "Chengetayi Mapaya pictured mid-jump on a TCU Track & Field wall display.",
+    "provider": "Owner-supplied display photograph",
+    "visibleWatermark": false,
+    "watermarkType": null,
+    "publishAllowed": true,
+    "rightsNote": "Supplied by Chengetayi Mapaya for the TCU display section of his biography. No date inferred from the photograph.",
+    "delivery": "original",
+    "originalSha256": "e746edc4c9e86ed0c9219a7aa043af7be0fa550234a01b7fddfaf548f63ab337",
+    "caption": "TCU TRACK & FIELD · WALL DISPLAY",
+    "viewLabel": "View wall portrait",
     "responsiveDerivatives": false
   }
 ]
