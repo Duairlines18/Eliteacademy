@@ -59,3 +59,17 @@ details{border-block:1px solid var(--line)}summary{display:flex;align-items:cent
 .journey-overview li a:focus-visible{outline:1px solid var(--light-gold);outline-offset:5px}
 .journey-overview li a:hover .overview-cta .arrow-icon,.journey-overview li a:focus-visible .overview-cta .arrow-icon{transform:translate(2px,-2px)}
 @media(prefers-reduced-motion:reduce){.overview-cta .arrow-icon{transition:none}.journey-overview li a:hover .overview-cta .arrow-icon,.journey-overview li a:focus-visible .overview-cta .arrow-icon{transform:none}}
+
+/* A quiet archive insert after the two national championship chapters. */
+.tcu-recognition{max-width:1120px;margin:20px auto 55px;padding:38px 24px;display:grid;grid-template-columns:.85fr 1.15fr;gap:48px;align-items:center;border-block:1px solid var(--line)}
+.tcu-recognition h2{font-size:clamp(29px,3.4vw,40px);max-width:15ch;margin:0 0 20px}
+.tcu-recognition-copy>p:not(.eyebrow){font-size:14px;line-height:1.85;color:var(--muted);margin:0 0 24px}
+.tcu-recognition .eyebrow{font-size:9px;letter-spacing:.15em}
+.tcu-recognition .text-link{font-size:11px}
+.tcu-recognition-photos{display:grid;grid-template-columns:1fr 1fr;gap:14px;min-width:0}
+.tcu-recognition-photos .photo img{width:100%;height:auto;aspect-ratio:3/4;object-fit:contain}
+.tcu-recognition-photos .photo figcaption{font-size:8px;letter-spacing:.08em;line-height:1.7}
+.tcu-photo-link{grid-column:1/-1;font-size:10px;margin:0;color:var(--muted);line-height:1.8}
+.tcu-photo-link a{display:inline-block;padding:6px 0;min-height:32px;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:899px){.tcu-recognition{grid-template-columns:1fr;gap:24px;max-width:632px;margin:8px auto 30px;padding:30px 24px}.tcu-recognition h2{max-width:20ch;font-size:30px}.tcu-recognition-copy>p:not(.eyebrow){font-size:13px;margin-bottom:18px}.tcu-recognition-photos{gap:12px}.tcu-recognition-photos .photo figcaption{font-size:7px}}
+@media print{.tcu-recognition{display:block;break-inside:avoid}.tcu-recognition-photos{max-width:420px;margin-top:20px}.tcu-recognition-copy>p:not(.eyebrow){color:#333}.tcu-recognition .text-link,.tcu-photo-link{display:none}}
