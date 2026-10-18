@@ -10,7 +10,7 @@ test('story is accessible without JavaScript and exposes sourced chapters',()=>{
  assert.ok(data.chapters.length>=7);
  for(const chapter of data.chapters){assert.ok(html.includes(`id="${chapter.id}"`));assert.ok(chapter.sourceIds.length);}
  for(const p of data.performances){assert.ok(p.date&&p.mark&&data.sources[p.sourceId]);}
- assert.ok(data.rankings.every(r=>r.documentDate&&r.sourceId&&['world-ranking-snapshot','annual-top-list','reported-world-position'].includes(r.kind)));
+ assert.ok(data.rankings.every(r=>r.documentDate&&r.sourceId&&['world-ranking-snapshot','annual-top-list','reported-world-position','championship-result'].includes(r.kind)));
 });
 test('new page contains no private academic records or unreviewed watermarks',()=>{
  for(const file of ['index.html','story.json','story.js']){
