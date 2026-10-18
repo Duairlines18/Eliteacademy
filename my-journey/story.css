@@ -51,3 +51,11 @@ details{border-block:1px solid var(--line)}summary{display:flex;align-items:cent
 @media(max-width:480px){.ranking-cards{grid-template-columns:1fr 1fr}.ranking-card{padding:20px 13px}.ranking-card .ranking-title{font-size:12px}.ranking-card span{font-size:10px}.ranking-card time,.ranking-card small{font-size:9px}}
 
 .ranking-card.championship-result{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr;column-gap:24px;align-items:center;background:var(--green)}.ranking-card.championship-result strong{grid-row:1/5;margin:0}
+
+/* Visible chapter navigation cues on touch, mouse and keyboard. */
+.journey-overview li .overview-cta{display:inline-flex;align-items:center;gap:.5em;align-self:flex-start;margin-top:8px;font:500 10px/1.5 var(--sans);letter-spacing:.06em;color:var(--light-gold)}
+.overview-cta .arrow-icon{width:1.1em;height:1.1em;transition:transform .18s ease}
+.journey-overview li a:hover,.journey-overview li a:focus-visible{background:rgba(199,162,90,.045)}
+.journey-overview li a:focus-visible{outline:1px solid var(--light-gold);outline-offset:5px}
+.journey-overview li a:hover .overview-cta .arrow-icon,.journey-overview li a:focus-visible .overview-cta .arrow-icon{transform:translate(2px,-2px)}
+@media(prefers-reduced-motion:reduce){.overview-cta .arrow-icon{transition:none}.journey-overview li a:hover .overview-cta .arrow-icon,.journey-overview li a:focus-visible .overview-cta .arrow-icon{transform:none}}
