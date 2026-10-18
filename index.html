@@ -3236,7 +3236,15 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
         }
       }
 
-      window.scrollTo({top:0, behavior:'instant'});
+      if (activeView === homeView && location.hash === '#sports') {
+        const pathways = document.getElementById('sports');
+        pathways.querySelector('details').open = true;
+        const topbar = homeView.querySelector('.topbar');
+        const offset = topbar ? topbar.offsetHeight + 16 : 72;
+        window.scrollTo({top:pathways.getBoundingClientRect().top + window.scrollY - offset, behavior:'instant'});
+      } else {
+        window.scrollTo({top:0, behavior:'instant'});
+      }
       document.body.classList.remove('route-transitioning');
     }, 90);
   }

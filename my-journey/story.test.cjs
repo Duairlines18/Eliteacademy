@@ -21,10 +21,10 @@ test('new page contains no private academic records or unreviewed watermarks',()
  assert.equal(manifest.length,15);
  for(const p of manifest){assert.equal(p.publishAllowed,true);assert.ok(!p.visibleWatermark||p.watermarkType==='photographer-credit');assert.ok(!/getty|alamy/i.test(p.provider));assert.ok(fs.existsSync('my-journey/'+p.src));}
 });
-test('homepage changes are limited to the new navigation links',()=>{
+test('homepage changes are limited to navigation and the authorized pathway arrival',()=>{
  const old=execFileSync('git',['show','921607a:index.html'],{encoding:'utf8',maxBuffer:12e6});
  const current=fs.readFileSync('index.html','utf8');
- const strip=s=>s.replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'');
+ const strip=s=>s.replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});");
  assert.equal(strip(current).replace(/\r\n/g,'\n'),old.replace(/\r\n/g,'\n'));
  assert.match(current,/href="\/my-journey\/"/);
 });
@@ -75,4 +75,20 @@ test('historical top lists stay distinct from points-based world rankings',()=>{
  assert.equal(junior.season,2017);assert.equal(junior.rank,10);
  assert.equal(junior.mark,16.30);assert.ok(data.sources[junior.sourceId].url.includes('ageCategory=u20'));
  for(const r of data.rankings){assert.ok(r.heading&&r.context&&r.dateLabel);}
+});
+
+test('Story CTA opens pathways at the correct header offset and preserves other routes',()=>{
+ const vm=require('node:vm');
+ const home=fs.readFileSync('index.html','utf8');
+ const html=fs.readFileSync('my-journey/index.html','utf8');
+ const arrival=home.match(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/)[0];
+ for(const height of [54,84])for(const hash of ['#sports','#/','#/hub/login']){
+  const details={open:false};let scroll;
+  const homeView={querySelector:()=>({offsetHeight:height})};
+  const context={activeView:homeView,homeView,location:{hash},document:{getElementById:id=>{assert.equal(id,'sports');return {querySelector:()=>details,getBoundingClientRect:()=>({top:900})};}},window:{scrollY:100,scrollTo:options=>{scroll=options;}}};
+  vm.runInNewContext(arrival,context);
+  assert.equal(details.open,hash==='#sports');assert.equal(scroll.top,hash==='#sports'?1000-height-16:0);
+ }
+ assert.ok(html.includes('Partner with Du Airlines'));
+ assert.ok(!html.includes('Bring Du Airlines to your school'));
 });
