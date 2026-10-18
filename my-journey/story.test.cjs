@@ -106,8 +106,8 @@ test('results and awards preserve performance data and distinguish sourced recog
  assert.match(html,/Selected results and awards/);assert.doesNotMatch(html,/All selected results/);
  assert.equal(data.awards.length,15);
  for(const a of data.awards){assert.match(a.url,/^https:\/\//);assert.ok(a.period&&a.title&&a.detail&&a.sourceLabel);assert.ok(html.includes(a.url.replace(/&/g,'&amp;')));}
- for(const year of ['2016','2017'])assert.ok(data.awards.some(a=>a.period===year&&a.title==='ANSA Junior Sportsman of the Year'&&a.detail.startsWith('Runner-up')));
- assert.ok(data.awards.some(a=>a.period==='2019'&&a.title==='ANSA Sportsman of the Year'&&a.detail.startsWith('Runner-up')));
+ for(const year of ['2016','2017'])assert.ok(data.awards.some(a=>a.period===year&&a.title==='Zimbabwe Junior Sportsman of the Year (ANSA)'&&a.detail.startsWith('Runner-up')));
+ assert.ok(data.awards.some(a=>a.period==='2019'&&a.title==='Zimbabwe Sportsman of the Year (ANSA)'&&a.detail.startsWith('Runner-up')));
  for(const a of data.awards.filter(a=>a.title==='Big 12 Male Athlete of the Year'))assert.match(a.detail,/Nominee/);
  assert.equal(JSON.parse(fs.readFileSync('my-journey/awards.json','utf8')).length,data.awards.length);
 });
