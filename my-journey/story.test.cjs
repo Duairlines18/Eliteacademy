@@ -54,3 +54,16 @@ test('preview navigation returns to the real academy and preserves chapter links
  assert.ok(html.includes('href="https://duairlineseliteacademy.com/#sports"'));
  assert.ok(!html.includes('href="/"'));
 });
+test('a curious visitor can scan the entire trajectory before opening any chapter',()=>{
+ const html=fs.readFileSync('my-journey/index.html','utf8'),data=JSON.parse(fs.readFileSync('my-journey/story.json'));
+ assert.ok(html.includes('id="journey-at-a-glance"'));
+ assert.ok(html.includes('aria-label="Career trajectory at a glance"'));
+ const ids=data.chapters.map(c=>c.id);
+ assert.ok(ids.indexOf('coaching-myself')<ids.indexOf('carrying-zimbabwe'));
+ assert.match(html,/Chengetayi “Chenge” Mapaya/);
+});
+test('homepage biography entry sits immediately beneath expandable credentials',()=>{
+ const html=fs.readFileSync('index.html','utf8');
+ assert.ok(/<\/details><!-- DU STORY NAV START --><a class="du-story-entry"/.test(html));
+ assert.ok(!html.includes('class="du-story-mobile-nav"'));
+});

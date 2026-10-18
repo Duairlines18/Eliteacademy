@@ -9,7 +9,7 @@
       "title": "A place on the team.\nA world beyond it.",
       "summary": "At St George’s College, the first ambition was simple: make the athletics team. Triple jump became the way in. Then the possibility grew.",
       "storyTitle": "Before there was Du Airlines",
-      "story": "Chenge began triple jump in Form 3. In his founder’s account, the school library became a place to study elite jumpers on video. Back home, he worked through the hop and step, using a mattress to practise. Curiosity came before the medals. Repetition gave it somewhere to go.",
+      "story": "Chenge started triple jump in Form 3. In the school library, he studied elite jumpers on video. At home, he worked through the hop and step, using a mattress to practise. Before he had a place on the world stage, he was learning how to make a place on his school team.",
       "extra": "These early photographs are from his personal archive. Exact capture dates are unconfirmed.",
       "photos": [
         "saints-team",
@@ -28,7 +28,7 @@
       "summary": "A video could show him what was possible. Learning to do it took repetition, feedback and the belief to keep trying.",
       "storyTitle": "The work outside the spotlight",
       "story": "Specialist coaching was not always available. Chenge remembers studying film, experimenting at home and learning to create structure for himself. That experience would later shape the academy: a young athlete should have a clear next step, even when the coach is not beside them.",
-      "extra": "During Lower Sixth, Chenge also lost his grandfather. This belongs to his school years, as he recalls them, rather than his later NCAA championship story.",
+      "extra": "Away from the runway, those school years also brought loss: his grandfather died during Lower Sixth.",
       "photos": [
         "backyard-one",
         "backyard-two"
@@ -60,9 +60,9 @@
       "era": "2018 · FORT WORTH, TEXAS",
       "year": "04",
       "title": "Belief travels\nboth ways.",
-      "summary": "TCU offered more than a new runway. It offered people who believed in Chenge before the breakthrough everyone could see.",
+      "summary": "Texas Christian University (TCU), in Fort Worth, offered a full scholarship. Chenge chose the coaches who believed in him before everyone else saw the breakthrough.",
       "storyTitle": "Why he chose TCU",
-      "story": "In his 2021 TCU Magazine interview, Chenge recalled the university offering a full scholarship when he was jumping around 15.65m. He valued that early belief. His first NCAA outdoor season ended with fifth place and 16.42m in 2018. Learning to compete in a deeper field was its own step forward.",
+      "story": "TCU backed him when he was jumping around 15.65m, Chenge recalled in his 2021 interview. He valued that early belief. His first NCAA outdoor season ended with fifth place and 16.42m in 2018. The NCAA is the United States’ college sports system; competing for its Division I titles meant facing a much deeper field.",
       "extra": "Photograph from the later TCU years; used as an archive portrait, not as documentation of the 2018 meet.",
       "photos": [
         "tcu-composure"
@@ -108,32 +108,14 @@
       ]
     },
     {
-      "id": "carrying-zimbabwe",
-      "era": "2024–2025 · INTERNATIONAL COMPETITION",
-      "year": "07",
-      "title": "Different stages.\nThe same Zimbabwe.",
-      "summary": "African senior silver in 2024. Seventh in the world indoors in 2025. The journey kept reaching new rooms.",
-      "storyTitle": "More than a college chapter",
-      "story": "At the African Championships in Douala, Chenge took silver with 16.87m. On 21 March 2025, he placed seventh in the World Indoor Championships final in Nanjing with 16.74m. Each result belongs to a different competition; both are part of his international story.",
-      "extra": "Zimbabwe team portrait from the personal archive; the stadium photograph is not dated to either result.",
-      "photos": [
-        "zimbabwe-runway",
-        "zimbabwe-world-stage"
-      ],
-      "sourceIds": [
-        "africa-2024",
-        "nanjing-2025"
-      ]
-    },
-    {
       "id": "coaching-myself",
       "era": "AFTER TCU · THREE YEARS OF SELF-DIRECTED TRAINING",
-      "year": "08",
+      "year": "07",
       "title": "My own coach.\nStill taking flight.",
-      "summary": "Three years leading his own day-to-day training. Three World Championships. A world indoor final.",
+      "summary": "The structure of college was gone. For three years, Chenge led his own training on the ground—and kept pursuing the world stage.",
       "storyTitle": "The chapter that built the academy",
-      "story": "After TCU, Chenge says he coached himself on the ground for three years. He had to bring structure to his own training: study film, plan the work and keep showing up while balancing a full-time job. Remote feedback and outside expertise still had a place. Day to day, he was the one turning that guidance into action.",
-      "extra": "Official records document three later World Championship appearances across indoor and outdoor competition: Nanjing 2025 (seventh, 16.74m), Tokyo 2025 (17th in qualification, 16.59m) and Toruń 2026 (15th, 16.25m). The three-year coaching account is Chenge’s personal recollection; the results are independently documented.",
+      "story": "He studied film, planned sessions and turned feedback into daily action while balancing a full-time job. Remote feedback and outside expertise still mattered. But the responsibility for doing the work was his. That experience taught him what a clear plan and consistent support can mean to an athlete.",
+      "extra": "The three-year account is Chenge’s recollection. Official records document three later World Championship appearances: Nanjing 2025, Tokyo 2025 and Toruń 2026. His best world-championship placing in that period was seventh indoors at Nanjing.",
       "photos": [
         "self-directed-training",
         "tokyo-landing"
@@ -146,11 +128,31 @@
       ]
     },
     {
+      "id": "carrying-zimbabwe",
+      "era": "2024–2026 · THE WORLD STAGE",
+      "year": "08",
+      "title": "Different stages.\nThe same Zimbabwe.",
+      "summary": "African senior silver in 2024. Seventh at the World Indoor Championships in 2025. Still representing Zimbabwe at the World Championships in Tokyo and the 2026 World Indoors.",
+      "storyTitle": "More than a college chapter",
+      "story": "In Douala, Chenge took African silver with 16.87m. In Nanjing, 16.74m earned seventh in the 2025 World Indoor final. Later that year, he jumped 16.59m in Tokyo’s World Championships qualification. At the 2026 World Indoors in Toruń, he recorded 16.25m. The results changed; the commitment to representing Zimbabwe continued.",
+      "extra": "Zimbabwe team portrait from the personal archive; the stadium photograph is not dated to either result.",
+      "photos": [
+        "zimbabwe-runway",
+        "zimbabwe-world-stage"
+      ],
+      "sourceIds": [
+        "africa-2024",
+        "nanjing-2025",
+        "tokyo-2025",
+        "torun-2026"
+      ]
+    },
+    {
       "id": "the-next-generation",
       "era": "2026 · DU AIRLINES ELITE ACADEMY",
       "year": "09",
       "title": "Now the support\ntravels further.",
-      "summary": "From figuring it out for himself to helping young athletes find their next step. This is why Du Airlines Elite Academy exists.",
+      "summary": "The lessons became Du Airlines Elite Academy: clearer training, consistent guidance and a pathway for the next generation. Chenge is building it while continuing his own athletic journey.",
       "storyTitle": "The journey becomes a system",
       "story": "The academy grows directly out of that self-coached chapter. Chenge knew what it meant to have knowledge and ambition, yet still need a clear plan for the day. Du Airlines Elite Academy turns those lessons into structured training, movement guidance and coach support for athletes, schools and clubs in Zimbabwe and the United States. The coaching comes first; the platform helps that support travel.",
       "extra": "His next ambition is the Los Angeles 2028 Olympics. It is a goal he is working toward, not a qualification already earned.",
@@ -334,5 +336,43 @@
       "type": "founder-account",
       "note": "Personal recollections supplied by Chengetayi Mapaya; not independently verified competition results."
     }
-  }
+  },
+  "overview": [
+    {
+      "era": "SCHOOL YEARS",
+      "title": "It starts at St George’s.",
+      "detail": "Harare · learning the triple jump",
+      "chapterId": "the-beginning"
+    },
+    {
+      "era": "2017",
+      "title": "African U20 champion.",
+      "detail": "16.30m · Tlemcen, Algeria",
+      "chapterId": "zimbabwe-to-africa"
+    },
+    {
+      "era": "2019 & 2022",
+      "title": "Two NCAA titles.",
+      "detail": "US college champion · 17.26m best",
+      "chapterId": "seventeen-metres"
+    },
+    {
+      "era": "AFTER TCU",
+      "title": "His own coach on the ground.",
+      "detail": "Three years leading his daily training",
+      "chapterId": "coaching-myself"
+    },
+    {
+      "era": "2024–2026",
+      "title": "Zimbabwe. The world stage.",
+      "detail": "African silver · 7th at World Indoors 2025",
+      "chapterId": "carrying-zimbabwe"
+    },
+    {
+      "era": "2026 →",
+      "title": "The academy. The next generation.",
+      "detail": "Still competing. Now developing others.",
+      "chapterId": "the-next-generation"
+    }
+  ]
 }

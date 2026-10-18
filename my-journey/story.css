@@ -30,3 +30,18 @@ details{border-block:1px solid var(--line)}summary{display:flex;align-items:cent
 .chapter#coaching-myself .photo:first-child img{aspect-ratio:4/5;object-position:50% 35%}
 .chapter#coaching-myself .photo:nth-child(2){width:100%;margin:22px 0 0}
 .chapter#coaching-myself .photo:nth-child(2) img{object-fit:contain;aspect-ratio:3/2}
+/* A clear identity and a fast, complete trajectory before the photographic chapters. */
+.hero-identity{font:600 15px/1.5 var(--sans);color:var(--cream);margin:1.2rem 0 .45rem}
+.journey-overview{max-width:1120px;margin:auto;padding:65px 24px 35px}
+.journey-overview h2{font-size:clamp(30px,4vw,45px);max-width:700px;margin-bottom:32px}
+.journey-overview ol{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0 30px;counter-reset:journey}
+.journey-overview li{position:relative;border-top:1px solid var(--line);counter-increment:journey}
+.journey-overview li a{display:flex;flex-direction:column;gap:8px;padding:22px 0 24px 27px;min-height:145px}
+.journey-overview li:before{content:counter(journey,decimal-leading-zero);position:absolute;top:24px;left:0;font-size:9px;color:var(--light-gold)}
+.journey-overview li span{font-size:9px;letter-spacing:.14em;color:var(--light-gold)}
+.journey-overview li strong{font:500 23px/1.25 var(--serif)}
+.journey-overview li small{font-size:11px;color:var(--muted);line-height:1.6}
+.journey-overview li a:hover strong{text-decoration:underline;text-underline-offset:4px}
+.overview-close{font-size:11px;color:var(--muted);margin-top:25px}
+@media(max-width:899px){.hero-copy{padding-bottom:40px}.hero-identity{font-size:14px}.journey-overview{padding:40px 24px 20px}.journey-overview ol{grid-template-columns:1fr 1fr;gap:0 18px}.journey-overview li a{min-height:160px;padding:20px 0 22px 21px;gap:8px}.journey-overview li strong{font-size:20px}.journey-overview li:before{top:22px;font-size:8px}.journey-overview li span{font-size:8px;letter-spacing:.08em}.journey-overview li small{font-size:10px}}
+@media(max-width:359px){.journey-overview ol{grid-template-columns:1fr}.journey-overview li a{min-height:0;padding:19px 0 20px 27px}.journey-overview li strong{font-size:22px}}

@@ -29,6 +29,31 @@ chapters[-1]['year']='09'
 chapters[5]['photos']=['ncaa-trophy','ncaa-flight','tcu-belief']
 chapters[6]['photos']=['zimbabwe-runway','zimbabwe-world-stage']
 chapters[-1]['story']='The academy grows directly out of that self-coached chapter. Chenge knew what it meant to have knowledge and ambition, yet still need a clear plan for the day. Du Airlines Elite Academy turns those lessons into structured training, movement guidance and coach support for athletes, schools and clubs in Zimbabwe and the United States. The coaching comes first; the platform helps that support travel.'
+
+# Reader-first chronology: the self-coached transition follows college, then its results.
+by_id={c['id']:c for c in chapters}
+chapters=[by_id[k] for k in ['the-beginning','learning-to-fly','zimbabwe-to-africa','the-tcu-leap','seventeen-metres','champion-again','coaching-myself','carrying-zimbabwe','the-next-generation']]
+for i,c in enumerate(chapters,1): c['year']=f'{i:02d}'
+by_id['the-beginning']['story']='Chenge started triple jump in Form 3. In the school library, he studied elite jumpers on video. At home, he worked through the hop and step, using a mattress to practise. Before he had a place on the world stage, he was learning how to make a place on his school team.'
+by_id['learning-to-fly']['extra']='Away from the runway, those school years also brought loss: his grandfather died during Lower Sixth.'
+by_id['the-tcu-leap']['summary']='Texas Christian University (TCU), in Fort Worth, offered a full scholarship. Chenge chose the coaches who believed in him before everyone else saw the breakthrough.'
+by_id['the-tcu-leap']['story']='TCU backed him when he was jumping around 15.65m, Chenge recalled in his 2021 interview. He valued that early belief. His first NCAA outdoor season ended with fifth place and 16.42m in 2018. The NCAA is the United States’ college sports system; competing for its Division I titles meant facing a much deeper field.'
+by_id['coaching-myself']['summary']='The structure of college was gone. For three years, Chenge led his own training on the ground—and kept pursuing the world stage.'
+by_id['coaching-myself']['story']='He studied film, planned sessions and turned feedback into daily action while balancing a full-time job. Remote feedback and outside expertise still mattered. But the responsibility for doing the work was his. That experience taught him what a clear plan and consistent support can mean to an athlete.'
+by_id['coaching-myself']['extra']='The three-year account is Chenge’s recollection. Official records document three later World Championship appearances: Nanjing 2025, Tokyo 2025 and Toruń 2026. His best world-championship placing in that period was seventh indoors at Nanjing.'
+by_id['carrying-zimbabwe']['era']='2024–2026 · THE WORLD STAGE'
+by_id['carrying-zimbabwe']['summary']='African senior silver in 2024. Seventh at the World Indoor Championships in 2025. Still representing Zimbabwe at the World Championships in Tokyo and the 2026 World Indoors.'
+by_id['carrying-zimbabwe']['story']='In Douala, Chenge took African silver with 16.87m. In Nanjing, 16.74m earned seventh in the 2025 World Indoor final. Later that year, he jumped 16.59m in Tokyo’s World Championships qualification. At the 2026 World Indoors in Toruń, he recorded 16.25m. The results changed; the commitment to representing Zimbabwe continued.'
+by_id['carrying-zimbabwe']['sourceIds']=['africa-2024','nanjing-2025','tokyo-2025','torun-2026']
+by_id['the-next-generation']['summary']='The lessons became Du Airlines Elite Academy: clearer training, consistent guidance and a pathway for the next generation. Chenge is building it while continuing his own athletic journey.'
+overview=[
+ dict(era='SCHOOL YEARS',title='It starts at St George’s.',detail='Harare · learning the triple jump',chapterId='the-beginning'),
+ dict(era='2017',title='African U20 champion.',detail='16.30m · Tlemcen, Algeria',chapterId='zimbabwe-to-africa'),
+ dict(era='2019 & 2022',title='Two NCAA titles.',detail='US college champion · 17.26m best',chapterId='seventeen-metres'),
+ dict(era='AFTER TCU',title='His own coach on the ground.',detail='Three years leading his daily training',chapterId='coaching-myself'),
+ dict(era='2024–2026',title='Zimbabwe. The world stage.',detail='African silver · 7th at World Indoors 2025',chapterId='carrying-zimbabwe'),
+ dict(era='2026 →',title='The academy. The next generation.',detail='Still competing. Now developing others.',chapterId='the-next-generation')]
+
 performances=[
  dict(date='2017-07-01',year=2017,mark=16.30,title='African U20 gold',venue='Tlemcen, Algeria',environment='Outdoor',sourceId='tcu-bio',pb=True),
  dict(date='2018-06-08',year=2018,mark=16.42,title='NCAA outdoor · fifth',venue='Eugene, United States',environment='Outdoor',sourceId='tcu-bio',pb=True),
@@ -40,7 +65,7 @@ performances=[
  dict(date='2025-07-12',year=2025,mark=17.15,title='Ed Murphey Classic',venue='Memphis, United States',environment='Outdoor',sourceId='world-2025',pb=False)]
 performances.append(dict(date='2026-03-20',year=2026,mark=16.25,title='World Indoors · 15th',venue='Toruń, Poland',environment='Indoor',sourceId='torun-2026',pb=False))
 rankings=[dict(documentDate='2025-09-16',rank=20,sourceId='tokyo-rank',kind='world-ranking-snapshot',label='Tokyo 2025 qualification start list'),dict(documentDate='2026-03-20',rank=19,sourceId='torun-rank',kind='world-ranking-snapshot',label='Toruń 2026 athlete briefing')]
-data=dict(title='The Du Airlines Story',lastReviewed='2026-10-17',chapters=chapters,performances=performances,rankings=rankings,sources=sources)
+data=dict(title='The Du Airlines Story',lastReviewed='2026-10-17',chapters=chapters,performances=performances,rankings=rankings,sources=sources,overview=overview)
 (root/'story.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 esc=html.escape
 photos={p['id']:p for p in json.loads((root/'photos.json').read_text())}
@@ -62,10 +87,10 @@ parts=['''<!doctype html>
 </head><body class="du-story"><a class="skip" href="#story-main">Skip to the story</a>
 <header class="masthead"><a class="wordmark" href="https://duairlineseliteacademy.com/">DU AIRLINES <span>ELITE ACADEMY</span></a><nav aria-label="Primary"><a href="https://duairlineseliteacademy.com/">Home</a><a class="current" href="#story-title" aria-current="page">My Journey</a><a href="https://duairlineseliteacademy.com/#/hub/login">Performance Hub <span aria-hidden="true">↗</span></a></nav></header>
 <main id="story-main">
-<section class="hero" aria-labelledby="story-title"><div class="hero-copy"><p class="eyebrow">CHENGETAYI “DU” MAPAYA · THE FOUNDER’S JOURNEY</p><h1 id="story-title">The Du Airlines<br><em>Story.</em></h1><p class="hero-line">From a school field in Harare.<br>To a world of possibility.</p><p class="hero-description">An athlete’s journey. A coach’s purpose.<br>A next generation ready to take flight.</p><a class="text-link" href="#the-beginning">Explore the journey <span aria-hidden="true">↓</span></a></div>''',photo('tcu-belief','hero-photo',True),'''<div class="hero-caption">HARARE → FORT WORTH → THE WORLD</div></section>
+<section class="hero" aria-labelledby="story-title"><div class="hero-copy"><p class="eyebrow">CHENGETAYI “DU” MAPAYA · THE FOUNDER’S JOURNEY</p><h1 id="story-title">The Du Airlines<br><em>Story.</em></h1><p class="hero-line">From a school field in Harare.<br>To a world of possibility.</p><p class="hero-identity">Chengetayi “Chenge” Mapaya</p><p class="hero-description">Zimbabwean triple jumper. Two-time NCAA champion.<br>Founder of Du Airlines Elite Academy.</p><a class="text-link" href="#journey-at-a-glance">Explore the journey <span aria-hidden="true">↓</span></a></div>''',photo('tcu-belief','hero-photo',True),'''<div class="hero-caption">HARARE → FORT WORTH → THE WORLD</div></section>
 <div class="credentials" aria-label="Career highlights"><div><strong>17.26<span>m</span></strong><span>Personal best · 2022</span></div><div><strong>2<span>×</span></strong><span>NCAA Division I champion</span></div><div><strong>7<span>th</span></strong><span>World Indoors · 2025</span></div></div>
-<nav class="chapter-nav" aria-label="Story chapters"><a href="#the-beginning">The beginning</a><a href="#zimbabwe-to-africa">Zimbabwe</a><a href="#the-tcu-leap">TCU</a><a href="#seventeen-metres">Championships</a><a href="#carrying-zimbabwe">World stage</a><a href="#coaching-myself">Self-coached</a><a href="#the-next-generation">The academy</a><a href="#the-progression">The numbers</a></nav>
-<div class="intro"><p class="eyebrow">EVERY FLIGHT STARTS SOMEWHERE</p><p>Before the titles, there was a young athlete trying to find his rhythm.<br class="desktop-only"> This is the journey that became Du Airlines.</p></div>''']
+<nav class="chapter-nav" aria-label="Story chapters"><a href="#the-beginning">The beginning</a><a href="#zimbabwe-to-africa">Zimbabwe</a><a href="#the-tcu-leap">TCU</a><a href="#seventeen-metres">Championships</a><a href="#coaching-myself">Self-coached</a><a href="#carrying-zimbabwe">World stage</a><a href="#the-next-generation">The academy</a><a href="#the-progression">The numbers</a></nav>
+<section class="journey-overview" id="journey-at-a-glance" aria-labelledby="overview-title"><p class="eyebrow">THE JOURNEY AT A GLANCE</p><h2 id="overview-title">From finding his event.<br>To opening a path for others.</h2><ol aria-label="Career trajectory at a glance">'''+''.join(f'<li><a href="#{o["chapterId"]}"><span>{esc(o["era"])}</span><strong>{esc(o["title"])}</strong><small>{esc(o["detail"])}</small></a></li>' for o in overview)+'''</ol><p class="overview-close">The milestones are the short version. The photographs tell the story.</p></section>''']
 for i,c in enumerate(chapters):
  parts.append(f'''<article class="chapter {'reverse' if i%2 else ''} {'final-chapter' if not c['photos'] else ''}" id="{c['id']}" aria-labelledby="title-{c['id']}">
 <div class="chapter-images {'paired' if len(c['photos'])>1 else ''}">{''.join(photo(k) for k in c['photos']) if c['photos'] else '<div class="flight-mark" aria-hidden="true"><span>HOP</span><span>STEP</span><span>JUMP ↗</span></div>'}</div>
@@ -86,7 +111,7 @@ for r in rankings:
 parts.append('''</div></div></section>
 <section class="standard"><p class="eyebrow">THE DU AIRLINES STANDARD</p><h2>A way to jump.<br><em>A way to move through life.</em></h2><div class="values"><div><span>01 · HOP</span><h3>Trust.</h3><p>Believe in the work you have put in.</p></div><div><span>02 · STEP</span><h3>Composure.</h3><p>Find your rhythm through transition.</p></div><div><span>03 · JUMP</span><h3>Execute.</h3><p>Commit when the moment comes.</p></div></div><p class="gratitude">Underneath every phase: <strong>gratitude for the process.</strong></p></section>
 <section class="next-step"><p class="eyebrow">THE STORY CONTINUES WITH YOU</p><h2>Your next step<br>starts somewhere.</h2><p>Training, guidance and a clearer path forward.<br>For athletes, schools and clubs.</p><div><a class="button" href="https://duairlineseliteacademy.com/#sports">Find your pathway <span aria-hidden="true">↗</span></a><a class="text-link" href="mailto:coachdu@duairlineseliteacademy.com">Bring Du Airlines to your school ↗</a></div></section>
-<section class="sources" id="sources"><details><summary>Sources &amp; story notes <span aria-hidden="true">+</span></summary><p>Competition milestones are checked against TCU Athletics and World Athletics. Personal recollections come from Chenge’s founder account. Archive images illustrate chapters; uncertain capture dates are not treated as verified event dates. Narration is editorial copy for founder review.</p><ol>''')
+<section class="sources" id="sources"><details><summary>Sources &amp; story notes <span aria-hidden="true">+</span></summary><p>Competition milestones are checked against TCU Athletics and World Athletics. Personal recollections come from Chenge’s founder account. Archive images illustrate chapters; uncertain capture dates are not treated as verified event dates.</p><ol>''')
 for k,v in sources.items():
  parts.append(f'<li>{sourcelinks([k])}</li>')
 parts.append('''</ol><p>Reviewed 17 October 2026. The 2028 Olympic ambition is a future goal. Rankings are dated document snapshots; medal positions are competition results.</p></details></section>
