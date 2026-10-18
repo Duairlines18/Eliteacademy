@@ -92,3 +92,22 @@ test('Story CTA opens pathways at the correct header offset and preserves other 
  assert.ok(html.includes('Partner with Du Airlines'));
  assert.ok(!html.includes('Bring Du Airlines to your school'));
 });
+
+test('results and awards preserve performance data and distinguish sourced recognition',()=>{
+ const data=JSON.parse(fs.readFileSync('my-journey/story.json','utf8'));
+ const html=fs.readFileSync('my-journey/index.html','utf8');
+ const embedded=JSON.parse(html.match(/<script type="application\/json" id="story-data">([\s\S]*?)<\/script>/)[1]);
+ assert.deepEqual(embedded,data,'visible data and chart data must agree');
+ const prior=JSON.parse(execFileSync('git',['show','5146430:my-journey/story.json'],{encoding:'utf8'}));
+ assert.deepEqual(data.performances,prior.performances,'awards cannot become distance-chart points');
+ assert.deepEqual(data.rankings,prior.rankings,'rankings remain separate from awards');
+ assert.equal(data.overview.find(o=>o.era==='AFTER TCU').title,'Three World Champs Qualifications.');
+ assert.equal(data.overview.find(o=>o.era==='2026 →').title,'Du Airlines Elite Academy. The next generation.');
+ assert.match(html,/Selected results and awards/);assert.doesNotMatch(html,/All selected results/);
+ assert.equal(data.awards.length,15);
+ for(const a of data.awards){assert.match(a.url,/^https:\/\//);assert.ok(a.period&&a.title&&a.detail&&a.sourceLabel);assert.ok(html.includes(a.url.replace(/&/g,'&amp;')));}
+ for(const year of ['2016','2017'])assert.ok(data.awards.some(a=>a.period===year&&a.title==='ANSA Junior Sportsman of the Year'&&a.detail.startsWith('Runner-up')));
+ assert.ok(data.awards.some(a=>a.period==='2019'&&a.title==='ANSA Sportsman of the Year'&&a.detail.startsWith('Runner-up')));
+ for(const a of data.awards.filter(a=>a.title==='Big 12 Male Athlete of the Year'))assert.match(a.detail,/Nominee/);
+ assert.equal(JSON.parse(fs.readFileSync('my-journey/awards.json','utf8')).length,data.awards.length);
+});

@@ -55,9 +55,9 @@ overview=[
  dict(era='SCHOOL YEARS',title='It starts at St George’s.',detail='Harare · learning the triple jump',chapterId='the-beginning'),
  dict(era='2017',title='African U20 champion.',detail='16.30m · World U20 top ten in 2017',chapterId='zimbabwe-to-africa'),
  dict(era='2019 & 2022',title='Two NCAA titles.',detail='US college champion · 17.26m best',chapterId='seventeen-metres'),
- dict(era='AFTER TCU',title='Self-coached. World finalist.',detail='Three years. Full-time work. Three Worlds. 7th at World Indoors 2025.',chapterId='coaching-myself'),
+ dict(era='AFTER TCU',title='Three World Champs Qualifications.',detail='Three years. Full-time work. Three Worlds. 7th at World Indoors 2025.',chapterId='coaching-myself'),
  dict(era='2024–2026',title='Zimbabwe. The world stage.',detail='African silver · 7th at World Indoors 2025',chapterId='carrying-zimbabwe'),
- dict(era='2026 →',title='The academy. The next generation.',detail='Still competing. Now developing others.',chapterId='the-next-generation')]
+ dict(era='2026 →',title='Du Airlines Elite Academy. The next generation.',detail='Still competing. Now developing others.',chapterId='the-next-generation')]
 
 performances=[
  dict(date='2017-07-01',year=2017,mark=16.30,title='African U20 gold',venue='Tlemcen, Algeria',environment='Outdoor',sourceId='tcu-bio',pb=True),
@@ -76,7 +76,14 @@ rankings=[
  dict(documentDate='2025-09-16',rank=20,sourceId='tokyo-rank',kind='world-ranking-snapshot',heading='World ranking',context='Men’s triple jump · points-based ranking',dateLabel='Document dated 16 September 2025',label='Tokyo qualification start list'),
  dict(documentDate='2026-03-20',rank=19,sourceId='torun-rank',kind='world-ranking-snapshot',heading='World ranking',context='Men’s triple jump · points-based ranking',dateLabel='Document dated 20 March 2026',label='Toruń athlete briefing')]
 
-data=dict(title='The Du Airlines Story',lastReviewed='2026-10-17',chapters=chapters,performances=performances,rankings=rankings,sources=sources,overview=overview)
+def render_awards(awards):
+ esc=html.escape
+ rows=''.join(f'<tr><td>{esc(a["period"])}</td><th scope="row">{esc(a["title"])}</th><td>{esc(a["detail"])}<br><a href="{esc(a["url"])}">{esc(a["sourceLabel"])} · Source ↗</a></td></tr>' for a in awards)
+ return '<div class="table-scroll"><table class="awards-table"><caption>Awards &amp; honours · winners, runner-up finishes, nominations and watch-list selections labelled separately</caption><thead><tr><th scope="col">Year</th><th scope="col">Recognition</th><th scope="col">Detail &amp; source</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+
+awards=json.loads((root/'awards.json').read_text())
+
+data=dict(awards=awards,title='The Du Airlines Story',lastReviewed='2026-10-18',chapters=chapters,performances=performances,rankings=rankings,sources=sources,overview=overview)
 (root/'story.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 esc=html.escape
 photos={p['id']:p for p in json.loads((root/'photos.json').read_text())}
@@ -112,10 +119,10 @@ for i,c in enumerate(chapters):
   parts.append('''<aside class="pullquote"><span class="quote-mark" aria-hidden="true">“</span><blockquote>I just wanted to be on my high school team because it had some swag.</blockquote><p>CHENGETAYI MAPAYA · <a href="https://magazine.tcu.edu/summer-2021/du-mapaya-triple-jump-zimbabwe/">TCU MAGAZINE, SUMMER 2021 ↗</a></p></aside>''')
 parts.append('''<section class="progression" id="the-progression" aria-labelledby="progression-title"><div class="section-heading"><p class="eyebrow">THE PROGRESSION · TRIPLE JUMP</p><h2 id="progression-title">The work, in metres.</h2><p>A journey has breakthroughs and quieter chapters. Every mark has a place.</p></div>
 <div id="interactive-chart" hidden><div class="chart-controls" role="group" aria-label="Choose progression view"><button type="button" data-chart="milestones" aria-pressed="true">Selected results</button><button type="button" data-chart="pbs" aria-pressed="false">PB breakthroughs</button></div><p class="chart-help" id="chart-help">Tap a point or use Tab and Enter to explore. Selected results are not annual season bests.</p><div id="chart-plot"></div><div id="chart-selection" class="chart-selection" aria-live="polite" aria-atomic="true"></div></div>
-<details class="results-details" open><summary>All selected results <span aria-hidden="true">+</span></summary><div class="table-scroll"><table><caption>Selected triple jump performances · indoor and outdoor conditions labelled separately</caption><thead><tr><th scope="col">Date</th><th scope="col">Competition</th><th scope="col">Mark</th><th scope="col">Setting</th><th scope="col">Record</th></tr></thead><tbody>''')
+<details class="results-details" open><summary>Selected results and awards <span aria-hidden="true">+</span></summary><div class="table-scroll"><table><caption>Selected triple jump performances · indoor and outdoor conditions labelled separately</caption><thead><tr><th scope="col">Date</th><th scope="col">Competition</th><th scope="col">Mark</th><th scope="col">Setting</th><th scope="col">Record</th></tr></thead><tbody>''')
 for p in performances:
  parts.append(f'<tr><td><time datetime="{p["date"]}">{p["date"]}</time></td><th scope="row">{esc(p["title"])}</th><td>{p["mark"]:.2f}m</td><td>{p["environment"]}</td><td><a href="{esc(sources[p["sourceId"]]["url"])}">Source ↗</a></td></tr>')
-parts.append('''</tbody></table></div></details><p class="chart-footnote">Selected results, not a complete performance history. PB view shows selected outdoor personal-best breakthroughs. No estimated school marks are plotted.</p>
+parts.append('''</tbody></table></div>'''+render_awards(awards)+'''</details><p class="chart-footnote">Selected results, not a complete performance history. PB view shows selected outdoor personal-best breakthroughs. No estimated school marks are plotted.</p>
 <div class="rankings"><div><p class="eyebrow">FROM WORLD U20 TO THE SENIOR STAGE</p><h3>A place on the world stage.</h3><p>World U20 top ten as a teenager. Senior world top ten at TCU. Seventh in a World Indoor final. Each milestone below carries its date and source.</p></div><div class="ranking-cards">''')
 for r in rankings:
  parts.append(f'<a class="ranking-card {r["kind"]}" href="{esc(sources[r["sourceId"]]["url"])}"><strong>{esc(r.get("display", "#"+str(r["rank"])))}</strong><span class="ranking-title">{esc(r["heading"])}</span><span>{esc(r["context"])}</span><time datetime="{r["documentDate"]}">{esc(r["dateLabel"])}</time><small>{esc(r["label"])} ↗</small></a>')
@@ -125,7 +132,7 @@ parts.append('''</div><p class="ranking-note">Top lists compare season-best dist
 <section class="sources" id="sources"><details><summary>Sources &amp; story notes <span aria-hidden="true">+</span></summary><p>Competition milestones are checked against TCU Athletics and World Athletics. Personal recollections come from Chenge’s founder account. Archive images illustrate chapters; uncertain capture dates are not treated as verified event dates.</p><ol>''')
 for k,v in sources.items():
  parts.append(f'<li>{sourcelinks([k])}</li>')
-parts.append('''</ol><p>Reviewed 17 October 2026. The 2028 Olympic ambition is a future goal. Top-list positions, reported world positions and points-based rankings are labelled separately; medal positions are competition results.</p></details></section>
+parts.append('''</ol><p>Reviewed 18 October 2026. The 2028 Olympic ambition is a future goal. Top-list positions, reported world positions and points-based rankings are labelled separately; medal positions are competition results.</p></details></section>
 </main><footer><a class="wordmark" href="https://duairlineseliteacademy.com/">DU AIRLINES <span>ELITE ACADEMY</span></a><p>Trust. Composure. Gratitude. Execute.</p><a href="#story-title">Back to the beginning ↑</a><small>© Du Airlines Elite Academy</small></footer><div class="toast" id="share-status" role="status"></div><dialog id="share-fallback" aria-labelledby="share-dialog-title"><form method="dialog"><button class="close" aria-label="Close share dialog">×</button><h2 id="share-dialog-title">Take this chapter with you.</h2><p>Select and copy the text below.</p><textarea readonly aria-label="Chapter text to copy"></textarea><button class="button">Done</button></form></dialog>
 <script type="application/json" id="story-data">'''+json.dumps(data,ensure_ascii=False).replace('</','<\\/')+'''</script></body></html>''')
 arrow='<svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg>'
