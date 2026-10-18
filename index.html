@@ -4359,20 +4359,44 @@ document.addEventListener('click',function(e){
     const tag=cleanText.match(/\(([A-Z]{2,8}\d{2,3})\)/i);
     const coded=tag?list.find(ex=>String(ex.code||'').toUpperCase()===tag[1].toUpperCase()):null;
     const directMatch=legacyExerciseMatch(cleanText,exercises),leadMatch=lead.dosage?legacyExerciseMatch(lead.text,exercises):null;
-    const matched=coded||directMatch||leadMatch,useLead=Boolean(leadMatch&&!directMatch&&!coded);
+    const suffixMatch=cleanText.match(/^(.+?)\s+((?:\d+(?:[–-]\d+)?\s*[×x]\s*)?\d+.*)$/);
+    const trailingMatch=suffixMatch?legacyExerciseMatch(suffixMatch[1],exercises):null;
+    const matched=coded||directMatch||leadMatch||trailingMatch,useLead=Boolean(leadMatch&&!directMatch&&!coded);
     const display=textPrescription(cleanText),parts=coachingParts(matched?.coachingNote||'');
     const key=subIndex===null?'i:'+order+':'+index:'i:'+order+':'+index+':'+subIndex;
     const trailing=coded?cleanText.slice(cleanText.indexOf(tag[0])+tag[0].length).trim().replace(/^[—–:-]\s*/,''):'';
     return {key,type:matched?'exercise':display.type,code:matched?.code||'',
       title:coded?(coded.title||coded.name||cleanText.replace(tag[0],'').trim()):(matched?.title||matched?.name||display.title),
-      dosage:coded?(trailing||display.dosage):useLead?lead.dosage:display.dosage,
+      dosage:coded?(trailing||display.dosage):useLead?lead.dosage:trailingMatch?suffixMatch[2]:display.dosage,
       rest:display.rest,cue:parts.cue,avoid:parts.avoid,description:matched?.description||'',
       purpose:matched?.purpose||'',videoId:matched?.videoId||'',videoUrl:matched?.videoUrl||'',
       group:parsed.group,rawIndex:index};
   }
-  function expandTextWorkoutItem(raw,order,index,exercises){const parsed=parsedGroup(raw),segments=parsed.text.split(';').map(x=>x.trim()).filter(Boolean);if(segments.length<=1)return [normalizedTextItem(raw,order,index,exercises,null)];return segments.map((segment,subIndex)=>normalizedTextItem((parsed.group?parsed.group+' — ':'')+segment,order,index,exercises,subIndex));}
+  function expandTextWorkoutItem(raw,order,index,exercises){
+    const parsed=parsedGroup(raw),segments=parsed.text.split(';').map(x=>x.trim()).filter(Boolean),items=[];
+    segments.forEach((segment,subIndex)=>{
+      const item=normalizedTextItem((parsed.group?parsed.group+' — ':'')+segment,order,index,exercises,segments.length===1?null:subIndex);
+      // Semicolons may separate movements OR cues/rest for the preceding movement.
+      // Only an independently prescribed movement starts another row.
+      const startsMovement=items.length===0||Boolean(item.code)||/^\d+(?:\s*[×x]\s*\d+)?\s*(?:m|metres?|meters?)\b/i.test(segment);
+      if(startsMovement){items.push(item);return;}
+      const previous=items[items.length-1];
+      if(/^(?:rest|recovery)\b/i.test(segment))previous.rest=[previous.rest,segment.replace(/^(?:rest|recovery)\s*[:—-]?\s*/i,'')].filter(Boolean).join(' · ');
+      else previous.cue=[previous.cue,segment].filter(Boolean).join('; ');
+    });
+    return items;
+  }
+  function applyReviewedWorkoutDemos(items,sectionData,index){
+    if(!Array.isArray(sectionData.videoLinks))return items;
+    const links=sectionData.videoLinks.filter(link=>link.itemIndex===index&&/^https:\/\/(?:www\.)?(?:youtube\.com|youtu\.be|youtube-nocookie\.com)\//i.test(String(link.url||'')));
+    return items.map(item=>{
+      const demos=links.filter(link=>items.length===1||simpleText(link.title)===simpleText(item.title));
+      const primary=demos.find(demo=>simpleText(demo.title)===simpleText(item.title))||(!item.code?demos[0]:null);
+      return {...item,demos,videoUrl:primary?.url||'',videoId:''};
+    });
+  }
 
-  function normalizeWorkoutSession(sessionData,exercises){const s=sessionData||{},exerciseMap=new Map((Array.isArray(exercises)?exercises:[]).map(ex=>[ex.code,ex])),sectionMap=new Map();const ensure=(title,order)=>{const key=String(Number(order)||0)+'|'+String(title||'Session');if(!sectionMap.has(key))sectionMap.set(key,{title:title||'Session',order:Number(order)||0,items:[]});return sectionMap.get(key);};const prescriptions=Array.isArray(s.prescriptions)?s.prescriptions:[];prescriptions.forEach((rx,index)=>{const order=Number(rx.sectionOrder)||0,ex=exerciseMap.get(rx.exerciseCode)||{},phaseMatch=String(rx.cues||'').match(/^\[([^\]]+)\]\s*/),parts=coachingParts(phaseMatch?String(rx.cues).slice(phaseMatch[0].length):(rx.cues||ex.coachingNote||'')),section=ensure(rx.sectionTitle||'Exercises',order);section.items.push({key:'p:'+order+':'+index+':'+rx.exerciseCode,type:'exercise',phase:phaseMatch?phaseMatch[1]:'',code:rx.exerciseCode||'',title:ex.title||rx.exerciseCode||'Exercise',dosage:rx.dosage||ex.dosage||'',rest:rx.rest||'',cue:parts.cue,avoid:parts.avoid,description:ex.description||'',purpose:ex.purpose||'',videoId:ex.videoId||'',videoUrl:ex.videoUrl||'',group:'',rawIndex:index});});const itemSections=Array.isArray(s.itemSections)?s.itemSections:[];itemSections.forEach(sectionData=>{const order=Number(sectionData.order)||0,section=ensure(sectionData.title||'Session',order),rxTitles=section.items.filter(item=>item.type==='exercise').map(item=>simpleText(item.title));(Array.isArray(sectionData.items)?sectionData.items:[]).forEach((raw,index)=>{const parsed=parsedGroup(raw),normalized=simpleText(parsed.text);if(rxTitles.some(title=>title&&normalized.includes(title)))return;expandTextWorkoutItem(raw,order,index,exercises).forEach(item=>section.items.push(item));});});if(!itemSections.length&&Array.isArray(s.items)&&s.items.length){const section=ensure('Session',0);s.items.forEach((raw,index)=>{expandTextWorkoutItem(raw,0,index,exercises).forEach(item=>section.items.push(item));});}if(!prescriptions.length&&Array.isArray(s.exerciseCodes)){const section=ensure('Exercises',999);s.exerciseCodes.forEach(code=>{if(section.items.some(item=>item.code===code))return;const ex=exerciseMap.get(code)||{},parts=coachingParts(ex.coachingNote||'');section.items.push({key:'e:'+code,type:'exercise',code,title:ex.title||code,dosage:ex.dosage||'',rest:'',cue:parts.cue,avoid:parts.avoid,description:ex.description||'',purpose:ex.purpose||'',videoId:ex.videoId||'',videoUrl:ex.videoUrl||'',group:''});});}return {id:s.id||'',day:s.day||'',title:s.title||'Training Session',focus:s.focus||s.objective||'',duration:s.duration||'',sections:Array.from(sectionMap.values()).filter(section=>section.items.length).sort((a,b)=>a.order-b.order)};}
+  function normalizeWorkoutSession(sessionData,exercises){const s=sessionData||{},exerciseMap=new Map((Array.isArray(exercises)?exercises:[]).map(ex=>[ex.code,ex])),sectionMap=new Map();const ensure=(title,order)=>{const key=String(Number(order)||0)+'|'+String(title||'Session');if(!sectionMap.has(key))sectionMap.set(key,{title:title||'Session',order:Number(order)||0,items:[]});return sectionMap.get(key);};const prescriptions=Array.isArray(s.prescriptions)?s.prescriptions:[];prescriptions.forEach((rx,index)=>{const order=Number(rx.sectionOrder)||0,ex=exerciseMap.get(rx.exerciseCode)||{},phaseMatch=String(rx.cues||'').match(/^\[([^\]]+)\]\s*/),parts=coachingParts(phaseMatch?String(rx.cues).slice(phaseMatch[0].length):(rx.cues||ex.coachingNote||'')),section=ensure(rx.sectionTitle||'Exercises',order);section.items.push({key:'p:'+order+':'+index+':'+rx.exerciseCode,type:'exercise',phase:phaseMatch?phaseMatch[1]:'',code:rx.exerciseCode||'',title:ex.title||rx.exerciseCode||'Exercise',dosage:rx.dosage||ex.dosage||'',rest:rx.rest||'',cue:parts.cue,avoid:parts.avoid,description:ex.description||'',purpose:ex.purpose||'',videoId:ex.videoId||'',videoUrl:ex.videoUrl||'',group:'',rawIndex:index});});const itemSections=Array.isArray(s.itemSections)?s.itemSections:[];itemSections.forEach(sectionData=>{const order=Number(sectionData.order)||0,section=ensure(sectionData.title||'Session',order),rxTitles=section.items.filter(item=>item.type==='exercise').map(item=>simpleText(item.title));(Array.isArray(sectionData.items)?sectionData.items:[]).forEach((raw,index)=>{const parsed=parsedGroup(raw),normalized=simpleText(parsed.text);if(rxTitles.some(title=>title&&normalized.includes(title)))return;applyReviewedWorkoutDemos(expandTextWorkoutItem(raw,order,index,exercises),sectionData,index).forEach(item=>section.items.push(item));});});if(!itemSections.length&&Array.isArray(s.items)&&s.items.length){const section=ensure('Session',0);s.items.forEach((raw,index)=>{expandTextWorkoutItem(raw,0,index,exercises).forEach(item=>section.items.push(item));});}if(!prescriptions.length&&Array.isArray(s.exerciseCodes)){const section=ensure('Exercises',999);s.exerciseCodes.forEach(code=>{if(section.items.some(item=>item.code===code))return;const ex=exerciseMap.get(code)||{},parts=coachingParts(ex.coachingNote||'');section.items.push({key:'e:'+code,type:'exercise',code,title:ex.title||code,dosage:ex.dosage||'',rest:'',cue:parts.cue,avoid:parts.avoid,description:ex.description||'',purpose:ex.purpose||'',videoId:ex.videoId||'',videoUrl:ex.videoUrl||'',group:''});});}return {id:s.id||'',day:s.day||'',title:s.title||'Training Session',focus:s.focus||s.objective||'',duration:s.duration||'',sections:Array.from(sectionMap.values()).filter(section=>section.items.length).sort((a,b)=>a.order-b.order)};}
   function visibleNormalizedSections(workout){const selected=schoolGroup();return workout.sections.map(section=>({...section,items:section.items.filter(item=>!isSharedSchoolViewer()||!item.group||(selected&&item.group.toLowerCase()===selected.toLowerCase()))})).filter(section=>section.items.length);}
   function requiresGroupSelection(workout){return isSharedSchoolViewer()&&!schoolGroup()&&workout.sections.some(section=>section.items.some(item=>item.group));}
   function flattenedWorkoutItems(sections){return sections.flatMap(section=>section.items.map(item=>({...item,sectionTitle:section.title,sectionOrder:section.order})));}
@@ -4453,7 +4477,7 @@ document.addEventListener('click',function(e){
     deliverySections(sections).filter(section=>!/Additional movement references/i.test(String(section.title||''))).forEach(section=>{
       lines.push('',String(section.title||'Workout'));
       (section.items||[]).forEach(item=>{
-        lines.push('- '+String(item.title||'Exercise')+(item.dosage?' — '+item.dosage:'')+(item.rest?' · Rest: '+item.rest:''));
+        lines.push('- '+String(item.title||'Exercise')+(item.dosage?' — '+item.dosage:'')+(item.rest?' · Rest: '+item.rest:'')+(item.cue?' · Cue: '+item.cue:''));
       });
     });
     return lines.join('\n');
@@ -4476,7 +4500,7 @@ document.addEventListener('click',function(e){
         const video=item.videoUrl||item.videoId&&('https://www.youtube.com/shorts/'+encodeURIComponent(item.videoId));
         const safeDemo=video&&/^https:\/\/(?:www\.)?(?:youtube\.com|youtu\.be|youtube-nocookie\.com)\//i.test(video);
         const tips=[item.cue,item.description,item.avoid&&'Avoid: '+item.avoid].filter(Boolean);
-        return phaseHeading+'<div class="hub-athlete-movement"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+(displayDose?'<strong>'+escapeHtml(displayDose)+'</strong>':'')+'</div>'+(rest?'<small>Rest: '+escapeHtml(rest)+'</small>':'')+(safeDemo?'<a class="hub-athlete-demo" href="'+escapeHtml(video)+'" target="_blank" rel="noopener noreferrer">▶ Watch demo</a>':'')+(tips.length?'<details class="hub-athlete-tips"><summary>Technique tips</summary><p>'+tips.map(escapeHtml).join(' · ')+'</p></details>':'')+'</div>';
+        return phaseHeading+'<div class="hub-athlete-movement"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+(displayDose?'<strong>'+escapeHtml(displayDose)+'</strong>':'')+'</div>'+(rest?'<small>Rest: '+escapeHtml(rest)+'</small>':'')+(Array.isArray(item.demos)?item.demos.map(demo=>'<a class="hub-athlete-demo" href="'+escapeHtml(demo.url)+'" target="_blank" rel="noopener noreferrer">▶ Watch '+escapeHtml(demo.title)+' demo</a>').join(''):safeDemo?'<a class="hub-athlete-demo" href="'+escapeHtml(video)+'" target="_blank" rel="noopener noreferrer">▶ Watch demo</a>':'')+(tips.length?'<details class="hub-athlete-tips"><summary>Technique tips</summary><p>'+tips.map(escapeHtml).join(' · ')+'</p></details>':'')+'</div>';
       }).join('');
       const heading='<span>'+escapeHtml(section.title)+'</span><small>'+items.length+' movements</small>';
       return warmup?'<details class="hub-athlete-phase hub-athlete-warmup"><summary class="hub-athlete-phase-heading">'+heading+'</summary><p class="hub-athlete-warmup-hint">Complete before the main session · tap to expand</p><div class="hub-athlete-phase-list">'+rows+'</div></details>':'<section class="hub-athlete-phase"><div class="hub-athlete-phase-heading"><h3>'+escapeHtml(section.title)+'</h3><span>'+items.length+' movements</span></div><div class="hub-athlete-phase-list">'+rows+'</div></section>';

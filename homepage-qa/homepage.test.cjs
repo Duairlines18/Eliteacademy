@@ -48,6 +48,9 @@ const withoutAirZimPresentation=source=>source
  .replace(/    \{slug:'plyometric-foundation',title:[^\n]+\n/,'    LANDING_CATEGORY\n')
  .replace(/  function normalizeExerciseCategories\([^\n]+\n/,'  CATEGORY_TRANSLATION\n')
  .replace(/  async function loadHubData\([\s\S]*?(?=  function categoryRoute\()/,'  SHARED_BOOTSTRAP\n')
+ // Workout delivery has its own dose/rest/cue/demo regression suite.
+ .replace(/  function normalizedTextItem\([\s\S]*?(?=  function normalizeWorkoutSession\()/,'  WORKOUT_TEXT_DELIVERY\n')
+ .replace(/  function athleteCopyText\([\s\S]*?(?=  function schoolAthleteDelivery\()/,'  WORKOUT_COPY_DELIVERY\n')
  .replace(/  function normalizeWorkoutSession\([\s\S]*?(?=  function visibleNormalizedSections\()/,'  WORKOUT_NORMALIZER\n')
  .replace(/  function schoolAthleteDelivery\([\s\S]*?(?=  function renderWorkoutExperience\()/,'  ATHLETE_DELIVERY\n')
  .replace(/  function renderWarmup\([^\n]+\n/,'  WARM_UP_LIBRARY\n');

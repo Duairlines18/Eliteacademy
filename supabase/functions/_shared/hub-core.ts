@@ -185,10 +185,10 @@ export function shapeBootstrap(input: {
             if (!Number.isInteger(link?.item_index) || link.item_index < 0
               || typeof block.content.items[link.item_index] !== 'string') return [];
             const exercise = (input.exercises || []).find(ex => ex.active !== false && ex.name === link.exercise);
-            if (!exercise || !(block.content.exerciseCodes || []).includes(exercise.code)) return [];
+            if (!exercise) return [];
             const url = exercise.video_url || (exercise.video_id ? 'https://www.youtube.com/watch?v=' + exercise.video_id : '');
             return url ? [{itemIndex: block.content.items.slice(0, link.item_index).filter((item: unknown) => typeof item === 'string').length,
-              title: exercise.name, url}] : [];
+              title: exercise.name, code: exercise.code, url}] : [];
           }),
       }));
     const exerciseCodes = unique(blocks.flatMap(block => Array.isArray(block?.content?.exerciseCodes) ? block.content.exerciseCodes.filter((code: unknown) => typeof code === 'string') : []));
@@ -225,7 +225,8 @@ export function shapeBootstrap(input: {
     const prescriptionCodes = prescriptionsFrom([block]).flatMap(item => [item.exerciseCode, item.alternativeExerciseCode]);
     return [...legacyCodes, ...prescriptionCodes].filter(code => typeof code === 'string' && code.trim());
   }));
-  const exercises = (input.exercises || []).filter(exercise => referencedCodes.has(exercise.code)).map(exercise => ({
+  const referencedNames = new Set(allBlocks.flatMap(block => (Array.isArray(block?.content?.video_links) ? block.content.video_links : []).map((link: any) => link?.exercise)));
+  const exercises = (input.exercises || []).filter(exercise => exercise.active !== false && (referencedCodes.has(exercise.code) || referencedNames.has(exercise.name))).map(exercise => ({
     id: exercise.id,
     code: exercise.code,
     title: exercise.name,

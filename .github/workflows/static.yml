@@ -31,6 +31,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Require workout delivery regression pass
+        run: |
+          node --test athlete-qa/workout-delivery.test.mjs qa/workout-validation.test.cjs supabase/qa/resolve-delivery-target.test.mjs supabase/qa/validate-delivery.test.mjs
+          node athlete-qa/athlete-sheet.test.cjs
+          node athlete-qa/air-zim.test.cjs
+          node coach-command/saved-video-links.test.mjs
+          node parent-qa/parent-session.test.cjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Include responsive session cards in deployed HTML
