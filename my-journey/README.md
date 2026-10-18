@@ -18,7 +18,7 @@ The five later images are included too. The NOMA Photography image retains its v
 
 ## Sources and dates
 
-The page separates official results, dated world-ranking snapshots, historical interview quotations, and founder recollections. Rankings #20 and #19 are the positions printed in official documents dated 16 September 2025 and 20 March 2026; they are not current rankings or event placings. The results chart contains selected meet results, not season bests. The PB filter contains selected outdoor breakthroughs, not an exhaustive PB chronology. No unverified school marks are charted.
+The page separates official results, annual performance top lists, dated reported world positions, points-based world rankings, historical interview quotations, and founder recollections. The 2017 World Athletics U20 annual list places Mapaya tenth with 16.30m (explicit U20 and best-by-athlete filters). TCU’s 7 June 2022 NCAA preview reports him No. 7 in the world; this is attributed to TCU and is not presented as an end-of-year rank or a verified points-ranking position. Rankings #20 and #19 are the positions printed in official documents dated 16 September 2025 and 20 March 2026; they are not current rankings or event placings. The results chart contains selected meet results, not season bests. The PB filter contains selected outdoor breakthroughs, not an exhaustive PB chronology. No unverified school marks are charted.
 
 Only one 17-word quotation is used from the TCU Magazine interview. The TCU article has an indoor-mark inconsistency (16.96 versus the official TCU bio's 16.95); that result is intentionally not plotted or repeated. The 2022 final took place 10 June; the report was published 11 June. Olympic 2028 language is explicitly aspirational.
 

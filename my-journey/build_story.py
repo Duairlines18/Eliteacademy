@@ -2,6 +2,8 @@ from pathlib import Path
 import json, html
 root=Path(__file__).resolve().parent
 sources={
+ 'u20-2017':dict(title='World Athletics · 2017 U20 world top list · best by athlete',url='https://worldathletics.org/records/toplists/jumps/triple-jump/outdoor/men/u20/2017?ageCategory=u20&bestResultsOnly=true&regionType=world&windReading=regular&page=1',type='official'),
+ 'world-2022-tcu':dict(title='TCU Athletics · No. 7 in the world · 7 June 2022',url='https://gofrogs.com/news/2022/6/7/mens-outdoor-track-preview-ncaa-outdoor-championships',type='official'),
  'tcu-bio':dict(title='TCU Athletics · Official athlete biography',url='https://gofrogs.com/sports/mens-indoor-track/roster/chengetayi-du-mapaya/14063',type='official'),
  'ncaa-2019':dict(title='TCU Athletics · First NCAA title · 7 June 2019',url='https://gofrogs.com/news/2019/6/7/mens-outdoor-track-mapaya-wins-national-championship',type='official'),
  'ncaa-2022':dict(title='TCU Athletics · Second NCAA title · 10 June 2022',url='https://gofrogs.com/news/2022/6/11/mens-outdoor-track-national-champion-mapaya-wins-triple-jump-gold',type='official'),
@@ -38,8 +40,11 @@ by_id['the-beginning']['story']='Chenge started triple jump in Form 3. In the sc
 by_id['learning-to-fly']['extra']='Away from the runway, those school years also brought loss: his grandfather died during Lower Sixth.'
 by_id['the-tcu-leap']['summary']='Texas Christian University (TCU), in Fort Worth, offered a full scholarship. Chenge chose the coaches who believed in him before everyone else saw the breakthrough.'
 by_id['the-tcu-leap']['story']='TCU backed him when he was jumping around 15.65m, Chenge recalled in his 2021 interview. He valued that early belief. His first NCAA outdoor season ended with fifth place and 16.42m in 2018. The NCAA is the United States’ college sports system; competing for its Division I titles meant facing a much deeper field.'
-by_id['coaching-myself']['summary']='The structure of college was gone. For three years, Chenge led his own training on the ground—and kept pursuing the world stage.'
-by_id['coaching-myself']['story']='He studied film, planned sessions and turned feedback into daily action while balancing a full-time job. Remote feedback and outside expertise still mattered. But the responsibility for doing the work was his. That experience taught him what a clear plan and consistent support can mean to an athlete.'
+by_id['zimbabwe-to-africa']['summary']='16.30 metres. African U20 champion. Tenth on the 2017 World Athletics U20 top list. A schoolboy from Harare was now making his mark beyond Zimbabwe.'
+by_id['zimbabwe-to-africa']['sourceIds']=['tcu-bio','u20-2017']
+by_id['coaching-myself']['title']='My own coach.\nA world finalist.'
+by_id['coaching-myself']['summary']='For three years, Chenge coached himself on the ground while working full time. He reached three World Championships—and finished seventh at the 2025 World Indoors.'
+by_id['coaching-myself']['story']='Without the day-to-day structure of college, Chenge took charge of his own development: studying film, planning sessions and carrying the work through alongside a full-time job. Remote feedback and outside expertise still mattered, but there was no coach beside him directing each session. In Nanjing, that persistence reached a world final: 16.74m and seventh place. The experience now shapes the support he builds for other athletes.'
 by_id['coaching-myself']['extra']='The three-year account is Chenge’s recollection. Official records document three later World Championship appearances: Nanjing 2025, Tokyo 2025 and Toruń 2026. His best world-championship placing in that period was seventh indoors at Nanjing.'
 by_id['carrying-zimbabwe']['era']='2024–2026 · THE WORLD STAGE'
 by_id['carrying-zimbabwe']['summary']='African senior silver in 2024. Seventh at the World Indoor Championships in 2025. Still representing Zimbabwe at the World Championships in Tokyo and the 2026 World Indoors.'
@@ -48,9 +53,9 @@ by_id['carrying-zimbabwe']['sourceIds']=['africa-2024','nanjing-2025','tokyo-202
 by_id['the-next-generation']['summary']='The lessons became Du Airlines Elite Academy: clearer training, consistent guidance and a pathway for the next generation. Chenge is building it while continuing his own athletic journey.'
 overview=[
  dict(era='SCHOOL YEARS',title='It starts at St George’s.',detail='Harare · learning the triple jump',chapterId='the-beginning'),
- dict(era='2017',title='African U20 champion.',detail='16.30m · Tlemcen, Algeria',chapterId='zimbabwe-to-africa'),
+ dict(era='2017',title='African U20 champion.',detail='16.30m · World U20 top ten in 2017',chapterId='zimbabwe-to-africa'),
  dict(era='2019 & 2022',title='Two NCAA titles.',detail='US college champion · 17.26m best',chapterId='seventeen-metres'),
- dict(era='AFTER TCU',title='His own coach on the ground.',detail='Three years leading his daily training',chapterId='coaching-myself'),
+ dict(era='AFTER TCU',title='Self-coached. World finalist.',detail='Three years leading his training · 7th at World Indoors 2025',chapterId='coaching-myself'),
  dict(era='2024–2026',title='Zimbabwe. The world stage.',detail='African silver · 7th at World Indoors 2025',chapterId='carrying-zimbabwe'),
  dict(era='2026 →',title='The academy. The next generation.',detail='Still competing. Now developing others.',chapterId='the-next-generation')]
 
@@ -64,7 +69,12 @@ performances=[
  dict(date='2025-03-21',year=2025,mark=16.74,title='World Indoor final · seventh',venue='Nanjing, China',environment='Indoor',sourceId='nanjing-2025',pb=False),
  dict(date='2025-07-12',year=2025,mark=17.15,title='Ed Murphey Classic',venue='Memphis, United States',environment='Outdoor',sourceId='world-2025',pb=False)]
 performances.append(dict(date='2026-03-20',year=2026,mark=16.25,title='World Indoors · 15th',venue='Toruń, Poland',environment='Indoor',sourceId='torun-2026',pb=False))
-rankings=[dict(documentDate='2025-09-16',rank=20,sourceId='tokyo-rank',kind='world-ranking-snapshot',label='Tokyo 2025 qualification start list'),dict(documentDate='2026-03-20',rank=19,sourceId='torun-rank',kind='world-ranking-snapshot',label='Toruń 2026 athlete briefing')]
+rankings=[
+ dict(documentDate='2017-12-31',rank=10,sourceId='u20-2017',kind='annual-top-list',ageCategory='u20',season=2017,mark=16.30,heading='U20 world top list',context='2017 season · 16.30m',dateLabel='Season ending 31 December 2017',label='World Athletics · best by athlete'),
+ dict(documentDate='2022-06-07',rank=7,sourceId='world-2022-tcu',kind='reported-world-position',heading='World top ten',context='Senior triple jump · reported by TCU',dateLabel='TCU report · 7 June 2022',label='NCAA Championships preview'),
+ dict(documentDate='2025-09-16',rank=20,sourceId='tokyo-rank',kind='world-ranking-snapshot',heading='World ranking',context='Men’s triple jump · points-based ranking',dateLabel='Document dated 16 September 2025',label='Tokyo qualification start list'),
+ dict(documentDate='2026-03-20',rank=19,sourceId='torun-rank',kind='world-ranking-snapshot',heading='World ranking',context='Men’s triple jump · points-based ranking',dateLabel='Document dated 20 March 2026',label='Toruń athlete briefing')]
+
 data=dict(title='The Du Airlines Story',lastReviewed='2026-10-17',chapters=chapters,performances=performances,rankings=rankings,sources=sources,overview=overview)
 (root/'story.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 esc=html.escape
@@ -105,16 +115,17 @@ parts.append('''<section class="progression" id="the-progression" aria-labelledb
 for p in performances:
  parts.append(f'<tr><td><time datetime="{p["date"]}">{p["date"]}</time></td><th scope="row">{esc(p["title"])}</th><td>{p["mark"]:.2f}m</td><td>{p["environment"]}</td><td><a href="{esc(sources[p["sourceId"]]["url"])}">Source ↗</a></td></tr>')
 parts.append('''</tbody></table></div></details><p class="chart-footnote">Selected results, not a complete performance history. PB view shows selected outdoor personal-best breakthroughs. No estimated school marks are plotted.</p>
-<div class="rankings"><div><p class="eyebrow">WORLD ATHLETICS · DATED SNAPSHOTS</p><h3>A place on the world stage.</h3><p>World rankings change. These are historical positions printed in official documents, not a claim about today’s ranking.</p></div><div class="ranking-cards">''')
+<div class="rankings"><div><p class="eyebrow">FROM WORLD U20 TO THE SENIOR STAGE</p><h3>A place on the world stage.</h3><p>World U20 top ten as a teenager. Senior world top ten at TCU. Each milestone below carries its date and source.</p></div><div class="ranking-cards">''')
 for r in rankings:
- parts.append(f'<a class="ranking-card" href="{esc(sources[r["sourceId"]]["url"])}"><strong>#{r["rank"]}</strong><span>Men’s triple jump · World ranking</span><time datetime="{r["documentDate"]}">Document dated {r["documentDate"]}</time><small>{esc(r["label"])} ↗</small></a>')
-parts.append('''</div></div></section>
+ parts.append(f'<a class="ranking-card" href="{esc(sources[r["sourceId"]]["url"])}"><strong>#{r["rank"]}</strong><span class="ranking-title">{esc(r["heading"])}</span><span>{esc(r["context"])}</span><time datetime="{r["documentDate"]}">{esc(r["dateLabel"])}</time><small>{esc(r["label"])} ↗</small></a>')
+parts.append('''</div><p class="ranking-note">Top lists compare season-best distances; world rankings use points across performances. TCU’s 2022 report is a dated position, not a year-end ranking. These are historical milestones.</p></div></section>
 <section class="standard"><p class="eyebrow">THE DU AIRLINES STANDARD</p><h2>A way to jump.<br><em>A way to move through life.</em></h2><div class="values"><div><span>01 · HOP</span><h3>Trust.</h3><p>Believe in the work you have put in.</p></div><div><span>02 · STEP</span><h3>Composure.</h3><p>Find your rhythm through transition.</p></div><div><span>03 · JUMP</span><h3>Execute.</h3><p>Commit when the moment comes.</p></div></div><p class="gratitude">Underneath every phase: <strong>gratitude for the process.</strong></p></section>
 <section class="next-step"><p class="eyebrow">THE STORY CONTINUES WITH YOU</p><h2>Your next step<br>starts somewhere.</h2><p>Training, guidance and a clearer path forward.<br>For athletes, schools and clubs.</p><div><a class="button" href="https://duairlineseliteacademy.com/#sports">Find your pathway <span aria-hidden="true">↗</span></a><a class="text-link" href="mailto:coachdu@duairlineseliteacademy.com">Bring Du Airlines to your school ↗</a></div></section>
 <section class="sources" id="sources"><details><summary>Sources &amp; story notes <span aria-hidden="true">+</span></summary><p>Competition milestones are checked against TCU Athletics and World Athletics. Personal recollections come from Chenge’s founder account. Archive images illustrate chapters; uncertain capture dates are not treated as verified event dates.</p><ol>''')
 for k,v in sources.items():
  parts.append(f'<li>{sourcelinks([k])}</li>')
-parts.append('''</ol><p>Reviewed 17 October 2026. The 2028 Olympic ambition is a future goal. Rankings are dated document snapshots; medal positions are competition results.</p></details></section>
+parts.append('''</ol><p>Reviewed 17 October 2026. The 2028 Olympic ambition is a future goal. Top-list positions, reported world positions and points-based rankings are labelled separately; medal positions are competition results.</p></details></section>
 </main><footer><a class="wordmark" href="https://duairlineseliteacademy.com/">DU AIRLINES <span>ELITE ACADEMY</span></a><p>Trust. Composure. Gratitude. Execute.</p><a href="#story-title">Back to the beginning ↑</a><small>© Du Airlines Elite Academy</small></footer><div class="toast" id="share-status" role="status"></div><dialog id="share-fallback" aria-labelledby="share-dialog-title"><form method="dialog"><button class="close" aria-label="Close share dialog">×</button><h2 id="share-dialog-title">Take this chapter with you.</h2><p>Select and copy the text below.</p><textarea readonly aria-label="Chapter text to copy"></textarea><button class="button">Done</button></form></dialog>
 <script type="application/json" id="story-data">'''+json.dumps(data,ensure_ascii=False).replace('</','<\\/')+'''</script></body></html>''')
-(root/'index.html').write_text('\n'.join(parts)+'\n')
+arrow='<svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg>'
+(root/'index.html').write_text('\n'.join(parts).replace('↗',arrow)+'\n')
