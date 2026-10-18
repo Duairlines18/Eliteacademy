@@ -111,3 +111,19 @@ test('results and awards preserve performance data and distinguish sourced recog
  for(const a of data.awards.filter(a=>a.title==='Big 12 Male Athlete of the Year'))assert.match(a.detail,/Nominee/);
  assert.equal(JSON.parse(fs.readFileSync('my-journey/awards.json','utf8')).length,data.awards.length);
 });
+
+test('photographs preserve uploaded source bytes and never advertise inflated resolutions',()=>{
+ const crypto=require('node:crypto');
+ const photos=JSON.parse(fs.readFileSync('my-journey/photos.json','utf8'));
+ const html=fs.readFileSync('my-journey/index.html','utf8');
+ for(const photo of photos){
+  assert.equal(photo.delivery,'original','deliver the original uploaded photo');
+  const bytes=fs.readFileSync('my-journey/'+photo.src);
+  assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),photo.originalSha256);
+  assert.ok(html.includes('src="'+photo.src+'"'));
+ }
+ assert.doesNotMatch(html,/<img[^>]*srcset=/,'no width descriptors overstating the original resolution');
+ const imgs=[...html.matchAll(/<img\b[^>]*>/g)].map(m=>m[0]);
+ assert.ok(imgs.filter(tag=>tag.includes('loading="eager"')).length===1,'only the hero loads eagerly');
+ assert.ok(imgs.filter(tag=>tag.includes('loading="lazy"')).length===imgs.length-1);
+});
