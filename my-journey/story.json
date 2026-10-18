@@ -1,4 +1,130 @@
 {
+  "tcuRecognition": {
+    "id": "tcu-sporting-history",
+    "title": "Part of TCU’s sporting history.",
+    "summary": "Inside Schollmaier Arena, Chenge’s 2019 and 2022 NCAA titles are commemorated in the Jane & John Justin Hall of Fame — a space celebrating the university’s sporting achievements.",
+    "photos": [
+      "schollmaier-2022",
+      "schollmaier-2019"
+    ],
+    "sourceIds": [
+      "schollmaier-arena"
+    ]
+  },
+  "awards": [
+    {
+      "period": "2016",
+      "title": "Zimbabwe Junior Sportsman of the Year (ANSA)",
+      "detail": "Runner-up · 2016 awards, presented January 2017",
+      "url": "https://www.newsday.co.zw/sport/article/78189/triple-jumper-mapaya-gets-us-scholarship",
+      "sourceLabel": "NewsDay"
+    },
+    {
+      "period": "2017",
+      "title": "Zimbabwe Junior Sportsman of the Year (ANSA)",
+      "detail": "Runner-up",
+      "url": "https://www.263chat.com/annual-national-sports-awards-winners-full-list/",
+      "sourceLabel": "263Chat"
+    },
+    {
+      "period": "2019",
+      "title": "Zimbabwe Sportsman of the Year (ANSA)",
+      "detail": "Runner-up · senior category",
+      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
+      "sourceLabel": "TCU Athletics"
+    },
+    {
+      "period": "2018–19",
+      "title": "TCU Pop Boone Co-Male Athlete of the Year",
+      "detail": "University-wide honour · shared with men’s tennis player Alex Rybakov",
+      "url": "https://s3.us-east-2.amazonaws.com/sidearm.nextgen.sites/gofrogs.com/documents/2019/11/14/TCU19annual.pdf#page=13",
+      "sourceLabel": "TCU Athletics · 2018–19 Annual Report, p. 13"
+    },
+    {
+      "period": "2019 & 2022",
+      "title": "NCAA Division I outdoor champion",
+      "detail": "Two triple jump national titles",
+      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
+      "sourceLabel": "TCU Athletics"
+    },
+    {
+      "period": "2018–2022",
+      "title": "Nine-time All-American",
+      "detail": "TCU career · indoor and outdoor triple jump",
+      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
+      "sourceLabel": "TCU Athletics"
+    },
+    {
+      "period": "2019–2022",
+      "title": "Five-time Big 12 champion",
+      "detail": "Indoor: 2019, 2021 · Outdoor: 2019, 2021, 2022",
+      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
+      "sourceLabel": "TCU Athletics"
+    },
+    {
+      "period": "2018–2022",
+      "title": "NCAA Indoor Championships medals",
+      "detail": "Silver: 2021 · Bronze: 2018, 2019, 2022",
+      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
+      "sourceLabel": "TCU Athletics"
+    },
+    {
+      "period": "2021",
+      "title": "NCAA Outdoor Championships bronze",
+      "detail": "Triple jump · 16.74m",
+      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
+      "sourceLabel": "TCU Athletics"
+    },
+    {
+      "period": "2020",
+      "title": "The Bowerman preseason watch list",
+      "detail": "Selected for the collegiate track and field award watch list",
+      "url": "https://gofrogs.com/news/2020/1/7/mens-indoor-track-mapaya-featured-on-the-bowerman-preseason-watchlist",
+      "sourceLabel": "TCU Athletics"
+    },
+    {
+      "period": "2019",
+      "title": "Big 12 Male Athlete of the Year",
+      "detail": "Nominee · representing TCU",
+      "url": "https://big12sports.com/news/2019/7/11/211806893.aspx",
+      "sourceLabel": "Big 12 Conference"
+    },
+    {
+      "period": "2022",
+      "title": "Big 12 Male Athlete of the Year",
+      "detail": "Nominee · representing TCU",
+      "url": "https://big12sports.com/news/2022/7/20/soccer-tcu-2021-22-athlete-of-the-year-nominees.aspx",
+      "sourceLabel": "Big 12 Conference"
+    },
+    {
+      "period": "2019",
+      "title": "Big 12 Outdoor Athlete of the Week",
+      "detail": "Conference weekly honour · 3 April",
+      "url": "https://big12sports.com/news/2019/4/3/211798368.aspx",
+      "sourceLabel": "Big 12 Conference"
+    },
+    {
+      "period": "2022",
+      "title": "Big 12 Indoor Athlete of the Week",
+      "detail": "Conference weekly honour · February",
+      "url": "https://big12sports.com/news/2022/2/2/players-of-the-week-tcu-texas-tech-and-texas-procure-athlete-of-the-week-awards.aspx",
+      "sourceLabel": "Big 12 Conference"
+    },
+    {
+      "period": "2021 & 2022",
+      "title": "Record-setting performances at TCU",
+      "detail": "16.95m indoors: Zimbabwe and TCU records in 2021 · 17.26m outdoors: TCU record in 2022",
+      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
+      "sourceLabel": "TCU Athletics"
+    },
+    {
+      "period": "2016",
+      "title": "AUSC Region 5 U20 Youth Games",
+      "detail": "Triple jump gold (15.42m) · Long jump silver (6.83m)",
+      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
+      "sourceLabel": "TCU Athletics"
+    }
+  ],
   "title": "The Du Airlines Story",
   "lastReviewed": "2026-10-18",
   "chapters": [
@@ -312,6 +438,16 @@
     }
   ],
   "sources": {
+    "tcu-annual-2019": {
+      "title": "TCU Athletics · 2018–19 Annual Report · page 13 (PDF)",
+      "url": "https://s3.us-east-2.amazonaws.com/sidearm.nextgen.sites/gofrogs.com/documents/2019/11/14/TCU19annual.pdf#page=13",
+      "type": "official"
+    },
+    "schollmaier-arena": {
+      "title": "TCU · Schollmaier Arena and the Justin Hall of Fame",
+      "url": "https://events.tcu.edu/guest-information/attractions.php",
+      "type": "official"
+    },
     "u20-2017": {
       "title": "World Athletics · 2017 U20 world top list · best by athlete",
       "url": "https://worldathletics.org/records/toplists/jumps/triple-jump/outdoor/men/u20/2017?ageCategory=u20&bestResultsOnly=true&regionType=world&windReading=regular&page=1",
@@ -424,113 +560,6 @@
       "title": "Du Airlines Elite Academy. The next generation.",
       "detail": "Still competing. Now developing others.",
       "chapterId": "the-next-generation"
-    }
-  ],
-  "awards": [
-    {
-      "period": "2016",
-      "title": "Zimbabwe Junior Sportsman of the Year (ANSA)",
-      "detail": "Runner-up · 2016 awards, presented January 2017",
-      "url": "https://www.newsday.co.zw/sport/article/78189/triple-jumper-mapaya-gets-us-scholarship",
-      "sourceLabel": "NewsDay"
-    },
-    {
-      "period": "2017",
-      "title": "Zimbabwe Junior Sportsman of the Year (ANSA)",
-      "detail": "Runner-up",
-      "url": "https://www.263chat.com/annual-national-sports-awards-winners-full-list/",
-      "sourceLabel": "263Chat"
-    },
-    {
-      "period": "2019",
-      "title": "Zimbabwe Sportsman of the Year (ANSA)",
-      "detail": "Runner-up · senior category",
-      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
-      "sourceLabel": "TCU Athletics"
-    },
-    {
-      "period": "2019 & 2022",
-      "title": "NCAA Division I outdoor champion",
-      "detail": "Two triple jump national titles",
-      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
-      "sourceLabel": "TCU Athletics"
-    },
-    {
-      "period": "2018–2022",
-      "title": "Nine-time All-American",
-      "detail": "TCU career · indoor and outdoor triple jump",
-      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
-      "sourceLabel": "TCU Athletics"
-    },
-    {
-      "period": "2019–2022",
-      "title": "Five-time Big 12 champion",
-      "detail": "Indoor: 2019, 2021 · Outdoor: 2019, 2021, 2022",
-      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
-      "sourceLabel": "TCU Athletics"
-    },
-    {
-      "period": "2018–2022",
-      "title": "NCAA Indoor Championships medals",
-      "detail": "Silver: 2021 · Bronze: 2018, 2019, 2022",
-      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
-      "sourceLabel": "TCU Athletics"
-    },
-    {
-      "period": "2021",
-      "title": "NCAA Outdoor Championships bronze",
-      "detail": "Triple jump · 16.74m",
-      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
-      "sourceLabel": "TCU Athletics"
-    },
-    {
-      "period": "2020",
-      "title": "The Bowerman preseason watch list",
-      "detail": "Selected for the collegiate track and field award watch list",
-      "url": "https://gofrogs.com/news/2020/1/7/mens-indoor-track-mapaya-featured-on-the-bowerman-preseason-watchlist",
-      "sourceLabel": "TCU Athletics"
-    },
-    {
-      "period": "2019",
-      "title": "Big 12 Male Athlete of the Year",
-      "detail": "Nominee · representing TCU",
-      "url": "https://big12sports.com/news/2019/7/11/211806893.aspx",
-      "sourceLabel": "Big 12 Conference"
-    },
-    {
-      "period": "2022",
-      "title": "Big 12 Male Athlete of the Year",
-      "detail": "Nominee · representing TCU",
-      "url": "https://big12sports.com/news/2022/7/20/soccer-tcu-2021-22-athlete-of-the-year-nominees.aspx",
-      "sourceLabel": "Big 12 Conference"
-    },
-    {
-      "period": "2019",
-      "title": "Big 12 Outdoor Athlete of the Week",
-      "detail": "Conference weekly honour · 3 April",
-      "url": "https://big12sports.com/news/2019/4/3/211798368.aspx",
-      "sourceLabel": "Big 12 Conference"
-    },
-    {
-      "period": "2022",
-      "title": "Big 12 Indoor Athlete of the Week",
-      "detail": "Conference weekly honour · February",
-      "url": "https://big12sports.com/news/2022/2/2/players-of-the-week-tcu-texas-tech-and-texas-procure-athlete-of-the-week-awards.aspx",
-      "sourceLabel": "Big 12 Conference"
-    },
-    {
-      "period": "2021 & 2022",
-      "title": "Record-setting performances at TCU",
-      "detail": "16.95m indoors: Zimbabwe and TCU records in 2021 · 17.26m outdoors: TCU record in 2022",
-      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
-      "sourceLabel": "TCU Athletics"
-    },
-    {
-      "period": "2016",
-      "title": "AUSC Region 5 U20 Youth Games",
-      "detail": "Triple jump gold (15.42m) · Long jump silver (6.83m)",
-      "url": "https://gofrogs.com/sports/track-and-field/roster/chengetayi-du-mapaya/14142",
-      "sourceLabel": "TCU Athletics"
     }
   ]
 }

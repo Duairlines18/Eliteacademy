@@ -213,5 +213,39 @@
     "rightsNote": "Founder supplied for biography. No Getty/Alamy watermark visible. Exact capture date unverified.",
     "delivery": "original",
     "originalSha256": "40358469e77dbc92c91691d170e845ceb575c2862f592fb8a493b0b6ba7adfbf"
+  },
+  {
+    "id": "schollmaier-2022",
+    "originalFilename": "IMG_8972.jpeg",
+    "src": "assets/schollmaier-2022-original.jpg",
+    "width": 1152,
+    "height": 1536,
+    "alt": "Du Mapaya’s 2022 NCAA triple jump championship banner displayed inside TCU’s Schollmaier Arena.",
+    "provider": "Owner-supplied arena photograph",
+    "visibleWatermark": false,
+    "watermarkType": null,
+    "publishAllowed": true,
+    "rightsNote": "Supplied by Chengetayi Mapaya for this biography; photographs document championship displays at TCU. Display recognition is not a claim of Hall of Fame induction.",
+    "delivery": "original",
+    "originalSha256": "258dc7057823207385648c9d956419a1d26f6a244feadb807f12947af1ce85a4",
+    "caption": "2022 NCAA TITLE · SCHOLLMAIER ARENA",
+    "responsiveDerivatives": false
+  },
+  {
+    "id": "schollmaier-2019",
+    "originalFilename": "IMG_9426.jpeg",
+    "src": "assets/schollmaier-2019-original.jpg",
+    "width": 1152,
+    "height": 1536,
+    "alt": "TCU’s arena display commemorating Chengetayi Mapaya’s 2019 NCAA national championship, with trophy and competition photographs.",
+    "provider": "Owner-supplied arena photograph",
+    "visibleWatermark": false,
+    "watermarkType": null,
+    "publishAllowed": true,
+    "rightsNote": "Supplied by Chengetayi Mapaya for this biography; photographs document championship displays at TCU. Display recognition is not a claim of Hall of Fame induction.",
+    "delivery": "original",
+    "originalSha256": "861ec24b9b653736319a09992b6c8f1a8ba00d941c9e4060fb49de00d486c3d1",
+    "caption": "2019 NCAA TITLE · SCHOLLMAIER ARENA",
+    "responsiveDerivatives": false
   }
 ]

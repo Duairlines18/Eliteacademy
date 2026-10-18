@@ -18,7 +18,7 @@ test('new page contains no private academic records or unreviewed watermarks',()
   assert.doesNotMatch(s,/2\.591|69\.7%|degree audit|term averages|transcript/i);
  }
  const manifest=JSON.parse(fs.readFileSync('my-journey/photos.json'));
- assert.equal(manifest.length,15);
+ assert.equal(manifest.length,17);
  for(const p of manifest){assert.equal(p.publishAllowed,true);assert.ok(!p.visibleWatermark||p.watermarkType==='photographer-credit');assert.ok(!/getty|alamy/i.test(p.provider));assert.ok(fs.existsSync('my-journey/'+p.src));}
 });
 test('homepage changes are limited to navigation and the authorized pathway arrival',()=>{
@@ -30,7 +30,7 @@ test('homepage changes are limited to navigation and the authorized pathway arri
 });
 test('all responsive photo variants are valid nonempty WebP files',()=>{
  const manifest=JSON.parse(fs.readFileSync('my-journey/photos.json'));
- for(const p of manifest)for(const width of [480,960,1440]){
+ for(const p of manifest.filter(p=>p.responsiveDerivatives!==false))for(const width of [480,960,1440]){
   const bytes=fs.readFileSync('my-journey/assets/'+p.id+'-'+width+'.webp');
   assert.ok(bytes.length>100,'valid image payload: '+p.id+'-'+width);
   assert.equal(bytes.toString('ascii',8,12),'WEBP');
@@ -104,7 +104,7 @@ test('results and awards preserve performance data and distinguish sourced recog
  assert.equal(data.overview.find(o=>o.era==='AFTER TCU').title,'Three World Champs Qualifications.');
  assert.equal(data.overview.find(o=>o.era==='2026 →').title,'Du Airlines Elite Academy. The next generation.');
  assert.match(html,/Selected results and awards/);assert.doesNotMatch(html,/All selected results/);
- assert.equal(data.awards.length,15);
+ assert.equal(data.awards.length,16);
  for(const a of data.awards){assert.match(a.url,/^https:\/\//);assert.ok(a.period&&a.title&&a.detail&&a.sourceLabel);assert.ok(html.includes(a.url.replace(/&/g,'&amp;')));}
  for(const year of ['2016','2017'])assert.ok(data.awards.some(a=>a.period===year&&a.title==='Zimbabwe Junior Sportsman of the Year (ANSA)'&&a.detail.startsWith('Runner-up')));
  assert.ok(data.awards.some(a=>a.period==='2019'&&a.title==='Zimbabwe Sportsman of the Year (ANSA)'&&a.detail.startsWith('Runner-up')));

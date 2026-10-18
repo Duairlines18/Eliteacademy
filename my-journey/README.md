@@ -38,3 +38,7 @@ Branch only: `feature/du-airlines-story`. Approval is required before merge or p
 ## Original photo delivery
 
 Photos now load the original uploaded JPEG bytes at their native dimensions. `photos.json` records `delivery: original` and each source SHA-256. Do not recompress these files or add responsive width descriptors larger than the actual pixel dimensions. Historic WebP derivatives remain for compatibility but are no longer used by the Story images. Preserve eager loading for the hero and lazy loading for chapter photos. The complete original set is about 5.9 MB, fetched as visitors scroll; the hero is about 206 KB. Low-resolution archival sources retain their inherent limits.
+
+## TCU recognition
+
+The 2018–19 TCU Athletics Annual Report, PDF page 13, identifies Mapaya and Alex Rybakov as Pop Boone Co-Male Athletes of the Year. The award uses that exact title and year; Big 12 nominations remain separately labelled. The arena insert follows the second NCAA title and uses two owner-supplied original JPEGs without recompression. It documents championship displays in Schollmaier Arena’s Justin Hall of Fame, not Hall of Fame induction. The TCU visitor guide supplies venue context. `story.json.tcuRecognition` retains its copy, images and sources.

@@ -2,6 +2,8 @@ from pathlib import Path
 import json, html
 root=Path(__file__).resolve().parent
 sources={
+ 'tcu-annual-2019':dict(title='TCU Athletics · 2018–19 Annual Report · page 13 (PDF)',url='https://s3.us-east-2.amazonaws.com/sidearm.nextgen.sites/gofrogs.com/documents/2019/11/14/TCU19annual.pdf#page=13',type='official'),
+ 'schollmaier-arena':dict(title='TCU · Schollmaier Arena and the Justin Hall of Fame',url='https://events.tcu.edu/guest-information/attractions.php',type='official'),
  'u20-2017':dict(title='World Athletics · 2017 U20 world top list · best by athlete',url='https://worldathletics.org/records/toplists/jumps/triple-jump/outdoor/men/u20/2017?ageCategory=u20&bestResultsOnly=true&regionType=world&windReading=regular&page=1',type='official'),
  'world-2022-tcu':dict(title='TCU Athletics · No. 7 in the world · 7 June 2022',url='https://gofrogs.com/news/2022/6/7/mens-outdoor-track-preview-ncaa-outdoor-championships',type='official'),
  'tcu-bio':dict(title='TCU Athletics · Official athlete biography',url='https://gofrogs.com/sports/mens-indoor-track/roster/chengetayi-du-mapaya/14063',type='official'),
@@ -83,15 +85,17 @@ def render_awards(awards):
 
 awards=json.loads((root/'awards.json').read_text())
 
-data=dict(awards=awards,title='The Du Airlines Story',lastReviewed='2026-10-18',chapters=chapters,performances=performances,rankings=rankings,sources=sources,overview=overview)
+tcu_recognition=dict(id='tcu-sporting-history',title='Part of TCU’s sporting history.',summary='Inside Schollmaier Arena, Chenge’s 2019 and 2022 NCAA titles are commemorated in the Jane & John Justin Hall of Fame — a space celebrating the university’s sporting achievements.',photos=['schollmaier-2022','schollmaier-2019'],sourceIds=['schollmaier-arena'])
+
+data=dict(tcuRecognition=tcu_recognition,awards=awards,title='The Du Airlines Story',lastReviewed='2026-10-18',chapters=chapters,performances=performances,rankings=rankings,sources=sources,overview=overview)
 (root/'story.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 esc=html.escape
 photos={p['id']:p for p in json.loads((root/'photos.json').read_text())}
 def photo(key,cls='',eager=False):
  p=photos[key]
- return f'''<figure class="photo {cls} photo-{key}"><img src="{esc(p['src'])}" width="{p['width']}" height="{p['height']}" alt="{esc(p['alt'])}" loading="{'eager' if eager else 'lazy'}" {'fetchpriority="high"' if eager else ''} decoding="async"><figcaption>{'NOMA PHOTOGRAPHY · FOUNDER-SUPPLIED ARCHIVE' if key=='zimbabwe-runway' else 'CHENGETAYI MAPAYA · PERSONAL ARCHIVE'}</figcaption></figure>'''
+ return f'''<figure class="photo {cls} photo-{key}"><img src="{esc(p['src'])}" width="{p['width']}" height="{p['height']}" alt="{esc(p['alt'])}" loading="{'eager' if eager else 'lazy'}" {'fetchpriority="high"' if eager else ''} decoding="async"><figcaption>{esc(p.get('caption', 'NOMA PHOTOGRAPHY · FOUNDER-SUPPLIED ARCHIVE' if key=='zimbabwe-runway' else 'CHENGETAYI MAPAYA · PERSONAL ARCHIVE'))}</figcaption></figure>'''
 def sourcelinks(ids):
- return ' · '.join(f'<a href="{esc(sources[k]["url"])}">{esc(sources[k]["title"])}</a>' if 'url' in sources[k] else '<span>Founder’s account</span>' for k in ids)
+ return ' · '.join(f'<a href="{esc(sources[k]["url"])}">{esc(sources[k]["title"])}</a>' if 'url' in sources[k] else '<span>Chenge’s account</span>' for k in ids)
 parts=['''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Du Airlines Story — Chengetayi Mapaya</title>
@@ -101,11 +105,11 @@ parts=['''<!doctype html>
 <meta name="theme-color" content="#0f271c">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="story.css?v=20261018-milestone-links"><script src="story.js?v=20261018-finalist" defer></script>
+<link rel="stylesheet" href="story.css?v=20261018-tcu-history"><script src="story.js?v=20261018-finalist" defer></script>
 </head><body class="du-story"><a class="skip" href="#story-main">Skip to the story</a>
 <header class="masthead"><a class="wordmark" href="https://duairlineseliteacademy.com/">DU AIRLINES <span>ELITE ACADEMY</span></a><nav aria-label="Primary"><a href="https://duairlineseliteacademy.com/">Home</a><a class="current" href="#story-title" aria-current="page">My Journey</a><a href="https://duairlineseliteacademy.com/#/hub/login">Performance Hub <span aria-hidden="true">↗</span></a></nav></header>
 <main id="story-main">
-<section class="hero" aria-labelledby="story-title"><div class="hero-copy"><p class="eyebrow">CHENGETAYI “DU” MAPAYA · THE FOUNDER’S JOURNEY</p><h1 id="story-title">The Du Airlines<br><em>Story.</em></h1><p class="hero-line">From a school field in Harare.<br>To a world of possibility.</p><p class="hero-identity">Chengetayi “Du Airlines” Mapaya</p><p class="hero-description">Zimbabwean triple jumper. Two-time NCAA champion. World Indoor finalist.</p><a class="text-link" href="#journey-at-a-glance">Explore the journey <span aria-hidden="true">↓</span></a></div>''',photo('tcu-belief','hero-photo',True),'''<div class="hero-caption">HARARE → FORT WORTH → THE WORLD</div></section>
+<section class="hero" aria-labelledby="story-title"><div class="hero-copy"><p class="eyebrow">CHENGETAYI “DU” MAPAYA · MY JOURNEY</p><h1 id="story-title">The Du Airlines<br><em>Story.</em></h1><p class="hero-line">From a school field in Harare.<br>To a world of possibility.</p><p class="hero-identity">Chengetayi “Du Airlines” Mapaya</p><p class="hero-description">Zimbabwean triple jumper. Two-time NCAA champion. World Indoor finalist.</p><a class="text-link" href="#journey-at-a-glance">Explore the journey <span aria-hidden="true">↓</span></a></div>''',photo('tcu-belief','hero-photo',True),'''<div class="hero-caption">HARARE → FORT WORTH → THE WORLD</div></section>
 <div class="credentials" aria-label="Career highlights"><div><strong>17.26<span>m</span></strong><span>Personal best · 2022</span></div><div><strong>2<span>×</span></strong><span>NCAA Division I champion</span></div><div><strong>7<span>th</span></strong><span>World Indoors · 2025</span></div></div>
 <nav class="chapter-nav" aria-label="Story chapters"><a href="#the-beginning">The beginning</a><a href="#zimbabwe-to-africa">Zimbabwe</a><a href="#the-tcu-leap">TCU</a><a href="#seventeen-metres">Championships</a><a href="#coaching-myself">Self-coached</a><a href="#carrying-zimbabwe">World stage</a><a href="#the-next-generation">The academy</a><a href="#the-progression">The numbers</a></nav>
 <section class="journey-overview" id="journey-at-a-glance" aria-labelledby="overview-title"><p class="eyebrow">THE JOURNEY AT A GLANCE</p><h2 id="overview-title">From finding his event.<br>To opening a path for others.</h2><ol aria-label="Career trajectory at a glance">'''+''.join(f'<li><a href="#{o["chapterId"]}"><span>{esc(o["era"])}</span><strong>{esc(o["title"])}</strong><small>{esc(o["detail"])}</small><span class="overview-cta">Explore chapter <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></span></a></li>' for o in overview)+'''</ol><p class="overview-close">The milestones are the short version. The photographs tell the story.</p></section>''']
@@ -115,6 +119,8 @@ for i,c in enumerate(chapters):
 <div class="chapter-copy"><p class="eyebrow"><span class="chapter-number">{c['year']}</span> {esc(c['era'])}</p><h2 id="title-{c['id']}">{esc(c['title']).replace(chr(10),'<br>')}</h2><p class="chapter-summary">{esc(c['summary'])}</p>
 <details><summary>{esc(c['storyTitle'])}<span aria-hidden="true">+</span></summary><div class="expanded-story"><p>{esc(c['story'])}</p><p class="archive-note">{esc(c['extra'])}</p><p class="source-note">{sourcelinks(c['sourceIds'])}</p></div></details>
 <div class="chapter-actions" hidden><button type="button" data-share="{c['id']}" aria-label="Share chapter: {esc(c['title'].replace(chr(10),' '))}">Share chapter <span aria-hidden="true">↗</span></button><button type="button" data-copy="{c['id']}" aria-label="Copy story text: {esc(c['title'].replace(chr(10),' '))}">Copy story</button></div></div></article>''')
+ if c['id']=='champion-again':
+  parts.append(f'''<aside class="tcu-recognition" id="{tcu_recognition['id']}" aria-labelledby="tcu-history-title"><div class="tcu-recognition-copy"><p class="eyebrow">SCHOLLMAIER ARENA · FORT WORTH</p><h2 id="tcu-history-title">{esc(tcu_recognition['title'])}</h2><p>{esc(tcu_recognition['summary'])}</p><a class="text-link" href="{esc(sources['schollmaier-arena']['url'])}">Inside the Justin Hall of Fame ↗</a></div><div class="tcu-recognition-photos">{''.join(photo(k) for k in tcu_recognition['photos'])}<p class="tcu-photo-link">{' · '.join(f'<a href="{esc(photos[k]["src"])}">View {"2022 banner" if k.endswith("2022") else "2019 display"} ↗</a>' for k in tcu_recognition['photos'])}</p></div></aside>''')
  if i==3:
   parts.append('''<aside class="pullquote"><span class="quote-mark" aria-hidden="true">“</span><blockquote>I just wanted to be on my high school team because it had some swag.</blockquote><p>CHENGETAYI MAPAYA · <a href="https://magazine.tcu.edu/summer-2021/du-mapaya-triple-jump-zimbabwe/">TCU MAGAZINE, SUMMER 2021 ↗</a></p></aside>''')
 parts.append('''<section class="progression" id="the-progression" aria-labelledby="progression-title"><div class="section-heading"><p class="eyebrow">THE PROGRESSION · TRIPLE JUMP</p><h2 id="progression-title">The work, in metres.</h2><p>A journey has breakthroughs and quieter chapters. Every mark has a place.</p></div>
@@ -129,7 +135,7 @@ for r in rankings:
 parts.append('''</div><p class="ranking-note">Top lists compare season-best distances; world rankings use points across performances. TCU’s 2022 report is a dated position, not a year-end ranking. Championship finishes show the place earned in a specific final. These are historical milestones.</p></div></section>
 <section class="standard"><p class="eyebrow">THE DU AIRLINES STANDARD</p><h2>A way to jump.<br><em>A way to move through life.</em></h2><div class="values"><div><span>01 · HOP</span><h3>Trust.</h3><p>Believe in the work you have put in.</p></div><div><span>02 · STEP</span><h3>Composure.</h3><p>Find your rhythm through transition.</p></div><div><span>03 · JUMP</span><h3>Execute.</h3><p>Commit when the moment comes.</p></div></div><p class="gratitude">Underneath every phase: <strong>gratitude for the process.</strong></p></section>
 <section class="next-step"><p class="eyebrow">THE STORY CONTINUES WITH YOU</p><h2>Your next step<br>starts somewhere.</h2><p>Training, guidance and a clearer path forward.<br>For athletes, schools and clubs.</p><div><a class="button" href="https://duairlineseliteacademy.com/#sports">Find your pathway <span aria-hidden="true">↗</span></a><a class="text-link" href="mailto:coachdu@duairlineseliteacademy.com">Partner with Du Airlines ↗</a></div></section>
-<section class="sources" id="sources"><details><summary>Sources &amp; story notes <span aria-hidden="true">+</span></summary><p>Competition milestones are checked against TCU Athletics and World Athletics. Personal recollections come from Chenge’s founder account. Archive images illustrate chapters; uncertain capture dates are not treated as verified event dates.</p><ol>''')
+<section class="sources" id="sources"><details><summary>Sources &amp; story notes <span aria-hidden="true">+</span></summary><p>Competition milestones are checked against TCU Athletics and World Athletics. Personal recollections come from Chenge’s personal account. Archive images illustrate chapters; uncertain capture dates are not treated as verified event dates.</p><ol>''')
 for k,v in sources.items():
  parts.append(f'<li>{sourcelinks([k])}</li>')
 parts.append('''</ol><p>Reviewed 18 October 2026. The 2028 Olympic ambition is a future goal. Top-list positions, reported world positions and points-based rankings are labelled separately; medal positions are competition results.</p></details></section>
