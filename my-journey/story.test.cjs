@@ -24,7 +24,7 @@ test('new page contains no private academic records or unreviewed watermarks',()
 test('homepage changes are limited to navigation and the authorized pathway arrival',()=>{
  const old=execFileSync('git',['show','921607a:index.html'],{encoding:'utf8',maxBuffer:12e6});
  const current=fs.readFileSync('index.html','utf8').replace(/Loughborough University Student-Athlete/g,'Future Loughborough University Student-Athlete').replace('<p>Kutama College Sports Captain</p>','<p>800m Athlete · Kutama College</p>').replace('— Kutama College Sports Captain</div>','— 800m Athlete, Kutama College</div>');
- const strip=s=>s.replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});");
+ const strip=s=>s.replace(/      if \(activeView === homeView && location.hash === '#stories'\) \{[\s\S]*?      \} else\r?\n/, '').replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});");
  assert.equal(strip(current).replace(/\r\n/g,'\n'),old.replace(/\r\n/g,'\n'));
  assert.match(current,/href="\/my-journey\/"/);
 });
@@ -127,3 +127,18 @@ test('photographs preserve uploaded source bytes and never advertise inflated re
  assert.ok(imgs.filter(tag=>tag.includes('loading="eager"')).length===1,'only the hero loads eagerly');
  assert.ok(imgs.filter(tag=>tag.includes('loading="lazy"')).length===imgs.length-1);
 });
+
+ test('academy chapter links directly to athlete proof with header-aware arrival',()=>{
+  const vm=require('node:vm');
+  const html=fs.readFileSync('my-journey/index.html','utf8');
+  const chapter=html.match(/<article[^>]*id="the-next-generation"[\s\S]*?<\/article>/)[0];
+  assert.match(chapter, /class="text-link athlete-proof-link" href="https:\/\/duairlineseliteacademy.com\/#stories"/);
+  assert.match(chapter,/See athlete results/);
+  const home=fs.readFileSync('index.html','utf8');
+  const code=home.match(/      if \(activeView === homeView && location.hash === '#stories'\) \{([\s\S]*?)      \} else/)[1];
+  for(const height of [54,84]){
+   let scroll;const homeView={querySelector:()=>({offsetHeight:height})};
+   vm.runInNewContext(code,{homeView,document:{getElementById:id=>{assert.equal(id,'stories');return {getBoundingClientRect:()=>({top:900})};}},window:{scrollY:100,scrollTo:options=>scroll=options}});
+   assert.equal(scroll.top,1000-height-16);
+  }
+ });

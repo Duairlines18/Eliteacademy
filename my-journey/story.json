@@ -222,9 +222,9 @@
       "era": "2022 · NCAA OUTDOOR CHAMPIONSHIPS",
       "year": "06",
       "title": "Back on top.\nFurther than before.",
-      "summary": "17.26 metres in Eugene. A second NCAA title, a lifetime best, and a new TCU outdoor record at the time.",
-      "storyTitle": "The standard behind the result",
-      "story": "The winning mark came on his third attempt on 10 June 2022. TCU’s report, published the following day, records his second national title, fifth Big 12 title and nine All-American honours across his college career. The headline was a distance. Behind it was years of development.",
+      "summary": "A torn hamstring at the 2021 NCAA Championships. A year later, a return to Hayward Field: 17.26 metres, a second NCAA title and a lifetime best.",
+      "storyTitle": "The comeback behind the second title",
+      "story": "In 2021, Chenge tore his hamstring on his fourth attempt at the NCAA Championships and still finished third. When he returned to Hayward Field a year later, he described 2022 as his comeback season. On 10 June, his third attempt reached 17.26m: a lifetime best, a TCU outdoor record at the time and his second NCAA title. Returning to the same stadium gave that result a meaning the distance alone could not capture.",
       "extra": "Archive portrait from the TCU years; not presented as a photograph of the title-winning attempt.",
       "photos": [
         "ncaa-trophy",
@@ -232,6 +232,7 @@
         "tcu-belief"
       ],
       "sourceIds": [
+        "comeback-2022",
         "ncaa-2022"
       ]
     },
@@ -439,6 +440,11 @@
     }
   ],
   "sources": {
+    "comeback-2022": {
+      "title": "University of Oregon SOJC Track Bureau · 2022 comeback report · 10 June 2022",
+      "url": "https://sojctrack.uoregon.edu/2022/06/10/a-year-after-injury-chengetayi-mapaya-regains-ncaa-triple-jump-title/",
+      "type": "meet-report"
+    },
     "tcu-annual-2019": {
       "title": "TCU Athletics · 2018–19 Annual Report · page 13 (PDF)",
       "url": "https://s3.us-east-2.amazonaws.com/sidearm.nextgen.sites/gofrogs.com/documents/2019/11/14/TCU19annual.pdf#page=13",
