@@ -93,7 +93,7 @@ parts=['''<!doctype html>
 <meta name="theme-color" content="#0f271c">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="story.css"><script src="story.js" defer></script>
+<link rel="stylesheet" href="story.css?v=20261018-polish"><script src="story.js?v=20261018-polish" defer></script>
 </head><body class="du-story"><a class="skip" href="#story-main">Skip to the story</a>
 <header class="masthead"><a class="wordmark" href="https://duairlineseliteacademy.com/">DU AIRLINES <span>ELITE ACADEMY</span></a><nav aria-label="Primary"><a href="https://duairlineseliteacademy.com/">Home</a><a class="current" href="#story-title" aria-current="page">My Journey</a><a href="https://duairlineseliteacademy.com/#/hub/login">Performance Hub <span aria-hidden="true">↗</span></a></nav></header>
 <main id="story-main">
