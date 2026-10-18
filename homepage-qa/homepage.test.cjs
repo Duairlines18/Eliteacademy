@@ -9,7 +9,11 @@ assert.equal((currentHtml.match(/Loughborough University Student-Athlete/g)||[])
 assert.equal((currentHtml.match(/Kutama College Sports Captain/g)||[]).length,2);
 assert.doesNotMatch(currentHtml,/Future Loughborough|800m Athlete[ ·,]+Kutama College/);
 const restoreTitles=source=>source.replace(/Loughborough University Student-Athlete/g,'Future Loughborough University Student-Athlete').replace('<p>Kutama College Sports Captain</p>','<p>800m Athlete · Kutama College</p>').replace('— Kutama College Sports Captain</div>','— 800m Athlete, Kutama College</div>');
-const html=restoreTitles(currentHtml).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'');
+// Owner-approved credentials copy is the only additional homepage exception.
+const approvedCredentials="<div class=\"premium-more-grid\"><span>9× All-American</span><span>5× Big 12 Champion</span><span>TCU Co-Male Athlete of the Year · 2018–19</span><span>African U20 Champion · 2017</span><span>African U20 Championships Meet Record Holder · 16.30m, 2017</span><span>TCU Triple Jump Record Holder · Indoor &amp; Outdoor</span><span>The Bowerman Preseason Watch List · 2020</span></div>";
+const previousCredentials="<div class=\"premium-more-grid\"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div>";
+assert.ok(currentHtml.includes(approvedCredentials),'approved seven credentials remain intact');
+const html=restoreTitles(currentHtml).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
 // These checks catch the duplicated homepage fragments and their stale controllers.
 for(const id of ['sports','performance-hub','credentials','premium-story-grid']){
   assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,`${id} must identify one section`);
