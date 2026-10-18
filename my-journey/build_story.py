@@ -78,7 +78,7 @@ rankings=[
 
 def render_awards(awards):
  esc=html.escape
- rows=''.join(f'<tr><td>{esc(a["period"])}</td><th scope="row">{esc(a["title"])}</th><td>{esc(a["detail"])}<br><a href="{esc(a["url"])}">{esc(a["sourceLabel"])} · Source ↗</a></td></tr>' for a in awards)
+ rows=''.join(f'<tr><td>{esc(a["period"])}</td><th scope="row">{esc(a["title"])}</th><td>{esc(a["detail"])}<br><a href="{esc(a["url"])}">{esc(a["sourceLabel"])} · Source <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a></td></tr>' for a in awards)
  return '<div class="table-scroll"><table class="awards-table"><caption>Awards &amp; honours · winners, runner-up finishes, nominations and watch-list selections labelled separately</caption><thead><tr><th scope="col">Year</th><th scope="col">Recognition</th><th scope="col">Detail &amp; source</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
 
 awards=json.loads((root/'awards.json').read_text())
