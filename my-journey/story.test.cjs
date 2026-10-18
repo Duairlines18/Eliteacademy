@@ -60,7 +60,7 @@ test('a curious visitor can scan the entire trajectory before opening any chapte
  assert.ok(html.includes('aria-label="Career trajectory at a glance"'));
  const ids=data.chapters.map(c=>c.id);
  assert.ok(ids.indexOf('coaching-myself')<ids.indexOf('carrying-zimbabwe'));
- assert.match(html,/Chengetayi “Chenge” Mapaya/);
+ assert.match(html,/Chengetayi “Du Airlines” Mapaya/);
 });
 test('homepage biography entry sits immediately beneath expandable credentials',()=>{
  const html=fs.readFileSync('index.html','utf8');
