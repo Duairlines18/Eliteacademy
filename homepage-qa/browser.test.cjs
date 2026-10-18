@@ -26,7 +26,7 @@ const {chromium}=require('playwright');
  ok(new Set(roleRows).size===1,`${width}: Hub roles stay in one horizontal row`);
  ok(await page.locator('.premium-story-avatar').count()===3,`${width}: existing athlete photos reused`);
  ok(await page.locator('.premium-story-avatar').evaluateAll(images=>images.every(e=>(e.getAttribute('src')||'').startsWith('data:image/'))),`${width}: every athlete photo has its original source`);
- const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: all seven credentials available`);ok(await page.locator('.premium-more-grid span').count()===4,`${width}: four additional credentials`);
+ const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: credentials expanded`);ok(await page.locator('.premium-more-grid span').count()===7,`${width}: seven additional credentials`);
  await page.locator('.premium-path-details summary').click();
  for(const sport of ['soccer','track']){
  await page.locator(`.premium-path-links [data-route="${sport}"]`).click();
