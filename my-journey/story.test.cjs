@@ -48,3 +48,9 @@ test('chart tap targets retain at least 44 CSS pixels on narrow screens',()=>{
  assert.ok(minWidth*radius*2/760>=44,'44px target after SVG scaling');
  assert.match(css,/#chart-plot\{overflow-x:auto/);
 });
+test('preview navigation returns to the real academy and preserves chapter links',()=>{
+ const html=fs.readFileSync('my-journey/index.html','utf8');
+ assert.ok(html.includes('href="https://duairlineseliteacademy.com/#/hub/login"'));
+ assert.ok(html.includes('href="https://duairlineseliteacademy.com/#sports"'));
+ assert.ok(!html.includes('href="/"'));
+});
