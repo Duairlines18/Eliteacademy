@@ -26,3 +26,9 @@ Dedicated branch: `feature/du-airlines-story`. No merge or production deployment
 ## Review limitations
 
 No physical iPhone/Safari test. Native OS share sheet and clipboard behavior depend on browser permissions; manual-copy dialog supplies an alternate path. Browser print stylesheet is provided but not visually checked as a PDF. Archive photographs’ exact capture dates are not independently authenticated, and narration/captions identify this where relevant. Founder should review the three-year period and all public narration before approval.
+
+## Published polish — 17 October 2026
+
+Owner explicitly requested polish and deployment. Overview stop 04 and the self-coached chapter now connect three years directing daily training with three later World Championship appearances and seventh at Nanjing 2025. Remote guidance remains acknowledged. All story-page external arrows are inline vector strokes to avoid iOS emoji presentation.
+
+Research: the official World Athletics 2017 U20 list, requested with `ageCategory=u20&bestResultsOnly=true`, returned Mapaya at No. 10 with 16.30m, zero wind, Tlemcen, 1 July 2017. The list includes indoor performances and is labelled a U20 world top list without an outdoor-only claim. Direct HTML retrieved successfully; search index variants without explicit age filters returned senior athletes, so were not used. TCU’s 7 June 2022 NCAA preview explicitly reports No. 7 in the world. Both sources are linked in public cards. Annual lists and reported positions remain distinct from the 2025/2026 points-ranking snapshots.

@@ -10,7 +10,7 @@ test('story is accessible without JavaScript and exposes sourced chapters',()=>{
  assert.ok(data.chapters.length>=7);
  for(const chapter of data.chapters){assert.ok(html.includes(`id="${chapter.id}"`));assert.ok(chapter.sourceIds.length);}
  for(const p of data.performances){assert.ok(p.date&&p.mark&&data.sources[p.sourceId]);}
- assert.ok(data.rankings.every(r=>r.documentDate&&r.sourceId&&r.kind==='world-ranking-snapshot'));
+ assert.ok(data.rankings.every(r=>r.documentDate&&r.sourceId&&['world-ranking-snapshot','annual-top-list','reported-world-position'].includes(r.kind)));
 });
 test('new page contains no private academic records or unreviewed watermarks',()=>{
  for(const file of ['index.html','story.json','story.js']){
@@ -66,4 +66,13 @@ test('homepage biography entry sits immediately beneath expandable credentials',
  const html=fs.readFileSync('index.html','utf8');
  assert.ok(/<\/details><!-- DU STORY NAV START --><a class="du-story-entry"/.test(html));
  assert.ok(!html.includes('class="du-story-mobile-nav"'));
+});
+
+test('historical top lists stay distinct from points-based world rankings',()=>{
+ const data=JSON.parse(fs.readFileSync('my-journey/story.json'));
+ const junior=data.rankings.find(r=>r.kind==='annual-top-list'&&r.ageCategory==='u20');
+ assert.ok(junior,'a sourced U20 annual list is included');
+ assert.equal(junior.season,2017);assert.equal(junior.rank,10);
+ assert.equal(junior.mark,16.30);assert.ok(data.sources[junior.sourceId].url.includes('ageCategory=u20'));
+ for(const r of data.rankings){assert.ok(r.heading&&r.context&&r.dateLabel);}
 });

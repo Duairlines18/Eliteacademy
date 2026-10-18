@@ -43,7 +43,7 @@
       "era": "2017 · AFRICAN U20 CHAMPIONSHIPS",
       "year": "03",
       "title": "The dream\ngets a passport.",
-      "summary": "16.30 metres. African U20 champion. A schoolboy from Harare was now making his mark beyond Zimbabwe.",
+      "summary": "16.30 metres. African U20 champion. Tenth on the 2017 World Athletics U20 top list. A schoolboy from Harare was now making his mark beyond Zimbabwe.",
       "storyTitle": "A bigger runway",
       "story": "The 2017 African U20 title in Tlemcen, Algeria, marked a new stage. TCU records the gold medal and the 16.30m winning performance. The jump made the next opportunity easier to see: competing and developing in the United States.",
       "extra": "Competition photographs from the founder’s early international archive; exact image dates are unconfirmed.",
@@ -52,7 +52,8 @@
         "african-podium"
       ],
       "sourceIds": [
-        "tcu-bio"
+        "tcu-bio",
+        "u20-2017"
       ]
     },
     {
@@ -111,10 +112,10 @@
       "id": "coaching-myself",
       "era": "AFTER TCU · THREE YEARS OF SELF-DIRECTED TRAINING",
       "year": "07",
-      "title": "My own coach.\nStill taking flight.",
-      "summary": "The structure of college was gone. For three years, Chenge led his own training on the ground—and kept pursuing the world stage.",
+      "title": "My own coach.\nA world finalist.",
+      "summary": "For three years, Chenge coached himself on the ground while working full time. He reached three World Championships—and finished seventh at the 2025 World Indoors.",
       "storyTitle": "The chapter that built the academy",
-      "story": "He studied film, planned sessions and turned feedback into daily action while balancing a full-time job. Remote feedback and outside expertise still mattered. But the responsibility for doing the work was his. That experience taught him what a clear plan and consistent support can mean to an athlete.",
+      "story": "Without the day-to-day structure of college, Chenge took charge of his own development: studying film, planning sessions and carrying the work through alongside a full-time job. Remote feedback and outside expertise still mattered, but there was no coach beside him directing each session. In Nanjing, that persistence reached a world final: 16.74m and seventh place. The experience now shapes the support he builds for other athletes.",
       "extra": "The three-year account is Chenge’s recollection. Official records document three later World Championship appearances: Nanjing 2025, Tokyo 2025 and Toruń 2026. His best world-championship placing in that period was seventh indoors at Nanjing.",
       "photos": [
         "self-directed-training",
@@ -256,21 +257,60 @@
   ],
   "rankings": [
     {
+      "documentDate": "2017-12-31",
+      "rank": 10,
+      "sourceId": "u20-2017",
+      "kind": "annual-top-list",
+      "ageCategory": "u20",
+      "season": 2017,
+      "mark": 16.3,
+      "heading": "U20 world top list",
+      "context": "2017 season · 16.30m",
+      "dateLabel": "Season ending 31 December 2017",
+      "label": "World Athletics · best by athlete"
+    },
+    {
+      "documentDate": "2022-06-07",
+      "rank": 7,
+      "sourceId": "world-2022-tcu",
+      "kind": "reported-world-position",
+      "heading": "World top ten",
+      "context": "Senior triple jump · reported by TCU",
+      "dateLabel": "TCU report · 7 June 2022",
+      "label": "NCAA Championships preview"
+    },
+    {
       "documentDate": "2025-09-16",
       "rank": 20,
       "sourceId": "tokyo-rank",
       "kind": "world-ranking-snapshot",
-      "label": "Tokyo 2025 qualification start list"
+      "heading": "World ranking",
+      "context": "Men’s triple jump · points-based ranking",
+      "dateLabel": "Document dated 16 September 2025",
+      "label": "Tokyo qualification start list"
     },
     {
       "documentDate": "2026-03-20",
       "rank": 19,
       "sourceId": "torun-rank",
       "kind": "world-ranking-snapshot",
-      "label": "Toruń 2026 athlete briefing"
+      "heading": "World ranking",
+      "context": "Men’s triple jump · points-based ranking",
+      "dateLabel": "Document dated 20 March 2026",
+      "label": "Toruń athlete briefing"
     }
   ],
   "sources": {
+    "u20-2017": {
+      "title": "World Athletics · 2017 U20 world top list · best by athlete",
+      "url": "https://worldathletics.org/records/toplists/jumps/triple-jump/outdoor/men/u20/2017?ageCategory=u20&bestResultsOnly=true&regionType=world&windReading=regular&page=1",
+      "type": "official"
+    },
+    "world-2022-tcu": {
+      "title": "TCU Athletics · No. 7 in the world · 7 June 2022",
+      "url": "https://gofrogs.com/news/2022/6/7/mens-outdoor-track-preview-ncaa-outdoor-championships",
+      "type": "official"
+    },
     "tcu-bio": {
       "title": "TCU Athletics · Official athlete biography",
       "url": "https://gofrogs.com/sports/mens-indoor-track/roster/chengetayi-du-mapaya/14063",
@@ -347,7 +387,7 @@
     {
       "era": "2017",
       "title": "African U20 champion.",
-      "detail": "16.30m · Tlemcen, Algeria",
+      "detail": "16.30m · World U20 top ten in 2017",
       "chapterId": "zimbabwe-to-africa"
     },
     {
@@ -358,8 +398,8 @@
     },
     {
       "era": "AFTER TCU",
-      "title": "His own coach on the ground.",
-      "detail": "Three years leading his daily training",
+      "title": "Self-coached. World finalist.",
+      "detail": "Three years. Full-time work. Three Worlds. 7th at World Indoors 2025.",
       "chapterId": "coaching-myself"
     },
     {

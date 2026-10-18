@@ -11,7 +11,7 @@
  function selectPoint(index){
   const p=visible[index];if(!p)return;
   plot.querySelectorAll('[data-point]').forEach(el=>{const selected=Number(el.dataset.point)===index;el.setAttribute('aria-pressed',String(selected));el.previousElementSibling.classList.toggle('chart-selected',selected);});
-  selection.innerHTML=`<strong>${p.mark.toFixed(2)}<small> m</small></strong><p>${escape(p.title)}</p><small>${escape(dateLabel(p.date))} · ${escape(p.venue)} · ${p.environment}<br><a href="${escape(data.sources[p.sourceId].url)}">View official record ↗</a></small>`;
+  selection.innerHTML=`<strong>${p.mark.toFixed(2)}<small> m</small></strong><p>${escape(p.title)}</p><small>${escape(dateLabel(p.date))} · ${escape(p.venue)} · ${p.environment}<br><a href="${escape(data.sources[p.sourceId].url)}">View official record <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a></small>`;
  }
  function drawChart(nextMode){
   mode=nextMode;
