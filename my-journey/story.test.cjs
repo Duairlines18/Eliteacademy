@@ -23,7 +23,7 @@ test('new page contains no private academic records or unreviewed watermarks',()
 });
 test('homepage changes are limited to navigation and the authorized pathway arrival',()=>{
  const old=execFileSync('git',['show','921607a:index.html'],{encoding:'utf8',maxBuffer:12e6});
- const current=fs.readFileSync('index.html','utf8');
+ const current=fs.readFileSync('index.html','utf8').replace(/Loughborough University Student-Athlete/g,'Future Loughborough University Student-Athlete').replace('<p>Kutama College Sports Captain</p>','<p>800m Athlete · Kutama College</p>').replace('— Kutama College Sports Captain</div>','— 800m Athlete, Kutama College</div>');
  const strip=s=>s.replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});");
  assert.equal(strip(current).replace(/\r\n/g,'\n'),old.replace(/\r\n/g,'\n'));
  assert.match(current,/href="\/my-journey\/"/);

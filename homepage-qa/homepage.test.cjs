@@ -4,7 +4,12 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 // The owner authorized My Journey navigation only. Exact removal is separately
 // verified by my-journey/story.test.cjs against the branch starting commit.
-const html=fs.readFileSync('index.html','utf8').replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'');
+const currentHtml=fs.readFileSync('index.html','utf8');
+assert.equal((currentHtml.match(/Loughborough University Student-Athlete/g)||[]).length,2);
+assert.equal((currentHtml.match(/Kutama College Sports Captain/g)||[]).length,2);
+assert.doesNotMatch(currentHtml,/Future Loughborough|800m Athlete[ ·,]+Kutama College/);
+const restoreTitles=source=>source.replace(/Loughborough University Student-Athlete/g,'Future Loughborough University Student-Athlete').replace('<p>Kutama College Sports Captain</p>','<p>800m Athlete · Kutama College</p>').replace('— Kutama College Sports Captain</div>','— 800m Athlete, Kutama College</div>');
+const html=restoreTitles(currentHtml).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'');
 // These checks catch the duplicated homepage fragments and their stale controllers.
 for(const id of ['sports','performance-hub','credentials','premium-story-grid']){
   assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,`${id} must identify one section`);
