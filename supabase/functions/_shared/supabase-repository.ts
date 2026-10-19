@@ -13,7 +13,7 @@ const PROFESSIONAL_MEMBER_FIELDS = [
 
 const PARENT_ATHLETE_FIELDS = [
   'id', 'parent_user_id', 'athlete_user_id', 'athlete_email', 'parent_first_name', 'parent_last_name', 'parent_email',
-  'full_name', 'display_name', 'cohort_id', 'access_status', 'paid',
+  'full_name', 'display_name', 'cohort_id', 'programme_id', 'current_week', 'access_status', 'paid',
   'access_reason', 'payment_status', 'programme_start_date',
   'coach_note', 'exercise_substitutions',
   'onboarding_complete', 'onboarding_data',
@@ -233,7 +233,7 @@ export class SupabaseHubRepository {
     if (!programme) return null;
 
     let weekQuery = this.client.from('programme_weeks')
-        .select('id,programme_id,week_number,phase,weekly_objective,running_focus,strength_focus,event_focus,athlete_education,status,verification_status,published_at')
+        .select('id,programme_id,week_number,phase,weekly_objective,running_focus,strength_focus,event_focus,athlete_education,status,verification_status,published_at,scheduled_for')
         .eq('programme_id', programme.id)
         .eq('week_number', cohort.current_week)
         .in('status', ['live', 'completed'])
@@ -300,7 +300,143 @@ export class SupabaseHubRepository {
   async insertFeedback(row:Record<string,unknown>){return assertResult(await this.client.from('feedback').insert(row).select('id,status').single(),'Feedback insert failed');}
   async updateFeedback(id:string,row:Record<string,unknown>){return assertResult(await this.client.from('feedback').update(row).eq('id',id).select('id,status').single(),'Feedback update failed');}
   async listPublishedWeeks(cohortId:string){const cohort=await this.findCohortContext(cohortId);if(!cohort?.programme_id||cohort.status!=='live')return[];let query=this.client.from('programme_weeks').select('id,week_number,phase,weekly_objective,published_at').eq('programme_id',cohort.programme_id).lt('week_number',cohort.current_week).in('status',['live','completed']).eq('verification_status','verified').not('published_at','is',null).order('week_number',{ascending:false});if(cohort.tier){const tier=assertResult(await this.client.from('programme_tiers').select('id').eq('programme_id',cohort.programme_id).eq('name',cohort.tier).maybeSingle(),'Programme tier lookup failed');if(!tier)return[];query=query.eq('tier_id',tier.id);}else query=query.is('tier_id',null);return assertResult(await query,'Programme history lookup failed')||[];}
-  async loadProgrammeWeek(cohortId:string,weekNumber:number){const cohort=assertResult(await this.client.from('cohorts').select('id,name,current_week,status,programme_id,tier,start_date,expected_sessions_per_week').eq('id',cohortId).eq('status','live').maybeSingle(),'Cohort lookup failed');if(!cohort?.programme_id||!Number.isInteger(weekNumber)||weekNumber<1||weekNumber>=cohort.current_week)return null;const programme=assertResult(await this.client.from('programmes').select('id,name,duration_weeks,sport').eq('id',cohort.programme_id).maybeSingle(),'Programme lookup failed');if(!programme)return null;let weekQuery=this.client.from('programme_weeks').select('id,programme_id,week_number,phase,weekly_objective,running_focus,strength_focus,event_focus,athlete_education,status,verification_status,published_at').eq('programme_id',programme.id).eq('week_number',weekNumber).in('status',['live','completed']).eq('verification_status','verified').not('published_at','is',null);if(cohort.tier){const tier=assertResult(await this.client.from('programme_tiers').select('id').eq('programme_id',programme.id).eq('name',cohort.tier).maybeSingle(),'Programme tier lookup failed');if(!tier)return null;weekQuery=weekQuery.eq('tier_id',tier.id);}else weekQuery=weekQuery.is('tier_id',null);const week=assertResult(await weekQuery.maybeSingle(),'Programme history week lookup failed');if(!week)return null;const trainingDays=assertResult(await this.client.from('training_days').select('id,programme_week_id,day_key,title,intensity,objective,duration,sort_order,playlist_id,playlist_url').eq('programme_week_id',week.id).order('sort_order'),'Training days lookup failed')||[];const dayIds=trainingDays.map((day:any)=>day.id);const blocks=dayIds.length?(assertResult(await this.client.from('session_blocks').select('id,training_day_id,block_type,title,sort_order,content,athlete_note,staff_note').in('training_day_id',dayIds).order('sort_order'),'Session blocks lookup failed')||[]):[];const referencedCodes=[...new Set(blocks.flatMap((block:any)=>{const legacy=Array.isArray(block?.content?.exerciseCodes)?block.content.exerciseCodes:[];const prescriptions=Array.isArray(block?.content?.prescriptions)?block.content.prescriptions:[];return[...legacy,...prescriptions.flatMap((item:any)=>[item?.exerciseCode,item?.alternativeExerciseCode])].filter((code:unknown)=>typeof code==='string'&&code.trim()).map((code:string)=>code.trim());}))];const exercises=referencedCodes.length?(assertResult(await this.client.from('exercises').select('id,code,name,category_slug,categories,video_id,video_url,description,purpose,coaching_cues,default_dosage,display_order,active').in('code',referencedCodes).eq('active',true).order('display_order'),'Exercise lookup failed')||[]):[];return{cohort,programme,week,trainingDays,blocks,exercises:await loadReviewedBlockExercises(this.client,blocks,exercises)};}
+  async loadProgrammeWeek(cohortId:string,weekNumber:number){const cohort=assertResult(await this.client.from('cohorts').select('id,name,current_week,status,programme_id,tier,start_date,expected_sessions_per_week').eq('id',cohortId).eq('status','live').maybeSingle(),'Cohort lookup failed');if(!cohort?.programme_id||!Number.isInteger(weekNumber)||weekNumber<1||weekNumber>=cohort.current_week)return null;const programme=assertResult(await this.client.from('programmes').select('id,name,duration_weeks,sport').eq('id',cohort.programme_id).maybeSingle(),'Programme lookup failed');if(!programme)return null;let weekQuery=this.client.from('programme_weeks').select('id,programme_id,week_number,phase,weekly_objective,running_focus,strength_focus,event_focus,athlete_education,status,verification_status,published_at,scheduled_for').eq('programme_id',programme.id).eq('week_number',weekNumber).in('status',['live','completed']).eq('verification_status','verified').not('published_at','is',null);if(cohort.tier){const tier=assertResult(await this.client.from('programme_tiers').select('id').eq('programme_id',programme.id).eq('name',cohort.tier).maybeSingle(),'Programme tier lookup failed');if(!tier)return null;weekQuery=weekQuery.eq('tier_id',tier.id);}else weekQuery=weekQuery.is('tier_id',null);const week=assertResult(await weekQuery.maybeSingle(),'Programme history week lookup failed');if(!week)return null;const trainingDays=assertResult(await this.client.from('training_days').select('id,programme_week_id,day_key,title,intensity,objective,duration,sort_order,playlist_id,playlist_url').eq('programme_week_id',week.id).order('sort_order'),'Training days lookup failed')||[];const dayIds=trainingDays.map((day:any)=>day.id);const blocks=dayIds.length?(assertResult(await this.client.from('session_blocks').select('id,training_day_id,block_type,title,sort_order,content,athlete_note,staff_note').in('training_day_id',dayIds).order('sort_order'),'Session blocks lookup failed')||[]):[];const referencedCodes=[...new Set(blocks.flatMap((block:any)=>{const legacy=Array.isArray(block?.content?.exerciseCodes)?block.content.exerciseCodes:[];const prescriptions=Array.isArray(block?.content?.prescriptions)?block.content.prescriptions:[];return[...legacy,...prescriptions.flatMap((item:any)=>[item?.exerciseCode,item?.alternativeExerciseCode])].filter((code:unknown)=>typeof code==='string'&&code.trim()).map((code:string)=>code.trim());}))];const exercises=referencedCodes.length?(assertResult(await this.client.from('exercises').select('id,code,name,category_slug,categories,video_id,video_url,description,purpose,coaching_cues,default_dosage,display_order,active').in('code',referencedCodes).eq('active',true).order('display_order'),'Exercise lookup failed')||[]):[];return{cohort,programme,week,trainingDays,blocks,exercises:await loadReviewedBlockExercises(this.client,blocks,exercises)};}
+
+
+  async loadAssignedProgramme(athlete: any, requestedWeek?: number) {
+    const programmeId = athlete?.programme_id;
+    const weekNumber = Number.isInteger(requestedWeek) ? requestedWeek : (Number.isInteger(athlete?.current_week) ? athlete.current_week : 1);
+    if (!programmeId) return null;
+
+    const programme = assertResult(
+      await this.client.from('programmes')
+        .select('id,name,duration_weeks,sport')
+        .eq('id', programmeId)
+        .eq('status', 'live')
+        .maybeSingle(),
+      'Assigned programme lookup failed',
+    );
+    if (!programme) return null;
+
+    const week = assertResult(
+      await this.client.from('programme_weeks')
+        .select('id,programme_id,week_number,phase,weekly_objective,running_focus,strength_focus,event_focus,athlete_education,status,verification_status,published_at,scheduled_for')
+        .eq('programme_id', programme.id)
+        .eq('week_number', weekNumber)
+        .in('status', ['live', 'completed'])
+        .eq('verification_status', 'verified')
+        .not('published_at', 'is', null)
+        .is('tier_id', null)
+        .maybeSingle(),
+      'Assigned programme week lookup failed',
+    );
+
+    const cohort = {
+      id: athlete.id,
+      name: `${athlete.full_name || athlete.display_name || 'Private Athlete'} — Individual Private Athlete`,
+      current_week: weekNumber,
+      status: 'live',
+      programme_id: programme.id,
+      tier: null,
+      start_date: athlete.programme_start_date || '',
+      expected_sessions_per_week: 7,
+    };
+
+    if (!week) return { cohort, programme, week: null, trainingDays: [], blocks: [], exercises: [] };
+
+    const trainingDays = assertResult(
+      await this.client.from('training_days')
+        .select('id,programme_week_id,day_key,title,intensity,objective,duration,sort_order,playlist_id,playlist_url')
+        .eq('programme_week_id', week.id)
+        .order('sort_order'),
+      'Assigned training days lookup failed',
+    ) || [];
+
+    const dayIds = trainingDays.map((day: any) => day.id);
+    const blocks = dayIds.length ? (assertResult(
+      await this.client.from('session_blocks')
+        .select('id,training_day_id,block_type,title,sort_order,content,athlete_note,staff_note')
+        .in('training_day_id', dayIds)
+        .order('sort_order'),
+      'Assigned session blocks lookup failed',
+    ) || []) : [];
+
+    const referencedCodes = [...new Set(blocks.flatMap((block: any) => {
+      const legacyCodes = Array.isArray(block?.content?.exerciseCodes) ? block.content.exerciseCodes : [];
+      const prescriptions = Array.isArray(block?.content?.prescriptions) ? block.content.prescriptions : [];
+      return [...legacyCodes, ...prescriptions.flatMap((item: any) => [item?.exerciseCode, item?.alternativeExerciseCode])]
+        .filter((code: unknown) => typeof code === 'string' && code.trim())
+        .map((code: string) => code.trim());
+    }))];
+
+    const exercises = referencedCodes.length ? (assertResult(
+      await this.client.from('exercises')
+        .select('id,code,name,category_slug,categories,video_id,video_url,description,purpose,coaching_cues,default_dosage,display_order,active')
+        .in('code', referencedCodes)
+        .eq('active', true)
+        .order('display_order'),
+      'Assigned exercise lookup failed',
+    ) || []) : [];
+
+    return { cohort, programme, week, trainingDays, blocks, exercises: await loadReviewedBlockExercises(this.client, blocks, exercises) };
+  }
+
+  async listAssignedProgrammeSchedule(athlete: any) {
+    if (!athlete?.programme_id) return [];
+    return assertResult(
+      await this.client.from('programme_weeks')
+        .select('week_number,phase,weekly_objective,scheduled_for,status,verification_status,published_at')
+        .eq('programme_id', athlete.programme_id)
+        .is('tier_id', null)
+        .in('status', ['live', 'completed']).eq('verification_status', 'verified').not('published_at', 'is', null)
+        .order('week_number', { ascending: true }),
+      'Assigned programme schedule lookup failed',
+    ) || [];
+  }
+
+  async listAssignedUpcomingWeeks(athlete: any) {
+    if (!athlete?.programme_id) return [];
+    const currentWeek = Number.isInteger(athlete.current_week) ? athlete.current_week : 1;
+    return assertResult(
+      await this.client.from('programme_weeks')
+        .select('week_number,phase,weekly_objective,scheduled_for,status,verification_status,published_at')
+        .eq('programme_id', athlete.programme_id)
+        .gt('week_number', currentWeek)
+        .in('status', ['live', 'completed']).eq('verification_status', 'verified').not('published_at', 'is', null)
+        .is('tier_id', null)
+        .in('status', ['live', 'completed']).eq('verification_status', 'verified').not('published_at', 'is', null)
+        .order('week_number', { ascending: true }),
+      'Assigned upcoming weeks lookup failed',
+    ) || [];
+  }
+
+  async listAssignedPublishedWeeks(athlete: any) {
+    if (!athlete?.programme_id) return [];
+    return assertResult(
+      await this.client.from('programme_weeks')
+        .select('id,week_number,phase,weekly_objective,published_at')
+        .eq('programme_id', athlete.programme_id)
+        .lt('week_number', Number.isInteger(athlete.current_week) ? athlete.current_week : 1)
+        .in('status', ['live', 'completed'])
+        .eq('verification_status', 'verified')
+        .not('published_at', 'is', null)
+        .is('tier_id', null)
+        .order('week_number', { ascending: false }),
+      'Assigned programme history lookup failed',
+    ) || [];
+  }
+
+  async loadAssignedProgrammeWeek(athlete: any, weekNumber: number) {
+    const currentWeek = Number.isInteger(athlete?.current_week) ? athlete.current_week : 1;
+    if (!Number.isInteger(weekNumber) || weekNumber < 1 || weekNumber >= currentWeek) return null;
+    return this.loadAssignedProgramme(athlete, weekNumber);
+  }
+
+  async loadAssignedVisibleWeek(athlete: any, weekNumber: number) {
+    const currentWeek = Number.isInteger(athlete?.current_week) ? athlete.current_week : 1;
+    if (!Number.isInteger(weekNumber) || weekNumber < 1 || weekNumber > currentWeek + 1) return null;
+    return this.loadAssignedProgramme(athlete, weekNumber);
+  }
 
   async loadExercisesByCodes(codes: string[]) {
     if (!codes.length) return [];
@@ -314,4 +450,3 @@ export class SupabaseHubRepository {
     ) || [];
   }
 }
-

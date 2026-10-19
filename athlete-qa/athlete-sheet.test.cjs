@@ -15,12 +15,13 @@ const source=extract('  function compactAthleteWeek(p,activeId){','  function we
   +';globalThis.testApi={compactAthleteWeek,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';
 let selected='Form 2';
 const context={
+  DuHubDelivery:require('../hub-delivery/delivery.js'),programme:()=>({week:6}),
   escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
   encodeURIComponent,
-  HUB_STATE:{audience:'school'},
+  HUB_STATE:{audience:'school',contentStatus:'published'},
   session:()=>({role:'athlete'}),
   schoolGroup:()=>selected,
-  isSharedSchoolViewer:()=>true,
+  isSchoolReferenceViewer:()=>context.HUB_STATE.audience==='school',isSharedSchoolViewer:()=>context.HUB_STATE.audience==='school',
   deliverySections:sections=>sections,
   isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),
   hubPhaseRows:()=>'<span>optional reference</span>'
@@ -39,7 +40,7 @@ assert.match(app,/function compactSchoolWeek\(p\)/);
 assert.doesNotMatch(week,/CURRENT PROGRAMME|60m/);
 const sections=[
  {title:'Standard Warm-Up',order:1,items:[{title:'200m easy jog',dosage:'100m out + 100m back',group:''},{title:'Split Squat',dosage:'2 × 6',group:'Form 2'},{title:'Split Squat',dosage:'3 × 8',group:'Form 3'}]},
- {title:'Main Strength',order:2,items:[{title:'Calf Raise',dosage:'2 × 10',group:'Form 2',videoUrl:'https://www.youtube.com/shorts/test'},{title:'Calf Raise',dosage:'3 × 12',group:'Form 3'},{title:'Bridge',dosage:'2 × 8',group:'Form 2',videoUrl:'javascript:alert(1)'}]}
+ {title:'Main Strength',order:2,items:[{title:'Calf Raise',dosage:'2 × 10',group:'Form 2',videoUrl:'https://www.youtube.com/shorts/abcdefghijk'},{title:'Calf Raise',dosage:'3 × 12',group:'Form 3'},{title:'Bridge',dosage:'2 × 8',group:'Form 2',videoUrl:'javascript:alert(1)'}]}
 ];
 const visible=api.visibleNormalizedSections({sections});
 assert.equal(visible[0].items.length,2);
@@ -71,8 +72,7 @@ assert.match(html,/hub-athlete-day-picker/);
 assert.match(html,/hub-athlete-warmup/);
 assert.match(html,/hub-athlete-demo/);
 assert.match(app,/if\(privateSelfServeViewer\(\)\)return renderPrivateAthleteCompact\(\)/);
-assert.match(app,/if\(copyButton&&\(isSchoolReferenceViewer\(\)\|\|privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)/);
-context.HUB_STATE.audience='private-athlete';
+context.HUB_STATE.audience='private-athlete';context.HUB_STATE.delivery={model:'private-athlete',copyWorkout:true};
 assert.equal(api.privateSelfServeViewer(),true);
 const privateWorkout=[{title:'Day 1 Strength',items:[{title:'Split Squat',dosage:'3 × 6',rest:'90s'},{title:'Calf Raise',dosage:'2 × 10'}]}];
 const privateSheet=api.schoolAthleteDelivery(privateWorkout,{title:'Day 1'});
@@ -81,6 +81,7 @@ assert.match(privateSheet,/3 × 6/);
 assert.doesNotMatch(privateSheet,/Training group:/);
 const privateCopy=api.athleteCopyText({day:'Day 1',title:'Strength',duration:'40 min'},privateWorkout);
 assert.match(privateCopy,/Split Squat — 3 × 6 · Rest: 90s/);
+context.HUB_STATE.audience='parent';assert.doesNotMatch(api.schoolAthleteDelivery(privateWorkout,{}),/data-athlete-copy/);context.HUB_STATE.audience='private-athlete';
 assert.doesNotMatch(privateCopy,/Training group:/);
 context.HUB_STATE.audience='professional';
 assert.equal(api.privateSelfServeViewer(),true);
@@ -135,6 +136,4 @@ assert.match(app,/guidedCard\(items\[cursor\]/,'parent guided mode uses original
 assert.match(app,/data-completion-toggle/,'guided completion control remains present');
 assert.match(app,/saveWorkoutCompletion\(sessionKey,itemKey,next\)/,'completion persists through existing backend');
 assert.match(app,/data-guided-next/,'guided next navigation remains present');
-assert.match(app,/privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)\&\&session\(\)\?\.role!=='staff'/,'parent can copy workout');
-assert.match(app,/\(privateSelfServeViewer\(\)\|\|HUB_STATE\.audience==='parent'\)\?\[\]/,'parent copy omits school training group');
 console.log('Parent four-day simplicity regression QA passed.');
