@@ -67,10 +67,23 @@ for(const match of journeyStyles.matchAll(/([^{}]+)\{/g)){
  if(selector.startsWith('@media'))continue;
  assert.ok(selector.split(',').every(part=>part.trim().startsWith('.duj')),'Journey CSS cannot style the public homepage');
 }
-assert.equal(withoutJourneyPresentation(html.slice(0,html.indexOf(routeStart))),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains unchanged except its isolated Hub stylesheet link');
+const withoutHubAssets=source=>source.replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
+assert.equal(withoutHubAssets(withoutJourneyPresentation(html.slice(0,html.indexOf(routeStart)))),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains unchanged apart from isolated Hub asset links');
+const withoutHubRepair=source=>source
+ .replace(/  function guidedCard\([^\n]+\n/,'  GUIDED_PRESCRIPTION\n')
+ .replace(/  async function loadAccountHubData\([\s\S]*?(?=  async function loadHubData\()/,'  ACCOUNT_BOOTSTRAP\n')
+ .replace(/  function mergeExercises\([^\n]+\n/,'  LIBRARY_MERGE\n')
+ .replace(/  function copyWorkoutAllowed\([\s\S]*?(?=  function athleteCopyText\()/,'')
+ .replace(/  function staffAllGroupsExperience\([\s\S]*?(?=  function privateSelfServeViewer\()/,'  STAFF_DELIVERY\n')
+ .replace(/  function renderSession\([^\n]+\n/,'  SESSION_DELIVERY\n')
+ .replace(/  function renderPrivateAthleteCompact\([\s\S]*?(?=  function parentSessionLabel\()/,'  PRIVATE_DASHBOARD\n')
+ .replace(/  function renderSharedWeeklyDashboard\([\s\S]*?(?=  function renderParentSimpleDashboard\()/,'')
+ .replace(/  function renderParentSimpleDashboard\([\s\S]*?(?=  function renderAthleteDashboard\()/,'  PARENT_DASHBOARD\n')
+ .replace(/  function weekBrowser\([\s\S]*?(?=  function compactSchoolWeek\()/,'  PUBLISHED_WEEK_PREVIEW\n')
+ .replace(/    const copyButton=[\s\S]*?(?=    const videoClose=)/,'  COPY_CLICK_HANDLER\n');
 // Story arrival is covered by my-journey/story.test.cjs; exclude only its exact scoped branch.
 const withoutPartnershipPresentation=source=>source.replace(/      if \(activeView === homeView && location.hash === '#stories'\) \{[\s\S]*?      \} else\r?\n/, '').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});").replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
-assert.equal(withoutJourneyPresentation(withoutAirZimPresentation(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController))))),withoutJourneyPresentation(withoutAirZimPresentation(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController))))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
+assert.equal(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)))))),withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
 const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
 assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
 console.log('Production integration preservation passed.');

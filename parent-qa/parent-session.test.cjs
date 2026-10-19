@@ -8,7 +8,7 @@ assert.ok(app,'Hub app script found');
 const begin=app.indexOf('  function parentSessionLabel('),end=app.indexOf('  function renderAthleteDashboard(){',begin);
 assert.ok(begin>=0&&end>begin,'parent rendering functions available');
 const code=app.slice(begin,end)+';globalThis.api={parentSessionLabel,parentSessionHeading,parentTrainingDays,renderParentSimpleDashboard};';
-const ctx={encodeURIComponent,escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),programme:()=>ctx.p,athleteDemo:()=>({displayName:'Andria'}),HUB_STATE:{contentStatus:'live'},weekLabel:()=> 'Week 4 of 6',root:{innerHTML:''},shell:s=>s};
+const ctx={DuHubDelivery:require('../hub-delivery/delivery.js'),airZimTool:()=>'',encodeURIComponent,escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),programme:()=>ctx.p,athleteDemo:()=>({displayName:'Andria'}),HUB_STATE:{contentStatus:'published'},weekLabel:()=> 'Week 4 of 6',root:{innerHTML:''},shell:s=>s};
 vm.createContext(ctx);vm.runInContext(code,ctx);
 const sessions=[
 {id:'one',day:'Day 1',title:'Day 1 — Recovery Reset',duration:'15–20 min'},

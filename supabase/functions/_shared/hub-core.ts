@@ -165,7 +165,13 @@ export function shapeBootstrap(input: {
     };
   }
   const trainingDays = [...(input.trainingDays || [])].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-  const allBlocks = input.blocks || [];
+  const allBlocks = (input.blocks || []).map((block: any) => {
+    const original = Array.isArray(block?.content?.items) ? block.content.items : [];
+    const instructions = (Array.isArray(block?.content?.prescriptions) ? block.content.prescriptions : [])
+      .filter((row: any) => !row?.exerciseCode && typeof row?.instruction === 'string' && row.instruction.trim())
+      .map((row: any) => row.instruction);
+    return {...block,content:{...(block.content || {}),items:[...original,...[...instructions, ...(typeof block?.content?.instruction === 'string' && block.content.instruction.trim() ? [block.content.instruction] : [])].filter((line: string) => !original.includes(line))]}};
+  });
 
   const sessions = trainingDays.map((day, index) => {
     const blocks = allBlocks
@@ -262,6 +268,7 @@ export function shapeBootstrap(input: {
       week: week.week_number,
       totalWeeks: programme.duration_weeks,
       phase: week.phase || '',
+      scheduledFor: week.scheduled_for || '',
       weeklyObjective: week.weekly_objective || '',
       athleteEducation: week.athlete_education || '',
       programmeNotes: role === 'staff' ? programmeNotes : '',

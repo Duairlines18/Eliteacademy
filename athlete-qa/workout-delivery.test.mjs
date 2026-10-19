@@ -2,15 +2,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
+import {createRequire} from 'node:module';
+const delivery=createRequire(import.meta.url)('../hub-delivery/delivery.js');
 import {shapeBootstrap} from '../supabase/functions/_shared/hub-core.ts';
 import {SupabaseHubRepository} from '../supabase/functions/_shared/supabase-repository.ts';
 
 const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const extract=(a,b)=>html.slice(html.indexOf(a),html.indexOf(b,html.indexOf(a)+a.length));
-const ctx={HUB_STATE:{audience:'private-athlete'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),encodeURIComponent};
+const ctx={DuHubDelivery:delivery,programme:()=>({week:6}),HUB_STATE:{audience:'private-athlete'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSchoolReferenceViewer:()=>false,isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),encodeURIComponent};
 vm.createContext(ctx);
-vm.runInContext(extract('  function simpleText(','  function visibleNormalizedSections(')+extract('  function deliverySections(','  function staffAllGroupsExperience(')+extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')+';globalThis.api={normalizeWorkoutSession,schoolAthleteDelivery,athleteCopyText};',ctx);
-const library=[['SPR01','Wall March'],['SPR02','Wall Switch'],['STR01','Calf Raise'],['CORE01','Hollow Hold'],['CORE02','Dead Bug']].map(([code,name],i)=>({code,name,active:true,video_id:'demo_video_'+i,video_url:'https://www.youtube.com/watch?v=demo_video_'+i}));
+ctx.isWorkoutComplete=()=>false;
+vm.runInContext(extract('  function simpleText(','  function visibleNormalizedSections(')+extract('  function guidedCard(','  function quickView(')+extract('  function deliverySections(','  function staffAllGroupsExperience(')+extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')+';globalThis.api={normalizeWorkoutSession,schoolAthleteDelivery,athleteCopyText,guidedCard};',ctx);
+const library=[['SPR01','Wall March'],['SPR02','Wall Switch'],['STR01','Calf Raise'],['CORE01','Hollow Hold'],['CORE02','Dead Bug']].map(([code,name],i)=>({code,name,active:true,video_id:'demo_video'+i,video_url:'https://www.youtube.com/watch?v=demo_video'+i}));
 const clientLibrary=library.map(e=>({...e,title:e.name,videoUrl:e.video_url,videoId:e.video_id}));
 const normalize=(items,extra={})=>ctx.api.normalizeWorkoutSession({itemSections:[{title:'Strength',order:1,items,...extra}]},clientLibrary);
 test('repository loads canonical demos for text blocks without a duplicate exerciseCodes list',async()=>{
@@ -53,3 +56,6 @@ test('bootstrap carries reviewed text-only demos from current active library, ne
  const inactive=shapeBootstrap({...input,exercises:library.map(e=>({...e,active:false}))});
  assert.equal(inactive.programme.sessions[0].itemSections[0].videoLinks.length,0);
 });
+test('reviewed non-video URLs never reenter normalized Guided or staff rows',()=>{const w=normalize(['Wall March 2 × 10'],{videoLinks:[{itemIndex:0,title:'Wall March',url:'https://youtube.com/playlist?list=bad'}]});assert.equal(w.sections[0].items[0].videoUrl,'');assert.equal(w.sections[0].items[0].demos.length,0);});
+test('Guided running rows retain prescribed pain cues and rest',()=>{const w=normalize(['3 x 80m; stop if pain returns; rest 3 min']);const item=w.sections[0].items[0];const result=ctx.api.guidedCard(item,'Running',0,1,'day');assert.match(result,/stop if pain returns/);assert.match(result,/3 min/);});
+test('raw clipboard fallback cannot reintroduce another school groups dose',()=>{ctx.isSharedSchoolViewer=()=>true;ctx.schoolGroup=()=> 'Form 2';const items=['Form 2 — Calf Raise — 2 × 8','Form 3 — Calf Raise — 3 × 12'];const w=normalize(items);const scoped=w.sections.map(s=>({...s,items:s.items.filter(i=>i.group==='Form 2')}));const copied=ctx.api.athleteCopyText({items},scoped);assert.match(copied,/2 × 8/);assert.doesNotMatch(copied,/3 × 12|Form 3/);ctx.isSharedSchoolViewer=()=>false;ctx.schoolGroup=()=>'';});
