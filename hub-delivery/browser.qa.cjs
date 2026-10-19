@@ -10,7 +10,7 @@ const fixtures=JSON.parse(fs.readFileSync(process.env.HUB_QA_FIXTURES,'utf8'));
  try{for(const name of ['Andria','Larry','Pride','Okello'])for(const audience of ['parent','private-athlete'])for(const width of [320,390,1280]){
   browser=await launch();
   const original=fixtures.find(f=>f.name===name);assert.ok(original,'Missing fixture '+name);
-  const data={...original.data,audience,delivery:{model:audience==='parent'?'parent-managed':'private-athlete',copyWorkout:audience!=='parent'}};
+  const data={...original.data,audience,delivery:audience==='parent'?{model:'parent-managed',copyWorkout:false}:original.data.delivery};
   data.historyWeeks=[{week_number:5,phase:'Published history'}];data.programmeSchedule=[{week_number:data.programme.week+1,phase:'Published next week',status:'live',verification_status:'verified',published_at:'2026-10-19'}];
   const context=await browser.newContext({viewport:{width,height:844},isMobile:width<500,hasTouch:width<500,permissions:['clipboard-read','clipboard-write']}),page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
@@ -26,9 +26,9 @@ const fixtures=JSON.parse(fs.readFileSync(process.env.HUB_QA_FIXTURES,'utf8'));
   await page.goto(base+'/#/hub/session/'+workout.id,{waitUntil:'domcontentloaded'});await page.locator('.hub-athlete-session-title').waitFor({timeout:15000});
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'workout fits '+width);
   if(workout.athleteNote)ok((await page.locator('#hub-root').innerText()).includes(workout.athleteNote),'saved instructions visible');
-  if(audience==='parent'){
-    ok(await page.locator('[data-athlete-copy]').count()===0,'parent has no copy button');
-    await page.locator('[data-workout-mode="guided"]').click();ok(await page.locator('.hub-guided-card').count()===1,'parent guided mode works');
+  if(audience==='parent'||data.delivery?.copyWorkout===false){
+    ok(await page.locator('[data-athlete-copy]').count()===0,'parent-managed delivery has no copy button');
+    if(audience==='parent'){await page.locator('[data-workout-mode="guided"]').click();ok(await page.locator('.hub-guided-card').count()===1,'parent guided mode works');}
   }else{
     const copy=page.locator('[data-athlete-copy]');ok(await copy.count()===1,'private copy button');
     ok(await copy.evaluate(el=>el.getBoundingClientRect().height>=44),'copy touch target');await copy.click();await page.getByText('Copied!',{exact:true}).waitFor();
