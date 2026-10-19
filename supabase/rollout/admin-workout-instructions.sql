@@ -24,6 +24,7 @@ declare
  v_bad_count integer;
  v_bad_dosage integer;
  v_codes jsonb;
+ v_saved_content jsonb;
 begin
  if auth.role() is distinct from 'service_role' then
    raise exception 'Administrative authorization required';
@@ -108,13 +109,15 @@ begin
  select count(*) into v_bad_count from refs r left join public.exercises e
  on e.code=r.code and e.active=true where e.id is null;
  if v_bad_count>0 then raise exception 'Missing or inactive exercise codes'; end if;
- update public.session_blocks set content=p_content where id=p_block_id;
- if (select content from public.session_blocks where id=p_block_id) is distinct from p_content
+ -- Existing BEFORE triggers own canonical video_links. All prescribed fields
+ -- must still read back exactly; return the actual saved demo metadata.
+ update public.session_blocks set content=p_content where id=p_block_id returning content into v_saved_content;
+ if (v_saved_content - 'video_links') is distinct from (p_content - 'video_links')
    then raise exception 'Workout read-back verification failed'; end if;
  return jsonb_build_object('status','WORKOUT_BLOCK_VERIFIED',
  'athlete_id',p_athlete_id,'programme_id',p_programme_id,
  'week',p_week_number,'block_id',p_block_id,'affected_other_athletes',v_owner_count,
- 'content',p_content,'previous_content',v_block.content);
+ 'content',v_saved_content,'previous_content',v_block.content);
 end;
 $$;
 revoke all on function public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,jsonb,boolean)

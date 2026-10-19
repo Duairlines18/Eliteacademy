@@ -116,5 +116,29 @@ try{
    assert.deepEqual((await privileges()).rows,originalPrivileges);
    await db.exec(read('rollout/admin-workout-instructions.sql'));
   });
+  await t.test('existing canonical demo trigger may update links while every prescribed field survives',async()=>{
+   await db.exec('begin');try{
+    await db.exec('alter table exercises add column name text;alter table exercises add column video_url text');
+    await db.exec(read('qa/fixtures/audited-session-triggers.sql'));
+    await db.query('update session_blocks set content=content where id=$1',[block]);
+    await setAuth(uid(9),'service_role');const before=await content();
+    const next={items:['QA running: 3 x 80m; rest 3 minutes'],prescriptions:[{instruction:'QA running: 3 x 80m; rest 3 minutes'}]};
+    const result=await rpc(next,before);assert.deepEqual(result.content,{...next,video_links:[]});assert.deepEqual(await content(),result.content);
+    await rpc(before,result.content);assert.deepEqual(await content(),before);
+    await db.exec("update exercises set name='Bridge',video_url='https://www.youtube.com/watch?v=abcdefghijk' where code='BR'");
+    const movement={items:['Bridge — 2 x 8'],prescriptions:[{exerciseCode:'BR',dosage:'2 x 8',rest:'60 seconds'}]};
+    const canonical=await rpc(movement,before);
+    assert.deepEqual(canonical.content,{...movement,video_links:[{item_index:0,exercise:'Bridge',video_url:'https://www.youtube.com/watch?v=abcdefghijk'}]});
+    await rpc(before,canonical.content);assert.deepEqual(await content(),before);
+    await db.query("update session_blocks set title='Air Zim Warm-Up' where id=$1",[block]).then(()=>assert.fail('Protected warm-up was allowed to lose its prescriptions'),error=>assert.match(error.message,/complete exercise prescriptions/));
+   }finally{await db.exec('rollback');}
+  });
+  await t.test('readback still rejects any trigger change outside canonical demo metadata',async()=>{
+   await db.exec('begin');try{
+    await db.exec("create function qa_mutate_content() returns trigger language plpgsql as $$begin NEW.content=jsonb_set(NEW.content,'{unexpected}','true'::jsonb,true);return NEW;end$$;create trigger qa_mutate_content before update on session_blocks for each row execute function qa_mutate_content()");
+    await setAuth(uid(9),'service_role');const before=await content();
+    await assert.rejects(rpc({items:['QA note']},before),/read-back verification failed/);
+   }finally{await db.exec('rollback');}
+  });
  });
 }finally{console.log('Engine: '+await scalar('select version()'));await db.close();}

@@ -63,3 +63,9 @@ All 63 distinct supported current library demo URLs returned YouTube embed metad
 Local SQL verification includes publication and update/readback/restore, stale preview rejection, unrelated and anonymous read denial, parent/athlete RLS parity, direct-first Journey resolution, and exact rollback of policies and validator definitions/grants. `admin-workout-instructions-rollback.sql` restores the two audited validator bodies if that release script is applied. See `supabase/qa/DATABASE_QA.md` for reproduction.
 
 Remaining production gates: controlled deployment approval, actual authenticated Edge Function/account views, actual demo playback, and hosted QA publish/restore. No passwords or secret keys were requested or extracted. Phase 2 remains excluded.
+
+## Approved release continuation
+
+The user subsequently approved the production release on the existing setup. Rollback bundles/definitions and pre-release data hashes were saved before changes. Parent v7, private v11 and hub-data v10 retain the previous JWT settings. The initial parity, policy and validator migration applied successfully.
+
+Hosted transaction-only QA exposed the existing canonical video trigger, which adds/rebuilds `video_links` before readback. The original strict equality check rejected a legitimate metadata change. An added local regression using the audited trigger reproduced the failure. The update RPC now returns actual stored content and requires exact equality of every field except root canonical `video_links`; a separate regression proves any other trigger mutation still rejects. Existing warm-up validation remains intact. All 18 database tests and 68 source regressions pass after the repair. This small additional change is reviewed and released with the same repair; no trigger itself is changed.

@@ -9,7 +9,7 @@ npm install --prefix /tmp/du-hub-database-qa --save-exact @electric-sql/pglite@0
 PGLITE_MODULE=/tmp/du-hub-database-qa/node_modules/@electric-sql/pglite/dist/index.js node supabase/qa/database.integration.mjs
 ```
 
-The final run executed PostgreSQL 17.5 (production is 17.6) and passed 16 tests. Checks include actual RLS filtering, matching parent/athlete rows, anonymous/unrelated denial, administrative authorization/grants, correct publish/readback/rollback, reversible saved-instruction edits, stale preview rejection, shared edit confirmation, incomplete/blank content denial, direct-first Journey parity, and exact policy/function rollback.
+The final run executed PostgreSQL 17.5 (production is 17.6) and passed 18 tests. Checks include actual RLS filtering, matching parent/athlete rows, anonymous/unrelated denial, administrative authorization/grants, correct publish/readback/rollback, reversible saved-instruction edits, stale preview rejection, shared edit confirmation, incomplete/blank content denial, direct-first Journey parity, and exact policy/function rollback. Two further tests use the audited existing video/validation triggers: canonical demo metadata can change while every prescribed field remains exact, and any non-demo mutation still rejects. The Air Zim warm-up prescription guard also remains effective.
 
 Before the new validator rollout was added, regression cases demonstrated rejection of nonempty instruction prescriptions and acceptance of empty content. The independent reviewer also identified whitespace codes and blank instructions; failing regressions preceded their fixes. `HUB_QA_BASELINE=1` runs the integration cases against the old validators and intentionally fails those repair assertions.
 
