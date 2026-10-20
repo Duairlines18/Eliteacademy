@@ -36,3 +36,9 @@ test('accepts correctly linked coded prescription with canonical URL',()=>{
  const errors=check([{title:'Strength',content:{items:['Calf Raise — 3 × 10'],prescriptions:[{exerciseCode:'STR01',dosage:'3 x 10'}],video_links:[{item_index:0,exercise:'Calf Raise',video_url:'https://www.youtube.com/watch?v=example'}]}}],library);
  assert.equal(errors.length,0);
 });
+
+test('grouped multi-exercise school rows do not create false code mismatch alarms',()=>{
+ const ex=[...library,{code:'STR02',name:'Dead Bug',active:true,video_url:'https://www.youtube.com/watch?v=other'}];
+ const errors=check([{title:'School Circuit',content:{items:['Form 2 — 3 x 10 calf raise; 2 x 6 dead bug'],prescriptions:[{exerciseCode:'STR01',dosage:'3 x 10'}],video_links:[{item_index:0,exercise:'Dead Bug',video_url:'https://www.youtube.com/watch?v=other'}]}}],ex);
+ assert.ok(!errors.some(e=>/does not match prescribed code/i.test(e)));
+});
