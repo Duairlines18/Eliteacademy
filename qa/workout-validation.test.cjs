@@ -57,3 +57,17 @@ test('synthetic school grouped rows retain reviewed multiple demo links',()=>{
  const blocks=[{title:'School Groups',content:{items:['Form 2 — 3 x 10 calf raise; 2 x 6 dead bug'],video_links:[{item_index:0,exercise:'Calf Raise',video_url:ex[0].video_url},{item_index:0,exercise:'Dead Bug',video_url:ex[1].video_url}]}}];
  assert.equal(check(blocks,ex).length,0);
 });
+
+test('rejects malformed video identifiers that the athlete Hub cannot play',()=>{
+ const invalid=[{code:'STR01',name:'Calf Raise',active:true,video_id:'shortid',video_url:''}];
+ const errors=check([{title:'Strength',content:{prescriptions:[{exerciseCode:'STR01',dosage:'3 x 10'}]}}],invalid);
+ assert.ok(errors.some(e=>/approved active demo missing/i.test(e)));
+});
+test('rejects misleading YouTube URL with invalid video ID',()=>{
+ const invalid=[{code:'STR01',name:'Calf Raise',active:true,video_url:'https://www.youtube.com/watch?v=not-eleven-characters'}];
+ assert.ok(check([{content:{prescriptions:[{exerciseCode:'STR01',dosage:'3 x 10'}]}}],invalid).some(e=>/demo missing/i.test(e)));
+});
+test('accepts valid 11-character YouTube shorts',()=>{
+ const valid=[{code:'STR01',name:'Calf Raise',active:true,video_url:'https://www.youtube.com/shorts/abcdefghijk'}];
+ assert.equal(check([{content:{prescriptions:[{exerciseCode:'STR01',dosage:'3 x 10'}]}}],valid).length,0);
+});
