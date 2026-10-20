@@ -48,6 +48,8 @@ for(const week of data.weeks){
         'Prescribed exercise demo not rendered: '+rx.exerciseCode+' in '+block.title);
       assert.ok(sheet.includes(ctx.escapeHtml(expected)),
         'Prescribed exercise demo absent from athlete HTML: '+rx.exerciseCode);
+      assert.ok(copied.includes(expected),
+        'Prescribed exercise demo absent from Copy Workout: '+rx.exerciseCode);
     }
     checkedPrescriptions++;
    }
