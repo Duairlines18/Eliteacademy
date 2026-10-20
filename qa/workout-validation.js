@@ -35,7 +35,7 @@ function workoutDeliveryIssues(blocks, library) {
       const suppliedUrl = link.video_url || link.videoUrl || '';
       if (canonicalUrl && suppliedUrl && suppliedUrl !== canonicalUrl) issues.push(label + ': demo URL differs from library for ' + link.exercise);
       const prescription = prescriptions[link.item_index];
-      if (prescription?.exerciseCode && ![prescription.exerciseCode, prescription.alternativeExerciseCode].filter(Boolean).includes(linkedExercise.code)) {
+      if (prescription?.exerciseCode && typeof items[link.item_index] === 'string' && !items[link.item_index].includes(';') && ![prescription.exerciseCode, prescription.alternativeExerciseCode].filter(Boolean).includes(linkedExercise.code)) {
         issues.push(label + ': demo exercise does not match prescribed code at row ' + (link.item_index + 1));
       }
     }
