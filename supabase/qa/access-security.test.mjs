@@ -85,3 +85,19 @@ test('unpublished assigned week does not leak private workout content',async()=>
  assert.equal(result.contentStatus,'preparing');
  assert.doesNotMatch(JSON.stringify(result),/Bridge 2 x 8/);
 });
+
+test('expired access code cannot issue a new session',async()=>{
+ const repo=makeRepo({findAccessCode:async()=>({...code,expires_at:'2026-10-19T12:00:00Z'})});
+ await assert.rejects(exchangeAccessCode({code:'synthetic-access-code',view:'staff',now,repository:repo,cryptoPort}));
+ assert.equal(repo.calls.create,0);
+});
+test('revoked session cannot load programme data',async()=>{
+ const repo=makeRepo({findSession:async()=>({...session,revoked_at:'2026-10-20T11:00:00Z'})});
+ await assert.rejects(bootstrapHub({token:'synthetic-token-with-length',now,repository:repo,cryptoPort}));
+ assert.equal(repo.calls.load,0);
+});
+test('suspended access code invalidates existing sessions',async()=>{
+ const repo=makeRepo({findAccessCodeById:async()=>({...code,status:'suspended'})});
+ await assert.rejects(bootstrapHub({token:'synthetic-token-with-length',now,repository:repo,cryptoPort}));
+ assert.equal(repo.calls.load,0);
+});
