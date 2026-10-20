@@ -22,3 +22,17 @@ test('a more specific movement is not mistaken for its shorter parent name',()=>
  const ex=[{code:'A',name:'Dead Bug',active:true,video_url:'https://www.youtube.com/watch?v=example'},{code:'B',name:'Dead Bug Heel Tap',active:true,video_url:'https://www.youtube.com/watch?v=example2'}];
  assert.equal(check([{content:{items:['Dead Bug Heel Tap — 2 × 6'],video_links:[{item_index:0,exercise:'Dead Bug Heel Tap'}]}}],ex).length,0);
 });
+
+test('rejects a video URL that does not match its exercise library entry',()=>{
+ const errors=check([{title:'Strength',content:{items:['Calf Raise — 3 × 10'],video_links:[{item_index:0,exercise:'Calf Raise',video_url:'https://www.youtube.com/watch?v=wrong'}]}}],library);
+ assert.ok(errors.some(e=>/URL differs from library/i.test(e)));
+});
+test('rejects another movement linked to a coded prescription row',()=>{
+ const ex=[...library,{code:'STR02',name:'Dead Bug',active:true,video_url:'https://www.youtube.com/watch?v=other'}];
+ const errors=check([{title:'Strength',content:{items:['Calf Raise — 3 × 10'],prescriptions:[{exerciseCode:'STR01',dosage:'3 x 10'}],video_links:[{item_index:0,exercise:'Dead Bug',video_url:'https://www.youtube.com/watch?v=other'}]}}],ex);
+ assert.ok(errors.some(e=>/does not match prescribed code/i.test(e)));
+});
+test('accepts correctly linked coded prescription with canonical URL',()=>{
+ const errors=check([{title:'Strength',content:{items:['Calf Raise — 3 × 10'],prescriptions:[{exerciseCode:'STR01',dosage:'3 x 10'}],video_links:[{item_index:0,exercise:'Calf Raise',video_url:'https://www.youtube.com/watch?v=example'}]}}],library);
+ assert.equal(errors.length,0);
+});
