@@ -67,8 +67,17 @@ for(const match of journeyStyles.matchAll(/([^{}]+)\{/g)){
  if(selector.startsWith('@media'))continue;
  assert.ok(selector.split(',').every(part=>part.trim().startsWith('.duj')),'Journey CSS cannot style the public homepage');
 }
+// Compact demo UI is covered by qa/compact-video-viewer.test.cjs.
+// Normalize only the explicitly approved viewer additions, not other homepage content.
+const withoutCompactVideo=source=>source
+ .replace(/  \/\* Compact by default:[\s\S]*?(?=  \.hub-video-modal\[hidden\])/,'')
+ .replace(/<div class="hub-video-modal-actions"><button type="button" class="hub-video-modal-expand"[^\n]*?<\/button><button type="button" class="hub-video-modal-close"/g,'<button type="button" class="hub-video-modal-close"')
+ .replace(/<\/button><\/div><\/div><div class="hub-video-modal-stage">/g,'<\/button><\/div><div class="hub-video-modal-stage">')
+ .replace(/    modal\.querySelector\('\[data-hub-video-expand\]'\)\.addEventListener\('click',function\(\)\{[\s\S]*?    \}\);\r?\n/,'')
+ .replace(/    modal\.classList\.remove\('expanded'\);\r?\n    modal\.querySelector\('\[data-hub-video-expand\]'\)\.textContent='Expand ↗';\r?\n    document\.body\.style\.overflow=HUB_VIDEO_BODY_OVERFLOW;/,"    document.body.style.overflow='hidden';")
+ .replace("    modal.classList.remove('loading','expanded');","    modal.classList.remove('loading');");
 const withoutHubAssets=source=>source.replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
-assert.equal(withoutHubAssets(withoutJourneyPresentation(html.slice(0,html.indexOf(routeStart)))),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains unchanged apart from isolated Hub asset links');
+assert.equal(withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(html.slice(0,html.indexOf(routeStart))))),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains unchanged apart from isolated Hub asset links');
 const withoutHubRepair=source=>source
  .replace(/  function guidedCard\([^\n]+\n/,'  GUIDED_PRESCRIPTION\n')
  .replace(/  async function loadAccountHubData\([\s\S]*?(?=  async function loadHubData\()/,'  ACCOUNT_BOOTSTRAP\n')
@@ -83,7 +92,7 @@ const withoutHubRepair=source=>source
  .replace(/    const copyButton=[\s\S]*?(?=    const videoClose=)/,'  COPY_CLICK_HANDLER\n');
 // Story arrival is covered by my-journey/story.test.cjs; exclude only its exact scoped branch.
 const withoutPartnershipPresentation=source=>source.replace(/      if \(activeView === homeView && location.hash === '#stories'\) \{[\s\S]*?      \} else\r?\n/, '').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});").replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
-assert.equal(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)))))),withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
+assert.equal(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutCompactVideo(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController))))))),withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
 const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
 assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
 console.log('Production integration preservation passed.');

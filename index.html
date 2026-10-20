@@ -1792,6 +1792,23 @@ footer,
   .hub-youtube-direct:focus-visible{outline:2px solid var(--hub-gold);outline-offset:3px}
   .hub-youtube-direct:hover .hub-play{transform:translate(-50%,-50%) scale(1.06)}
   .hub-youtube-label{position:absolute;left:12px;right:12px;bottom:12px;padding:.65rem .75rem;background:rgba(0,0,0,.72);color:#fff;font-size:.76rem;font-weight:700;letter-spacing:.04em;text-align:center;border:1px solid rgba(255,255,255,.18)}
+  /* Compact by default: preserve the training sheet behind exercise demos. */
+  .hub-video-modal:not(.expanded){inset:auto 0 0;place-items:end center;padding:.5rem;background:transparent;backdrop-filter:none;pointer-events:none}
+  .hub-video-modal:not(.expanded) .hub-video-modal-panel{width:min(680px,100%);max-height:min(48dvh,430px);pointer-events:auto}
+  .hub-video-modal:not(.expanded) .hub-video-modal-stage{min-height:0;overflow:hidden}
+  .hub-video-modal:not(.expanded) .hub-video-modal-frame-wrap{height:min(31dvh,290px);width:100%;aspect-ratio:auto}
+  .hub-video-modal:not(.expanded) .hub-video-modal-frame-wrap.vertical{height:min(31dvh,290px);width:min(170px,100%);aspect-ratio:9/16}
+  .hub-video-modal-expand{min-height:44px;border:1px solid var(--hub-line);border-radius:6px;background:transparent;color:var(--hub-text);font:inherit;font-weight:700;cursor:pointer}
+  .hub-video-modal-actions{display:flex;gap:.5rem;align-items:center}
+  .hub-video-modal-expand:hover,.hub-video-modal-expand:focus-visible{border-color:var(--hub-gold);color:var(--hub-gold)}
+  @media(max-width:640px){
+    .hub-video-modal:not(.expanded){inset:auto 0 0;padding:.5rem;place-items:end center}
+    .hub-video-modal:not(.expanded) .hub-video-modal-panel{height:auto;max-height:48dvh;border:1px solid var(--hub-line);border-radius:10px}
+    .hub-video-modal:not(.expanded) .hub-video-modal-stage{flex:none;padding:.3rem}
+    .hub-video-modal:not(.expanded) .hub-video-modal-frame-wrap{height:min(28dvh,245px);width:100%;aspect-ratio:auto}
+    .hub-video-modal:not(.expanded) .hub-video-modal-frame-wrap.vertical{height:min(28dvh,245px);width:min(145px,100%);aspect-ratio:9/16}
+    .hub-video-modal:not(.expanded) .hub-video-modal-foot{padding:.35rem .6rem}
+  }
   .hub-video-modal[hidden]{display:none!important}
   .hub-video-modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:clamp(.75rem,3vw,1.5rem);background:rgba(0,0,0,.86);backdrop-filter:blur(6px)}
   .hub-video-modal-panel{width:min(920px,100%);max-height:calc(100vh - 1.5rem);max-height:calc(100dvh - 1.5rem);display:flex;flex-direction:column;background:#0c0c0c;border:1px solid var(--hub-line);border-radius:10px;box-shadow:0 28px 90px rgba(0,0,0,.6);overflow:hidden}
@@ -4560,8 +4577,14 @@ document.addEventListener('click',function(e){
     modal.setAttribute('role','dialog');
     modal.setAttribute('aria-modal','true');
     modal.setAttribute('aria-labelledby','hubVideoModalTitle');
-    modal.innerHTML='<div class="hub-video-modal-panel" data-hub-video-panel><div class="hub-video-modal-head"><h2 class="hub-video-modal-title" id="hubVideoModalTitle">Exercise Demo</h2><button type="button" class="hub-video-modal-close" data-hub-video-close aria-label="Close video">✕ <span>Close</span></button></div><div class="hub-video-modal-stage"><div class="hub-video-modal-frame-wrap" data-hub-video-frame-wrap></div><div class="hub-video-modal-loader" data-hub-video-loader>Loading video…</div></div><div class="hub-video-modal-foot"><a class="hub-video-modal-fallback" data-hub-video-fallback href="#" target="_blank" rel="noopener noreferrer">Video not loading? Open in YouTube ↗</a></div></div>';
+    modal.innerHTML='<div class="hub-video-modal-panel" data-hub-video-panel><div class="hub-video-modal-head"><h2 class="hub-video-modal-title" id="hubVideoModalTitle">Exercise Demo</h2><div class="hub-video-modal-actions"><button type="button" class="hub-video-modal-expand" data-hub-video-expand aria-label="Expand video">Expand ↗</button><button type="button" class="hub-video-modal-close" data-hub-video-close aria-label="Close video">✕ <span>Close</span></button></div></div><div class="hub-video-modal-stage"><div class="hub-video-modal-frame-wrap" data-hub-video-frame-wrap></div><div class="hub-video-modal-loader" data-hub-video-loader>Loading video…</div></div><div class="hub-video-modal-foot"><a class="hub-video-modal-fallback" data-hub-video-fallback href="#" target="_blank" rel="noopener noreferrer">Video not loading? Open in YouTube ↗</a></div></div>';
     document.body.appendChild(modal);
+    modal.querySelector('[data-hub-video-expand]').addEventListener('click',function(){
+      const expanded=modal.classList.toggle('expanded');
+      this.textContent=expanded?'Minimize ↙':'Expand ↗';
+      this.setAttribute('aria-label',expanded?'Minimize video':'Expand video');
+      document.body.style.overflow=expanded?'hidden':HUB_VIDEO_BODY_OVERFLOW;
+    });
     return modal;
   }
   function hubYoutubeEmbed(url){
@@ -4601,7 +4624,9 @@ document.addEventListener('click',function(e){
     wrap.innerHTML='<iframe class="hub-video-modal-frame" src="'+info.embed+'" title="'+escapeHtml(title||'Exercise demonstration')+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
     const frame=wrap.querySelector('iframe');if(frame)frame.addEventListener('load',()=>modal.classList.remove('loading'),{once:true});
     modal.hidden=false;
-    document.body.style.overflow='hidden';
+    modal.classList.remove('expanded');
+    modal.querySelector('[data-hub-video-expand]').textContent='Expand ↗';
+    document.body.style.overflow=HUB_VIDEO_BODY_OVERFLOW;
     if(!HUB_VIDEO_HISTORY_PUSHED&&history&&typeof history.pushState==='function'){history.pushState(Object.assign({},history.state||{},{hubVideoModal:true}),'',location.href);HUB_VIDEO_HISTORY_PUSHED=true;}
     modal.querySelector('[data-hub-video-close]').focus({preventScroll:true});
     return true;
@@ -4611,7 +4636,7 @@ document.addEventListener('click',function(e){
     if(!modal||modal.hidden){if(fromHistory)HUB_VIDEO_HISTORY_PUSHED=false;return;}
     const wrap=modal.querySelector('[data-hub-video-frame-wrap]');
     modal.hidden=true;
-    modal.classList.remove('loading');
+    modal.classList.remove('loading','expanded');
     if(wrap)wrap.innerHTML='';
     document.body.style.overflow=HUB_VIDEO_BODY_OVERFLOW;
     const target=HUB_VIDEO_LAST_FOCUS;HUB_VIDEO_LAST_FOCUS=null;
