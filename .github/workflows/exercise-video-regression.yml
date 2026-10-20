@@ -40,3 +40,16 @@ jobs:
         run: |
           printf '{"athletes":[],"weeks":[],"days":[],"blocks":[],"exercises":[]}' > /tmp/synthetic-empty-export.json
           node qa/check-workout-delivery.mjs /tmp/synthetic-empty-export.json
+      - name: End-to-end synthetic published athlete workout
+        shell: bash
+        run: |
+          cat > /tmp/synthetic-workout.json <<'JSON'
+          {
+            "athletes":[{"id":"synthetic-athlete","name":"Synthetic Athlete","programme_id":"synthetic-programme","current_week":1}],
+            "weeks":[{"id":"synthetic-week","programme_id":"synthetic-programme","week_number":1,"status":"live","verification_status":"verified","published_at":"2026-10-01T12:00:00Z"}],
+            "days":[{"id":"synthetic-day","programme_week_id":"synthetic-week","day_key":"Day 1","title":"Strength","sort_order":1}],
+            "blocks":[{"id":"synthetic-block","training_day_id":"synthetic-day","title":"Strength","sort_order":1,"content":{"items":["Calf Raise — 3 x 10"],"prescriptions":[{"exerciseCode":"STR01","dosage":"3 x 10","rest":"60 sec"}],"video_links":[{"item_index":0,"exercise":"Calf Raise","video_url":"https://www.youtube.com/watch?v=abcdefghijk"}]}}],
+            "exercises":[{"id":"synthetic-exercise","code":"STR01","name":"Calf Raise","active":true,"video_url":"https://www.youtube.com/watch?v=abcdefghijk","video_id":"abcdefghijk"}]
+          }
+          JSON
+          node qa/check-workout-delivery.mjs /tmp/synthetic-workout.json
