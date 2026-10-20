@@ -4,9 +4,28 @@ function workoutDeliveryIssues(blocks, library) {
   const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   const exercises = Array.isArray(library) ? library : [];
   const byCode = new Map(exercises.map(exercise => [exercise.code, exercise]));
+  // Match the Hub player: only supported HTTPS YouTube URLs with 11-character video IDs.
+  const playableUrl = (value, id) => {
+    const raw = typeof value === 'string' && value.trim()
+      ? value.trim()
+      : typeof id === 'string' && /^[A-Za-z0-9_-]{11}$/.test(id)
+        ? 'https://www.youtube.com/watch?v=' + id : '';
+    try {
+      const url = new URL(raw);
+      if (url.protocol !== 'https:' || url.username || url.password || url.port) return false;
+      const host = url.hostname.toLowerCase();
+      let key = '';
+      if (['youtube.com','www.youtube.com','m.youtube.com','youtube-nocookie.com','www.youtube-nocookie.com'].includes(host)) {
+        if (url.pathname === '/watch') key = url.searchParams.get('v') || '';
+        else key = (url.pathname.match(/^\\/(?:shorts|embed)\\/([A-Za-z0-9_-]+)\\/?$/) || [])[1] || '';
+      } else if (host === 'youtu.be' || host === 'www.youtu.be') {
+        key = url.pathname.slice(1).replace(/\\/$/, '');
+      }
+      return /^[A-Za-z0-9_-]{11}$/.test(key);
+    } catch { return false; }
+  };
   const hasDemo = exercise => exercise && exercise.active !== false &&
-    (/^https:\/\/(?:www\.)?(?:youtube\.com|youtu\.be|youtube-nocookie\.com)\//i.test(exercise.video_url || exercise.videoUrl || '')
-      || /^[A-Za-z0-9_-]{6,100}$/.test(exercise.video_id || exercise.videoId || ''));
+    playableUrl(exercise.video_url || exercise.videoUrl, exercise.video_id || exercise.videoId);
   for (const block of blocks) {
     const content = block?.content || {}, label = block.title || 'Workout';
     const prescriptions = Array.isArray(content.prescriptions) ? content.prescriptions : [];
