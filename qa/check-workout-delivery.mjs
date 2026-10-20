@@ -40,7 +40,16 @@ for(const week of data.weeks){
     if(!rx.exerciseCode&&rx.instruction){assert.ok(section.items.some(i=>[i.title,i.dosage,i.rest,i.cue].join(' ').includes(rx.instruction)||copied.includes(rx.instruction)),'Missing running instruction');continue;}
     const item=section.items.find(i=>i.key.startsWith('p:')&&i.code===rx.exerciseCode&&i.dosage===rx.dosage);
     assert.ok(item,'Missing prescription/dose: '+rx.exerciseCode);
-    assert.equal(item.rest,rx.rest||'');checkedPrescriptions++;
+    assert.equal(item.rest,rx.rest||'');
+    const prescribedExercise=data.exercises.find(e=>e.code===rx.exerciseCode);
+    if(prescribedExercise?.active!==false && prescribedExercise?.video_url){
+      const expected=prescribedExercise.video_url;
+      assert.ok(item.videoUrl===expected||(item.demos||[]).some(d=>d.url===expected),
+        'Prescribed exercise demo not rendered: '+rx.exerciseCode+' in '+block.title);
+      assert.ok(sheet.includes(ctx.escapeHtml(expected)),
+        'Prescribed exercise demo absent from athlete HTML: '+rx.exerciseCode);
+    }
+    checkedPrescriptions++;
    }
    for(const link of block.content.video_links||[]){
     const exercise=data.exercises.find(e=>e.active!==false&&e.name===link.exercise);
