@@ -24,19 +24,16 @@ test('new page contains no private academic records or unreviewed watermarks',()
 test('story navigation is present without disturbing the academy homepage structure',()=>{
  const current=fs.readFileSync('index.html','utf8');
  const original=execFileSync('git',['show','921607a:index.html'],{encoding:'utf8',maxBuffer:12e6});
- // The story baseline predates approved homepage, athlete and Hub changes.
- // Guard the story integration and stable homepage landmarks, not byte-for-byte historical HTML.
+ // Preserve the academy sections; historical whole-file equality would reject later approved changes.
  for(const marker of ['id="home-view"','id="performance-hub"','id="sports"']){
   assert.ok(original.includes(marker),'baseline contains '+marker);
   assert.ok(current.includes(marker),'current homepage preserves '+marker);
+  assert.equal(current.split(marker).length,original.split(marker).length,'landmark count preserved: '+marker);
  }
- assert.match(current,/href="\\/my-journey\\/"/);
- assert.match(current,/<!-- DU STORY NAV START -->[\\s\\S]*?<!-- DU STORY NAV END -->/);
- assert.match(current,/location\\.hash === '#stories'/);
- const count=(s,needle)=>s.split(needle).length-1;
- for(const marker of ['id="home-view"','id="performance-hub"','id="sports"']){
-  assert.equal(count(current,marker),count(original,marker),'homepage landmark count preserved: '+marker);
- }
+ assert.ok(current.includes('href="/my-journey/"'),'story navigation link');
+ assert.ok(current.includes('<!-- DU STORY NAV START -->'),'story navigation start');
+ assert.ok(current.includes('<!-- DU STORY NAV END -->'),'story navigation end');
+ assert.ok(current.includes("location.hash === '#stories'"),'story hash navigation');
 });
 test('all responsive photo variants are valid nonempty WebP files',()=>{
  const manifest=JSON.parse(fs.readFileSync('my-journey/photos.json'));
