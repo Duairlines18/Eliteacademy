@@ -54,3 +54,34 @@ test('suspended school cannot load a programme',async()=>{
  await assert.rejects(bootstrapHub({token:'synthetic-token-with-length',now,repository:repo,cryptoPort}));
  assert.equal(repo.calls.load,0);
 });
+
+const publishedBundle={
+ cohort:{id:'school-a',name:'Synthetic School',current_week:1},
+ programme:{id:'programme-a',name:'Synthetic Programme',duration_weeks:1},
+ week:{week_number:1,status:'live',verification_status:'verified',published_at:'2026-10-19T12:00:00Z'},
+ trainingDays:[{id:'day-a',day_key:'Day 1',title:'Synthetic Session'}],
+ blocks:[{training_day_id:'day-a',title:'Movement',content:{items:['Bridge 2 x 8']}}],
+ exercises:[]
+};
+test('valid staff code issues a cohort-scoped session',async()=>{
+ const repo=makeRepo();
+ const result=await exchangeAccessCode({code:'synthetic-access-code',view:'staff',now,repository:repo,cryptoPort});
+ assert.equal(result.role,'staff');
+ assert.equal(result.token,'synthetic-token-with-length');
+ assert.equal(repo.calls.create,1);
+});
+test('valid session loads only its assigned published cohort programme',async()=>{
+ const requested=[];
+ const repo=makeRepo({loadCurrentProgramme:async id=>{requested.push(id);return publishedBundle;}});
+ const result=await bootstrapHub({token:'synthetic-token-with-length',now,repository:repo,cryptoPort});
+ assert.deepEqual(requested,['school-a']);
+ assert.equal(result.role,'staff');
+ assert.equal(result.contentStatus,'published');
+ assert.equal(result.programme.sessions[0].items[0],'Bridge 2 x 8');
+});
+test('unpublished assigned week does not leak private workout content',async()=>{
+ const repo=makeRepo({loadCurrentProgramme:async()=>({...publishedBundle,week:{...publishedBundle.week,published_at:null}})});
+ const result=await bootstrapHub({token:'synthetic-token-with-length',now,repository:repo,cryptoPort});
+ assert.equal(result.contentStatus,'preparing');
+ assert.doesNotMatch(JSON.stringify(result),/Bridge 2 x 8/);
+});
