@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Run isolated validator regressions
-        run: node --test qa/workout-validation.test.cjs
+      - name: Run isolated validator and delivery regressions
+        run: node --test qa/workout-validation.test.cjs hub-delivery/delivery.test.cjs
       - name: Check delivery QA script syntax
         run: node --check qa/check-workout-delivery.mjs
