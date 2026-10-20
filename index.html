@@ -1811,11 +1811,15 @@ footer,
   .hub-video-modal-fallback{color:var(--hub-muted);font-size:.78rem;text-decoration:none}
   .hub-video-modal-fallback:hover,.hub-video-modal-fallback:focus-visible{color:var(--hub-gold);outline:none}
   @media(max-width:640px){
-    .hub-video-modal{padding:0;place-items:stretch}
-    .hub-video-modal-panel{width:100%;max-height:100vh;max-height:100dvh;height:100vh;height:100dvh;border-radius:0;border-inline:0}
-    .hub-video-modal-stage{flex:1;padding:.5rem}
-    .hub-video-modal-frame-wrap{width:100%}
-    .hub-video-modal-frame-wrap.vertical{height:calc(100vh - 8.5rem);height:calc(100dvh - 8.5rem);width:auto;max-width:100%}
+    .hub-video-modal{padding:1rem;place-items:end center;background:rgba(0,0,0,.48)}
+    .hub-video-modal-panel{width:100%;max-height:min(70dvh,540px);height:auto;border-radius:10px;border:1px solid var(--hub-line)}
+    .hub-video-modal-stage{flex:0 1 auto;padding:.5rem;overflow:auto}
+    .hub-video-modal-frame-wrap{width:100%;max-height:48dvh}
+    .hub-video-modal-frame-wrap.vertical{height:min(48dvh,460px);width:auto;max-width:100%}
+    .hub-video-modal.expanded{padding:0;place-items:stretch;background:rgba(0,0,0,.86)}
+    .hub-video-modal.expanded .hub-video-modal-panel{width:100%;height:100dvh;max-height:100dvh;border-radius:0;border-inline:0}
+    .hub-video-modal.expanded .hub-video-modal-stage{flex:1}
+    .hub-video-modal.expanded .hub-video-modal-frame-wrap.vertical{height:calc(100dvh - 9rem);max-height:none}
     .hub-video-modal-foot{padding-bottom:max(.75rem,env(safe-area-inset-bottom))}
   }
   .hub-video iframe{width:100%;height:100%;border:0;display:block}
@@ -4560,8 +4564,13 @@ document.addEventListener('click',function(e){
     modal.setAttribute('role','dialog');
     modal.setAttribute('aria-modal','true');
     modal.setAttribute('aria-labelledby','hubVideoModalTitle');
-    modal.innerHTML='<div class="hub-video-modal-panel" data-hub-video-panel><div class="hub-video-modal-head"><h2 class="hub-video-modal-title" id="hubVideoModalTitle">Exercise Demo</h2><button type="button" class="hub-video-modal-close" data-hub-video-close aria-label="Close video">✕ <span>Close</span></button></div><div class="hub-video-modal-stage"><div class="hub-video-modal-frame-wrap" data-hub-video-frame-wrap></div><div class="hub-video-modal-loader" data-hub-video-loader>Loading video…</div></div><div class="hub-video-modal-foot"><a class="hub-video-modal-fallback" data-hub-video-fallback href="#" target="_blank" rel="noopener noreferrer">Video not loading? Open in YouTube ↗</a></div></div>';
+    modal.innerHTML='<div class="hub-video-modal-panel" data-hub-video-panel><div class="hub-video-modal-head"><h2 class="hub-video-modal-title" id="hubVideoModalTitle">Exercise Demo</h2><button type="button" class="hub-video-modal-close" data-hub-video-expand aria-label="Expand video">Expand</button><button type="button" class="hub-video-modal-close" data-hub-video-close aria-label="Close video">✕ <span>Close</span></button></div><div class="hub-video-modal-stage"><div class="hub-video-modal-frame-wrap" data-hub-video-frame-wrap></div><div class="hub-video-modal-loader" data-hub-video-loader>Loading video…</div></div><div class="hub-video-modal-foot"><a class="hub-video-modal-fallback" data-hub-video-fallback href="#" target="_blank" rel="noopener noreferrer">Video not loading? Open in YouTube ↗</a></div></div>';
     document.body.appendChild(modal);
+    modal.querySelector('[data-hub-video-expand]').addEventListener('click',function(){
+      const expanded=modal.classList.toggle('expanded');
+      this.textContent=expanded?'Compact':'Expand';
+      this.setAttribute('aria-label',expanded?'Return to compact video':'Expand video');
+    });
     return modal;
   }
   function hubYoutubeEmbed(url){
@@ -4600,6 +4609,9 @@ document.addEventListener('click',function(e){
     modal.classList.add('loading');
     wrap.innerHTML='<iframe class="hub-video-modal-frame" src="'+info.embed+'" title="'+escapeHtml(title||'Exercise demonstration')+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
     const frame=wrap.querySelector('iframe');if(frame)frame.addEventListener('load',()=>modal.classList.remove('loading'),{once:true});
+    modal.classList.remove('expanded');
+    modal.querySelector('[data-hub-video-expand]').textContent='Expand';
+    modal.querySelector('[data-hub-video-expand]').setAttribute('aria-label','Expand video');
     modal.hidden=false;
     document.body.style.overflow='hidden';
     if(!HUB_VIDEO_HISTORY_PUSHED&&history&&typeof history.pushState==='function'){history.pushState(Object.assign({},history.state||{},{hubVideoModal:true}),'',location.href);HUB_VIDEO_HISTORY_PUSHED=true;}
