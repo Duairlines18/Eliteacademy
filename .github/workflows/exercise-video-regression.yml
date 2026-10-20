@@ -1,0 +1,23 @@
+name: Exercise video regression
+on:
+  push:
+    branches:
+      - fix/exercise-video-sync-regression-20261019
+  pull_request:
+    paths:
+      - 'qa/workout-validation.js'
+      - 'qa/workout-validation.test.cjs'
+      - '.github/workflows/exercise-video-regression.yml'
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run isolated validator regressions
+        run: node --test qa/workout-validation.test.cjs
