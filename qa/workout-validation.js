@@ -26,7 +26,18 @@ function workoutDeliveryIssues(blocks, library) {
       if (!Number.isInteger(link?.item_index) || link.item_index < 0 || typeof items[link.item_index] !== 'string') {
         issues.push(label + ': demo points to a missing instruction row'); continue;
       }
-      if (!hasDemo(exercises.find(exercise => (exercise.name || exercise.title) === link.exercise))) issues.push(label + ': approved active demo missing for ' + link.exercise);
+      const linkedExercise = exercises.find(exercise => (exercise.name || exercise.title) === link.exercise);
+      if (!hasDemo(linkedExercise)) {
+        issues.push(label + ': approved active demo missing for ' + link.exercise);
+        continue;
+      }
+      const canonicalUrl = linkedExercise.video_url || linkedExercise.videoUrl || '';
+      const suppliedUrl = link.video_url || link.videoUrl || '';
+      if (canonicalUrl && suppliedUrl !== canonicalUrl) issues.push(label + ': demo URL differs from library for ' + link.exercise);
+      const prescription = prescriptions[link.item_index];
+      if (prescription?.exerciseCode && ![prescription.exerciseCode, prescription.alternativeExerciseCode].filter(Boolean).includes(linkedExercise.code)) {
+        issues.push(label + ': demo exercise does not match prescribed code at row ' + (link.item_index + 1));
+      }
     }
     for (const [index, item] of items.entries()) {
       if (typeof item !== 'string' || !item.trim()) {issues.push(label + ': empty instruction row ' + (index + 1)); continue;}
