@@ -28,4 +28,14 @@ jobs:
           set -e
           node --test athlete-qa/*.test.cjs athlete-qa/*.test.mjs coach-command/*.test.cjs coach-command/*.test.mjs parent-qa/*.test.cjs hub-delivery/*.test.cjs supabase/qa/*.test.mjs performance-journey/*.test.cjs performance-journey/*.test.mjs qa/*.test.cjs
           node homepage-qa/homepage.test.cjs
-          node my-journey/story.test.cjs
+  story-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Story and homepage isolation regression
+        run: node my-journey/story.test.cjs
