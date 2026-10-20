@@ -35,3 +35,8 @@ jobs:
           node qa/check-workout-delivery.mjs > /tmp/delivery-smoke.log 2>&1 && exit 1
           cat /tmp/delivery-smoke.log
           grep -Fq 'Usage: node qa/check-workout-delivery.mjs' /tmp/delivery-smoke.log
+      - name: Exercise full delivery script initialization
+        shell: bash
+        run: |
+          printf '{"athletes":[],"weeks":[],"days":[],"blocks":[],"exercises":[]}' > /tmp/synthetic-empty-export.json
+          node qa/check-workout-delivery.mjs /tmp/synthetic-empty-export.json
