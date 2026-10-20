@@ -17,9 +17,12 @@ function workoutDeliveryIssues(blocks, library) {
       let key = '';
       if (['youtube.com','www.youtube.com','m.youtube.com','youtube-nocookie.com','www.youtube-nocookie.com'].includes(host)) {
         if (url.pathname === '/watch') key = url.searchParams.get('v') || '';
-        else key = (url.pathname.match(/^\\/(?:shorts|embed)\\/([A-Za-z0-9_-]+)\\/?$/) || [])[1] || '';
+        else {
+          const parts = url.pathname.split('/').filter(Boolean);
+          if (parts.length === 2 && ['shorts','embed'].includes(parts[0])) key = parts[1];
+        }
       } else if (host === 'youtu.be' || host === 'www.youtu.be') {
-        key = url.pathname.slice(1).replace(/\\/$/, '');
+        key = url.pathname.split('/').filter(Boolean).join('/');
       }
       return /^[A-Za-z0-9_-]{11}$/.test(key);
     } catch { return false; }
