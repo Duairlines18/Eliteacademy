@@ -7,6 +7,9 @@ on:
     paths:
       - 'qa/workout-validation.js'
       - 'qa/workout-validation.test.cjs'
+      - 'qa/check-workout-delivery.mjs'
+      - 'hub-delivery/delivery.js'
+      - 'hub-delivery/delivery.test.cjs'
       - '.github/workflows/exercise-video-regression.yml'
 permissions:
   contents: read
@@ -23,3 +26,5 @@ jobs:
         run: node --test qa/workout-validation.test.cjs hub-delivery/delivery.test.cjs
       - name: Check delivery QA script syntax
         run: node --check qa/check-workout-delivery.mjs
+      - name: Check shared validator syntax
+        run: node --check qa/workout-validation.js
