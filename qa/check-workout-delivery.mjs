@@ -12,7 +12,7 @@ if(!filename)throw new Error('Usage: node qa/check-workout-delivery.mjs /private
 const data=JSON.parse(fs.readFileSync(filename,'utf8'));
 const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const part=(a,b)=>{const start=html.indexOf(a),end=html.indexOf(b,start+a.length);assert.ok(start>=0&&end>start);return html.slice(start,end)};
-const ctx={DuHubDelivery:delivery,programme:()=>({week:0}),HUB_STATE:{audience:'private-athlete'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSchoolReferenceViewer:()=>false,isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),encodeURIComponent};
+const ctx={URL,DuHubDelivery:delivery,programme:()=>({week:0}),HUB_STATE:{audience:'private-athlete'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSchoolReferenceViewer:()=>false,isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),encodeURIComponent};
 vm.createContext(ctx);vm.runInContext(fs.readFileSync(new URL('./workout-validation.js',import.meta.url),'utf8'),ctx);
 vm.runInContext(part('  function simpleText(','  function visibleNormalizedSections(')+part('  function deliverySections(','  function staffAllGroupsExperience(')+part('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')+';globalThis.api={normalizeWorkoutSession,schoolAthleteDelivery,athleteCopyText};',ctx);
 let checkedLinks=0,checkedPrescriptions=0,checkedBlocks=0;
