@@ -29,5 +29,9 @@ jobs:
       - name: Check shared validator syntax
         run: node --check qa/workout-validation.js
       - name: Smoke-test full delivery QA module loading
-        run: node qa/check-workout-delivery.mjs 2>&1 | tee /tmp/delivery-smoke.log; grep -q 'Usage: node qa/check-workout-delivery.mjs' /tmp/delivery-smoke.log
         shell: bash
+        run: |
+          set -o pipefail
+          node qa/check-workout-delivery.mjs > /tmp/delivery-smoke.log 2>&1 && exit 1
+          cat /tmp/delivery-smoke.log
+          grep -Fq 'Usage: node qa/check-workout-delivery.mjs' /tmp/delivery-smoke.log
