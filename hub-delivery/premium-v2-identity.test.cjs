@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {identity}=require('./premium-v2.js');
+assert.deepEqual(identity({audience:'parent',athlete:{displayName:'Andria'},viewer:{firstName:'Andrianna',lastName:'Ogden'}}),{headline:'Hi, Andria',athleteName:'Andria',parentLabel:'Parent access: Andrianna Ogden',schoolLabel:''});
+assert.equal(identity({audience:'private-athlete',athlete:{fullName:'Example Athlete'}}).headline,'Hi, Example');
+assert.equal(identity({audience:'school',athlete:{displayName:'School Athlete'},cohort:{name:'Form 3'}}).schoolLabel,'Form 3');
+assert.equal(identity({audience:'parent',athlete:{displayName:'Andria'},viewer:{firstName:'Andrianna'}}).parentLabel,'Parent access: Andrianna');
+assert.equal(identity({audience:'parent',athlete:{displayName:'Andria'}}).parentLabel,'');
+assert.equal(identity({audience:'parent'}).headline,'Your Performance Hub');
+assert.equal(identity({audience:'parent',athlete:{displayName:'  Andria  '},viewer:{firstName:' Andrianna '}}).athleteName,'Andria');
+console.log('Premium V2 identity contract passed');
