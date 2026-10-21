@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict');
 const {identity}=require('./premium-v2.js');
-assert.deepEqual(identity({audience:'parent',athlete:{displayName:'Andria'},viewer:{firstName:'Andrianna',lastName:'Ogden'}}),{headline:'Hi, Andria',athleteName:'Andria',parentLabel:'Parent access: Andrianna Ogden',schoolLabel:''});
+assert.deepEqual(identity({audience:'parent',athlete:{displayName:'Andria'},viewer:{firstName:'Andrianna',lastName:'Ogden'}}),{headline:'Hi, Andria',athleteName:'Andria',parentLabel:'Parent access: Andrianna',schoolLabel:''});
 assert.equal(identity({audience:'private-athlete',athlete:{fullName:'Example Athlete'}}).headline,'Hi, Example');
 assert.equal(identity({audience:'school',athlete:{displayName:'School Athlete'},cohort:{name:'Form 3'}}).schoolLabel,'Form 3');
 assert.equal(identity({audience:'parent',athlete:{displayName:'Andria'},viewer:{firstName:'Andrianna'}}).parentLabel,'Parent access: Andrianna');
