@@ -22,3 +22,18 @@ test('legacy root instructions remain visible on prescribed rest days',()=>{cons
 test('server copy capability uses existing role/ownership path and fails closed for mixed accounts',()=>{assert.equal(shapePrivateAthleteBootstrap({...athlete,parent_user_id:null},bundle).delivery.copyWorkout,true);assert.equal(shapePrivateAthleteBootstrap(athlete,bundle).delivery.copyWorkout,false);assert.equal(shapePrivateAthleteBootstrap({...athlete,athlete_user_id:null,parent_user_id:null},bundle).delivery.copyWorkout,false);});
 test('both existing handlers reject unauthenticated requests before any repository use',async()=>{for(const fn of [handleParentRequest,handlePrivateAthleteRequest]){const response=await fn(new Request('https://example.invalid',{method:'POST',headers:{origin:'https://duairlineseliteacademy.com','content-type':'application/json'},body:JSON.stringify({action:'bootstrap',athleteId:'other-user'})}),{verifyUser:async()=>null,repository:new Proxy({},{get(){throw Error('Repository must not be used without authentication')}})});assert.equal(response.status,401);}});
 test('substitution replaces every mirrored delivery reference while preserving dose and safety text',()=>{const b={...bundle,exercises:[{code:'OLD',name:'Squat',active:true,video_id:'oldvideo123'}],blocks:[{training_day_id:'day',content:{prescriptions:[{exerciseCode:'OLD',dosage:'2 x 8',rest:'60 sec'}],exerciseCodes:['OLD'],items:['Squat — 2 x 8; stop if symptoms return'],video_links:[{item_index:0,exercise:'Squat'}]}}]};const result=applyAccountAdjustments(b,{exercise_substitutions:[{fromExerciseCode:'OLD',toExerciseCode:'NEW',note:'Approved alternative'}]},[{code:'NEW',name:'Bridge',active:true,video_id:'newvideo123'}]);assert.deepEqual(result.exercises.map(e=>e.code),['NEW']);assert.deepEqual(result.blocks[0].content.exerciseCodes,['NEW']);assert.equal(result.blocks[0].content.video_links[0].exercise,'Bridge');assert.equal(result.blocks[0].content.items[0],'Bridge — 2 x 8; stop if symptoms return');assert.equal(result.blocks[0].content.prescriptions[0].rest,'60 sec');});
+
+test('parent bootstrap resolves the authenticated parent, not a supplied athlete selector',async()=>{
+ const lookedUp=[];
+ const r=repository();
+ r.findParentAthlete=async id=>{lookedUp.push(id);return athlete;};
+ await bootstrapParentAthlete({user:{id:'parent-user',athleteId:'other-athlete'},repository:r});
+ assert.deepEqual(lookedUp,['parent-user']);
+});
+test('private athlete bootstrap resolves the authenticated athlete, not a supplied athlete selector',async()=>{
+ const lookedUp=[];
+ const r=repository();
+ r.findPrivateAthlete=async id=>{lookedUp.push(id);return athlete;};
+ await bootstrapPrivateAthlete({user:{id:'athlete-user',athleteId:'other-athlete'},repository:r});
+ assert.deepEqual(lookedUp,['athlete-user']);
+});

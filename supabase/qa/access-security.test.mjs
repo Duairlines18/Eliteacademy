@@ -101,3 +101,35 @@ test('suspended access code invalidates existing sessions',async()=>{
  await assert.rejects(bootstrapHub({token:'synthetic-token-with-length',now,repository:repo,cryptoPort}));
  assert.equal(repo.calls.load,0);
 });
+
+test('school athlete code cannot grant school staff access',async()=>{
+ const repo=makeRepo({findAccessCode:async()=>({...code,code_type:'cohort'})});
+ await assert.rejects(exchangeAccessCode({code:'synthetic-access-code',view:'staff',now,repository:repo,cryptoPort}));
+ assert.equal(repo.calls.create,0);
+});
+test('school athlete session loads only its assigned cohort programme',async()=>{
+ const requested=[];
+ const repo=makeRepo({
+  findSession:async()=>({...session,role:'athlete'}),
+  findAccessCodeById:async()=>({...code,code_type:'cohort'}),
+  loadCurrentProgramme:async id=>{requested.push(id);return publishedBundle;},
+ });
+ const result=await bootstrapHub({token:'synthetic-token-with-length',now,repository:repo,cryptoPort});
+ assert.deepEqual(requested,['school-a']);
+ assert.equal(result.role,'athlete');
+ assert.equal(result.contentStatus,'published');
+});
+
+test('paused school athlete code cannot issue a session',async()=>{
+ const repo=makeRepo({findAccessCode:async()=>({...code,code_type:'cohort',status:'paused'})});
+ await assert.rejects(exchangeAccessCode({code:'synthetic-access-code',view:'athlete',now,repository:repo,cryptoPort}));
+ assert.equal(repo.calls.create,0);
+});
+test('school athlete session cannot switch to another cohort through its code',async()=>{
+ const repo=makeRepo({
+  findSession:async()=>({...session,role:'athlete'}),
+  findAccessCodeById:async()=>({...code,code_type:'cohort',cohort_id:'school-b'}),
+ });
+ await assert.rejects(bootstrapHub({token:'synthetic-token-with-length',now,repository:repo,cryptoPort}));
+ assert.equal(repo.calls.load,0);
+});

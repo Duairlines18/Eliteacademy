@@ -1,0 +1,24 @@
+'use strict';
+// Static contract checks for presentation-only Premium Hub V2.
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const css=fs.readFileSync(path.join(__dirname,'premium-v2.css'),'utf8');
+const delivery=fs.readFileSync(path.join(__dirname,'delivery.css'),'utf8');
+const app=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const engine=fs.readFileSync(path.join(__dirname,'delivery.js'),'utf8');
+assert.match(delivery,/^@import url\("\.\/premium-v2\.css"\);/);
+for(const selector of ['.hub-athlete-compact-intro','.hub-parent-session-card','.hub-mode-toggle','.hub-field-cohort','.hub-staff-sheet-group','.hub-athlete-day-choice'])assert.ok(css.includes(selector),'Missing '+selector);
+assert.match(app,/function renderSharedWeeklyDashboard\(/);
+assert.ok(app.includes('premium-v2.js?v='));
+assert.ok(app.includes('DuPremiumV2') && app.includes('.identity('));
+assert.match(app,/function renderSchoolAthleteCompact\(/);
+assert.match(app,/function renderWorkoutExperience\(/);
+assert.match(app,/data-workout-mode="guided"/);
+assert.match(app,/function copyWorkoutAllowed\(/);
+assert.match(app,/function staffAllGroupsExperience\(/);
+assert.match(engine,/function canCopy\(/);
+assert.match(engine,/function copyWorkout\(/);
+assert.doesNotMatch(css,/service.role|service_role|supabaseKey|access_code/i,'No secrets or credentials in presentation stylesheet');
+console.log('Premium V2 static contracts passed (role rendering, guided mode, copy formatter, school groups, styles).');

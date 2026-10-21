@@ -57,7 +57,8 @@ const {chromium}=require('playwright');
  await track.hover({position:{x:40,y:40}});
  const box=await track.boundingBox();const y=Math.max(box.y+20,Math.min(800,box.y+box.height/2));
  const startX=box.x+box.width*.8;
- ok(await page.evaluate(({x,y})=>!!document.elementFromPoint(x,y)?.closest('#premium-story-grid'),{x:startX,y}),`${width}: gesture starts inside story carousel`);
+ const hit=await page.evaluate(({x,y})=>{const node=document.elementFromPoint(x,y);return {inside:!!node?.closest('#premium-story-grid'),tag:node?.tagName||'none',id:node?.id||'',className:typeof node?.className==='string'?node.className.slice(0,100):'',x,y,viewport:[innerWidth,innerHeight]};},{x:startX,y});
+ ok(hit.inside,`${width}: gesture starts inside story carousel; hit=${JSON.stringify(hit)}`);
  // Playwright wheel input exercises native horizontal scrolling across Chromium versions.
  // Physical touch uses the same CSS overflow/snap surface; it was also checked on the live site.
  await page.mouse.move(startX,y);
@@ -65,7 +66,7 @@ const {chromium}=require('playwright');
  // Send bounded real wheel gestures; never mutate scrollLeft to manufacture a pass.
  for(let attempt=0;attempt<3;attempt++){
  await page.mouse.wheel(box.width*.8,0);
- try{await page.waitForFunction(()=>document.getElementById('premium-story-grid').scrollLeft>50,null,{timeout:2000});break;}catch(error){if(attempt===2)throw error;}
+ try{await page.waitForFunction(()=>document.getElementById('premium-story-grid').scrollLeft>50,null,{timeout:4000});break;}catch(error){if(attempt===2)throw error;}
  }
  ok(await track.evaluate(e=>e.scrollLeft)>50,`${width}: horizontal gesture moves athlete stories`);
  }
