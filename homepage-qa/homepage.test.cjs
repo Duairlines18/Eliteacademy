@@ -76,7 +76,7 @@ const withoutCompactVideo=source=>source
  .replace(/    modal\.querySelector\('\[data-hub-video-expand\]'\)\.addEventListener\('click',function\(\)\{[\s\S]*?    \}\);\r?\n/,'')
  .replace(/    modal\.classList\.remove\('expanded'\);\r?\n    modal\.querySelector\('\[data-hub-video-expand\]'\)\.textContent='Expand ↗';\r?\n    document\.body\.style\.overflow=HUB_VIDEO_BODY_OVERFLOW;/,"    document.body.style.overflow='hidden';")
  .replace("    modal.classList.remove('loading','expanded');","    modal.classList.remove('loading');");
-const withoutHubAssets=source=>source.replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
+const withoutHubAssets=source=>source.replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
 assert.equal(withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(html.slice(0,html.indexOf(routeStart))))),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains unchanged apart from isolated Hub asset links');
 const withoutHubRepair=source=>source
  .replace(/  function guidedCard\([^\n]+\n/,'  GUIDED_PRESCRIPTION\n')
