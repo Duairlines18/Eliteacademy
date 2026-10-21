@@ -13,10 +13,11 @@ const {chromium}=require('playwright');
  for(const width of [390,1440])for(const [audience,role] of [['parent','athlete'],['private-athlete','athlete'],['school','athlete'],['school','staff'],['professional','athlete']]){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
-  await context.addInitScript(({audience,role})=>{
+  await context.addInitScript(({audience,role,origin})=>{
+   if(location.origin!==origin)return;
    localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify(audience==='school'?{role,token:'test-fixture'}:{role,mode:'account',audience}));
    window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:'test-fixture'}}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})}})};
-  },{audience,role});
+  },{audience,role,origin:base});
   let completionWrites=0;
   await page.route('**/*',async route=>{
    const req=route.request(),url=req.url();if(url.startsWith(base))return route.continue();
