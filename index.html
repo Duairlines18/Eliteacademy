@@ -4549,6 +4549,7 @@ document.addEventListener('click',function(e){
   function nav(active){
     const s=session(); const staff=s?.role==='staff'; const dashboard=staff?'#/hub/staff':'#/hub/athlete';
     const links=staff?[['dashboard',dashboard,'Dashboard'],['week','#/hub/current-week','Current Week'],['library','#/hub/library','Exercise Library'],['notes','#/hub/programme-notes','Programme Notes'],['coach-feedback','#/hub/coach-feedback','Weekly Feedback']]:[['dashboard',dashboard,'My Week'],['library','#/hub/library','Exercise Library'],['feedback','#/hub/feedback','Feedback']];
+    links.splice(1,0,['routines','#/hub/routines','Your Routines']);
     if(HUB_STATE.audience!=='professional')links.splice(1,0,['journey','#/hub/journey',staff?'Group Journey':'My Journey']);
     return '<header class="hub-topbar"><div class="hub-wrap hub-topbar-row"><a class="hub-brand" href="'+dashboard+'">DU AIRLINES <span>PERFORMANCE HUB</span></a><button class="hub-menu-button" type="button" aria-expanded="false" aria-controls="hubNav">Menu</button><nav class="hub-nav" id="hubNav" aria-label="Performance Hub">'+links.map(x=>'<a href="'+x[1]+'"'+(active===x[0]?' aria-current="page"':'')+'>'+x[2]+'</a>').join('')+'<button class="hub-logout" type="button">Log Out</button></nav></div></header>';
   }
@@ -4789,26 +4790,26 @@ document.addEventListener('click',function(e){
     root.innerHTML=shell(body,'dashboard');
   }
   function compactSchoolWeek(p){
-    const sessions=Array.isArray(p.sessions)?p.sessions:[];
+    const sessions=trainingSessions(p);
     return '<nav class="hub-athlete-day-picker" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':'')+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
   }
   function compactAthleteWeek(p,activeId){
-    const sessions=Array.isArray(p.sessions)?p.sessions:[];
+    const sessions=trainingSessions(p);
     return '<nav class="hub-athlete-day-picker" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice'+(String(activeId||'')===String(item.id)?' selected':'')+'" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':'')+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
   }
   function weekBlock(p,athlete=false){
     // One shared week navigation for staff, school athletes, parents and private athletes.
     // Uses only published sessions; never manufactures a training day.
-    return compactSchoolWeek(p);
+    return compactSchoolWeek(p)+routinesShortcut();
   }
 
   function renderStaffDashboard(){
     const p=programme();
     if(session()?.role==='staff' && window.DuCoachCommand && HUB_STATE.cohort && p){
-      root.innerHTML=shell('<section id="du-coach-command-root" aria-label="Coach Command"></section>','dashboard');
+      root.innerHTML=shell('<section id="du-coach-command-root" aria-label="Coach Command"></section>'+routinesShortcut(),'dashboard');
       try{
         window.DuCoachCommand.mount(root.querySelector('#du-coach-command-root'),{
-          role:'staff',cohort:HUB_STATE.cohort,programme:p,exercises:EXERCISES
+          role:'staff',cohort:HUB_STATE.cohort,programme:{...p,sessions:trainingSessions(p)},exercises:EXERCISES
         });
         return;
       }catch(error){console.error('Coach Command unavailable; using original staff view.',error);}
@@ -4820,7 +4821,7 @@ document.addEventListener('click',function(e){
   }
 
   function renderCurrentWeek(){const p=programme();root.innerHTML=shell('<div class="hub-field-day-header"><a href="#/hub/staff">← Coach home</a><h1>Current Week</h1></div>'+weekBlock(p)+(p.coachGuidance?'<details class="hub-field-optional"><summary>Coach guidance</summary><p>'+escapeHtml(p.coachGuidance)+'</p></details>':''),'week');}
-  function renderSession(id){const p=programme(),s=p.sessions.find(x=>x.id===id);if(!s){renderNotFound();return;}const back=session()?.role==='staff'?'#/hub/current-week':'#/hub/athlete';const savedNotes=[s.watch,s.athleteNote].filter(Boolean);const important=savedNotes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+savedNotes.map(escapeHtml).join('<br>')+'</span></div>':'';const sessionHelp=isSchoolReferenceViewer()?'Read the prescription first. Open an exact demo only when you need technique guidance.':'Scan the full prescription in Quick View or switch to Guided Mode for step-by-step help.';const schoolAthlete=isSchoolReferenceViewer()&&session()?.role!=='staff';const privateAthlete=privateSelfServeViewer();const parentAthlete=HUB_STATE.audience==='parent'&&session()?.role!=='staff';const simpleAthlete=schoolAthlete||privateAthlete||parentAthlete;const athleteNav=simpleAthlete?'<div class="hub-athlete-session-nav"><a href="'+back+'">← Week</a><span>'+escapeHtml(weekLabel(p))+'</span></div>'+ (parentAthlete?parentTrainingDays(p,s.id):compactAthleteWeek(p,s.id))+(schoolAthlete?'<details class="hub-field-cohort hub-athlete-session-group"><summary>'+escapeHtml(schoolGroup()||'Choose your Form')+' <span>Change</span></summary>'+groupPicker()+'</details>':''):'';const athleteHead=simpleAthlete?'<div class="hub-athlete-session-title"><h1>'+escapeHtml(parentAthlete?(parentSessionLabel(s,Math.max(0,p.sessions.indexOf(s)))+' — '+parentSessionHeading(s,Math.max(0,p.sessions.indexOf(s)))):((s.day||'Day')+' · '+s.title))+'</h1><p>'+escapeHtml(s.duration||'')+'</p></div>':'';const body=simpleAthlete?athleteNav+athleteHead+important+'<section class="hub-section hub-field-session">'+renderWorkoutExperience(s)+'</section>':(session()?.role==='staff'&&isSchoolReferenceViewer()?'<div class="hub-field-day-header"><a href="'+back+'">← Week</a><span>'+escapeHtml(s.day||'')+'</span><h1>'+escapeHtml(s.title)+'</h1><p>'+escapeHtml(s.focus||'')+'</p><small>'+escapeHtml(s.duration||'')+'</small></div>':pageHead(s.day,s.title,s.focus,back))+important+'<section class="hub-section hub-field-session"><div class="hub-section-head"><div><h2>Training Sheet</h2></div></div>'+renderWorkoutExperience(s)+'</section>';root.innerHTML=shell(body+airZimTool(p),'week');}
+  function renderSession(id){const p=programme(),s=p.sessions.find(x=>x.id===id);if(!s){renderNotFound();return;}if(assignedRoutines(p).includes(s)){renderRoutine(s);return;}const back=session()?.role==='staff'?'#/hub/current-week':'#/hub/athlete';const savedNotes=[s.watch,s.athleteNote].filter(Boolean);const important=savedNotes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+savedNotes.map(escapeHtml).join('<br>')+'</span></div>':'';const sessionHelp=isSchoolReferenceViewer()?'Read the prescription first. Open an exact demo only when you need technique guidance.':'Scan the full prescription in Quick View or switch to Guided Mode for step-by-step help.';const schoolAthlete=isSchoolReferenceViewer()&&session()?.role!=='staff';const privateAthlete=privateSelfServeViewer();const parentAthlete=HUB_STATE.audience==='parent'&&session()?.role!=='staff';const simpleAthlete=schoolAthlete||privateAthlete||parentAthlete;const athleteNav=simpleAthlete?'<div class="hub-athlete-session-nav"><a href="'+back+'">← Week</a><span>'+escapeHtml(weekLabel(p))+'</span></div>'+ (parentAthlete?parentTrainingDays(p,s.id):compactAthleteWeek(p,s.id))+(schoolAthlete?'<details class="hub-field-cohort hub-athlete-session-group"><summary>'+escapeHtml(schoolGroup()||'Choose your Form')+' <span>Change</span></summary>'+groupPicker()+'</details>':''):'';const athleteHead=simpleAthlete?'<div class="hub-athlete-session-title"><h1>'+escapeHtml(parentAthlete?(parentSessionLabel(s,Math.max(0,p.sessions.indexOf(s)))+' — '+parentSessionHeading(s,Math.max(0,p.sessions.indexOf(s)))):((s.day||'Day')+' · '+s.title))+'</h1><p>'+escapeHtml(s.duration||'')+'</p></div>':'';const body=simpleAthlete?athleteNav+athleteHead+important+'<section class="hub-section hub-field-session">'+renderWorkoutExperience(s)+'</section>':(session()?.role==='staff'&&isSchoolReferenceViewer()?'<div class="hub-field-day-header"><a href="'+back+'">← Week</a><span>'+escapeHtml(s.day||'')+'</span><h1>'+escapeHtml(s.title)+'</h1><p>'+escapeHtml(s.focus||'')+'</p><small>'+escapeHtml(s.duration||'')+'</small></div>':pageHead(s.day,s.title,s.focus,back))+important+'<section class="hub-section hub-field-session"><div class="hub-section-head"><div><h2>Training Sheet</h2></div></div>'+renderWorkoutExperience(s)+'</section>';root.innerHTML=shell(body+airZimTool(p),'week');}
 
 
   function athleteCard(a){return '<article class="hub-profile-card"><h3>'+escapeHtml(a.name)+'</h3><p>'+escapeHtml(a.event)+'</p><div class="hub-meta-row"><span class="hub-chip">'+escapeHtml(a.phase)+'</span><span class="hub-status'+(a.status!=='No Current Flag'?' flag':'')+'">'+escapeHtml(a.status)+'</span></div><p>Next review: '+escapeHtml(a.nextReview)+'</p><a class="hub-action-arrow" href="#/hub/athlete-profile/'+encodeURIComponent(a.id)+'">View Profile →</a></article>';}
@@ -4831,6 +4832,35 @@ document.addEventListener('click',function(e){
   function renderProgress(){const upcoming=MOCK.athletes.filter(a=>a.nextReview==='Week 6').map(a=>'<div class="hub-progress-row"><div><strong>'+escapeHtml(a.name)+'</strong><p>Week 6 review</p></div><span class="hub-status">Upcoming</span></div>').join('');const flags=MOCK.flags.map(f=>'<div class="hub-progress-row"><div><strong>'+escapeHtml(f.athlete)+'</strong><p>'+escapeHtml(f.note)+'</p></div><span class="hub-status flag">Needs Attention</span></div>').join('');root.innerHTML=shell(pageHead('Staff Progress','Who needs attention?','Reviews and flags — not attendance.','#/hub/staff')+'<div class="hub-review-grid"><div class="hub-review-card"><h3>Upcoming Reviews</h3>'+upcoming+'</div><div class="hub-review-card"><h3>Athlete Flags</h3>'+flags+'</div></div>'+section('Development Reviews','Athlete check-ins every two weeks across the block.','<div class="hub-note-card">'+MOCK.reviews.map(r=>'<div class="hub-progress-row"><div><strong>Week '+r.week+' — '+escapeHtml(r.label)+'</strong></div><span class="hub-status">'+escapeHtml(r.status)+'</span></div>').join('')+'</div>'),'progress');}
   function renderProgrammeNotes(){const p=programme();root.innerHTML=shell(pageHead('Programme Notes',p.title,'Short programme context for staff.','#/hub/staff')+'<div class="hub-note-card"><h3>Programme Intent</h3><p>'+escapeHtml(p.programmeNotes)+'</p></div><div class="hub-objective"><strong>Coach Guidance</strong><span>'+escapeHtml(p.coachGuidance)+'</span></div>','notes');}
 
+  function assignedRoutines(p=programme()){
+    const sessions=Array.isArray(p?.sessions)?p.sessions:[];
+    const warmups=DuHubDelivery.overview(p||{}).warmups;
+    // Only explicit standalone labels count. A Day 1 core workout stays a training day.
+    return sessions.filter(item=>warmups.includes(item)||/^(?:[a-z -]+ )?routine$/i.test(String(item.day||'').trim()));
+  }
+  function trainingSessions(p){
+    const routines=assignedRoutines(p);
+    return (Array.isArray(p?.sessions)?p.sessions:[]).filter(item=>!routines.includes(item));
+  }
+  function routinesShortcut(){
+    return '<section class="hub-premium-routines" aria-label="Your routines"><h2>Your Routines</h2><a class="hub-button secondary" href="#/hub/routines">Open Your Routines →</a></section>';
+  }
+  function renderRoutines(){
+    const p=programme(),ready=HUB_STATE.contentStatus==='published';
+    const routines=ready?assignedRoutines(p):[];
+    const cards=routines.map(item=>'<a class="hub-card" href="#/hub/session/'+encodeURIComponent(item.id)+'"><span class="hub-card-kicker">Routine</span><h3>'+escapeHtml(item.title||item.day)+'</h3>'+(item.duration?'<p>'+escapeHtml(item.duration)+'</p>':'')+'<span class="hub-card-arrow">Open routine →</span></a>').join('');
+    const airZim=ready&&assignedAirZim(p)&&!routines.some(item=>/air zim/i.test(item.title+' '+item.day))?'<a class="hub-card" href="#/hub/routines/air-zim"><span class="hub-card-kicker">Warm-Up</span><h3>Air Zim Warm-Up</h3><span class="hub-card-arrow">Open routine →</span></a>':'';
+    const back=session()?.role==='staff'?'#/hub/staff':'#/hub/athlete';
+    root.innerHTML=shell(pageHead('Your Routines','Your Routines','Choose a coach-approved routine.',back)+(cards||airZim?'<div class="hub-grid">'+cards+airZim+'</div>':'<div class="hub-note-card"><p>Your coach-approved routines will appear here when available.</p></div>'),'routines');
+  }
+  function renderRoutine(s){
+    if(HUB_STATE.contentStatus!=='published'||!assignedRoutines().includes(s)){renderNotFound();return;}
+    const notes=[s.watch,s.athleteNote].filter(Boolean);
+    const group=isSchoolReferenceViewer()?'<details class="hub-field-cohort hub-athlete-session-group"><summary>'+escapeHtml(schoolGroup()||'Choose your Form')+' <span>Change</span></summary>'+groupPicker()+'</details>':'';
+    const heading='<div class="hub-athlete-session-nav"><a href="#/hub/routines">← Your Routines</a></div><div class="hub-athlete-session-title"><h1>'+escapeHtml(s.title||s.day)+'</h1><p>'+escapeHtml(s.duration||'')+'</p></div>';
+    const guidance=notes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+notes.map(escapeHtml).join('<br>')+'</span></div>':'';
+    root.innerHTML=shell(heading+group+guidance+'<section class="hub-section hub-field-session">'+renderWorkoutExperience(s)+'</section>','routines');
+  }
   function renderSchoolAthleteCompact(){
     const a=athleteDemo(),p=programme();
     const intro='<section class="hub-field-intro hub-athlete-compact-intro"><span class="hub-week-label">MY TRAINING</span><h1>'+escapeHtml((typeof window!=='undefined'?window.DuPremiumV2:null)?.identity({...HUB_STATE,programme:p}).headline||('Hi, '+a.displayName))+'</h1><p>'+escapeHtml(weekLabel(p))+' · '+escapeHtml(a.school||p.school||'School programme')+'</p></section>';
@@ -4839,7 +4869,7 @@ document.addEventListener('click',function(e){
     const actions='<div class="hub-field-links"><a href="#/hub/library">Movement library →</a><a href="#/hub/feedback">Athlete check-in →</a></div>';
     const standard='<section class="hub-premium-standard" aria-label="Du Airlines Weekly Standard"><span class="hub-week-label">DU AIRLINES WEEKLY STANDARD</span><h2>Trust · Composure · Gratitude · Execute</h2><p>Show up with purpose. Focus on what you can control. Keep building.</p></section>';
     const training='<section class="hub-premium-training" aria-label="Your training"><h2 class="hub-week-training-heading">Your Training</h2>'+compactAthleteWeek(p)+'</section>';
-    root.innerHTML=shell(intro+group+standard+training+note+actions,'dashboard');
+    root.innerHTML=shell(intro+group+standard+training+routinesShortcut()+note+actions,'dashboard');
   }
   function renderPrivateAthleteCompact(){return renderSharedWeeklyDashboard();}
   function parentSessionLabel(item,index){
@@ -4862,7 +4892,7 @@ document.addEventListener('click',function(e){
     return '✦';
   }
   function parentTrainingDays(p,activeId){
-    const sessions=Array.isArray(p.sessions)?p.sessions:[];
+    const sessions=trainingSessions(p);
     return '<nav class="hub-athlete-day-picker hub-parent-session-grid" aria-label="Choose training day">'+sessions.map((item,index)=>{
       const label=parentSessionLabel(item,index),title=parentSessionHeading(item,index),active=String(activeId||'')===String(item.id);
       const icon=trainingDayIcon(title,label);
@@ -4877,9 +4907,9 @@ document.addEventListener('click',function(e){
     const ready=HUB_STATE.contentStatus==='published';
     const focus=ready&&view.focus?'<div class="hub-parent-week-focus"><strong>This week’s focus</strong><p>'+escapeHtml(view.focus)+'</p></div>':'';
     const warmups=ready&&view.warmups.length?'<section class="hub-week-warmups"><h2>Standard Warm-Up</h2>'+view.warmups.map(w=>'<a class="hub-button secondary" href="#/hub/session/'+encodeURIComponent(w.id)+'">'+escapeHtml(w.title)+' →</a>').join('')+'</section>':'';
-    const training=ready?'<section class="hub-premium-training" aria-label="Your training"><h2 class="hub-week-training-heading">Your Training</h2>'+parentTrainingDays({...p,sessions:view.training})+'</section>'+airZimTool(p):'<div class="hub-note-card"><strong>This week is being prepared.</strong><p>Only published workouts appear here.</p></div>';
+    const training=ready?'<section class="hub-premium-training" aria-label="Your training"><h2 class="hub-week-training-heading">Your Training</h2>'+parentTrainingDays(p)+'</section>'+airZimTool(p):'<div class="hub-note-card"><strong>This week is being prepared.</strong><p>Only published workouts appear here.</p></div>';
     const standard='<section class="hub-premium-standard" aria-label="Du Airlines Weekly Standard"><span class="hub-week-label">DU AIRLINES WEEKLY STANDARD</span><h2>Trust · Composure · Gratitude · Execute</h2><p>Show up with purpose. Focus on what you can control. Keep building.</p></section>';
-    const routines='<section class="hub-premium-routines" aria-label="Your routines"><h2>Your Routines</h2>'+(ready&&view.warmups.length?view.warmups.map(w=>'<a class="hub-button secondary" href="#/hub/session/'+encodeURIComponent(w.id)+'">'+escapeHtml(w.title)+' →</a>').join(''):'<p class="hub-helper">Your coach-approved routines will appear here when available.</p>')+'</section>';
+    const routines=routinesShortcut();
     const journey=ready?'<section class="hub-premium-journey" aria-label="Your athlete journey"><h2>Your Athlete Journey</h2><div id="du-performance-journey"></div></section>':'';
     const coachNote=p.personalNote||p.athleteEducation||'';const note=coachNote?'<details class="hub-field-note"><summary>Coach Du note</summary><p>'+escapeHtml(coachNote)+'</p></details>':'';
     const publishedWeeks=HUB_STATE.audience==='private-athlete'?'<details class="hub-field-note"><summary>Published programme weeks</summary>'+weekBrowser(p)+historyBlock()+'</details>':'';
@@ -4907,9 +4937,9 @@ document.addEventListener('click',function(e){
     if(!assignedAirZim(p))return '';
     return '<div class="hub-note-card hub-assigned-warmup-tool" style="margin:1rem 0"><h3>Air Zim Warm-Up</h3><p>Your reusable warm-up and exercise demos. Follow today’s training prescription and Coach Du’s guidance.</p><a class="hub-action-arrow" href="#/hub/library/air-zim">Open warm-up →</a></div>';
   }
-  function renderAssignedAirZim(){
+  function renderAssignedAirZim(back='#/hub/library'){
     const source=assignedAirZim();
-    const heading=pageHead('Assigned Warm-Up','Air Zim Warm-Up','A reusable warm-up for your assigned programme.','#/hub/library');
+    const heading=pageHead('Assigned Warm-Up','Air Zim Warm-Up','A reusable warm-up for your assigned programme.',back);
     if(!source){root.innerHTML=shell(heading+'<div class="hub-note-card"><p>This warm-up is not assigned to your programme.</p></div>','library');return;}
     const note='<div class="hub-objective"><strong>Follow your programme</strong><span>Today’s reduced warm-up, recovery, rest or return-to-running limits take priority. This reference does not add running volume or give clearance for maximal sprinting.'+(source.watch?' '+escapeHtml(source.watch):'')+'</span></div>';
     root.innerHTML=shell(heading+note+'<section class="hub-section hub-field-session">'+schoolAthleteDelivery(normalizeWorkoutSession(source,EXERCISES).sections,source)+'</section>','library');
@@ -4958,6 +4988,8 @@ document.addEventListener('click',function(e){
     else if(route.startsWith('/history/'))await renderHistoryWeek(decodeURIComponent(route.split('/')[2]||''));
     else if(route.startsWith('/programme-week/'))await renderPrivateProgrammeWeek(decodeURIComponent(route.split('/')[2]||''),route.split('/')[3]==='day'?route.split('/')[4]:undefined);
     else if(route.startsWith('/upcoming-week/'))renderUpcomingWeek(decodeURIComponent(route.split('/')[2]||''));
+    else if(route==='/routines')renderRoutines();
+    else if(route==='/routines/air-zim'&&HUB_STATE.contentStatus==='published')renderAssignedAirZim('#/hub/routines');
     else if(route.startsWith('/session/'))renderSession(route.split('/')[2]);
     else if(route.startsWith('/athlete-profile/')&&active.role==='staff')renderStaffDashboard();
     else if(route==='/programme-notes'&&active.role==='staff')renderProgrammeNotes();
