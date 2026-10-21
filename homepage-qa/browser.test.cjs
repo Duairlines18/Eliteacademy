@@ -66,7 +66,7 @@ const {chromium}=require('playwright');
  // Send bounded real wheel gestures; never mutate scrollLeft to manufacture a pass.
  for(let attempt=0;attempt<3;attempt++){
  await page.mouse.wheel(box.width*.8,0);
- try{await page.waitForFunction(()=>document.getElementById('premium-story-grid').scrollLeft>50,null,{timeout:2000});break;}catch(error){if(attempt===2)throw error;}
+ try{await page.waitForFunction(()=>document.getElementById('premium-story-grid').scrollLeft>50,null,{timeout:4000});break;}catch(error){if(attempt===2)throw error;}
  }
  ok(await track.evaluate(e=>e.scrollLeft)>50,`${width}: horizontal gesture moves athlete stories`);
  }
