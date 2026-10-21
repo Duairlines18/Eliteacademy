@@ -1,0 +1,18 @@
+/* Du Airlines Premium Hub V2 — presentation layer only. */
+:root{--du-v2-gold:#e5b957;--du-v2-line:rgba(229,185,87,.28);--du-v2-panel:#121512}
+.hub-athlete-compact-intro{position:relative;overflow:hidden;border:1px solid var(--du-v2-line);border-radius:22px;background:radial-gradient(circle at 95% 12%,rgba(229,185,87,.17),transparent 45%),linear-gradient(135deg,#1c1c16,#0d100f);padding:clamp(20px,4vw,34px);box-shadow:0 16px 36px rgba(0,0,0,.23),inset 0 1px rgba(255,231,177,.08)}
+.hub-athlete-compact-intro:after{content:'✦';position:absolute;right:clamp(12px,4vw,35px);top:10px;font-size:clamp(55px,10vw,95px);line-height:1;color:rgba(229,185,87,.16);pointer-events:none}
+.hub-athlete-compact-intro h1{position:relative;z-index:1;color:#f8f1e5;letter-spacing:-.035em;font-size:clamp(28px,5vw,46px);line-height:1.1;margin:12px 0}
+.hub-athlete-compact-intro .hub-week-label{color:var(--du-v2-gold);font-size:11px;font-weight:800;letter-spacing:.15em}
+.hub-athlete-compact-intro p{position:relative;z-index:1;color:#c9bdab;line-height:1.5}
+.hub-premium-training,.hub-premium-routines,.hub-premium-journey,.hub-premium-standard{border-radius:20px!important;border:1px solid var(--du-v2-line)!important;background:linear-gradient(145deg,#181a16,#0e110f)!important;box-shadow:0 12px 28px rgba(0,0,0,.18),inset 0 1px rgba(255,231,177,.04);padding:clamp(17px,3vw,26px)!important}
+.hub-premium-training h2,.hub-premium-routines h2,.hub-premium-journey h2{color:#f2e5cd!important;letter-spacing:-.025em}
+.hub-parent-session-card{border:1px solid rgba(229,185,87,.27)!important;border-radius:16px!important;background:radial-gradient(circle at top right,rgba(229,185,87,.09),transparent 55%),#151814!important;box-shadow:0 8px 18px rgba(0,0,0,.16);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.hub-parent-session-card:hover,.hub-parent-session-card:focus-visible{transform:translateY(-2px);border-color:var(--du-v2-gold)!important;box-shadow:0 12px 24px rgba(0,0,0,.24)}
+.hub-parent-session-card.selected{border-color:var(--du-v2-gold)!important;background:linear-gradient(145deg,#30271a,#161814)!important}
+.hub-parent-session-icon{color:var(--du-v2-gold)!important;text-shadow:0 3px 15px rgba(229,185,87,.18)}
+.hub-mode-toggle{border-radius:13px;overflow:hidden}.hub-mode-toggle button{min-height:44px}.hub-mode-toggle button.active{background:var(--du-v2-gold)!important;color:#16120b!important}
+.hub-guided-layout,.hub-parent-workout-experience{max-width:100%}
+.hub-week-calendar article{border-radius:14px;background:#151713;border-color:var(--du-v2-line)}
+@media(prefers-reduced-motion:reduce){.hub-parent-session-card{transition:none}.hub-parent-session-card:hover{transform:none}}
+@media(max-width:600px){.hub-athlete-compact-intro{padding:20px}.hub-athlete-compact-intro:after{opacity:.55}.hub-parent-session-card{min-height:110px}}
