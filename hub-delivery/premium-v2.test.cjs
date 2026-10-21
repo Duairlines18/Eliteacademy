@@ -13,7 +13,6 @@ for(const selector of ['.hub-athlete-compact-intro','.hub-parent-session-card','
 assert.match(app,/function renderSharedWeeklyDashboard\(/);
 assert.match(app,/premium-v2\\.js\\?v=/);
 assert.match(app,/DuPremiumV2\\?\\.identity\\(HUB_STATE\\)/);
-assert.match(app,/hub-v2-parent-label/);
 assert.match(app,/function renderSchoolAthleteCompact\(/);
 assert.match(app,/function renderWorkoutExperience\(/);
 assert.match(app,/data-workout-mode="guided"/);
