@@ -7,7 +7,7 @@ const app=scripts.find(s=>s.includes('function parentTrainingDays('));
 assert.ok(app,'Hub app script found');
 const begin=app.indexOf('  function parentSessionLabel('),end=app.indexOf('  function renderAthleteDashboard(){',begin);
 assert.ok(begin>=0&&end>begin,'parent rendering functions available');
-const code=app.slice(begin,end)+';globalThis.api={parentSessionLabel,parentSessionHeading,parentTrainingDays,renderParentSimpleDashboard};';
+const code=app.slice(app.indexOf('  function assignedRoutines('),app.indexOf('  function renderSchoolAthleteCompact('))+app.slice(begin,end)+';globalThis.api={parentSessionLabel,parentSessionHeading,parentTrainingDays,renderParentSimpleDashboard};';
 const ctx={DuHubDelivery:require('../hub-delivery/delivery.js'),airZimTool:()=>'',encodeURIComponent,escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),programme:()=>ctx.p,athleteDemo:()=>({displayName:'Andria'}),HUB_STATE:{contentStatus:'published'},weekLabel:()=> 'Week 4 of 6',root:{innerHTML:''},shell:s=>s};
 vm.createContext(ctx);vm.runInContext(code,ctx);
 const sessions=[
@@ -17,9 +17,9 @@ const sessions=[
 {id:'warm',day:'Game Warm-Up',title:'Standard Warm-Up Before Games',duration:'8–10 min'}];
 ctx.p={title:'Andria Volleyball Development',sessions,weeklyObjective:'Move well and control landings'};
 const nav=ctx.api.parentTrainingDays(ctx.p);
-assert.equal((nav.match(/hub-parent-session-card/g)||[]).length,4,'four published session cards');
-for(const s of sessions)assert.ok(nav.includes(s.title.replace(/^Day \d+ — /,'')),'uses published workout heading: '+s.title);
-assert.match(nav,/15–20 min/);assert.match(nav,/25–30 min/);assert.match(nav,/8–10 min/);
+assert.equal((nav.match(/hub-parent-session-card/g)||[]).length,3,'only the three published training days');
+for(const s of sessions.slice(0,3))assert.ok(nav.includes(s.title.replace(/^Day \d+ — /,'')),'uses published workout heading: '+s.title);
+assert.match(nav,/15–20 min/);assert.match(nav,/25–30 min/);assert.doesNotMatch(nav,/8–10 min|Standard Warm-Up/);
 assert.doesNotMatch(nav,/Day 1 — Day 1/);
 assert.match(ctx.api.parentTrainingDays(ctx.p,'two'),/hub-parent-session-card selected/);
 ctx.api.renderParentSimpleDashboard();

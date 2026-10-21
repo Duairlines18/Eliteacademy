@@ -9,7 +9,8 @@ scripts.forEach((script,index)=>assert.doesNotThrow(()=>new vm.Script(script,{fi
 const app=scripts.find(x=>x.includes('function schoolAthleteDelivery('));
 assert.ok(app,'Hub application script must exist');
 const extract=(start,end)=>{const a=app.indexOf(start),b=app.indexOf(end,a+start.length);assert.ok(a>=0&&b>a,start);return app.slice(a,b);};
-const source=extract('  function compactAthleteWeek(p,activeId){','  function weekBlock(')
+const source=extract('  function assignedRoutines(', '  function renderSchoolAthleteCompact(')
+  +extract('  function compactAthleteWeek(p,activeId){','  function weekBlock(')
   +extract('  function visibleNormalizedSections(workout){','  function flattenedWorkoutItems(')
   +extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')
   +';globalThis.testApi={compactAthleteWeek,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';

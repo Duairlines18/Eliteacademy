@@ -78,7 +78,15 @@ const withoutCompactVideo=source=>source
  .replace("    modal.classList.remove('loading','expanded');","    modal.classList.remove('loading');");
 const withoutHubAssets=source=>source.replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
 assert.equal(withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(html.slice(0,html.indexOf(routeStart))))),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains unchanged apart from isolated Hub asset links');
+// Owner-approved routines navigation; behavior is covered by hub-delivery/routines.test.cjs.
 const withoutHubRepair=source=>source
+ .replace(/  function assignedRoutines\([\s\S]*?(?=  function renderSchoolAthleteCompact\()/,'')
+ .replace(/    links\.splice\(1,0,\['routines','#\/hub\/routines','Your Routines'\]\);\r?\n/,'')
+ .replace(/    else if\(route==='\/routines'[^\n]*\n/g,'')
+ .replace(/    else if\(route==='\/routines\/air-zim'[^\n]*\n/g,'')
+ .replace(/const sessions=trainingSessions\(p\);/g,'const sessions=Array.isArray(p.sessions)?p.sessions:[];')
+ .replace(/\+routinesShortcut\(\)/g,'')
+ .replace('programme:{...p,sessions:trainingSessions(p)},exercises:EXERCISES','programme:p,exercises:EXERCISES')
  .replace(/  function guidedCard\([^\n]+\n/,'  GUIDED_PRESCRIPTION\n')
  .replace(/  async function loadAccountHubData\([\s\S]*?(?=  async function loadHubData\()/,'  ACCOUNT_BOOTSTRAP\n')
  .replace(/  function mergeExercises\([^\n]+\n/,'  LIBRARY_MERGE\n')
