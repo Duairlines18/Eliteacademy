@@ -5,7 +5,7 @@
   function identity(state={}){
     const athlete=state.athlete||{},viewer=state.viewer||{};
     const athleteName=first(athlete.displayName)||first(athlete.fullName);
-    const parentName=[clean(viewer.firstName),clean(viewer.lastName)].filter(Boolean).join(' ');
+    const parentName=first(viewer.firstName);
     const audience=clean(state.audience);
     return Object.freeze({
       headline:athleteName?'Hi, '+athleteName:'Your Performance Hub',
