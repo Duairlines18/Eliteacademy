@@ -8,4 +8,7 @@ assert.equal(identity({audience:'parent',athlete:{displayName:'Andria'},viewer:{
 assert.equal(identity({audience:'parent',athlete:{displayName:'Andria'}}).parentLabel,'');
 assert.equal(identity({audience:'parent'}).headline,'Your Performance Hub');
 assert.equal(identity({audience:'parent',athlete:{displayName:'  Andria  '},viewer:{firstName:' Andrianna '}}).athleteName,'Andria');
+assert.equal(identity({audience:'private-athlete',athlete:{displayName:'Andria'},viewer:{firstName:'Andrianna'}}).parentLabel,'');
+assert.equal(identity({audience:'school',athlete:{displayName:'School Athlete'},cohort:{name:'Form 3'},programme:{school:'Other School'}}).schoolLabel,'Form 3');
+assert.equal(identity({audience:'parent',athlete:{displayName:' '}}).headline,'Your Performance Hub');
 console.log('Premium V2 identity contract passed');
