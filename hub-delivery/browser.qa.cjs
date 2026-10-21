@@ -51,8 +51,8 @@ const fixtures=JSON.parse(fs.readFileSync(process.env.HUB_QA_FIXTURES,'utf8'));
   await page.route('https://cdn.jsdelivr.net/**',route=>route.fulfill({contentType:'text/javascript',body:"window.supabase={createClient(){return {auth:{getSession:async()=>({data:{session:{access_token:'fixture-only',user:{email:'qa@example.invalid'}}}}),onAuthStateChange(){return {data:{subscription:{unsubscribe(){}}}}}}}}};"}));
   await page.route('https://fonts.googleapis.com/**',route=>route.fulfill({body:'',contentType:'text/css'}));
   await page.addInitScript(audience=>{if(location.hostname!=='127.0.0.1')return;localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify({mode:'account',audience,role:'athlete'}));window.DU_TECHNIQUE_REVIEW_ENABLED=false;},audience);
-  await page.goto(base+'/#/hub/athlete',{waitUntil:'domcontentloaded'});await page.locator('.hub-week-calendar').waitFor({timeout:15000});
-  ok(await page.locator('.hub-week-calendar article').count()===7,'seven calendar days');ok(await page.locator('.hub-week-calendar').count()===1,'one shared overview');
+  await page.goto(base+'/#/hub/athlete',{waitUntil:'domcontentloaded'});await page.locator('.hub-premium-training').waitFor({timeout:15000});
+  ok(await page.locator('.hub-week-overview,.hub-week-calendar').count()===0,'redundant week calendar removed');ok(await page.locator('.hub-premium-training').count()===1,'one primary training section');
   ok(await page.locator('#hub-root h1').innerText()==='Hi, '+name,'athlete identity uses approved greeting');ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'overview fits '+width);
   if(audience==='private-athlete'){ok(await page.locator('a[href="#/hub/history/5"]').count()===1,'published history navigation retained');ok(await page.locator('a[href="#/hub/programme-week/'+(data.programme.week+1)+'"]').count()===1,'next published week navigation retained');}
   const workout=data.programme.sessions.find(s=>!/[Ww]arm.?[Uu]p/.test(s.day)&&(s.prescriptions?.length||s.itemSections?.some(b=>b.videoLinks?.length)));
