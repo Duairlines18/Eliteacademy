@@ -7,7 +7,3 @@
 /* Premium parent/private athlete dashboard: presentation only; no video or programme changes. */
 .hub-premium-standard,.hub-premium-routines,.hub-premium-journey{margin:1.1rem 0;padding:clamp(1rem,3vw,1.5rem);border:1px solid rgba(199,162,90,.32);border-radius:16px;background:linear-gradient(135deg,rgba(199,162,90,.10),rgba(8,22,17,.42))}
 .hub-premium-standard h2{font-size:clamp(1.12rem,3vw,1.55rem);line-height:1.3;margin:.65rem 0;color:#e6c68c}.hub-premium-standard p{margin:.4rem 0 0;line-height:1.6}.hub-premium-routines h2,.hub-premium-journey h2{margin:0 0 .85rem}.hub-premium-routines .hub-button{display:inline-flex;margin:.3rem .45rem .3rem 0}.hub-premium-training{margin:1.4rem 0}.hub-premium-journey #du-performance-journey{min-height:1px}
-
-/* Premium parent/private athlete dashboard: presentation only; no video or programme changes. */
-.hub-premium-standard,.hub-premium-routines,.hub-premium-journey{margin:1.1rem 0;padding:clamp(1rem,3vw,1.5rem);border:1px solid rgba(199,162,90,.32);border-radius:16px;background:linear-gradient(135deg,rgba(199,162,90,.10),rgba(8,22,17,.42))}
-.hub-premium-standard h2{font-size:clamp(1.12rem,3vw,1.55rem);line-height:1.3;margin:.65rem 0;color:#e6c68c}.hub-premium-standard p{margin:.4rem 0 0;line-height:1.6}.hub-premium-routines h2,.hub-premium-journey h2{margin:0 0 .85rem}.hub-premium-routines .hub-button{display:inline-flex;margin:.3rem .45rem .3rem 0}.hub-premium-training{margin:1.4rem 0}.hub-premium-journey #du-performance-journey{min-height:1px}
