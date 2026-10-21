@@ -16,3 +16,16 @@
 .hub-week-calendar article{border-radius:14px;background:#151713;border-color:var(--du-v2-line)}
 @media(prefers-reduced-motion:reduce){.hub-parent-session-card{transition:none}.hub-parent-session-card:hover{transform:none}}
 @media(max-width:600px){.hub-athlete-compact-intro{padding:20px}.hub-athlete-compact-intro:after{opacity:.55}.hub-parent-session-card{min-height:110px}}
+
+/* School and staff reuse existing group-safe session rendering and Copy Workout controls. */
+.hub-field-day-header,.hub-athlete-session-title{border:1px solid var(--du-v2-line);border-radius:20px;padding:clamp(18px,3vw,27px);background:radial-gradient(circle at 94% 12%,rgba(229,185,87,.12),transparent 45%),linear-gradient(140deg,#1b1c16,#0d100f);box-shadow:0 12px 28px rgba(0,0,0,.18)}
+.hub-field-day-header h1,.hub-athlete-session-title h1{color:#f8f0e3;letter-spacing:-.025em}
+.hub-field-cohort,.hub-athlete-session-group{border:1px solid var(--du-v2-line);border-radius:14px;background:#151713;padding:12px 15px}
+.hub-field-cohort summary,.hub-athlete-session-group summary{min-height:44px;color:#edcf8e;cursor:pointer}
+.hub-athlete-day-choice{border:1px solid var(--du-v2-line);border-radius:14px;background:#171915;min-height:62px;transition:background .18s ease,border-color .18s ease}
+.hub-athlete-day-choice.selected,.hub-athlete-day-choice:focus-visible{border-color:var(--du-v2-gold);background:#2b2418}
+.hub-athlete-day-choice strong{color:#e7bf6b}
+.hub-field-session,.hub-staff-sheet-group{border-radius:18px;border-color:var(--du-v2-line)}
+.hub-staff-sheet-group{box-shadow:0 10px 22px rgba(0,0,0,.14)}
+.hub-athlete-sheet-actions button,.hub-athlete-sheet-actions a{min-height:44px}
+@media(prefers-reduced-motion:reduce){.hub-athlete-day-choice{transition:none}}
