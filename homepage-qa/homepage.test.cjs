@@ -85,6 +85,7 @@ const withoutHubRepair=source=>source
  .replace(/  function copyWorkoutAllowed\([\s\S]*?(?=  function athleteCopyText\()/,'')
  .replace(/  function staffAllGroupsExperience\([\s\S]*?(?=  function privateSelfServeViewer\()/,'  STAFF_DELIVERY\n')
  .replace(/  function renderSession\([^\n]+\n/,'  SESSION_DELIVERY\n')
+ .replace(/  function renderSchoolAthleteCompact\([\s\S]*?(?=  function renderPrivateAthleteCompact\()/,'  SCHOOL_ATHLETE_DASHBOARD\n')
  .replace(/  function renderPrivateAthleteCompact\([\s\S]*?(?=  function parentSessionLabel\()/,'  PRIVATE_DASHBOARD\n')
  .replace(/  function renderSharedWeeklyDashboard\([\s\S]*?(?=  function renderParentSimpleDashboard\()/,'')
  .replace(/  function renderParentSimpleDashboard\([\s\S]*?(?=  function renderAthleteDashboard\()/,'  PARENT_DASHBOARD\n')
