@@ -93,6 +93,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   await page.emulateMedia({media:'print'});
   ok(await page.locator('.hub-topbar').evaluate(e=>getComputedStyle(e).display==='none'),'print hides navigation');
   ok(await page.locator('#schoolAttendanceRoot').evaluate(e=>getComputedStyle(e).display==='none'),'print excludes register');
+  ok(await page.locator('.hub-premium-routines').evaluate(e=>getComputedStyle(e).display==='none'),'print excludes routine navigation');
   await page.emulateMedia({media:'screen'});
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'coach Day 2 fits viewport');
 
