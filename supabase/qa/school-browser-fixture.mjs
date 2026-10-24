@@ -40,7 +40,7 @@ const server=http.createServer(async(req,res)=>{
    if(url.pathname.endsWith('/school-technique-review'))return json(res,200,{clips:[]});
    return json(res,503,{error:'Not included in local fixture'});
   }
-  if(/^\/qa\/(01|02|03|04|05|06|staff)$/.test(url.pathname)){
+  if(/^\/qa\/(01|02|03|04|05|06|staff|director)$/.test(url.pathname)){
    const slot=url.pathname.split('/').pop(),login=logins.get(slot);
    // Test-only session seed; no production credentials, profiles or programme data.
    const init=`<script>localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify(${JSON.stringify(login)}));const originalFetch=window.fetch;window.fetch=function(input,init){const u=typeof input==='string'?input:input.url;return originalFetch(u.includes('/functions/v1/')?'/functions/v1/'+u.split('/functions/v1/')[1]:input,init);};</script>`;
