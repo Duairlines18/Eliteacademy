@@ -4502,7 +4502,7 @@ document.addEventListener('click',function(e){
         return '<div class="hub-unified-movement"><div class="hub-unified-movement-name">'+escapeHtml(row.title)+'</div><div class="hub-unified-doses">'+doses+'</div><div class="hub-unified-help">'+demo+'</div></div>';
       }).join('')+'</div>':'';
       if(!sharedHtml&&!cohortHtml)return '';
-      return '<section class="hub-unified-phase"><div class="hub-unified-phase-title"><h3>'+escapeHtml(section.title)+'</h3><span>'+items.length+' prescribed entries</span></div>'+sharedHtml+cohortHtml+'</section>';
+      return '<details class="hub-unified-phase hub-school-coach-phase"'+(/horizontal jumps|plyometric skills/i.test(section.title)?' open':'')+'><summary class="hub-unified-phase-title"><strong>'+escapeHtml(section.title)+'</strong><span>'+items.length+' prescribed entries</span></summary>'+sharedHtml+cohortHtml+'</details>';
     }).join('');
     const referenceHtml=references.length?'<details class="hub-unified-references"><summary>Movement reference library ('+references.reduce((n,x)=>n+(x.items||[]).length,0)+')</summary>'+references.map(section=>hubPhaseRows(section.items||[])).join('')+'</details>':'';
     return '<div class="hub-field-delivery hub-unified-field">'+(copyWorkoutAllowed()?'<div class="hub-athlete-sheet-actions"><button type="button" data-athlete-copy>Copy workout</button><span data-athlete-copy-status role="status"></span></div>':'')+'<div class="hub-unified-overview"><strong>One training sheet</strong><span>'+groups.map(escapeHtml).join(' · ')+'</span></div>'+html+referenceHtml+'</div>';
