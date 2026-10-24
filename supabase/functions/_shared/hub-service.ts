@@ -21,6 +21,7 @@ export async function exchangeAccessCode({ code, view, now = new Date(), reposit
   const codeHash = await cryptoPort.sha256(input.code);
   const record = await repository.findAccessCode(codeHash);
   if (!isCodeUsable(record, input.view, now)) throw new Error(ACCESS_DENIED_MESSAGE);
+  if(input.code.length===8&&!record.athlete_id&&!record.staff_id)throw new Error(ACCESS_DENIED_MESSAGE);
   const cohort = await repository.findCohort(record.cohort_id);
   if (!cohort || cohort.status !== 'live') throw new Error(ACCESS_DENIED_MESSAGE);
   let identity;

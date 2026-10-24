@@ -214,6 +214,9 @@ export class SupabaseHubRepository {
       .select('id,full_name,display_name,access_status,access_profile').eq('id',id).maybeSingle(), 'School staff lookup failed');
   }
 
+  async consumeLoginAttempt(key: string) {
+    return assertResult(await this.client.rpc('consume_hub_access_attempt',{p_key:key}), 'Login limit unavailable') === true;
+  }
   async attendanceProgramme(id: string) {
     return assertResult(await this.client.from('programmes').select('id,duration_weeks').eq('id',id).maybeSingle(), 'Attendance programme lookup failed');
   }
