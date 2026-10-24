@@ -19,7 +19,8 @@ const PARENT_ATHLETE_FIELDS = [
   'onboarding_complete', 'onboarding_data',
 ].join(',');
 
-function assertResult<T>(result: { data: T; error: any }, operation: string): T {
+// The interim client is deliberately dynamic; callers may supply a typed result explicitly.
+function assertResult<T = any>(result: { data: T; error: any }, operation: string): T {
   if (result.error) throw new Error(`${operation}: ${result.error.message}`);
   return result.data;
 }
