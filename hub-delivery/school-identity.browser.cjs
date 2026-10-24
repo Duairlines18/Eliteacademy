@@ -18,12 +18,14 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    ok(await page.locator('.hub-school-day-picker a').count()===3,'two coached days and optional home day');
    ok(await page.locator('.hub-school-day-picker').innerText().then(t=>t.includes('Movement foundations')&&t.includes('Capacity and control')&&t.includes('Optional home day')),'school cards show session purpose');
    await page.locator('[aria-label="Choose training day"] a').first().click();
+   const warmup=page.locator('.hub-athlete-warmup');if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
    const toggle=page.locator('[data-completion-toggle]').first();await toggle.waitFor();
    // A different athlete remains incomplete despite preceding athlete's activity.
    if(width===390)ok(await toggle.getAttribute('data-completed')==='false','independent initial progress '+slot);
    if(await toggle.getAttribute('data-completed')==='true'){await toggle.click();await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='false');}
    await toggle.click();await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='true');checks++;
    await page.reload();await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='true');checks++;
+   if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
    ok(await page.locator('.hub-main').innerText().then(t=>t.includes('1 × 20 m')&&t.includes('Walk-back recovery')),'dose and rest preserved');
    await page.locator('.hub-athlete-demo').first().click();await page.locator('#hubVideoModal').waitFor({state:'visible'});
    ok(await page.locator('#hubVideoModal').evaluate(e=>!e.classList.contains('expanded')),'compact video default');
