@@ -45,15 +45,17 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
   await page.getByRole('heading',{name:'School Overview',exact:true}).waitFor();checks++;
   ok(await page.locator('.hub-main').innerText().then(t=>t.includes('Mr Chivandire')&&t.includes('St. George’s Athlete 06')),'director school identity and roster');
+  ok(await page.locator('.hub-main').innerText().then(t=>['Land','Spring','Project','Own','February','Weeks 2–4 remain unreleased'].every(x=>t.includes(x))),'director sees read-only development roadmap');
   ok(await page.locator('#school-send, #coachFeedbackForm, [data-completion-toggle]').count()===0,'director has no upload, feedback or completion mutation controls');
   await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');await page.getByRole('heading',{name:'Team Command',exact:true}).waitFor();checks++;
   ok(await page.locator('.ducc [data-athlete]').count()===6,'coach sees exactly six assigned athletes');
   await page.locator('[data-att-week]').waitFor();
   await page.locator('[data-att-week]').selectOption('2');
   await page.getByText('Week 2 of 4',{exact:true}).waitFor();checks++;
+  const dates={390:['2026-10-19','2026-10-21'],375:['2026-10-18','2026-10-20'],430:['2026-10-17','2026-10-19'],768:['2026-10-16','2026-10-18'],1440:['2026-10-15','2026-10-17']}[width];
   const person=width===390?'fixture-athlete-1':'fixture-athlete-2';
-  await page.locator('[data-att-date="1"]').fill('2026-10-19');
-  await page.locator('[data-att-date="2"]').fill('2026-10-21');
+  await page.locator('[data-att-date="1"]').fill(dates[0]);
+  await page.locator('[data-att-date="2"]').fill(dates[1]);
   await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="1"]').selectOption('present');
   await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="2"]').selectOption('present');
   let failOnce=true;
@@ -73,7 +75,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
   await page.locator('[data-att-week]').waitFor();await page.locator('[data-att-week]').selectOption('2');
   await page.getByText('Week 2 of 4',{exact:true}).waitFor();
-  ok(await page.locator('.att-row').filter({hasText:width===390?'Athlete 01':'Athlete 02'}).innerText().then(t=>t.includes('2/2 attended')&&t.includes('2026-10-19')&&t.includes('2026-10-21')),'director sees shared coach register and actual dates');
+  ok(await page.locator('.att-row').filter({hasText:width===390?'Athlete 01':'Athlete 02'}).innerText().then(t=>t.includes('2/2 attended')&&t.includes(dates[0])&&t.includes(dates[1])),'director sees shared coach register and actual dates');
   ok(await page.locator('[data-att-save],[data-att-status]').count()===0,'director cannot change attendance');
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'attendance view fits viewport');
   await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');

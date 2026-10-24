@@ -17,3 +17,9 @@ test('identified school mode enables persistence while legacy school/staff stay 
  assert.match(html,/action:'logout'/);assert.match(html,/WORKOUT_COMPLETIONS=new Map\(\);Object.keys\(GUIDED_CURSOR\)/);
  assert.match(html,/data-completion-toggle/);
 });
+test('director oversight explains the four-week skills roadmap without exposing draft workouts',()=>{
+ const start=html.indexOf('  function renderDirectorOverview(){'),end=html.indexOf('  function renderStaffDashboard(){',start);
+ const ctx={HUB_STATE:{cohort:{name:'Synthetic school'},staff:{displayName:'Test Director'}},programme:()=>({title:'Four-week Plyometric Skills Pilot',totalWeeks:4,week:1,weeklyObjective:'Learn landing control'}),weekLabel:()=> 'Week 1 of 4',trainingSessions:()=>[{title:'Day 1'},{title:'Day 2'},{title:'Optional recovery'}],escapeHtml:s=>String(s),shell:s=>s,pageHead:()=>'',compactSchoolWeek:()=>'',routinesShortcut:()=>'',mountSchoolAttendance(){},root:{}};
+ vm.runInNewContext(html.slice(start,end)+';renderDirectorOverview();',ctx);
+ for(const text of ['Land','Spring','Project','Own','February','Weeks 2–4 remain unreleased'])assert.ok(ctx.root.innerHTML.includes(text),text);
+});
