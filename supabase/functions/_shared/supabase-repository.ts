@@ -210,7 +210,17 @@ export class SupabaseHubRepository {
 
   async findSchoolStaff(id: string) {
     return assertResult(await this.client.from('staff_profiles')
-      .select('id,full_name,display_name,access_status').eq('id',id).maybeSingle(), 'School staff lookup failed');
+      .select('id,full_name,display_name,access_status,access_profile').eq('id',id).maybeSingle(), 'School staff lookup failed');
+  }
+
+  async schoolCompletionSummary(cohortId: string, programmeId: string, week: number) {
+    const roster=await this.listSchoolRoster(cohortId);
+    const ids=roster.map((a:any)=>a.id);
+    if(!ids.length)return [];
+    const rows:any=assertResult(await this.client.from('workout_item_completions')
+      .select('athlete_id,completed,completed_at').in('athlete_id',ids)
+      .eq('programme_key',programmeId).eq('week_number',week).eq('completed',true), 'School completion lookup failed') || [];
+    return ids.map((id:string)=>({athleteId:id,recordedItems:rows.filter((r:any)=>r.athlete_id===id).length}));
   }
 
   async listSchoolRoster(cohortId: string) {

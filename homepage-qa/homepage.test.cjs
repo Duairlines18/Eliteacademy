@@ -102,6 +102,10 @@ const withoutHubRepair=source=>source
 // Approved person-bound school access has its own identity, persistence and race suites.
 // Normalize only its named functions/guards; public forms and remaining routes stay byte-checked.
 const withoutSchoolIdentity=source=>source
+ .replace(/  function renderDirectorOverview\([\s\S]*?(?=  function renderStaffDashboard\()/,'')
+ .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'\)return renderDirectorOverview\(\);\r?\n/,'')
+ .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'&&!\[[^\n]+\n/,'')
+ .replace(/ && HUB_STATE.staff\?\.accessProfile!=='sports_director'/g,'')
  .replace(/  let HUB_REQUEST_EPOCH=0;\r?\n/,'')
  .replace(/  function sessionStamp\([^\n]+\n/,'')
  .replace(/  function resetHubState\([^\n]+\n/,'  HUB_STATE_RESET\n')

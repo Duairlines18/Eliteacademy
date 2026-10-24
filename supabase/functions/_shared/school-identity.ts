@@ -19,5 +19,6 @@ export async function authorizeSchoolIdentity(repository: any, code: any, cohort
   const staff = await repository.findSchoolStaff(code.staff_id);
   if (!staff || staff.id !== code.staff_id || staff.access_status !== 'active'
     || !await repository.isStaffAssigned(staff.id, cohort.id)) deny();
+  if(staff.access_profile && !['coach','sports_director'].includes(staff.access_profile))deny();
   return { athlete: null, staff };
 }

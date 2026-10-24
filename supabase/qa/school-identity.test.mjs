@@ -39,3 +39,8 @@ test('named staff roster contains only minimal active athletes from their cohort
  assert.deepEqual(data.roster,[{id:'own',display_name:'St. George’s Athlete 01',cohort_id:'school',access_status:'active'}]);
  const a=fixture();const own=await bootstrapHub({token:'synthetic-session-token',repository:a.repository,cryptoPort,now});assert.equal(own.roster,null);
 });
+test('sports director receives a read-only overview and cannot submit coaching feedback',async()=>{
+ const f=fixture(1,'staff');f.staff.access_profile='sports_director';f.repository.listSchoolRoster=async()=>[];f.repository.schoolCompletionSummary=async()=>[];
+ const data=await bootstrapHub({token:'synthetic-session-token',repository:f.repository,cryptoPort,now});assert.equal(data.staff.accessProfile,'sports_director');assert.ok(Array.isArray(data.completionSummary));
+ const {saveSharedHubFeedback}=await import('../functions/_shared/hub-service.ts');await assert.rejects(saveSharedHubFeedback({token:'synthetic-session-token',repository:f.repository,cryptoPort,now,input:{}}),/read.only/i);
+});

@@ -4318,7 +4318,7 @@ document.addEventListener('click',function(e){
     try{
       const data=await edgePost(HUB_CONFIG.dataFunction,{action:'bootstrap'},{'x-du-session':s.token});
       if(stamp!==sessionStamp())return false;
-      HUB_STATE={programme:data.programme||null,cohort:data.cohort||null,contentStatus:data.contentStatus||null,viewer:null,athlete:data.athlete||null,staff:data.staff||null,roster:Array.isArray(data.roster)?data.roster:null,accessMode:data.accessMode||'shared-school',pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};
+      HUB_STATE={programme:data.programme||null,cohort:data.cohort||null,contentStatus:data.contentStatus||null,viewer:null,athlete:data.athlete||null,staff:data.staff||null,roster:Array.isArray(data.roster)?data.roster:null,completionSummary:data.completionSummary||[],accessMode:data.accessMode||'shared-school',pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};
       if(Array.isArray(data.exercises)&&data.exercises.length){
         const byCode=new Map(EXERCISES.map(ex=>[ex.code,ex]));
         data.exercises.forEach(ex=>byCode.set(ex.code,{
@@ -4818,7 +4818,13 @@ document.addEventListener('click',function(e){
     return compactSchoolWeek(p)+routinesShortcut();
   }
 
+  function renderDirectorOverview(){
+    const p=programme(),rows=HUB_STATE.roster||[],counts=new Map((HUB_STATE.completionSummary||[]).map(x=>[x.athleteId,x.recordedItems]));
+    const list=rows.map(a=>'<div class="hub-note-card"><h3>'+escapeHtml(a.display_name)+'</h3><p>'+Number(counts.get(a.id)||0)+' recorded workout items completed this week</p></div>').join('');
+    root.innerHTML=shell(pageHead('Sports Director','School Overview','St. George’s College · '+escapeHtml(HUB_STATE.staff.displayName),'#/hub/staff')+'<div class="hub-note-card"><h3>'+escapeHtml(weekLabel(p))+'</h3><p>'+escapeHtml(p.weeklyObjective||'Programme being prepared.')+'</p><p>Start date: '+escapeHtml(HUB_STATE.cohort?.startDate||'Awaiting confirmation')+'</p><p>Recorded activity is athlete-reported completion, not attendance or measured improvement.</p></div>'+list+compactSchoolWeek(p)+routinesShortcut(),'dashboard');
+  }
   function renderStaffDashboard(){
+    if(HUB_STATE.staff?.accessProfile==='sports_director')return renderDirectorOverview();
     const p=programme();
     if(session()?.role==='staff' && window.DuCoachCommand && HUB_STATE.cohort && p){
       root.innerHTML=shell('<section id="du-coach-command-root" aria-label="Coach Command"></section>'+routinesShortcut(),'dashboard');
@@ -5001,6 +5007,7 @@ document.addEventListener('click',function(e){
     }
     if(renderStamp!==sessionStamp())return;
     const active=session(); if(!active||!programme()){location.hash='#/hub/login';return;}
+    if(HUB_STATE.staff?.accessProfile==='sports_director'&&!['/','/staff','/athlete','/routines','/library','/current-week'].includes(route)&&!route.startsWith('/session/')&&!route.startsWith('/library/')){renderDirectorOverview();return;}
     if(route==='/'||route==='/staff'||route==='/athlete'){active.role==='staff'?renderStaffDashboard():renderAthleteDashboard();}
     else if(route==='/current-week'&&active.role==='staff')renderCurrentWeek();
     else if(route.startsWith('/history/'))await renderHistoryWeek(decodeURIComponent(route.split('/')[2]||''));
@@ -5020,7 +5027,7 @@ document.addEventListener('click',function(e){
     else if(route.startsWith('/library/'))renderCategory(route.split('/')[2]);
     else renderNotFound();
     // Performance Journey reads its own authorized endpoint; workout/video flows stay independent.
-    if(HUB_STATE.audience!=='professional' && ['/', '/staff', '/athlete', '/journey'].includes(route)){
+    if(HUB_STATE.audience!=='professional' && HUB_STATE.staff?.accessProfile!=='sports_director' && ['/', '/staff', '/athlete', '/journey'].includes(route)){
       const wrap=root.querySelector('.hub-main > .hub-wrap');
       if(wrap){
         let panel=wrap.querySelector('#du-performance-journey');
@@ -5040,7 +5047,7 @@ document.addEventListener('click',function(e){
       }
     }
     // School coach Technique Review: independent of individual athlete assignments.
-    if(active.role==='staff' && (route==='/'||route==='/staff')){
+    if(active.role==='staff' && HUB_STATE.staff?.accessProfile!=='sports_director' && (route==='/'||route==='/staff')){
       const shellNode=root.querySelector('.hub-shell');
       if(shellNode){
         const panel=document.createElement('section');

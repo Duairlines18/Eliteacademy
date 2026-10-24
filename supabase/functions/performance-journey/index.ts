@@ -25,6 +25,7 @@ Deno.serve(async request=>{
    const token=request.headers.get('x-du-session')||'';if(token.length<16||token.length>256)return reply(401,{error:'Your Hub session has expired.'});
    const identity=await authorizeSchoolSession({token,repository:new SupabaseHubRepository(db),cryptoPort});
    const {session:s,accessCode:code,cohort}=identity;
+   if(identity.staff?.access_profile==='sports_director')return reply(403,{error:'Use your School Overview for recorded activity.'});
    staff=s.role==='staff';
    if(identity.athlete){
     if(body.athleteId && body.athleteId!==identity.athlete.id)return reply(403,{error:'That athlete is not available for your access.'});

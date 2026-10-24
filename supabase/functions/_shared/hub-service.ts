@@ -81,15 +81,17 @@ export async function bootstrapHub(args: any) {
       .map((a: any) => ({id:a.id,display_name:a.display_name,cohort_id:a.cohort_id,access_status:a.access_status})) : null;
   return { ...shapeBootstrap({ role: session.role, ...bundle }),
     roster,
+    completionSummary: staff?.access_profile==='sports_director' ? await repository.schoolCompletionSummary(session.cohort_id,bundle.programme.id,bundle.cohort.current_week) : null,
     accessMode: athlete || staff ? 'identified-school' : 'shared-school',
     athlete: athlete ? { id: athlete.id, displayName: athlete.display_name, formTier: athlete.form_tier || null,
       testing: athlete.onboarding_data?.testing_placeholder === true } : null,
-    staff: staff ? {id:staff.id,displayName:staff.display_name || staff.full_name} : null };
+    staff: staff ? {id:staff.id,displayName:staff.display_name || staff.full_name,accessProfile:staff.access_profile || 'coach'} : null };
 }
 
 export async function saveSharedHubFeedback(args: any) {
   const {repository, feedbackType, input, now=new Date()} = args;
   const {session,athlete,staff} = await authorizeSchoolSession(args);
+  if(staff?.access_profile==='sports_director')throw new Error('Sports Director access is read-only.');
   const cohort = await repository.findCohortContext(session.cohort_id);
   if(!cohort || cohort.status !== 'live') throw new Error(SESSION_EXPIRED_MESSAGE);
   const expectedType = session.role === 'staff' ? 'coach_weekly' : (feedbackType === 'athlete_issue' ? 'athlete_issue' : 'athlete_biweekly');

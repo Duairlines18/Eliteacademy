@@ -23,6 +23,7 @@ Deno.serve(async request => {
     else return json(origin, 400, { error: 'Unsupported request.' });
     return json(origin, 200, result);
   } catch (error) {
+    if(error instanceof Error && error.message==='Sports Director access is read-only.')return json(origin,403,{error:error.message});
     if (error instanceof Error && error.message === SESSION_EXPIRED_MESSAGE) return json(origin, 401, { error: SESSION_EXPIRED_MESSAGE });
     if (error instanceof Error && error.message === PROGRAMME_PENDING_MESSAGE) return json(origin, 409, { error: PROGRAMME_PENDING_MESSAGE });
     if (error instanceof Error && error.message === 'Invalid feedback information.') return json(origin, 400, { error: error.message });
