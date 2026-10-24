@@ -4889,8 +4889,8 @@ document.addEventListener('click',function(e){
     const notes=[s.watch,s.athleteNote].filter(Boolean);
     const group=isSchoolReferenceViewer()?'<details class="hub-field-cohort hub-athlete-session-group"><summary>'+escapeHtml(schoolGroup()||'Choose your Form')+' <span>Change</span></summary>'+groupPicker()+'</details>':'';
     const heading='<div class="hub-athlete-session-nav"><a href="#/hub/routines">← Your Routines</a></div><div class="hub-athlete-session-title"><h1>'+escapeHtml(s.title||s.day)+'</h1><p>'+escapeHtml(s.duration||'')+'</p></div>';
-    const guidance=notes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+notes.map(escapeHtml).join('<br>')+'</span></div>':'';
-    root.innerHTML=shell(heading+group+guidance+'<section class="hub-section hub-field-session">'+renderWorkoutExperience(s)+'</section>','routines');
+    const guidance=notes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+notes.map(escapeHtml).join('<br>')+'</span></div>':'';const routineDose=isSchoolReferenceViewer()&&Array.isArray(s.prescriptions)?'<div class="hub-school-routine-dose"><strong>Today’s assigned dose</strong>'+s.prescriptions.map(item=>'<p>'+escapeHtml(item.dosage||'See exercise')+'</p>').join('')+'</div>':'';
+    root.innerHTML=shell(heading+group+guidance+routineDose+'<section class="hub-section hub-field-session">'+renderWorkoutExperience(s)+'</section>','routines');
   }
   function renderSchoolAthleteCompact(){
     const a=athleteDemo(),p=programme();
