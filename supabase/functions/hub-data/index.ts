@@ -1,3 +1,4 @@
+import { AttendanceError, readSchoolAttendance, saveSchoolAttendance } from '../_shared/school-attendance.ts';
 import { PROGRAMME_PENDING_MESSAGE, SESSION_EXPIRED_MESSAGE, corsHeaders } from '../_shared/hub-core.ts';
 import { bootstrapHub, saveSharedHubFeedback, logoutSchoolSession } from '../_shared/hub-service.ts';
 import { SupabaseHubRepository } from '../_shared/supabase-repository.ts';
@@ -18,11 +19,14 @@ Deno.serve(async request => {
     const repository = new SupabaseHubRepository(adminClient());
     let result;
     if (body?.action === 'bootstrap') result = await bootstrapHub({ token: request.headers.get('x-du-session') || '', repository, cryptoPort });
+    else if (body?.action === 'attendance-read') result = await readSchoolAttendance({ token: request.headers.get('x-du-session') || '', repository, cryptoPort, weekNumber:body.weekNumber });
+    else if (body?.action === 'attendance-save') result = await saveSchoolAttendance({ token: request.headers.get('x-du-session') || '', repository, cryptoPort, weekNumber:body.weekNumber, entries:body.entries });
     else if (body?.action === 'logout') result = await logoutSchoolSession({ token: request.headers.get('x-du-session') || '', repository, cryptoPort });
     else if (body?.action === 'save-feedback') result = await saveSharedHubFeedback({ token: request.headers.get('x-du-session') || '', feedbackType: body.feedbackType, input: body.feedback, repository, cryptoPort });
     else return json(origin, 400, { error: 'Unsupported request.' });
     return json(origin, 200, result);
   } catch (error) {
+    if(error instanceof AttendanceError)return json(origin,error.status,{error:error.message});
     if(error instanceof Error && error.message==='Sports Director access is read-only.')return json(origin,403,{error:error.message});
     if (error instanceof Error && error.message === SESSION_EXPIRED_MESSAGE) return json(origin, 401, { error: SESSION_EXPIRED_MESSAGE });
     if (error instanceof Error && error.message === PROGRAMME_PENDING_MESSAGE) return json(origin, 409, { error: PROGRAMME_PENDING_MESSAGE });

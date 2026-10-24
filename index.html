@@ -4156,6 +4156,7 @@ document.addEventListener('click',function(e){
   @media(min-width:980px){.hub-dashboard-actions{grid-template-columns:repeat(3,1fr)}.hub-athlete-grid{grid-template-columns:repeat(3,1fr)}.hub-video-grid{grid-template-columns:repeat(3,1fr)!important}}
 </style>
 <script src="/coach-command/coach-command.js"></script>
+<script src="/hub-delivery/school-attendance.js"></script>
 <script id="performance-hub-app">
 (function(){
   'use strict';
@@ -4818,20 +4819,28 @@ document.addEventListener('click',function(e){
     return compactSchoolWeek(p)+routinesShortcut();
   }
 
+  function mountSchoolAttendance(){
+    const target=root.querySelector('#schoolAttendanceRoot'),s=session(),stamp=sessionStamp();
+    if(!target||!s||!HUB_STATE.staff||!window.DuSchoolAttendance)return;
+    window.DuSchoolAttendance.mount(target,{weekNumber:programme()?.week||1,isCurrent:()=>stamp===sessionStamp(),
+      post:body=>edgePost(HUB_CONFIG.dataFunction,body,{'x-du-session':s.token})});
+  }
   function renderDirectorOverview(){
-    const p=programme(),rows=HUB_STATE.roster||[],counts=new Map((HUB_STATE.completionSummary||[]).map(x=>[x.athleteId,x.recordedItems]));
-    const list=rows.map(a=>'<div class="hub-note-card"><h3>'+escapeHtml(a.display_name)+'</h3><p>'+Number(counts.get(a.id)||0)+' recorded workout items completed this week</p></div>').join('');
-    root.innerHTML=shell(pageHead('Sports Director','School Overview','St. George’s College · '+escapeHtml(HUB_STATE.staff.displayName),'#/hub/staff')+'<div class="hub-note-card"><h3>'+escapeHtml(weekLabel(p))+'</h3><p>'+escapeHtml(p.weeklyObjective||'Programme being prepared.')+'</p><p>Start date: '+escapeHtml(HUB_STATE.cohort?.startDate||'Awaiting confirmation')+'</p><p>Recorded activity is athlete-reported completion, not attendance or measured improvement.</p></div>'+list+compactSchoolWeek(p)+routinesShortcut(),'dashboard');
+    const p=programme(),school=HUB_STATE.cohort?.name||p.school||'School';
+    const overview='<div class="hub-note-card"><h3>'+escapeHtml(weekLabel(p))+'</h3><p><strong>This week’s purpose</strong></p><p>'+escapeHtml(p.weeklyObjective||'Programme being prepared.')+'</p><p>'+trainingSessions(p).filter(x=>!/optional/i.test(x.title||'')).length+' coached sessions · '+trainingSessions(p).filter(x=>/optional/i.test(x.title||'')).length+' optional home session</p><p>Start date: '+escapeHtml(HUB_STATE.cohort?.startDate||'Awaiting confirmation')+'</p></div>';
+    root.innerHTML=shell(pageHead('Sports Director','School Overview',school+' · '+HUB_STATE.staff.displayName,'#/hub/staff')+overview+'<div id="schoolAttendanceRoot"></div>'+compactSchoolWeek(p)+routinesShortcut(),'dashboard');
+    mountSchoolAttendance();
   }
   function renderStaffDashboard(){
     if(HUB_STATE.staff?.accessProfile==='sports_director')return renderDirectorOverview();
     const p=programme();
     if(session()?.role==='staff' && window.DuCoachCommand && HUB_STATE.cohort && p){
-      root.innerHTML=shell('<section id="du-coach-command-root" aria-label="Coach Command"></section>'+routinesShortcut(),'dashboard');
+      root.innerHTML=shell('<section id="du-coach-command-root" aria-label="Coach Command"></section>'+(HUB_STATE.staff?'<div id="schoolAttendanceRoot"></div>':'')+routinesShortcut(),'dashboard');
       try{
         window.DuCoachCommand.mount(root.querySelector('#du-coach-command-root'),{
           role:'staff',cohort:HUB_STATE.cohort,programme:{...p,sessions:trainingSessions(p)},exercises:EXERCISES
         },{rosterVerified:Array.isArray(HUB_STATE.roster),roster:HUB_STATE.roster});
+        mountSchoolAttendance();
         return;
       }catch(error){console.error('Coach Command unavailable; using original staff view.',error);}
     }

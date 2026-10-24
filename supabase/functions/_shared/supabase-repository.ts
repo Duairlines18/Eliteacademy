@@ -214,6 +214,17 @@ export class SupabaseHubRepository {
       .select('id,full_name,display_name,access_status,access_profile').eq('id',id).maybeSingle(), 'School staff lookup failed');
   }
 
+  async attendanceProgramme(id: string) {
+    return assertResult(await this.client.from('programmes').select('id,duration_weeks').eq('id',id).maybeSingle(), 'Attendance programme lookup failed');
+  }
+  async readSchoolAttendance(cohort: string, programme: string, week: number) {
+    return assertResult(await this.client.from('school_attendance').select('athlete_id,session_number,session_date,status,recorded_at')
+      .eq('cohort_id',cohort).eq('programme_id',programme).eq('week_number',week), 'Attendance lookup failed') || [];
+  }
+  async saveSchoolAttendance(rows: any[]) {
+    assertResult(await this.client.from('school_attendance').upsert(rows,{onConflict:'cohort_id,programme_id,week_number,athlete_id,session_number'}), 'Attendance save failed');
+  }
+
   async schoolCompletionSummary(cohortId: string, programmeId: string, week: number) {
     const roster=await this.listSchoolRoster(cohortId);
     const ids=roster.map((a:any)=>a.id);
