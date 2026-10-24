@@ -7,7 +7,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
  const browser=await chromium.launch({headless:true});let checks=0;
  const ok=(value,message)=>{assert.ok(value,message);checks++;};
  try{
- for(const width of [390,1440]){
+ for(const width of [390,375,430,768,1440]){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',route=>route.request().url().startsWith('http://127.0.0.1:4173/')?route.continue():route.abort());
@@ -27,6 +27,12 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    await page.reload();await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='true');checks++;
    if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
    ok(await page.locator('.hub-main').innerText().then(t=>t.includes('1 × 20 m')&&t.includes('Walk-back recovery')),'dose and rest preserved');
+   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'workout fits viewport');
+   await page.locator('.hub-athlete-tips summary').first().click();
+   ok(await page.locator('.hub-athlete-tips[open]').innerText().then(t=>t.includes('Stay tall; controlled rhythm.')),'short technique cue expands');
+   await page.evaluate(()=>{window.__copied='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>{window.__copied=t}}});});
+   await page.locator('[data-athlete-copy]').click();
+   ok(await page.evaluate(()=>['A-March','1 × 20 m','Walk-back recovery','Stay tall; controlled rhythm.','4lQsMyKRRn8'].every(t=>window.__copied.includes(t))),'athlete copy contains full dose, rest, cue and matching demo');
    await page.locator('.hub-athlete-demo').first().click();await page.locator('#hubVideoModal').waitFor({state:'visible'});
    ok(await page.locator('#hubVideoModal').evaluate(e=>!e.classList.contains('expanded')),'compact video default');
    ok(await page.locator('#hubVideoModal iframe').getAttribute('src').then(src=>src.includes('4lQsMyKRRn8')),'exact prescribed canonical demo');
@@ -74,9 +80,25 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   await page.locator('.ducc [data-action="workout"]').first().click();
   await page.getByRole('button',{name:'Copy complete workout',exact:true}).waitFor();checks++;
   ok(await page.locator('[data-completion-toggle]').count()===0,'staff stays read only');
+  await page.evaluate(()=>{window.__copied='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>{window.__copied=t}}});});
+  await page.getByRole('button',{name:'Copy complete workout',exact:true}).click();
+  ok(await page.evaluate(()=>['A-March','1 × 20 m','Walk-back recovery','Stay tall; controlled rhythm.','4lQsMyKRRn8'].every(t=>window.__copied.includes(t))),'coach copy contains dose, rest, cues and demo');
+  await page.locator('.ducc [data-action="back"]').click();
+  await page.locator('.ducc [data-day="1"]').click();
+  ok(await page.locator('.ducc .warmup').count()===1,'Day 2 includes warm-up before skills');
+  await page.evaluate(()=>{window.__printSnapshot=null;window.print=()=>{const root=document.querySelector('.ducc');window.__printSnapshot={expanded:[...root.querySelectorAll('details')].every(d=>d.open),text:root.innerText};};});
+  await page.locator('.ducc [data-action="print"]').click();
+  ok(await page.evaluate(()=>window.__printSnapshot.expanded&&['2 × 8','30 seconds','Move smoothly.','3 × 3','Stay balanced.'].every(t=>window.__printSnapshot.text.includes(t))),'print includes expanded warm-up, skills, rest and cues');
+  ok(await page.locator('.ducc .warmup').evaluate(e=>!e.open),'print restores compact warm-up');
+  await page.emulateMedia({media:'print'});
+  ok(await page.locator('.hub-topbar').evaluate(e=>getComputedStyle(e).display==='none'),'print hides navigation');
+  ok(await page.locator('#schoolAttendanceRoot').evaluate(e=>getComputedStyle(e).display==='none'),'print excludes register');
+  await page.emulateMedia({media:'screen'});
+  ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'coach Day 2 fits viewport');
+
   ok(errors.length===0,'no page errors: '+errors.join('; '));
   await context.close();
  }
- console.log('School identity browser QA: '+checks+' checks passed at 390px and 1440px. Synthetic backend; no live Supabase or video playback verification.');
+ console.log('School identity browser QA: '+checks+' checks passed at 375px, 390px, 430px, 768px and 1440px. Synthetic backend; no live Supabase or video playback verification.');
  }finally{await browser.close();server.kill();}
 })().catch(e=>{console.error(e);process.exit(1);});
