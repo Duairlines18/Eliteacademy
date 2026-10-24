@@ -91,7 +91,7 @@
         case 'videos':showVideos=!showVideos;video='';break;
         case 'close-video':video='';root.querySelectorAll('.video').forEach(v=>v.remove());return;
         case 'copy':try{await navigator.clipboard.writeText(copyText());}catch(err){alert('Copy unavailable. Select the workout text to copy.');}return;
-        case 'print':window.print();return;
+        case 'print':{const disclosures=[...root.querySelectorAll('details.coach-cue')],states=disclosures.map(d=>d.open);disclosures.forEach(d=>d.open=true);try{window.print();}finally{disclosures.forEach((d,i)=>d.open=states[i]);}return;}
       }
       render();
     });
