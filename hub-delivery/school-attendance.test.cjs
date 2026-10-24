@@ -1,0 +1,24 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const file=path.join(__dirname,'school-attendance.js');let api={};if(fs.existsSync(file)){const ctx={window:{},module:{exports:{}}};vm.runInNewContext(fs.readFileSync(file,'utf8'),ctx);api=ctx.module.exports;}
+const data={weekNumber:1,totalWeeks:4,writable:true,roster:[{id:'a1',name:'Athlete <01>'},{id:'a2',name:'Athlete 02'}],entries:[{athleteId:'a1',sessionNumber:1,status:'present',sessionDate:'2026-10-19'},{athleteId:'a1',sessionNumber:2,status:'excused',sessionDate:'2026-10-21'}]};
+test('unknown sessions are not counted as absent or website completion',()=>{const r=api.summary(data,'a2');assert.equal(r.present,0);assert.equal(r.unrecorded,2);assert.equal(r.recorded,0);const a=api.summary(data,'a1');assert.equal(a.present,1);assert.equal(a.excused,1);});
+test('director view escapes names, shows unrecorded explicitly and contains no save controls',()=>{const s=api.view({...data,writable:false});assert.ok(s.includes('Athlete &lt;01&gt;'));assert.ok(s.includes('Not recorded'));assert.ok(s.includes('Coach-recorded'));assert.ok(!s.includes('data-att-save'));assert.ok(!s.includes('<select data-att-status'));assert.ok(!s.includes('completed workout items'));});
+test('weekly editor has two actual dates and one explicit save; optional home excluded',()=>{const s=api.view(data);assert.equal((s.match(/type="date"/g)||[]).length,2);assert.equal((s.match(/data-att-status/g)||[]).length,4);assert.equal((s.match(/data-att-save/g)||[]).length,1);assert.ok(s.includes('Daily entry or weekly reconciliation'));assert.ok(s.includes('Optional home work is not counted'));});
+test('weekly reconciliation sends changed cells only and clears unknown date',()=>{const changes=api.changedEntries(data,[{athleteId:'a1',sessionNumber:1,status:'present',sessionDate:'2026-10-19'},{athleteId:'a1',sessionNumber:2,status:'unrecorded',sessionDate:'2026-10-21'},{athleteId:'a2',sessionNumber:1,status:'unrecorded',sessionDate:'2026-10-19'}]);assert.equal(changes.length,1);assert.equal(changes[0].status,'unrecorded');assert.equal(changes[0].sessionDate,null);});
+test('coach roster uses shared theme tokens instead of hard-coded white',()=>{const source=fs.readFileSync(path.join(__dirname,'../coach-command/coach-command.js'),'utf8');const rule=source.match(/\.ducc \.roster button\{([^}]+)\}/)[1];assert.ok(rule.includes('var(--hub-panel'));assert.ok(rule.includes('color:var(--hub-text'));});
+test('mixed session dates survive unrelated weekly reconciliation until explicitly replaced',()=>{
+ const mixed={...data,entries:[{athleteId:'a1',sessionNumber:1,status:'present',sessionDate:'2026-10-19'},{athleteId:'a2',sessionNumber:1,status:'present',sessionDate:'2026-10-20'}]};
+ const selections=[{athleteId:'a1',sessionNumber:1,status:'present'},{athleteId:'a2',sessionNumber:1,status:'present'},{athleteId:'a2',sessionNumber:2,status:'present'}];
+ const values=api.collectEntries(mixed,selections,{1:'',2:'2026-10-21'},new Set([2]));
+ assert.equal(values[0].sessionDate,'2026-10-19');assert.equal(values[1].sessionDate,'2026-10-20');assert.equal(api.changedEntries(mixed,values).length,1);
+ const replaced=api.collectEntries(mixed,selections,{1:'2026-10-22',2:''},new Set([1]));assert.equal(replaced[0].sessionDate,'2026-10-22');assert.equal(replaced[1].sessionDate,'2026-10-22');
+ assert.ok(api.view(mixed).includes('Different recorded dates'));
+});
+test('school session cards show the two coached purposes and optional home day',()=>{
+ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+ const fn=html.match(/  function compactAthleteWeek\([\s\S]*?(?=  function weekBlock\()/)[0];
+ const ctx={trainingSessions:p=>p.sessions,escapeHtml:x=>String(x),isSchoolReferenceViewer:()=>true};
+ vm.runInNewContext(fn,ctx);
+ const rendered=ctx.compactAthleteWeek({sessions:[{id:'d1',day:'Day 1',title:'Movement foundations'},{id:'d2',day:'Day 2',title:'Capacity and control'},{id:'d3',day:'Day 3',title:'Optional Recovery'}]});
+ assert.ok(rendered.includes('Movement foundations'));assert.ok(rendered.includes('Capacity and control'));assert.ok(rendered.includes('Optional home day'));assert.equal((rendered.match(/Coached session/g)||[]).length,2);
+});

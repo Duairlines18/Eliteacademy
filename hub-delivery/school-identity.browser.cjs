@@ -15,6 +15,8 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    const slot=String(n).padStart(2,'0');
    await page.goto('http://127.0.0.1:4173/qa/'+slot+'#/hub/athlete');
    await page.getByRole('heading',{name:'Hi, St. George’s Athlete '+slot,exact:true}).waitFor();checks++;
+   ok(await page.locator('.hub-school-day-picker a').count()===3,'two coached days and optional home day');
+   ok(await page.locator('.hub-school-day-picker').innerText().then(t=>t.includes('Movement foundations')&&t.includes('Capacity and control')&&t.includes('Optional home day')),'school cards show session purpose');
    await page.locator('[aria-label="Choose training day"] a').first().click();
    const toggle=page.locator('[data-completion-toggle]').first();await toggle.waitFor();
    // A different athlete remains incomplete despite preceding athlete's activity.
@@ -38,6 +40,35 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   ok(await page.locator('#school-send, #coachFeedbackForm, [data-completion-toggle]').count()===0,'director has no upload, feedback or completion mutation controls');
   await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');await page.getByRole('heading',{name:'Team Command',exact:true}).waitFor();checks++;
   ok(await page.locator('.ducc [data-athlete]').count()===6,'coach sees exactly six assigned athletes');
+  await page.locator('[data-att-week]').waitFor();
+  await page.locator('[data-att-week]').selectOption('2');
+  await page.getByText('Week 2 of 4',{exact:true}).waitFor();checks++;
+  const person=width===390?'fixture-athlete-1':'fixture-athlete-2';
+  await page.locator('[data-att-date="1"]').fill('2026-10-19');
+  await page.locator('[data-att-date="2"]').fill('2026-10-21');
+  await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="1"]').selectOption('present');
+  await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="2"]').selectOption('present');
+  let failOnce=true;
+  await page.route('**/functions/v1/hub-data',async route=>{
+   if(failOnce&&route.request().postDataJSON()?.action==='attendance-save'){failOnce=false;return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Synthetic weak-Wi-Fi failure'})});}
+   return route.fallback();
+  });
+  await page.locator('[data-att-save]').click();
+  await page.getByRole('status').filter({hasText:'Not saved. Your edits are still here.'}).waitFor();checks++;
+  ok(await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="1"]').inputValue()==='present','failed save retains edits');
+  await page.locator('[data-att-save]').click();
+  await page.getByRole('status').filter({hasText:'Attendance saved.'}).waitFor();checks++;
+  await page.reload();await page.locator('[data-att-week]').waitFor();
+  await page.locator('[data-att-week]').selectOption('2');
+  await page.getByText('Week 2 of 4',{exact:true}).waitFor();
+  ok(await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="2"]').inputValue()==='present','reconciliation persists after refresh');
+  await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
+  await page.locator('[data-att-week]').waitFor();await page.locator('[data-att-week]').selectOption('2');
+  await page.getByText('Week 2 of 4',{exact:true}).waitFor();
+  ok(await page.locator('.att-row').filter({hasText:width===390?'Athlete 01':'Athlete 02'}).innerText().then(t=>t.includes('2/2 attended')&&t.includes('2026-10-19')&&t.includes('2026-10-21')),'director sees shared coach register and actual dates');
+  ok(await page.locator('[data-att-save],[data-att-status]').count()===0,'director cannot change attendance');
+  ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'attendance view fits viewport');
+  await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');
   await page.locator('.ducc [data-action="workout"]').first().click();
   await page.getByRole('button',{name:'Copy complete workout',exact:true}).waitFor();checks++;
   ok(await page.locator('[data-completion-toggle]').count()===0,'staff stays read only');
