@@ -4,7 +4,7 @@
   const first=value=>clean(value).split(/\s+/)[0]||'';
   function identity(state={}){
     const athlete=state.athlete||{},viewer=state.viewer||{};
-    const athleteName=first(athlete.displayName)||first(athlete.fullName);
+    const athleteName=state.accessMode==='identified-school'?clean(athlete.displayName)||clean(athlete.fullName):first(athlete.displayName)||first(athlete.fullName);
     const parentName=first(viewer.firstName);
     const audience=clean(state.audience);
     return Object.freeze({

@@ -162,7 +162,7 @@ export class SupabaseHubRepository {
   async findAccessCode(codeHash: string) {
     return assertResult(
       await this.client.from('access_codes')
-        .select('id,status,code_type,cohort_id,expires_at')
+        .select('id,status,code_type,cohort_id,athlete_id,staff_id,expires_at')
         .eq('code_hash', codeHash)
         .eq('status', 'active')
         .maybeSingle(),
@@ -177,7 +177,7 @@ export class SupabaseHubRepository {
   async findAccessCodeById(id: string) {
     return assertResult(
       await this.client.from('access_codes')
-        .select('id,status,code_type,cohort_id,expires_at')
+        .select('id,status,code_type,cohort_id,athlete_id,staff_id,expires_at')
         .eq('id', id)
         .maybeSingle(),
       'Access status lookup failed',
@@ -191,7 +191,7 @@ export class SupabaseHubRepository {
   async findSession(tokenHash: string) {
     return assertResult(
       await this.client.from('hub_sessions')
-        .select('id,role,cohort_id,access_code_id,revoked_at,expires_at')
+        .select('id,role,cohort_id,athlete_id,staff_id,access_code_id,revoked_at,expires_at')
         .eq('token_hash', tokenHash)
         .maybeSingle(),
       'Session lookup failed',
@@ -202,10 +202,36 @@ export class SupabaseHubRepository {
     assertResult(await this.client.from('hub_sessions').update({ last_active_at: at }).eq('id', id), 'Session update failed');
   }
 
+  async findSchoolAthlete(id: string) {
+    return assertResult(await this.client.from('athletes')
+      .select('id,display_name,athlete_type,organization_id,cohort_id,programme_id,access_status,form_tier,onboarding_data')
+      .eq('id',id).maybeSingle(), 'School athlete lookup failed');
+  }
+
+  async findSchoolStaff(id: string) {
+    return assertResult(await this.client.from('staff_profiles')
+      .select('id,full_name,display_name,access_status').eq('id',id).maybeSingle(), 'School staff lookup failed');
+  }
+
+  async listSchoolRoster(cohortId: string) {
+    return assertResult(await this.client.from('athletes')
+      .select('id,display_name,cohort_id,access_status').eq('cohort_id',cohortId)
+      .eq('athlete_type','school').eq('access_status','active').order('display_name'), 'School roster lookup failed') || [];
+  }
+
+  async isStaffAssigned(staffId: string, cohortId: string) {
+    return !!assertResult(await this.client.from('staff_cohorts').select('staff_id')
+      .eq('staff_id',staffId).eq('cohort_id',cohortId).maybeSingle(), 'Staff assignment lookup failed');
+  }
+
+  async revokeSession(id: string, at: string) {
+    assertResult(await this.client.from('hub_sessions').update({revoked_at:at}).eq('id',id), 'Session revoke failed');
+  }
+
   async findCohort(id: string) {
     return assertResult(
       await this.client.from('cohorts')
-        .select('id,status')
+        .select('id,status,organization_id,programme_id,current_week')
         .eq('id', id)
         .maybeSingle(),
       'Cohort status lookup failed',

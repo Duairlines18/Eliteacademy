@@ -47,13 +47,13 @@ export function codeTypeForView(view: 'athlete' | 'staff'): 'cohort' | 'staff' {
 export function isCodeUsable(record: any, view: 'athlete' | 'staff', now = new Date()): boolean {
   if (!record || record.status !== 'active' || !record.cohort_id) return false;
   if (record.code_type !== codeTypeForView(view)) return false;
-  if (record.expires_at && new Date(record.expires_at).getTime() <= now.getTime()) return false;
+  if (record.expires_at && !(new Date(record.expires_at).getTime() > now.getTime())) return false;
   return true;
 }
 
 export function isSessionUsable(record: any, now = new Date()): boolean {
   if (!record || !record.cohort_id || record.revoked_at) return false;
-  if (!record.expires_at || new Date(record.expires_at).getTime() <= now.getTime()) return false;
+  if (!record.expires_at || !(new Date(record.expires_at).getTime() > now.getTime())) return false;
   return record.role === 'athlete' || record.role === 'staff';
 }
 

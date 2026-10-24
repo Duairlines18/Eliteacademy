@@ -99,9 +99,28 @@ const withoutHubRepair=source=>source
  .replace(/  function renderParentSimpleDashboard\([\s\S]*?(?=  function renderAthleteDashboard\()/,'  PARENT_DASHBOARD\n')
  .replace(/  function weekBrowser\([\s\S]*?(?=  function compactSchoolWeek\()/,'  PUBLISHED_WEEK_PREVIEW\n')
  .replace(/    const copyButton=[\s\S]*?(?=    const videoClose=)/,'  COPY_CLICK_HANDLER\n');
+// Approved person-bound school access has its own identity, persistence and race suites.
+// Normalize only its named functions/guards; public forms and remaining routes stay byte-checked.
+const withoutSchoolIdentity=source=>source
+ .replace(/  let HUB_REQUEST_EPOCH=0;\r?\n/,'')
+ .replace(/  function sessionStamp\([^\n]+\n/,'')
+ .replace(/  function resetHubState\([^\n]+\n/,'  HUB_STATE_RESET\n')
+ .replace(/    if\(active\?\.token\)edgePost\(HUB_CONFIG.dataFunction,\{action:'logout'\}[^\n]+\n/,'')
+ .replace(/  function (?:isIdentifiedSchoolAthlete|schoolGroup)\([\s\S]*?(?=  function itemGroup\()/,'  SCHOOL_IDENTITY_GROUP\n')
+ .replace(/  async function completionPost\([\s\S]*?(?=  function simpleText\()/,'  COMPLETION_TRANSPORT\n')
+ .replace("if(isIdentifiedSchoolAthlete())return schoolAthleteDelivery(sections,sessionData,true);",'')
+ .replace("if((isIdentifiedSchoolAthlete()||isSharedSchoolViewer())&&HUB_STATE.audience!=='parent')", "if(isSharedSchoolViewer()&&HUB_STATE.audience!=='parent')")
+ .replace("const s=session(),renderStamp=sessionStamp();","const s=session();")
+ .replace('},{rosterVerified:Array.isArray(HUB_STATE.roster),roster:HUB_STATE.roster});','});')
+ .replace(/  function renderAthleteDashboard[^\n]+\n/,'  ATHLETE_DASHBOARD_ROUTE\n')
+ .replace(/^[ \t]*if\(renderStamp!==sessionStamp\(\)\)return;\r?\n/gm,'')
+ .replace(/    const completionButton=[^\n]+\n/,'  COMPLETION_HANDLER\n')
+ .replace(/    const schoolGroupButton=[^\n]+\n/,'  SCHOOL_GROUP_HANDLER\n')
+ .replace(/    if\(event.target.id==='hubLoginForm'\)[^\n]+\n/,'  SCHOOL_LOGIN_HANDLER\n')
+ .replace(/\r\n/g,'\n');
 // Story arrival is covered by my-journey/story.test.cjs; exclude only its exact scoped branch.
 const withoutPartnershipPresentation=source=>source.replace(/      if \(activeView === homeView && location.hash === '#stories'\) \{[\s\S]*?      \} else\r?\n/, '').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});").replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
-assert.equal(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutCompactVideo(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController))))))),withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
+assert.equal(withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutCompactVideo(withoutPartnershipPresentation(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)))))))),withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController))))))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
 const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
 assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
 console.log('Production integration preservation passed.');

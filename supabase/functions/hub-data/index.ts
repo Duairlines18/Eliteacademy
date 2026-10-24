@@ -1,5 +1,5 @@
 import { PROGRAMME_PENDING_MESSAGE, SESSION_EXPIRED_MESSAGE, corsHeaders } from '../_shared/hub-core.ts';
-import { bootstrapHub, saveSharedHubFeedback } from '../_shared/hub-service.ts';
+import { bootstrapHub, saveSharedHubFeedback, logoutSchoolSession } from '../_shared/hub-service.ts';
 import { SupabaseHubRepository } from '../_shared/supabase-repository.ts';
 import { adminClient, cryptoPort } from '../_shared/runtime.ts';
 
@@ -18,6 +18,7 @@ Deno.serve(async request => {
     const repository = new SupabaseHubRepository(adminClient());
     let result;
     if (body?.action === 'bootstrap') result = await bootstrapHub({ token: request.headers.get('x-du-session') || '', repository, cryptoPort });
+    else if (body?.action === 'logout') result = await logoutSchoolSession({ token: request.headers.get('x-du-session') || '', repository, cryptoPort });
     else if (body?.action === 'save-feedback') result = await saveSharedHubFeedback({ token: request.headers.get('x-du-session') || '', feedbackType: body.feedbackType, input: body.feedback, repository, cryptoPort });
     else return json(origin, 400, { error: 'Unsupported request.' });
     return json(origin, 200, result);

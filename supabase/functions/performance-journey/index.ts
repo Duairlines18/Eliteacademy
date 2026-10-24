@@ -1,3 +1,6 @@
+import {authorizeSchoolSession} from '../_shared/hub-service.ts';
+import {SupabaseHubRepository} from '../_shared/supabase-repository.ts';
+import {cryptoPort} from '../_shared/runtime.ts';
 import {createClient} from 'npm:@supabase/supabase-js@2.95.0';
 import {resolveAccountSubject,resolveSharedSubject,activeAthlete} from './authorization.mjs';
 const origins=new Set(['https://duairlineseliteacademy.com','https://www.duairlineseliteacademy.com','https://hiktwkdfvlujszczthdu.supabase.co']);
@@ -20,18 +23,20 @@ Deno.serve(async request=>{
   let subject:any,roster:any[]=[],linked:any[]=[],staff=false;
   if(request.headers.has('x-du-session')){
    const token=request.headers.get('x-du-session')||'';if(token.length<16||token.length>256)return reply(401,{error:'Your Hub session has expired.'});
-   const s=await read(db.from('hub_sessions').select('id,role,cohort_id,access_code_id,expires_at,revoked_at').eq('token_hash',await hash(token)).maybeSingle());
-   if(!s)return reply(401,{error:'Your Hub session has expired.'});
-   const code=await read(db.from('access_codes').select('status,code_type,cohort_id,staff_id,expires_at').eq('id',s.access_code_id).maybeSingle());
-   const cohort=await read(db.from('cohorts').select('id,name,status,programme_id,current_week').eq('id',s.cohort_id).maybeSingle());
-   let assigned=true;if(s.role==='staff'&&code?.staff_id)assigned=!!await read(db.from('staff_cohorts').select('staff_id').eq('staff_id',code.staff_id).eq('cohort_id',s.cohort_id).maybeSingle());
-   // Validate the session before loading any athlete or roster data.
-   resolveSharedSubject(s,code,cohort,null,assigned);
+   const identity=await authorizeSchoolSession({token,repository:new SupabaseHubRepository(db),cryptoPort});
+   const {session:s,accessCode:code,cohort}=identity;
    staff=s.role==='staff';
-   if(body.athleteId&&!staff)return reply(403,{error:'Individual journeys require coach access.'});
-   const athlete=body.athleteId?await read(db.from('athletes').select(fields).eq('id',body.athleteId).eq('cohort_id',s.cohort_id).eq('access_status','active').maybeSingle()):null;
-   if(body.athleteId&&!athlete)return reply(403,{error:'Athlete not in your group.'});
-   subject=resolveSharedSubject(s,code,cohort,athlete,assigned);
+   if(identity.athlete){
+    if(body.athleteId && body.athleteId!==identity.athlete.id)return reply(403,{error:'That athlete is not available for your access.'});
+    const own=await read(db.from('athletes').select(fields).eq('id',identity.athlete.id).maybeSingle());
+    if(!own)return reply(403,{error:'Athlete unavailable.'});
+    subject={...own,kind:'athlete',parentMode:false};
+   }else{
+    if(body.athleteId&&!staff)return reply(403,{error:'Individual journeys require coach access.'});
+    const athlete=body.athleteId?await read(db.from('athletes').select(fields).eq('id',body.athleteId).eq('cohort_id',s.cohort_id).eq('access_status','active').maybeSingle()):null;
+    if(body.athleteId&&!athlete)return reply(403,{error:'Athlete not in your group.'});
+    subject=resolveSharedSubject(s,code,cohort,athlete,true);
+   }
    if(staff)roster=await read(db.from('athletes').select('id,display_name,full_name').eq('cohort_id',cohort.id).eq('access_status','active').order('display_name'))||[];
   }else{
    const token=(request.headers.get('authorization')||'').match(/^Bearer\s+(\S+)$/i)?.[1];
@@ -50,7 +55,7 @@ Deno.serve(async request=>{
   const snapshots=await read(db.from('performance_journey_snapshots').select('id,captured_at,source').eq('subject_kind',subject.kind).eq('subject_id',subject.id).eq('parent_mode',subject.parentMode===true).eq('programme_id',source.programme.id).eq('assignment_key',source.assignment_key).order('captured_at',{ascending:false}).limit(12))||[];
   return reply(200,{source,snapshots,subjectId:subject.id,roster:roster.map(a=>({id:a.id,name:a.display_name||a.full_name||'Athlete'})),linked,group:subject.kind==='cohort',staff,parent:subject.parentMode===true});
  }catch(error){
-  if(error instanceof Error&&/Access denied|Session expired|Access revoked|Cohort unavailable|Coach not assigned/.test(error.message))return reply(403,{error:'This journey is not available for your access.'});
+  if(error instanceof Error&&/Access denied|Session expired|Access revoked|Cohort unavailable|Coach not assigned|Your Hub session has expired/.test(error.message))return reply(403,{error:'This journey is not available for your access.'});
   console.error('performance-journey read failed',error);
   return reply(503,{error:'Your journey is temporarily unavailable. Your training is still available.'});
  }

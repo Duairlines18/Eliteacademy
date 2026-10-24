@@ -1,0 +1,58 @@
+import {authorizeSchoolSession} from '../_shared/hub-service.ts';
+import {SupabaseHubRepository} from '../_shared/supabase-repository.ts';
+import {cryptoPort} from '../_shared/runtime.ts';
+import {schoolCompletionContext} from '../_shared/school-completion.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.95.0';
+
+const PROD=new Set(['https://duairlineseliteacademy.com','https://www.duairlineseliteacademy.com','https://hiktwkdfvlujszczthdu.supabase.co']);
+const PREVIEW=new Set(['http://terminal.local:4173','https://du-airlines-performance-hub-pilot.light-auk-1409.chatgpt.site','https://du-airlines-performance-hub-pilot.duchenge28.chatgpt.site']);
+const ACCESS={stripe:'paid',manual_payment:'manually_confirmed',complimentary:'not_required'};
+
+function db(){const url=Deno.env.get('SUPABASE_URL');let key='';const packed=Deno.env.get('SUPABASE_SECRET_KEYS');if(packed){try{key=JSON.parse(packed).default||'';}catch{key='';}}key||=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')||'';if(!url||!key)throw new Error('Supabase function environment is incomplete.');return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});}
+function cors(origin=''){const local=/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin),h={'Access-Control-Allow-Headers':'authorization,apikey,content-type,x-du-session,x-du-viewer','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin'};if(PROD.has(origin)||PREVIEW.has(origin)||local)h['Access-Control-Allow-Origin']=origin;return h;}
+function reply(origin,status,body){return new Response(JSON.stringify(body),{status,headers:{...cors(origin),'Content-Type':'application/json','Cache-Control':'no-store'}});}
+function active(p){return p?.access_status==='active'&&Object.hasOwn(ACCESS,p?.access_reason)&&ACCESS[p.access_reason]===p?.payment_status;}
+async function sha(v){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('');}
+function viewer(v){v=typeof v==='string'?v.trim():'';return /^[A-Za-z0-9_-]{16,128}$/.test(v)?v:'';}
+async function cohort(client,id){const {data,error}=await client.from('cohorts').select('id,status,programme_id,current_week').eq('id',id).eq('status','live').maybeSingle();if(error)throw error;return data?.programme_id&&Number.isInteger(data.current_week)?{programmeId:data.programme_id,weekNumber:data.current_week}:null;}
+
+async function verifiedAccount(req,client){const m=(req.headers.get('authorization')||'').match(/^Bearer\s+([^\s]+)$/i);if(!m)return null;const {data,error}=await client.auth.getUser(m[1]);if(error||!data?.user)return null;return data.user;}
+async function accountContext(req,client){const user=await verifiedAccount(req,client);if(!user)return null;
+  const fields='id,parent_user_id,athlete_user_id,cohort_id,programme_id,current_week,access_status,access_reason,payment_status';
+  const {data:athletes,error:ae}=await client.from('athletes').select(fields).or(`parent_user_id.eq.${user.id},athlete_user_id.eq.${user.id}`);
+  if(ae)throw ae;
+  const candidates=(athletes||[]).filter(active).sort((a,b)=>{
+    const aDirect=a.athlete_user_id===user.id?1:0,bDirect=b.athlete_user_id===user.id?1:0;
+    return bDirect-aDirect;
+  });
+  for(const athlete of candidates){
+    if(athlete.programme_id)return {kind:'athlete',userId:null,athleteId:athlete.id,viewerKey:`athlete_${athlete.id}`,programmeId:athlete.programme_id,weekNumber:Number.isInteger(athlete.current_week)?athlete.current_week:1};
+    if(athlete.cohort_id){const c=await cohort(client,athlete.cohort_id);if(c)return {kind:'athlete',userId:null,athleteId:athlete.id,viewerKey:`athlete_${athlete.id}`,...c};}
+  }
+  const {data:p,error:pe}=await client.from('professional_members').select('id,user_id,cohort_id,access_status,access_reason,payment_status').eq('user_id',user.id).maybeSingle();if(pe)throw pe;if(!p||!active(p)||!p.cohort_id)return {denied:true};const c=await cohort(client,p.cohort_id);if(!c)return {denied:true};return {kind:'professional',userId:user.id,athleteId:null,viewerKey:null,...c};}
+
+async function sharedSession(req,client){
+  try{return await authorizeSchoolSession({token:req.headers.get('x-du-session')||'',repository:new SupabaseHubRepository(client),cryptoPort});}
+  catch{return null;}
+}
+async function sharedContext(req,body,client){
+  const identity=await sharedSession(req,client);
+  if(!identity)return {denied:true,code:'SESSION_EXPIRED'};
+  return schoolCompletionContext(identity,req.headers.get('x-du-viewer')||body?.viewerKey);
+}
+async function context(req,body,client){
+  if(req.headers.has('x-du-session'))return sharedContext(req,body,client);
+  const a=await accountContext(req,client);return a||{denied:true};
+}
+
+async function libraryAuthorized(req,client){if(req.headers.has('x-du-session'))return !!(await sharedSession(req,client));const user=await verifiedAccount(req,client);if(user){const ctx=await accountContext(req,client);return !!ctx&&!ctx.denied;}return !!(await sharedSession(req,client));}
+async function exerciseLibrary(client){const {data,error}=await client.from('exercises').select('id,code,name,category_slug,categories,video_id,video_url,description,purpose,coaching_cues,default_dosage,display_order,active').eq('active',true).order('display_order');if(error)throw error;return (data||[]).map(ex=>({id:ex.id,code:ex.code,title:ex.name,category:ex.categories||(ex.category_slug?[ex.category_slug]:[]),videoId:ex.video_id||'',videoUrl:ex.video_url||'',description:ex.description||'',purpose:ex.purpose||'',coachingCues:ex.coaching_cues||'',defaultDosage:ex.default_dosage||'',order:ex.display_order||0,active:true}));}
+
+async function validateSession(client,ctx,sessionKey){if(!/^[0-9a-fA-F-]{36}$/.test(sessionKey))return null;const {data:d,error:de}=await client.from('training_days').select('id,programme_week_id').eq('id',sessionKey).maybeSingle();if(de)throw de;if(!d)return null;const {data:w,error:we}=await client.from('programme_weeks').select('id,programme_id,week_number,status,verification_status,published_at').eq('id',d.programme_week_id).maybeSingle();if(we)throw we;if(!w||w.programme_id!==ctx.programmeId||w.week_number!==ctx.weekNumber||!['live','completed'].includes(w.status)||w.verification_status!=='verified'||!w.published_at)return null;return w;}
+async function validateItem(client,sessionKey,itemKey){let m=itemKey.match(/^i:(\d+):(\d{1,3})(?::(\d{1,2}))?$/);if(m){const order=Number(m[1]),index=Number(m[2]),subIndex=m[3]===undefined?null:Number(m[3]);const {data,error}=await client.from('session_blocks').select('content').eq('training_day_id',sessionKey).eq('sort_order',order);if(error)throw error;return (data||[]).some(b=>{if(!Array.isArray(b?.content?.items)||index>=b.content.items.length||typeof b.content.items[index]!=='string')return false;if(subIndex===null)return true;const text=String(b.content.items[index]).replace(/^(Form 2|Form 3|Lower 6)\s*[—:-]\s*/i,'');const segments=text.split(';').map(x=>x.trim()).filter(Boolean);return segments.length>1&&subIndex<segments.length;});}m=itemKey.match(/^p:(\d+):(\d{1,3}):([A-Za-z0-9_-]{2,30})$/);if(m){const order=Number(m[1]),code=m[3];const {data,error}=await client.from('session_blocks').select('content').eq('training_day_id',sessionKey).eq('sort_order',order);if(error)throw error;return (data||[]).some(b=>Array.isArray(b?.content?.prescriptions)&&b.content.prescriptions.some(p=>p?.exerciseCode===code));}m=itemKey.match(/^e:([A-Za-z0-9_-]{2,30})$/);if(m){const code=m[1];const {data,error}=await client.from('session_blocks').select('content').eq('training_day_id',sessionKey);if(error)throw error;return (data||[]).some(b=>Array.isArray(b?.content?.exerciseCodes)&&b.content.exerciseCodes.includes(code));}return false;}
+function cq(client,ctx){let q=client.from('workout_item_completions').select('session_key,item_key,completed,completed_at').eq('programme_key',ctx.programmeId).eq('week_number',ctx.weekNumber);q=ctx.userId?q.eq('user_id',ctx.userId).is('viewer_key',null):q.is('user_id',null).eq('viewer_key',ctx.viewerKey);q=ctx.athleteId?q.eq('athlete_id',ctx.athleteId):q.is('athlete_id',null);return q;}
+async function list(client,ctx){const {data,error}=await cq(client,ctx).order('updated_at',{ascending:true});if(error)throw error;return (data||[]).map(r=>({sessionKey:r.session_key,itemKey:r.item_key,completed:r.completed===true,completedAt:r.completed_at}));}
+async function setCompletion(client,ctx,sessionKey,itemKey,completed){if(!await validateSession(client,ctx,sessionKey)||!await validateItem(client,sessionKey,itemKey))return {forbidden:true};let q=client.from('workout_item_completions').select('id').eq('programme_key',ctx.programmeId).eq('week_number',ctx.weekNumber).eq('session_key',sessionKey).eq('item_key',itemKey);q=ctx.userId?q.eq('user_id',ctx.userId).is('viewer_key',null):q.is('user_id',null).eq('viewer_key',ctx.viewerKey);q=ctx.athleteId?q.eq('athlete_id',ctx.athleteId):q.is('athlete_id',null);const {data:x,error:xe}=await q.maybeSingle();if(xe)throw xe;const now=new Date().toISOString();let r;if(x?.id)r=await client.from('workout_item_completions').update({completed,completed_at:now,updated_at:now}).eq('id',x.id).select('session_key,item_key,completed,completed_at').single();else r=await client.from('workout_item_completions').insert({user_id:ctx.userId,athlete_id:ctx.athleteId,viewer_key:ctx.viewerKey,programme_key:ctx.programmeId,week_number:ctx.weekNumber,session_key:sessionKey,item_key:itemKey,completed,completed_at:now,updated_at:now}).select('session_key,item_key,completed,completed_at').single();if(r.error)throw r.error;return {sessionKey:r.data.session_key,itemKey:r.data.item_key,completed:r.data.completed===true,completedAt:r.data.completed_at};}
+
+Deno.serve(async req=>{const origin=req.headers.get('origin')||'',h=cors(origin);if(req.method==='OPTIONS')return new Response('ok',{status:h['Access-Control-Allow-Origin']?200:403,headers:h});if(req.method!=='POST'||!h['Access-Control-Allow-Origin'])return reply(origin,403,{code:'REQUEST_DENIED',error:'Request not allowed.'});let body;try{body=await req.json();}catch{return reply(origin,400,{code:'INVALID_REQUEST',error:'Invalid request.'});}try{const client=db();if(body?.action==='library'){if(!await libraryAuthorized(req,client))return reply(origin,403,{code:'ACCESS_DENIED',error:'Exercise library access is not available for this viewer.'});return reply(origin,200,{exercises:await exerciseLibrary(client)});}const ctx=await context(req,body,client);if(!ctx||ctx.denied){const code=ctx?.code||'ACCESS_DENIED';return reply(origin,code==='SESSION_EXPIRED'?401:403,{code,error:'Completion access is not available for this viewer.'});}if(body?.action==='list')return reply(origin,200,{completions:await list(client,ctx)});if(body?.action==='set'){const sessionKey=typeof body.sessionKey==='string'?body.sessionKey.trim():'',itemKey=typeof body.itemKey==='string'?body.itemKey.trim():'';if(typeof body.completed!=='boolean'||!sessionKey||!itemKey)return reply(origin,400,{code:'INVALID_COMPLETION',error:'Invalid completion information.'});const saved=await setCompletion(client,ctx,sessionKey,itemKey,body.completed);if(saved?.forbidden)return reply(origin,403,{code:'INVALID_WORKOUT_CONTEXT',error:'That workout item is not available for this viewer.'});return reply(origin,200,{completion:saved});}return reply(origin,400,{code:'UNSUPPORTED_ACTION',error:'Unsupported request.'});}catch(error){console.error('workout-completions failed',error);return reply(origin,500,{code:'SERVER_ERROR',error:'Workout support is temporarily unavailable.'});}});
+
