@@ -6,3 +6,11 @@ test('director view escapes names, shows unrecorded explicitly and contains no s
 test('weekly editor has two actual dates and one explicit save; optional home excluded',()=>{const s=api.view(data);assert.equal((s.match(/type="date"/g)||[]).length,2);assert.equal((s.match(/data-att-status/g)||[]).length,4);assert.equal((s.match(/data-att-save/g)||[]).length,1);assert.ok(s.includes('Daily entry or weekly reconciliation'));assert.ok(s.includes('Optional home work is not counted'));});
 test('weekly reconciliation sends changed cells only and clears unknown date',()=>{const changes=api.changedEntries(data,[{athleteId:'a1',sessionNumber:1,status:'present',sessionDate:'2026-10-19'},{athleteId:'a1',sessionNumber:2,status:'unrecorded',sessionDate:'2026-10-21'},{athleteId:'a2',sessionNumber:1,status:'unrecorded',sessionDate:'2026-10-19'}]);assert.equal(changes.length,1);assert.equal(changes[0].status,'unrecorded');assert.equal(changes[0].sessionDate,null);});
 test('coach roster uses shared theme tokens instead of hard-coded white',()=>{const source=fs.readFileSync(path.join(__dirname,'../coach-command/coach-command.js'),'utf8');const rule=source.match(/\.ducc \.roster button\{([^}]+)\}/)[1];assert.ok(rule.includes('var(--hub-panel'));assert.ok(rule.includes('color:var(--hub-text'));});
+test('mixed session dates survive unrelated weekly reconciliation until explicitly replaced',()=>{
+ const mixed={...data,entries:[{athleteId:'a1',sessionNumber:1,status:'present',sessionDate:'2026-10-19'},{athleteId:'a2',sessionNumber:1,status:'present',sessionDate:'2026-10-20'}]};
+ const selections=[{athleteId:'a1',sessionNumber:1,status:'present'},{athleteId:'a2',sessionNumber:1,status:'present'},{athleteId:'a2',sessionNumber:2,status:'present'}];
+ const values=api.collectEntries(mixed,selections,{1:'',2:'2026-10-21'},new Set([2]));
+ assert.equal(values[0].sessionDate,'2026-10-19');assert.equal(values[1].sessionDate,'2026-10-20');assert.equal(api.changedEntries(mixed,values).length,1);
+ const replaced=api.collectEntries(mixed,selections,{1:'2026-10-22',2:''},new Set([1]));assert.equal(replaced[0].sessionDate,'2026-10-22');assert.equal(replaced[1].sessionDate,'2026-10-22');
+ assert.ok(api.view(mixed).includes('Different recorded dates'));
+});
