@@ -32,6 +32,10 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    await page.locator('.hub-card').filter({hasText:'ASIM Warm-Up'}).waitFor();checks++;
    ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no viewport overflow');
   }
+  await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
+  await page.getByRole('heading',{name:'School Overview',exact:true}).waitFor();checks++;
+  ok(await page.locator('.hub-main').innerText().then(t=>t.includes('Mr Chivandire')&&t.includes('St. George’s Athlete 06')),'director school identity and roster');
+  ok(await page.locator('#school-send, #coachFeedbackForm, [data-completion-toggle]').count()===0,'director has no upload, feedback or completion mutation controls');
   await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');await page.getByRole('heading',{name:'Team Command',exact:true}).waitFor();checks++;
   ok(await page.locator('.ducc [data-athlete]').count()===6,'coach sees exactly six assigned athletes');
   await page.locator('.ducc [data-action="workout"]').first().click();
