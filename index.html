@@ -4156,6 +4156,7 @@ document.addEventListener('click',function(e){
   @media(min-width:980px){.hub-dashboard-actions{grid-template-columns:repeat(3,1fr)}.hub-athlete-grid{grid-template-columns:repeat(3,1fr)}.hub-video-grid{grid-template-columns:repeat(3,1fr)!important}}
 </style>
 <script src="/coach-command/coach-command.js"></script>
+<link rel="stylesheet" href="/hub-delivery/school.css">
 <script src="/hub-delivery/school-attendance.js"></script>
 <script id="performance-hub-app">
 (function(){
@@ -4806,12 +4807,12 @@ document.addEventListener('click',function(e){
     root.innerHTML=shell(body,'dashboard');
   }
   function compactSchoolWeek(p){
-    const sessions=trainingSessions(p);
-    return '<nav class="hub-athlete-day-picker" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':'')+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
+    const sessions=trainingSessions(p),school=isSchoolReferenceViewer();
+    return '<nav class="hub-athlete-day-picker'+(school?' hub-school-day-picker':'')+'" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(school?'<span class="hub-school-session-name">'+escapeHtml(item.title||'Training session')+'</span><small>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'Optional home day':'Coached session')+'</small>':(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':''))+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
   }
   function compactAthleteWeek(p,activeId){
-    const sessions=trainingSessions(p);
-    return '<nav class="hub-athlete-day-picker" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice'+(String(activeId||'')===String(item.id)?' selected':'')+'" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':'')+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
+    const sessions=trainingSessions(p),school=isSchoolReferenceViewer();
+    return '<nav class="hub-athlete-day-picker'+(school?' hub-school-day-picker':'')+'" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice'+(String(activeId||'')===String(item.id)?' selected':'')+'" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(school?'<span class="hub-school-session-name">'+escapeHtml(item.title||'Training session')+'</span><small>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'Optional home day':'Coached session')+'</small>':(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':''))+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
   }
   function weekBlock(p,athlete=false){
     // One shared week navigation for staff, school athletes, parents and private athletes.

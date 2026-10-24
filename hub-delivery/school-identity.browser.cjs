@@ -15,6 +15,8 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    const slot=String(n).padStart(2,'0');
    await page.goto('http://127.0.0.1:4173/qa/'+slot+'#/hub/athlete');
    await page.getByRole('heading',{name:'Hi, St. George’s Athlete '+slot,exact:true}).waitFor();checks++;
+   ok(await page.locator('.hub-school-day-picker a').count()===3,'two coached days and optional home day');
+   ok(await page.locator('.hub-school-day-picker').innerText().then(t=>t.includes('Movement foundations')&&t.includes('Capacity and control')&&t.includes('Optional home day')),'school cards show session purpose');
    await page.locator('[aria-label="Choose training day"] a').first().click();
    const toggle=page.locator('[data-completion-toggle]').first();await toggle.waitFor();
    // A different athlete remains incomplete despite preceding athlete's activity.

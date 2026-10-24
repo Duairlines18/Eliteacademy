@@ -17,9 +17,9 @@ begin
  select id into strict source_week from programme_weeks where programme_id=pilot and week_number=1;
  insert into programme_versions(programme_week_id,snapshot,change_note)
  select source_week,jsonb_build_object('programme',(select to_jsonb(p) from programmes p where p.id=pilot),
- 'weeks',(select jsonb_agg(w) from programme_weeks w where w.programme_id=pilot),
- 'days',(select jsonb_agg(d) from training_days d join programme_weeks w on w.id=d.programme_week_id where w.programme_id=pilot),
- 'blocks',(select jsonb_agg(b) from session_blocks b join training_days d on d.id=b.training_day_id join programme_weeks w on w.id=d.programme_week_id where w.programme_id=pilot)),marker||': before-image';
+ 'weeks',(select jsonb_agg(pw) from programme_weeks pw where pw.programme_id=pilot),
+ 'days',(select jsonb_agg(d) from training_days d join programme_weeks pw on pw.id=d.programme_week_id where pw.programme_id=pilot),
+ 'blocks',(select jsonb_agg(b) from session_blocks b join training_days d on d.id=b.training_day_id join programme_weeks pw on pw.id=d.programme_week_id where pw.programme_id=pilot)),marker||': before-image';
  if (select count(*) from exercises where active and code in ('PLY01','PLY02','PLY03','PLY06','PLY08') and coalesce(video_id,'')<>'')<>5 then
   raise exception 'Plyometric library mapping changed';
  end if;

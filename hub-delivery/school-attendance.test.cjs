@@ -14,3 +14,11 @@ test('mixed session dates survive unrelated weekly reconciliation until explicit
  const replaced=api.collectEntries(mixed,selections,{1:'2026-10-22',2:''},new Set([1]));assert.equal(replaced[0].sessionDate,'2026-10-22');assert.equal(replaced[1].sessionDate,'2026-10-22');
  assert.ok(api.view(mixed).includes('Different recorded dates'));
 });
+test('school session cards show the two coached purposes and optional home day',()=>{
+ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+ const fn=html.match(/  function compactAthleteWeek\([\s\S]*?(?=  function weekBlock\()/)[0];
+ const ctx={trainingSessions:p=>p.sessions,escapeHtml:x=>String(x),isSchoolReferenceViewer:()=>true};
+ vm.runInNewContext(fn,ctx);
+ const rendered=ctx.compactAthleteWeek({sessions:[{id:'d1',day:'Day 1',title:'Movement foundations'},{id:'d2',day:'Day 2',title:'Capacity and control'},{id:'d3',day:'Day 3',title:'Optional Recovery'}]});
+ assert.ok(rendered.includes('Movement foundations'));assert.ok(rendered.includes('Capacity and control'));assert.ok(rendered.includes('Optional home day'));assert.equal((rendered.match(/Coached session/g)||[]).length,2);
+});

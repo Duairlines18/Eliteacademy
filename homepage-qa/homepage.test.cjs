@@ -102,6 +102,8 @@ const withoutHubRepair=source=>source
 // Approved person-bound school access has its own identity, persistence and race suites.
 // Normalize only its named functions/guards; public forms and remaining routes stay byte-checked.
 const withoutSchoolIdentity=source=>source
+ .replace(/<link rel="stylesheet" href="\/hub-delivery\/school\.css">\r?\n/,'')
+ .replace(/  function compactSchoolWeek\([\s\S]*?(?=  function weekBlock\()/,'  SCHOOL_WEEK_CARDS\n')
  .replace(/<script src="\/hub-delivery\/school-attendance\.js"><\/script>\r?\n/,'')
  .replace(/  function mountSchoolAttendance\([\s\S]*?(?=  function renderDirectorOverview\()/,'')
  .replace(/        mountSchoolAttendance\(\);\r?\n/,'')

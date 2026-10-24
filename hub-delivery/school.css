@@ -1,0 +1,6 @@
+/* School session presentation only; other Hub audiences keep their layouts. */
+.hub-school-day-picker{grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}
+.hub-school-day-picker .hub-athlete-day-choice{padding:1rem;min-height:116px;gap:.5rem;background:var(--hub-panel,#111);border-color:var(--hub-line,#41382c);color:var(--hub-text,#eee)}
+.hub-school-day-picker .hub-school-session-name{font-size:.9rem;line-height:1.4;overflow-wrap:anywhere}
+.hub-school-day-picker .hub-athlete-day-choice small{font-size:.73rem;color:var(--hub-muted,#aaa)}
+@media(max-width:600px){.hub-school-day-picker{grid-template-columns:1fr}.hub-school-day-picker .hub-athlete-day-choice{align-items:flex-start;text-align:left;min-height:88px}}
