@@ -1,3 +1,4 @@
+import {allowHubLogin} from '../_shared/login-limits.ts';
 import { ACCESS_DENIED_MESSAGE, corsHeaders } from '../_shared/hub-core.ts';
 import { exchangeAccessCode } from '../_shared/hub-service.ts';
 import { SupabaseHubRepository } from '../_shared/supabase-repository.ts';
@@ -14,8 +15,10 @@ Deno.serve(async request => {
   if (request.method !== 'POST' || !cors['Access-Control-Allow-Origin']) return json(origin, 403, { error: ACCESS_DENIED_MESSAGE });
 
   try {
-    const body = await request.json();
     const repository = new SupabaseHubRepository(adminClient());
+    const clientKey=request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown-client';
+    if(!await allowHubLogin({clientKey,repository,cryptoPort}))return json(origin,429,{error:'Too many sign-in attempts. Please wait 10 minutes and try again.'});
+    const body = await request.json();
     const result = await exchangeAccessCode({
       code: body?.code,
       view: body?.view,

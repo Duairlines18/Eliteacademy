@@ -34,7 +34,7 @@ export function normalizeCode(value: unknown): string {
 export function validateLoginInput(input: { code?: unknown; view?: unknown }): { code: string; view: 'athlete' | 'staff' } {
   const code = normalizeCode(input?.code);
   const view = input?.view;
-  if (code.length < 12 || code.length > 128 || (view !== 'athlete' && view !== 'staff')) {
+  if ((code.length < 12 && !/^[abcdefghjklmnpqrstuvwxyz23456789]{8}$/.test(code)) || code.length > 128 || (view !== 'athlete' && view !== 'staff')) {
     throw new Error(ACCESS_DENIED_MESSAGE);
   }
   return { code, view };
