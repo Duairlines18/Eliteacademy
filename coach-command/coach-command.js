@@ -28,7 +28,8 @@
     const programme=data.programme, sessions=Array.isArray(programme.sessions)?programme.sessions:[];
     const exercises=new Map((Array.isArray(data.exercises)?data.exercises:[]).map(e=>[e.code,e]));
     const roster=opts.rosterVerified===true&&Array.isArray(opts.roster)&&opts.roster.every(a=>a&&a.cohort_id===data.cohort.id)?opts.roster:null;
-    let day=0,view='overview',showVideos=true,video='',athlete=null;
+    const initialDay=opts.initialSessionId?sessions.findIndex(s=>String(s.id)===String(opts.initialSessionId)):-1;
+    let day=initialDay>=0?initialDay:0,view=initialDay>=0?'workout':'overview',showVideos=true,video='',athlete=null;
     const style=document.createElement('style');style.textContent=styles;host.replaceChildren(style);
     const root=document.createElement('div');root.className='ducc';host.append(root);
     const session=()=>sessions[day]||{};

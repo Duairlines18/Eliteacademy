@@ -46,6 +46,8 @@ jobs:
         run: node hub-delivery/routines.browser.cjs
       - name: Verify six identified school athletes and named staff on mobile and desktop
         run: node hub-delivery/school-identity.browser.cjs
+      - name: Verify coach dashboard, current week and saved workout links across screen sizes
+        run: node coach-command/route-parity.browser.cjs
   story-regression:
     runs-on: ubuntu-latest
     steps:
