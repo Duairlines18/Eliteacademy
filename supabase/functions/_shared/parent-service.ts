@@ -26,9 +26,9 @@ export async function ensureParentProfile({ user, repository }: any) {
   return shapeParentProfile(await repository.ensureParentAthlete(user));
 }
 
-export async function saveParentOnboarding({ user, input, repository }: any) {
+export async function saveParentOnboarding({ user, input, repository, draft = false }: any) {
   await athleteFor(user, repository);
-  const safeFields = validateParentOnboarding(input);
+  const safeFields = validateParentOnboarding(input, draft);
   return shapeParentProfile(await repository.updateParentOnboarding(user.id, safeFields));
 }
 

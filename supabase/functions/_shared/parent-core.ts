@@ -27,11 +27,51 @@ function textArray(value: unknown, maxItems = 12): string[] {
   return value.map(item => item.trim()).filter(Boolean);
 }
 
-export function validateParentOnboarding(input: unknown): Record<string, unknown> {
+const COMPACT_FIELDS = new Set(['form_version','development_priorities','hub_frequency','training_locations','equipment','safety_status','safety_details']);
+const PRIORITIES = ['Speed','Jumping / Explosiveness','Movement / Coordination','Strength','Mobility / Resilience'];
+function invalid(): never { throw new Error('Invalid parent onboarding information.'); }
+function compactOnboarding(fields: Record<string, unknown>, draft: boolean) {
+  if (Object.keys(fields).some(key => !COMPACT_FIELDS.has(key))) invalid();
+  const data: Record<string, unknown> = {formVersion: 2};
+  const list = (key: string, target: string, options: string[], max: number) => {
+    if (draft && fields[key] === undefined) return;
+    const value = fields[key];
+    if (!Array.isArray(value) || value.length > max || (!draft && !value.length)
+      || value.some(item => typeof item !== 'string' || !options.includes(item)) || new Set(value).size !== value.length) invalid();
+    data[target] = value;
+  };
+  list('development_priorities','developmentPriorities',PRIORITIES,2);
+  list('training_locations','trainingLocations',['Home','Gym','Field / Court'],3);
+  list('equipment','equipment',['Bodyweight only','Resistance bands','Weights','Other'],4);
+  if (Array.isArray(data.equipment) && data.equipment.includes('Bodyweight only') && data.equipment.length > 1) invalid();
+  for (const [key,target,options] of [
+    ['hub_frequency','hubFrequency',['1 day','2 days','3 days','4+ days']],
+    ['safety_status','safetyStatus',['no','yes','already_discussed']],
+  ] as const) {
+    if (draft && fields[key] === undefined) continue;
+    if (!(options as readonly unknown[]).includes(fields[key])) invalid();
+    data[target] = fields[key];
+  }
+  if (fields.safety_status === 'yes') {
+    if (typeof fields.safety_details !== 'string' || fields.safety_details.length > 1000) {
+      if (!draft || fields.safety_details !== undefined) invalid();
+    } else {
+      const details = fields.safety_details.trim();
+      if (!draft && !details) invalid();
+      // Empty drafts must never erase a previously recorded concern.
+      if (details) data.safetyDetails = details;
+    }
+  } else if (fields.safety_details !== undefined) invalid();
+  return {onboarding_complete: !draft, onboarding_data: data};
+}
+
+export function validateParentOnboarding(input: unknown, draft = false): Record<string, unknown> {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     throw new Error('Invalid parent onboarding information.');
   }
   const fields = input as Record<string, unknown>;
+  if (fields.form_version === 2) return compactOnboarding(fields, draft);
+  if (draft) invalid();
   if (Object.keys(fields).some(key => !SAFE_FIELDS.has(key))) {
     throw new Error('Invalid parent onboarding information.');
   }

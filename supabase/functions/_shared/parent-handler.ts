@@ -34,6 +34,9 @@ export async function handleParentRequest(request: Request, ports: any) {
       case 'profile':
         result = await services.ensureParentProfile({ user, repository: ports.repository });
         break;
+      case 'save-onboarding-draft':
+        result = await services.saveParentOnboarding({ user, input: body.profile, repository: ports.repository, draft: true });
+        break;
       case 'save-onboarding':
         result = await services.saveParentOnboarding({ user, input: body.profile, repository: ports.repository });
         break;

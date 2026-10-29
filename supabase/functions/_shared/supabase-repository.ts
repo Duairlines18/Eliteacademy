@@ -99,24 +99,22 @@ export class SupabaseHubRepository {
       display_name: athleteFirst,
       access_status: 'pending',
     };
-    return assertResult(
-      await this.client.from('athletes')
-        .insert(payload)
-        .select(PARENT_ATHLETE_FIELDS)
-        .single(),
-      'Parent athlete creation failed',
-    );
+    const result = await this.client.from('athletes').insert(payload).select(PARENT_ATHLETE_FIELDS).single();
+    if (result.error?.code === '23505') {
+      const linked = await this.findParentAthlete(user.id);
+      if (linked) return linked;
+    }
+    return assertResult(result, 'Parent athlete creation failed');
   }
 
   async updateParentOnboarding(userId: string, safeFields: Record<string, unknown>) {
-    return assertResult(
-      await this.client.from('athletes')
-        .update(safeFields)
-        .eq('parent_user_id', userId)
-        .select(PARENT_ATHLETE_FIELDS)
-        .single(),
-      'Parent onboarding update failed',
-    );
+    // Only the server-validated answers cross this boundary. Identity, access and
+    // assignments are never writable through setup, including legacy payloads.
+    return assertResult(await this.client.rpc('save_parent_athlete_setup', {
+      p_parent_user_id: userId,
+      p_answers: safeFields.onboarding_data,
+      p_complete: safeFields.onboarding_complete === true,
+    }), 'Parent onboarding update failed');
   }
 
   async findPrivateAthlete(userId: string) {

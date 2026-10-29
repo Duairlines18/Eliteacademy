@@ -1,0 +1,14 @@
+const {PGlite}=require('@electric-sql/pglite'),fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const db=new PGlite();try{
+await db.exec(`create role anon; create role authenticated; create role service_role bypassrls; create table public.athletes(id uuid primary key,parent_user_id uuid,onboarding_data jsonb default '{}',onboarding_complete boolean default false,access_status text default 'pending',programme_id uuid,parent_first_name text); alter table public.athletes enable row level security; grant all on public.athletes to service_role;`);
+const migration=fs.readdirSync('supabase/migrations').find(x=>x.endsWith('_parent_athlete_setup.sql'));await db.exec(fs.readFileSync('supabase/migrations/'+migration,'utf8'));
+await db.exec(`insert into athletes(id,parent_user_id,onboarding_data,parent_first_name) values('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002','{"considerations":"old injury","safetyDetails":"old detail"}','Parent');`);
+const save=async(answers,complete)=>{const result=await db.query('select public.save_parent_athlete_setup($1,$2,$3) as saved',['00000000-0000-0000-0000-000000000002',JSON.stringify(answers),complete]);return result.rows[0].saved;};
+await db.exec('set role service_role');let row=await save({formVersion:2,hubFrequency:'1 day',safetyStatus:'already_discussed'},false);assert.equal(row.onboarding_complete,false);assert.equal(row.onboarding_data.safetyDetails,'old detail');
+row=await save({formVersion:2,hubFrequency:'1 day',safetyStatus:'already_discussed'},true);assert.equal(row.onboarding_complete,true);assert.equal(row.onboarding_data.considerations,'old injury');assert.equal(row.access_status,'pending');assert.equal(row.programme_id,null);assert.equal(row.parent_first_name,'Parent');
+row=await save({hubFrequency:'4+ days'},false);assert.equal(row.onboarding_complete,true);assert.equal(row.onboarding_data.hubFrequency,'1 day');row=await save({hubFrequency:'4+ days'},true);assert.equal(row.onboarding_data.hubFrequency,'1 day');
+await assert.rejects(()=>db.exec(`insert into athletes(id,parent_user_id) values('00000000-0000-0000-0000-000000000003','00000000-0000-0000-0000-000000000002')`),/unique|duplicate/i);
+for(const role of ['anon','authenticated']){await db.exec('reset role; set role '+role);await assert.rejects(()=>save({},false),/permission denied/i);}
+await db.exec('reset role; set role service_role');await assert.rejects(()=>db.query('select public.save_parent_athlete_setup($1,$2,$3)',['00000000-0000-0000-0000-000000000004','{}',true]),/not found/i);
+console.log('Database QA passed: persisted drafts/final, medical/name/access/assignment preservation, completed idempotency, stale-draft protection, duplicate prevention, service-only RPC, unknown-parent rejection');
+}finally{await db.close();}})().catch(e=>{console.error(e);process.exitCode=1});
