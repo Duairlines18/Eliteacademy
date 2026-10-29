@@ -57,8 +57,10 @@ const {chromium}=require('playwright');
   await page.getByRole('link',{name:'← Your Routines',exact:true}).click();await page.locator('.hub-card').first().waitFor();
   await page.goBack();await page.locator('.hub-main h1').filter({hasText:'Standard Warm-Up'}).waitFor();
   await page.reload();await page.getByRole('link',{name:'← Your Routines',exact:true}).waitFor();
-  await page.goto(base+(role==='staff'?'/#/hub/current-week':'/#/hub/session/d1'));await page.locator('[aria-label="Choose training day"]').waitFor();
-  ok(await page.locator('[aria-label="Choose training day"] a').count()===1,'normal workout retains only the assigned training day');
+  await page.goto(base+(role==='staff'?'/#/hub/current-week':'/#/hub/session/d1'));
+  const trainingDays=role==='staff'?page.locator('.ducc [data-day]'):page.locator('[aria-label="Choose training day"] a');
+  await trainingDays.first().waitFor();
+  ok(await trainingDays.count()===1,'normal workout retains only the assigned training day');
   ok(errors.length===0,`${audience}/${role}: no browser errors: ${errors}`);
   await context.close();console.log(`Routines browser QA passed: ${audience}/${role} at ${width}px`);
  }

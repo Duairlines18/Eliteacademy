@@ -111,6 +111,10 @@ const withoutSchoolIdentity=source=>source
  .replace(/        mountSchoolAttendance\(\);\r?\n/,'')
  .replace("+(HUB_STATE.staff?'<div id=\"schoolAttendanceRoot\"></div>':'')",'')
  .replace(/  function renderDirectorOverview\([\s\S]*?(?=  function renderStaffDashboard\()/,'')
+ // Coach route parity is covered by the authenticated coach browser suite.
+ .replace(/  function renderStaffDashboard\([\s\S]*?(?=  function renderCurrentWeek\()/,'  COACH_DASHBOARD\n')
+ .replace(/  function renderCurrentWeek\([^\n]+\n/,'  COACH_CURRENT_WEEK\n')
+ .replace(/coach-command\.js\?v=20261028-coach-parity/g,'coach-command.js')
  .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'\)return renderDirectorOverview\(\);\r?\n/,'')
  .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'&&!\[[^\n]+\n/,'')
  .replace(/ && HUB_STATE.staff\?\.accessProfile!=='sports_director'/g,'')
