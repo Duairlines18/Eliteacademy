@@ -42,6 +42,8 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Run real browser smoke checks
         run: node homepage-qa/browser.test.cjs
+      - name: Verify private athlete onboarding on mobile and desktop
+        run: node qa/private-onboarding.browser.cjs
       - name: Verify routines across Hub roles on mobile and desktop
         run: node hub-delivery/routines.browser.cjs
       - name: Verify six identified school athletes and named staff on mobile and desktop

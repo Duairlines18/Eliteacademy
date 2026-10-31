@@ -13,7 +13,18 @@ const restoreTitles=source=>source.replace(/Loughborough University Student-Athl
 const approvedCredentials="<div class=\"premium-more-grid\"><span>9× All-American</span><span>5× Big 12 Champion</span><span>TCU Co-Male Athlete of the Year · 2018–19</span><span>African U20 Champion · 2017</span><span>African U20 Championships Meet Record Holder · 16.30m, 2017</span><span>TCU Triple Jump Record Holder · Indoor &amp; Outdoor</span><span>The Bowerman Preseason Watch List · 2020</span></div>";
 const previousCredentials="<div class=\"premium-more-grid\"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div>";
 assert.ok(currentHtml.includes(approvedCredentials),'approved seven credentials remain intact');
-const html=restoreTitles(currentHtml).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
+// Approved private setup repair is behavior-tested in qa/private-onboarding tests.
+// Reverse only this release's scoped edits for the existing byte-preservation check.
+const withoutPrivateSetup=source=>source
+ .replace(/    if\(s\?\.mode==='account'&&s.audience==='private-athlete'\)links.push\([^\n]+\n/,'')
+ .replace(/  function normalizeOnboardingList\([\s\S]*?(?=  function renderAccountOnboarding\()/,'')
+ .replace(/    if\(privateAthlete\)\{\r?\n      const form=root.querySelector\('#hubAccountOnboardingForm'\)[\s\S]*?\r?\n    \}\r?\n/,'')
+ .replace(/if\(accountNeedsOnboarding\((?:s\.audience|audience),profile\)\)/g,'if(profile?.onboardingComplete!==true)')
+ .replace(/    if\(route==='\/setup'&&s.mode==='account'&&s.audience==='private-athlete'\)\{[\s\S]*?\r?\n    \}\r?\n/,'')
+ .replace(/          if\(profile.schedule_notes.length>1000\)[^\n]+\n/,'')
+ .replace('if(profile.equipment!==undefined)profile.equipment=normalizeOnboardingList(profile.equipment);',"if(profile.equipment!==undefined&&!Array.isArray(profile.equipment))profile.equipment=profile.equipment?profile.equipment.split(',').map(x=>x.trim()).filter(Boolean):[];")
+ .replace('if(profile.primary_goals!==undefined)profile.primary_goals=normalizeOnboardingList(profile.primary_goals);',"if(profile.primary_goals!==undefined)profile.primary_goals=profile.primary_goals?profile.primary_goals.split(',').map(x=>x.trim()).filter(Boolean):[];");
+const html=restoreTitles(withoutPrivateSetup(currentHtml)).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
 // These checks catch the duplicated homepage fragments and their stale controllers.
 for(const id of ['sports','performance-hub','credentials','premium-story-grid']){
   assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,`${id} must identify one section`);
