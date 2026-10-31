@@ -23,7 +23,7 @@ const {chromium}=require('playwright');
    const req=route.request(),url=req.url();if(url.startsWith(base))return route.continue();
    if(url.includes('/functions/v1/')){
     const body=req.postDataJSON()||{};let data={};
-    if(body.action==='profile')data={onboardingComplete:true};
+    if(body.action==='profile')data={onboardingComplete:true,onboarding:audience==='private-athlete'?{sportPathway:'Track',primaryGoals:['Speed / acceleration'],trainingEnvironment:'Track / field',equipment:['Bodyweight only'],weeklyAvailability:'3 days',scheduleNotes:'Current weekly training schedule: Track twice\nCurrent pain / injury / restriction: None\nPrevious significant injuries: None'}:{}};
     if(body.action==='bootstrap')data={contentStatus:'published',audience:audience==='school'?null:audience,cohort:{id:'test-school',name:'Test School',currentWeek:1},athlete:{displayName:'Test Athlete'},viewer:{firstName:'Test'},programme:{id:'test-programme',title:'Test Programme',school:'Test School',week:1,totalWeeks:6,sessions},exercises,delivery:{model:'private-athlete',copyWorkout:true}};
     if(body.action==='library')data={exercises};
     if(body.action==='list')data={completions:[]};
