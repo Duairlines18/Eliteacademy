@@ -13,7 +13,18 @@ const restoreTitles=source=>source.replace(/Loughborough University Student-Athl
 const approvedCredentials="<div class=\"premium-more-grid\"><span>9× All-American</span><span>5× Big 12 Champion</span><span>TCU Co-Male Athlete of the Year · 2018–19</span><span>African U20 Champion · 2017</span><span>African U20 Championships Meet Record Holder · 16.30m, 2017</span><span>TCU Triple Jump Record Holder · Indoor &amp; Outdoor</span><span>The Bowerman Preseason Watch List · 2020</span></div>";
 const previousCredentials="<div class=\"premium-more-grid\"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div>";
 assert.ok(currentHtml.includes(approvedCredentials),'approved seven credentials remain intact');
-const html=restoreTitles(currentHtml).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
+// Approved private setup repair is behavior-tested in qa/private-onboarding tests.
+// Reverse only this release's scoped edits for the existing byte-preservation check.
+const withoutPrivateSetup=source=>source
+ .replace(/    if\(s\?\.mode==='account'&&s.audience==='private-athlete'\)links.push\([^\n]+\n/,'')
+ .replace(/  function normalizeOnboardingList\([\s\S]*?(?=  function renderAccountOnboarding\()/,'')
+ .replace(/    if\(privateAthlete\)\{\r?\n      const form=root.querySelector\('#hubAccountOnboardingForm'\)[\s\S]*?\r?\n    \}\r?\n/,'')
+ .replace(/if\(accountNeedsOnboarding\((?:s\.audience|audience),profile\)\)/g,'if(profile?.onboardingComplete!==true)')
+ .replace(/    if\(route==='\/setup'&&s.mode==='account'&&s.audience==='private-athlete'\)\{[\s\S]*?\r?\n    \}\r?\n/,'')
+ .replace(/          if\(profile.schedule_notes.length>1000\)[^\n]+\n/,'')
+ .replace('if(profile.equipment!==undefined)profile.equipment=normalizeOnboardingList(profile.equipment);',"if(profile.equipment!==undefined&&!Array.isArray(profile.equipment))profile.equipment=profile.equipment?profile.equipment.split(',').map(x=>x.trim()).filter(Boolean):[];")
+ .replace('if(profile.primary_goals!==undefined)profile.primary_goals=normalizeOnboardingList(profile.primary_goals);',"if(profile.primary_goals!==undefined)profile.primary_goals=profile.primary_goals?profile.primary_goals.split(',').map(x=>x.trim()).filter(Boolean):[];");
+const html=restoreTitles(withoutPrivateSetup(currentHtml)).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
 // These checks catch the duplicated homepage fragments and their stale controllers.
 for(const id of ['sports','performance-hub','credentials','premium-story-grid']){
   assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,`${id} must identify one section`);
@@ -78,14 +89,10 @@ const withoutCompactVideo=source=>source
  .replace("    modal.classList.remove('loading','expanded');","    modal.classList.remove('loading');");
 // Existing Pages additions are now tracked in source; exact parity is tested in qa/release-assets.test.cjs.
 const withoutDeploymentAdditions=source=>source.replace("<link rel=\"stylesheet\" href=\"/parent-qa/session-card-polish.css\">\n<script defer src=\"/parent-qa/session-card-polish.js\"></script>\n<script defer src=\"/performance/coachdu-hub-bridge.js\"></script>\n",'').replace("  function renderAccountStatus(audience,error){\n    if(audience==='professional' && error?.code==='NO_ASSIGNMENT'){\n      const client=accountClient();\n      if(client){\n        client.auth.getSession().then(({data})=>{\n          const email=data?.session?.user?.email?.toLowerCase();\n          if(email==='coachdu@duairlineseliteacademy.com'){\n            location.replace('/performance/');\n          }\n        }).catch(()=>{});\n      }\n    }\n\n","  function renderAccountStatus(audience,error){\r\n");
-const withoutHubAssets=source=>source.replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\n<script src="\/parent-setup\/setup\.js"><\/script>\n/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
+const withoutHubAssets=source=>source.replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
 assert.equal(withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart)))))),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains unchanged apart from isolated Hub asset links');
 // Owner-approved routines navigation; behavior is covered by hub-delivery/routines.test.cjs.
 const withoutHubRepair=source=>source
- // Approved compact Parent Setup has its own contract/database/browser suite.
- .replace(/    if\(audience==='parent'\)\{DuParentSetup\.render[^\n]+\n/,'')
- .replace(/    if\(parent\)\{\r?\n      fields=[\s\S]*?    \}else if\(privateAthlete\)\{/, '    if(privateAthlete){')
- .replace(/        if\(audience==='parent'\)\{\r?\n          const goals=[\s\S]*?(?=        if\(audience==='private-athlete'\)\{)/,'')
  .replace(/  function assignedRoutines\([\s\S]*?(?=  function renderSchoolAthleteCompact\()/,'')
  .replace(/    links\.splice\(1,0,\['routines','#\/hub\/routines','Your Routines'\]\);\r?\n/,'')
  .replace(/    else if\(route==='\/routines'[^\n]*\n/g,'')
