@@ -91,6 +91,7 @@ export class SupabaseHubRepository {
     const athleteLast = typeof user.user_metadata?.athlete_last_name === 'string'
       ? user.user_metadata.athlete_last_name.trim() : '';
     const payload = {
+      athlete_type: 'private',
       parent_user_id: user.id,
       parent_first_name: typeof user.user_metadata?.first_name === 'string' ? user.user_metadata.first_name.trim() : '',
       parent_last_name: typeof user.user_metadata?.last_name === 'string' ? user.user_metadata.last_name.trim() : '',
@@ -135,6 +136,7 @@ export class SupabaseHubRepository {
     return assertResult(
       await this.client.from('athletes')
         .insert({
+          athlete_type: 'private',
           athlete_user_id: user.id,
           athlete_email: user.email || '',
           full_name: [firstName, lastName].filter(Boolean).join(' '),
