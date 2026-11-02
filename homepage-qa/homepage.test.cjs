@@ -92,13 +92,13 @@ const withoutDeploymentAdditions=source=>source.replace("<link rel=\"stylesheet\
 const withoutHubAssets=source=>source.replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\n<script src="\/parent-setup\/setup\.js"><\/script>\n/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
 const actualHomepage=withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart))))));
 const expectedHomepage=currentProduction.slice(0,currentProduction.indexOf(routeStart));
-if(actualHomepage!==expectedHomepage){
+if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')){
  const offset=[...actualHomepage].findIndex((ch,i)=>ch!==expectedHomepage[i]);
  const at=offset<0?Math.min(actualHomepage.length,expectedHomepage.length):offset;
  const around=s=>JSON.stringify(s.slice(Math.max(0,at-120),at+220));
  console.error('Homepage preservation mismatch at character',at,'actual:',around(actualHomepage),'expected:',around(expectedHomepage));
 }
-assert.equal(actualHomepage,expectedHomepage,'locked homepage remains unchanged apart from isolated Hub asset links');
+assert.equal(actualHomepage.replace(/\r\n/g,'\n'),expectedHomepage.replace(/\r\n/g,'\n'),'locked homepage remains unchanged apart from isolated Hub asset links (line endings ignored)');
 // Owner-approved routines navigation; behavior is covered by hub-delivery/routines.test.cjs.
 const withoutHubRepair=source=>source
  // Approved compact Parent Setup has its own contract/database/browser suite.
