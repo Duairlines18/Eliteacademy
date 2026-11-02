@@ -93,10 +93,11 @@ const withoutHubAssets=source=>source.replace(/<link rel="stylesheet" href="\/pa
 const actualHomepage=withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart))))));
 const expectedHomepage=currentProduction.slice(0,currentProduction.indexOf(routeStart));
 if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')){
- const offset=[...actualHomepage].findIndex((ch,i)=>ch!==expectedHomepage[i]);
- const at=offset<0?Math.min(actualHomepage.length,expectedHomepage.length):offset;
+ const actualNormalized=actualHomepage.replace(/\r\n/g,'\n'),expectedNormalized=expectedHomepage.replace(/\r\n/g,'\n');
+ const offset=[...actualNormalized].findIndex((ch,i)=>ch!==expectedNormalized[i]);
+ const at=offset<0?Math.min(actualNormalized.length,expectedNormalized.length):offset;
  const around=s=>JSON.stringify(s.slice(Math.max(0,at-120),at+220));
- console.error('Homepage preservation mismatch at character',at,'actual:',around(actualHomepage),'expected:',around(expectedHomepage));
+ console.error('Homepage preservation normalized mismatch at character',at,'actual:',around(actualNormalized),'expected:',around(expectedNormalized));
 }
 assert.equal(actualHomepage.replace(/\r\n/g,'\n'),expectedHomepage.replace(/\r\n/g,'\n'),'locked homepage remains unchanged apart from isolated Hub asset links (line endings ignored)');
 // Owner-approved routines navigation; behavior is covered by hub-delivery/routines.test.cjs.
