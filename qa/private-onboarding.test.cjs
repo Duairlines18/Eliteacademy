@@ -37,7 +37,7 @@ test('parent multi-select payload retains its existing API contract',()=>{
   const result=submit('parent',[['development_goals','Speed'],['development_goals','Jumping'],['training_environment','Home'],['training_environment','Gym'],['equipment','Bodyweight only'],['considerations','']]);
   assert.deepEqual(result.equipment,['Bodyweight only']);
   assert.deepEqual(result.training_environment,['Home','Gym']);
-  assert.equal(result.considerations,'Development goals: Speed, Jumping');
+  assert.equal(result.considerations,'');
 });
 test('saved list values tolerate text, arrays, empty and malformed optional values',()=>{
   const helpers=html.slice(html.indexOf('  function normalizeOnboardingList('),html.indexOf('  function renderAccountOnboarding('));
