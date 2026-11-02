@@ -13,7 +13,18 @@ const restoreTitles=source=>source.replace(/Loughborough University Student-Athl
 const approvedCredentials="<div class=\"premium-more-grid\"><span>9× All-American</span><span>5× Big 12 Champion</span><span>TCU Co-Male Athlete of the Year · 2018–19</span><span>African U20 Champion · 2017</span><span>African U20 Championships Meet Record Holder · 16.30m, 2017</span><span>TCU Triple Jump Record Holder · Indoor &amp; Outdoor</span><span>The Bowerman Preseason Watch List · 2020</span></div>";
 const previousCredentials="<div class=\"premium-more-grid\"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div>";
 assert.ok(currentHtml.includes(approvedCredentials),'approved seven credentials remain intact');
-const html=restoreTitles(currentHtml).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
+// Approved private setup repair is behavior-tested in qa/private-onboarding tests.
+// Reverse only this release's scoped edits for the existing byte-preservation check.
+const withoutPrivateSetup=source=>source
+ .replace(/    if\(s\?\.mode==='account'&&s.audience==='private-athlete'\)links.push\([^\n]+\n/,'')
+ .replace(/  function normalizeOnboardingList\([\s\S]*?(?=  function renderAccountOnboarding\()/,'')
+ .replace(/    if\(privateAthlete\)\{\r?\n      const form=root.querySelector\('#hubAccountOnboardingForm'\)[\s\S]*?\r?\n    \}\r?\n/,'')
+ .replace(/if\(accountNeedsOnboarding\((?:s\.audience|audience),profile\)\)/g,'if(profile?.onboardingComplete!==true)')
+ .replace(/    if\(route==='\/setup'&&s.mode==='account'&&s.audience==='private-athlete'\)\{[\s\S]*?\r?\n    \}\r?\n/,'')
+ .replace(/          if\(profile.schedule_notes.length>1000\)[^\n]+\n/,'')
+ .replace('if(profile.equipment!==undefined)profile.equipment=normalizeOnboardingList(profile.equipment);',"if(profile.equipment!==undefined&&!Array.isArray(profile.equipment))profile.equipment=profile.equipment?profile.equipment.split(',').map(x=>x.trim()).filter(Boolean):[];")
+ .replace('if(profile.primary_goals!==undefined)profile.primary_goals=normalizeOnboardingList(profile.primary_goals);',"if(profile.primary_goals!==undefined)profile.primary_goals=profile.primary_goals?profile.primary_goals.split(',').map(x=>x.trim()).filter(Boolean):[];");
+const html=restoreTitles(withoutPrivateSetup(currentHtml)).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
 // These checks catch the duplicated homepage fragments and their stale controllers.
 for(const id of ['sports','performance-hub','credentials','premium-story-grid']){
   assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,`${id} must identify one section`);
@@ -57,8 +68,8 @@ const withoutAirZimPresentation=source=>source
 const currentProduction=execFileSync('git',['show','ee633b7:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
 // Approved Journey additions are isolated Hub presentation. Keep every other byte protected.
 const withoutJourneyPresentation=source=>source
- .replace('<link rel="stylesheet" href="/performance-journey/journey.css?v=20261017">\n','')
- .replace("    if(HUB_STATE.audience!=='professional')links.splice(1,0,['journey','#/hub/journey',staff?'Group Journey':'My Journey']);\n",'')
+ .replace(/<link rel="stylesheet" href="\/performance-journey\/journey\.css\?v=20261017">\r?\n?/,'')
+ .replace(/    if\(HUB_STATE\.audience!=='professional'\)links\.splice\(1,0,\['journey','#\/hub\/journey',staff\?'Group Journey':'My Journey'\]\);\r?\n/,'')
  .replace(/    else if\(route==='\/journey'&&HUB_STATE\.audience!=='professional'\)[^\n]+\n/,'')
  .replace(/    \/\/ Performance Journey reads its own authorized endpoint; workout\/video flows stay independent\.[\s\S]*?(?=    \/\/ School coach Technique Review: independent of individual athlete assignments\.)/,'');
 const journeyStyles=fs.readFileSync('performance-journey/journey.css','utf8');
@@ -77,9 +88,18 @@ const withoutCompactVideo=source=>source
  .replace(/    modal\.classList\.remove\('expanded'\);\r?\n    modal\.querySelector\('\[data-hub-video-expand\]'\)\.textContent='Expand ↗';\r?\n    document\.body\.style\.overflow=HUB_VIDEO_BODY_OVERFLOW;/,"    document.body.style.overflow='hidden';")
  .replace("    modal.classList.remove('loading','expanded');","    modal.classList.remove('loading');");
 // Existing Pages additions are now tracked in source; exact parity is tested in qa/release-assets.test.cjs.
-const withoutDeploymentAdditions=source=>source.replace("<link rel=\"stylesheet\" href=\"/parent-qa/session-card-polish.css\">\n<script defer src=\"/parent-qa/session-card-polish.js\"></script>\n<script defer src=\"/performance/coachdu-hub-bridge.js\"></script>\n",'').replace("  function renderAccountStatus(audience,error){\n    if(audience==='professional' && error?.code==='NO_ASSIGNMENT'){\n      const client=accountClient();\n      if(client){\n        client.auth.getSession().then(({data})=>{\n          const email=data?.session?.user?.email?.toLowerCase();\n          if(email==='coachdu@duairlineseliteacademy.com'){\n            location.replace('/performance/');\n          }\n        }).catch(()=>{});\n      }\n    }\n\n","  function renderAccountStatus(audience,error){\r\n");
-const withoutHubAssets=source=>source.replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\n<script src="\/parent-setup\/setup\.js"><\/script>\n/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
-assert.equal(withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart)))))),currentProduction.slice(0,currentProduction.indexOf(routeStart)),'locked homepage remains unchanged apart from isolated Hub asset links');
+const withoutDeploymentAdditions=source=>source.replace(/<link rel="stylesheet" href="\/parent-qa\/session-card-polish\.css">\r?\n?<script defer src="\/parent-qa\/session-card-polish\.js"><\/script>\r?\n?<script defer src="\/performance\/coachdu-hub-bridge\.js"><\/script>\r?\n?/,'').replace(/  function renderAccountStatus\(audience,error\)\{\r?\n    if\(audience==='professional' && error\?\.code==='NO_ASSIGNMENT'\)\{[\s\S]*?\r?\n    \}\r?\n\r?\n/,'  function renderAccountStatus(audience,error){\r\n');
+const withoutHubAssets=source=>source.replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\r?\n?<script src="\/parent-setup\/setup\.js"><\/script>\r?\n?/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=20261019"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
+const actualHomepage=withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart))))));
+const expectedHomepage=currentProduction.slice(0,currentProduction.indexOf(routeStart));
+if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')){
+ const actualNormalized=actualHomepage.replace(/\r\n/g,'\n'),expectedNormalized=expectedHomepage.replace(/\r\n/g,'\n');
+ const offset=[...actualNormalized].findIndex((ch,i)=>ch!==expectedNormalized[i]);
+ const at=offset<0?Math.min(actualNormalized.length,expectedNormalized.length):offset;
+ const around=s=>JSON.stringify(s.slice(Math.max(0,at-120),at+220));
+ console.error('Homepage preservation normalized mismatch at character',at,'actual:',around(actualNormalized),'expected:',around(expectedNormalized));
+}
+assert.equal(actualHomepage.replace(/\r\n/g,'\n'),expectedHomepage.replace(/\r\n/g,'\n'),'locked homepage remains unchanged apart from isolated Hub asset links (line endings ignored)');
 // Owner-approved routines navigation; behavior is covered by hub-delivery/routines.test.cjs.
 const withoutHubRepair=source=>source
  // Approved compact Parent Setup has its own contract/database/browser suite.
@@ -140,7 +160,14 @@ const withoutSchoolIdentity=source=>source
  .replace(/\r\n/g,'\n');
 // Story arrival is covered by my-journey/story.test.cjs; exclude only its exact scoped branch.
 const withoutPartnershipPresentation=source=>source.replace(/      if \(activeView === homeView && location.hash === '#stories'\) \{[\s\S]*?      \} else\r?\n/, '').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});").replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
-assert.equal(withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutCompactVideo(withoutPartnershipPresentation(withoutDeploymentAdditions(html.slice(html.indexOf(routeStart),html.indexOf(homepageController))))))))),withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController))))))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
+const actualIntegration=withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutCompactVideo(withoutPartnershipPresentation(withoutDeploymentAdditions(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)))))))));
+const expectedIntegration=withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))))));
+if(actualIntegration!==expectedIntegration){
+ const a=actualIntegration.replace(/\r\n/g,'\n'),b=expectedIntegration.replace(/\r\n/g,'\n');
+ let at=0;while(at<a.length&&at<b.length&&a[at]===b[at])at++;
+ console.error('Integration mismatch at normalized offset',at,'actual',JSON.stringify(a.slice(Math.max(0,at-140),at+220)),'expected',JSON.stringify(b.slice(Math.max(0,at-140),at+220)));
+}
+assert.equal(actualIntegration.replace(/\r\n/g,'\n'),expectedIntegration.replace(/\r\n/g,'\n'),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged (line endings ignored)');
 const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
 assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
 console.log('Production integration preservation passed.');
