@@ -4725,10 +4725,9 @@ document.addEventListener('click',function(e){
     };
   }
   function accountNeedsOnboarding(audience,profile){
-    if(profile?.onboardingComplete!==true)return true;
-    if(audience!=='private-athlete')return false;
-    const answers=privateOnboardingAnswers(profile);
-    return ['sport_pathway','private_development_goals','private_training_environment','private_equipment','weekly_availability','private_weekly_schedule','private_current_considerations','private_injury_history'].some(key=>!answers[key]?.length);
+    // The authenticated Supabase profile is authoritative. Older optional answers
+    // must not force an already-onboarded athlete through setup again.
+    return profile?.onboardingComplete!==true;
   }
   function renderAccountOnboarding(audience,profile){
     if(audience==='parent'){DuParentSetup.render(root,profile,{save:(answers,draft)=>authEdgePost(HUB_CONFIG.accountFunctions.parent,{action:draft?'save-onboarding-draft':'save-onboarding',profile:answers}),enter:async()=>{resetHubState();await enterAccount('parent');}});return;}
