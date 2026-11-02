@@ -45,13 +45,15 @@ test('saved list values tolerate text, arrays, empty and malformed optional valu
     assert.deepEqual(JSON.parse(JSON.stringify(vm.runInNewContext(helpers+'\nnormalizeOnboardingList(value)',{value}))),want);
   }
 });
-test('an empty or partial private setup is reopened even when its completion flag is true',()=>{
+test('completed private athletes bypass setup regardless of optional questionnaire answers',()=>{
   const helpers=html.slice(html.indexOf('  function normalizeOnboardingList('),html.indexOf('  function renderAccountOnboarding('));
-  const complete={onboardingComplete:true,onboarding:{sportPathway:'Triple jump',primaryGoals:['Jumping / power'],trainingEnvironment:'Track / field',equipment:['Bodyweight only'],weeklyAvailability:'3 days',scheduleNotes:'Current weekly training schedule: Track\nCurrent pain / injury / restriction: None\nPrevious significant injuries: None'}};
-  for(const [profile,want] of [[{onboardingComplete:true,onboarding:{}},true],[{...complete,onboarding:{...complete.onboarding,equipment:[]}},true],[complete,false]]){
-    assert.equal(vm.runInNewContext(helpers+'\naccountNeedsOnboarding("private-athlete",profile)',{profile}),want);
-  }
-  assert.equal(vm.runInNewContext(helpers+'\naccountNeedsOnboarding("parent",{onboardingComplete:true})'),false);
+  const check=(audience,profile)=>vm.runInNewContext(helpers+'\naccountNeedsOnboarding(audience,profile)',{audience,profile});
+  const completed={onboardingComplete:true,onboarding:{}};
+  assert.equal(check('private-athlete',completed),false,'existing eight-week athlete must enter their dashboard');
+  assert.equal(check('private-athlete',{...completed,onboarding:{sportPathway:'400/800',primaryGoals:[]}}),false);
+  assert.equal(check('private-athlete',{onboardingComplete:false,onboarding:{}}),true,'new athletes still set up');
+  assert.equal(check('private-athlete',null),true);
+  assert.equal(check('parent',{onboardingComplete:true}),false);
 });
 test('frontend answers pass the real server validator and preserve account entitlement on save',async()=>{
   const {savePrivateAthleteOnboarding}=await import('../supabase/functions/_shared/private-athlete-service.ts');
