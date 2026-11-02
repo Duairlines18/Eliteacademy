@@ -164,7 +164,7 @@ const actualIntegration=withoutSchoolIdentity(withoutJourneyPresentation(without
 const expectedIntegration=withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))))));
 if(actualIntegration!==expectedIntegration){
  const a=actualIntegration.replace(/\r\n/g,'\n'),b=expectedIntegration.replace(/\r\n/g,'\n');
- const n=[...a].findIndex((ch,i)=>ch!==b[i]);const at=n<0?Math.min(a.length,b.length):n;
+ let at=0;while(at<a.length&&at<b.length&&a[at]===b[at])at++;
  console.error('Integration mismatch at normalized offset',at,'actual',JSON.stringify(a.slice(Math.max(0,at-140),at+220)),'expected',JSON.stringify(b.slice(Math.max(0,at-140),at+220)));
 }
 assert.equal(actualIntegration.replace(/\r\n/g,'\n'),expectedIntegration.replace(/\r\n/g,'\n'),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged (line endings ignored)');
