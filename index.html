@@ -4725,8 +4725,7 @@ document.addEventListener('click',function(e){
     };
   }
   function accountNeedsOnboarding(audience,profile){
-    // The authenticated Supabase profile is authoritative. Older optional answers
-    // must not force an already-onboarded athlete through setup again.
+    // Persisted onboarding completion, not optional legacy answers, controls access.
     return profile?.onboardingComplete!==true;
   }
   function renderAccountOnboarding(audience,profile){
