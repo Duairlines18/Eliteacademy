@@ -160,7 +160,14 @@ const withoutSchoolIdentity=source=>source
  .replace(/\r\n/g,'\n');
 // Story arrival is covered by my-journey/story.test.cjs; exclude only its exact scoped branch.
 const withoutPartnershipPresentation=source=>source.replace(/      if \(activeView === homeView && location.hash === '#stories'\) \{[\s\S]*?      \} else\r?\n/, '').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});").replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
-assert.equal(withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutCompactVideo(withoutPartnershipPresentation(withoutDeploymentAdditions(html.slice(html.indexOf(routeStart),html.indexOf(homepageController))))))))),withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController))))))),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged');
+const actualIntegration=withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutCompactVideo(withoutPartnershipPresentation(withoutDeploymentAdditions(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)))))))));
+const expectedIntegration=withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))))));
+if(actualIntegration!==expectedIntegration){
+ const a=actualIntegration.replace(/\r\n/g,'\n'),b=expectedIntegration.replace(/\r\n/g,'\n');
+ const n=[...a].findIndex((ch,i)=>ch!==b[i]);const at=n<0?Math.min(a.length,b.length):n;
+ console.error('Integration mismatch at normalized offset',at,'actual',JSON.stringify(a.slice(Math.max(0,at-140),at+220)),'expected',JSON.stringify(b.slice(Math.max(0,at-140),at+220)));
+}
+assert.equal(actualIntegration.replace(/\r\n/g,'\n'),expectedIntegration.replace(/\r\n/g,'\n'),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged (line endings ignored)');
 const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
 assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
 console.log('Production integration preservation passed.');
