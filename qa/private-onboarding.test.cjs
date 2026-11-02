@@ -36,7 +36,7 @@ test('professional text fields still normalize to arrays, including empty option
 test('parent multi-select payload retains its existing API contract',()=>{
   const result=submit('parent',[['development_goals','Speed'],['development_goals','Jumping'],['training_environment','Home'],['training_environment','Gym'],['equipment','Bodyweight only'],['considerations','']]);
   assert.deepEqual(result.equipment,['Bodyweight only']);
-  assert.equal(result.training_environment,'Home, Gym');
+  assert.deepEqual(result.training_environment,['Home','Gym']);
   assert.equal(result.considerations,'Development goals: Speed, Jumping');
 });
 test('saved list values tolerate text, arrays, empty and malformed optional values',()=>{
