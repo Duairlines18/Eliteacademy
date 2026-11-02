@@ -24,7 +24,16 @@ const withoutPrivateSetup=source=>source
  .replace(/          if\(profile.schedule_notes.length>1000\)[^\n]+\n/,'')
  .replace('if(profile.equipment!==undefined)profile.equipment=normalizeOnboardingList(profile.equipment);',"if(profile.equipment!==undefined&&!Array.isArray(profile.equipment))profile.equipment=profile.equipment?profile.equipment.split(',').map(x=>x.trim()).filter(Boolean):[];")
  .replace('if(profile.primary_goals!==undefined)profile.primary_goals=normalizeOnboardingList(profile.primary_goals);',"if(profile.primary_goals!==undefined)profile.primary_goals=profile.primary_goals?profile.primary_goals.split(',').map(x=>x.trim()).filter(Boolean):[];");
-const html=restoreTitles(withoutPrivateSetup(currentHtml)).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
+// Approved dashboard return refresh and previous-week check-in have dedicated
+// race, authorization and browser coverage. Keep the immutable baseline intact.
+const withoutDashboardRefresh=source=>source
+ .replace(/  let HUB_LAST_LOADED_AT=0;\r?\n/,'')
+ .replace(/  let HUB_REVALIDATING=false;\r?\n/,'')
+ .replace(/  \/\/ Refresh published assignments when returning to the dashboard, never during a workout\.[\s\S]*?(?=  initializePasswordRecovery\()/,"  window.addEventListener('hashchange',()=>setTimeout(render,50)); window.addEventListener('popstate',()=>setTimeout(render,50));\r\n")
+ .replace(/  function feedbackWeekSelector\([\s\S]*?(?=  function renderFeedback\()/,'')
+ .replace("athleteFeedbackForm(false).replace('><div>', '>'+feedbackWeekSelector()+'<div>')",'athleteFeedbackForm(false)')
+ .replace("const feedbackWeek=form.querySelector('[name=weekNumber]');if(feedbackWeek)payload.weekNumber=Number(feedbackWeek.value);",'');
+const html=restoreTitles(withoutPrivateSetup(withoutDashboardRefresh(currentHtml))).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
 // These checks catch the duplicated homepage fragments and their stale controllers.
 for(const id of ['sports','performance-hub','credentials','premium-story-grid']){
   assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,`${id} must identify one section`);

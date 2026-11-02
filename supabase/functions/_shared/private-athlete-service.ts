@@ -1,4 +1,4 @@
-import {loadAccountAssignment,accountHistory,accountSchedule,accountFeedbackContext} from './account-assignment.ts';
+import {loadAccountAssignment,accountHistory,accountSchedule,accountFeedbackContext,publishedWeek} from './account-assignment.ts';
 import {
   evaluatePrivateAthleteEntitlement,
   shapePrivateAthleteBootstrap,
@@ -46,7 +46,26 @@ export async function bootstrapPrivateAthlete({user,repository}:any){
   const upcomingWeeks=programmeSchedule.filter((w:any)=>w.week_number>athlete.current_week);
   return {...shapePrivateAthleteBootstrap(athlete,bundle),historyWeeks,upcomingWeeks,programmeSchedule};
 }
-export async function savePrivateAthleteFeedback({user,input,feedbackType='athlete_weekly',repository}:any){const athlete=await athleteFor(user,repository);const entitlement=evaluatePrivateAthleteEntitlement(athlete);if(entitlement!=='ACTIVE')throw new PrivateAthleteServiceError(entitlement,'Your private athlete access is not active.');const {cohortId,weekNumber}=await accountFeedbackContext(athlete,repository);const allowedType=feedbackType==='athlete_issue'?'athlete_issue':'athlete_weekly';return saveFeedback({repository,feedbackType:allowedType,input,athleteId:athlete.id,cohortId,weekNumber,replaceExisting:allowedType!=='athlete_issue'});}
+export async function savePrivateAthleteFeedback({user,input,feedbackType='athlete_weekly',repository}:any){
+  const athlete=await athleteFor(user,repository);
+  const entitlement=evaluatePrivateAthleteEntitlement(athlete);
+  if(entitlement!=='ACTIVE')throw new PrivateAthleteServiceError(entitlement,'Your private athlete access is not active.');
+  const context=await accountFeedbackContext(athlete,repository);
+  const allowedType=feedbackType==='athlete_issue'?'athlete_issue':'athlete_weekly';
+  let weekNumber=context.weekNumber;
+  if(allowedType==='athlete_weekly'&&input?.weekNumber!==undefined){
+    const requested=input.weekNumber;
+    if(!Number.isInteger(requested)||requested<1||![weekNumber,weekNumber-1].includes(requested))throw new Error('Invalid feedback information.');
+    if(requested!==weekNumber){
+      const history=await accountHistory(athlete,repository);
+      if(!history.some((week:any)=>week.week_number===requested))throw new Error('Invalid feedback information.');
+      const bundle=await loadAccountAssignment(athlete,repository,requested);
+      if(!publishedWeek(bundle?.week))throw new Error('Invalid feedback information.');
+    }
+    weekNumber=requested;
+  }
+  return saveFeedback({repository,feedbackType:allowedType,input,athleteId:athlete.id,cohortId:context.cohortId,weekNumber,replaceExisting:allowedType!=='athlete_issue'});
+}
 export async function loadPrivateAthleteHistory({user,weekNumber,repository}:any){const athlete=await athleteFor(user,repository);const entitlement=evaluatePrivateAthleteEntitlement(athlete);if(entitlement!=='ACTIVE')throw new PrivateAthleteServiceError(entitlement,'Your private athlete access is not active.');const directAssignment=Boolean(athlete.programme_id);const allowed=directAssignment?await repository.listAssignedPublishedWeeks(athlete):await repository.listPublishedWeeks(athlete.cohort_id);if(!Number.isInteger(weekNumber)||!allowed.some((item:any)=>item.week_number===weekNumber))throw new PrivateAthleteServiceError('HISTORY_NOT_FOUND','That previous week is not available.');const bundle=await loadAccountAssignment(athlete,repository,weekNumber);if(!bundle?.week)throw new PrivateAthleteServiceError('HISTORY_NOT_FOUND','That previous week is not available.');return shapePrivateAthleteBootstrap(athlete,bundle);}
 
 export async function loadPrivateAthleteProgrammeWeek({user,weekNumber,repository}:any){
