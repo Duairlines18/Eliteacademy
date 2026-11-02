@@ -47,7 +47,7 @@ test('saved list values tolerate text, arrays, empty and malformed optional valu
 });
 test('completed private athletes bypass setup regardless of optional questionnaire answers',()=>{
   const helpers=html.slice(html.indexOf('  function normalizeOnboardingList('),html.indexOf('  function renderAccountOnboarding('));
-  const check=(audience,profile)=>vm.runInNewContext(helpers+'\\naccountNeedsOnboarding(audience,profile)',{audience,profile});
+  const check=(audience,profile)=>vm.runInNewContext(helpers+'\naccountNeedsOnboarding(audience,profile)',{audience,profile});
   const completed={onboardingComplete:true,onboarding:{}};
   assert.equal(check('private-athlete',completed),false,'existing eight-week athlete must enter their dashboard');
   assert.equal(check('private-athlete',{...completed,onboarding:{sportPathway:'400/800',primaryGoals:[]}}),false);
