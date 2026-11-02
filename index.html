@@ -4245,6 +4245,8 @@ document.addEventListener('click',function(e){
     return HUB_ACCOUNT_CLIENT;
   }
   let HUB_REQUEST_EPOCH=0;
+  let HUB_LAST_LOADED_AT=0;
+  let HUB_REVALIDATING=false;
   function sessionStamp(){return HUB_REQUEST_EPOCH+'|'+JSON.stringify(session());}
   function resetHubState(){HUB_REQUEST_EPOCH++;WORKOUT_COMPLETIONS=new Map();Object.keys(GUIDED_CURSOR).forEach(key=>delete GUIDED_CURSOR[key]);WORKOUT_MODE='quick';HUB_STATE={programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};}
   function logout(){
@@ -4316,6 +4318,7 @@ document.addEventListener('click',function(e){
     if(stamp!==sessionStamp())return false;
     EXERCISES=EXERCISES.map(ex=>{const url=DuHubDelivery.safeVideo(ex.videoUrl,ex.videoId);return {...ex,videoUrl:url,videoId:url?ex.videoId:''};});
     await loadWorkoutCompletions();
+    if(stamp===sessionStamp())HUB_LAST_LOADED_AT=Date.now();
     return !!HUB_STATE.programme;
   }
   async function loadHubData(activeSession){
@@ -4340,6 +4343,7 @@ document.addEventListener('click',function(e){
     if(stamp!==sessionStamp())return false;
       EXERCISES=EXERCISES.map(ex=>{const url=DuHubDelivery.safeVideo(ex.videoUrl,ex.videoId);return {...ex,videoUrl:url,videoId:url?ex.videoId:''};});
       await loadWorkoutCompletions();
+      if(stamp===sessionStamp())HUB_LAST_LOADED_AT=Date.now();
       return !!HUB_STATE.programme;
     }catch(error){
       if(stamp!==sessionStamp())return false;
@@ -5301,7 +5305,26 @@ document.addEventListener('click',function(e){
     if(event.target.id==='sessionIssueForm'){event.preventDefault();const form=event.target,result=document.getElementById('sessionIssueResult'),button=form.querySelector('button[type="submit"]');result.innerHTML='';button.disabled=true;const original=button.textContent;button.textContent='Sending…';try{const payload={formVersion:'1.0',submissionId:makeSubmissionId(),submitterName:String(document.getElementById('issueSubmitterName')?.value||'').trim(),session:requireChoice(selectedChoice(form,'session'),'affected session'),reason:requireChoice(selectedChoice(form,'reason'),'reason'),note:String(document.getElementById('issueNote')?.value||'').trim()};await saveHubFeedback('athlete_issue',payload);result.innerHTML='<div class="hub-feedback-success">Issue received. Coach Du can review it before the next programme update.</div>';}catch(err){result.innerHTML='<div class="hub-feedback-error">'+escapeHtml(err.message||'The issue could not be saved. Please try again.')+'</div>';}finally{button.disabled=false;button.textContent=original;}return;}
     if(event.target.id==='coachFeedbackForm'){event.preventDefault();const form=event.target,result=document.getElementById('coachFeedbackResult'),button=form.querySelector('button[type="submit"]');result.innerHTML='';button.disabled=true;const original=button.textContent;button.textContent='Saving…';try{const payload={formVersion:'1.0',submissionId:makeSubmissionId(),submitterName:requireText(document.getElementById('coachFeedbackName')?.value,'your name'),completion:requireChoice(selectedChoice(form,'completion'),'week completion'),load:requireChoice(selectedChoice(form,'load'),'training load'),movementQuality:requireChoice(selectedChoice(form,'movementQuality'),'movement quality'),engagement:requireChoice(selectedChoice(form,'engagement'),'effort and engagement'),modified:requireChoice(selectedChoice(form,'modified'),'session modifications'),pain:requireChoice(selectedChoice(form,'pain'),'pain / physical concern'),workloadIssue:requireChoice(selectedChoice(form,'workloadIssue'),'schedule / workload issue'),attention:requireChoice(selectedChoice(form,'attention'),'attention before next week'),note:String(document.getElementById('coachFeedbackNote')?.value||'').trim()};await saveHubFeedback('coach_weekly',payload);result.innerHTML='<div class="hub-feedback-success">Weekly coach feedback received and saved.</div>';}catch(err){result.innerHTML='<div class="hub-feedback-error">'+escapeHtml(err.message||'Feedback could not be saved. Please try again.')+'</div>';}finally{button.disabled=false;button.textContent=original;}return;}
   });
-  window.addEventListener('hashchange',()=>setTimeout(render,50)); window.addEventListener('popstate',()=>setTimeout(render,50));
+  // Refresh published assignments when returning to the dashboard, never during a workout.
+  async function refreshVisibleProgramme(){
+    const route=location.hash;
+    if(document.hidden||HUB_REVALIDATING||!['#/hub','#/hub/athlete','#/hub/staff'].includes(route))return;
+    const active=session();
+    if(!active||!HUB_STATE.programme||Date.now()-HUB_LAST_LOADED_AT<60000)return;
+    const stamp=sessionStamp();
+    HUB_REVALIDATING=true;
+    try{
+      if(active.mode==='account')await loadAccountHubData(active.audience);
+      else await loadHubData(active);
+      if(stamp===sessionStamp()&&route===location.hash)await render();
+    }catch(error){
+      console.warn('Programme refresh unavailable; keeping the current workout.',error);
+    }finally{HUB_REVALIDATING=false;}
+  }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleProgramme();});
+  window.addEventListener('focus',()=>refreshVisibleProgramme());
+  window.addEventListener('hashchange',()=>{setTimeout(render,50);setTimeout(refreshVisibleProgramme,100);});
+  window.addEventListener('popstate',()=>setTimeout(render,50));
   initializePasswordRecovery().then(recovery=>{if(!recovery&&isHubRoute())setTimeout(render,60);});
 })();
 </script>
