@@ -69,7 +69,7 @@ const currentProduction=execFileSync('git',['show','ee633b7:index.html'],{encodi
 // Approved Journey additions are isolated Hub presentation. Keep every other byte protected.
 const withoutJourneyPresentation=source=>source
  .replace(/<link rel="stylesheet" href="\/performance-journey\/journey\.css\?v=20261017">\r?\n?/,'')
- .replace("    if(HUB_STATE.audience!=='professional')links.splice(1,0,['journey','#/hub/journey',staff?'Group Journey':'My Journey']);\n",'')
+ .replace(/    if\(HUB_STATE\.audience!=='professional'\)links\.splice\(1,0,\['journey','#\/hub\/journey',staff\?'Group Journey':'My Journey'\]\);\r?\n/,'')
  .replace(/    else if\(route==='\/journey'&&HUB_STATE\.audience!=='professional'\)[^\n]+\n/,'')
  .replace(/    \/\/ Performance Journey reads its own authorized endpoint; workout\/video flows stay independent\.[\s\S]*?(?=    \/\/ School coach Technique Review: independent of individual athlete assignments\.)/,'');
 const journeyStyles=fs.readFileSync('performance-journey/journey.css','utf8');
