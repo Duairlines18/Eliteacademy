@@ -43,8 +43,9 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no viewport overflow');
   }
   await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
-  await page.getByRole('heading',{name:'School Overview',exact:true}).waitFor();checks++;
-  ok(await page.locator('.hub-main').innerText().then(t=>t.includes('Mr Chivandire')&&t.includes('St. George’s Athlete 06')),'director school identity and roster');
+  await page.getByRole('heading',{name:'Programme Overview',exact:true}).waitFor();checks++;
+  await page.locator('.saints-director-attendance summary').click();
+  ok(await page.locator('.hub-main').innerText().then(t=>t.includes('St. George’s')&&t.includes('St. George’s Athlete 06')),'director school identity and roster');
   ok(await page.locator('.hub-main').innerText().then(t=>['Land','Spring','Project','Own','February','Weeks 2–4 remain unreleased'].every(x=>t.includes(x))),'director sees read-only development roadmap');
   ok(await page.locator('#school-send, #coachFeedbackForm, [data-completion-toggle]').count()===0,'director has no upload, feedback or completion mutation controls');
   await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');await page.getByRole('heading',{name:'Team Command',exact:true}).waitFor();checks++;
@@ -79,6 +80,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   await page.locator('[data-att-week] option[value="2"][selected]').waitFor({state:'attached'});
   ok(await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="2"]').inputValue()==='present','reconciliation persists after refresh');
   await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
+  await page.locator('.saints-director-attendance summary').click();
   await page.locator('[data-att-week]').waitFor();await page.locator('[data-att-week]').selectOption('2');
   await page.locator('[data-att-week] option[value="2"][selected]').waitFor({state:'attached'});
   for(const day of [1,2]){
