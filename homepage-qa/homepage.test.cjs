@@ -139,7 +139,7 @@ const withoutHubRepair=source=>source
 const withoutSchoolIdentity=source=>source
  .replace(/<link rel="stylesheet" href="\/hub-delivery\/school\.css">\r?\n/,'')
  .replace(/  function compactSchoolWeek\([\s\S]*?(?=  function weekBlock\()/,'  SCHOOL_WEEK_CARDS\n')
- .replace(/<script src="\/hub-delivery\/school-attendance\.js"><\/script>\r?\n/,'')
+ .replace(/<script src="\/hub-delivery\/school-attendance\.js(?:\?v=20261104-compact)?"><\/script>\r?\n/,'')
  .replace(/  function mountSchoolAttendance\([\s\S]*?(?=  function renderDirectorOverview\()/,'')
  .replace(/        mountSchoolAttendance\(\);\r?\n/,'')
  .replace("+(HUB_STATE.staff?'<div id=\"schoolAttendanceRoot\"></div>':'')",'')
@@ -147,7 +147,7 @@ const withoutSchoolIdentity=source=>source
  // Coach route parity is covered by the authenticated coach browser suite.
  .replace(/  function renderStaffDashboard\([\s\S]*?(?=  function renderCurrentWeek\()/,'  COACH_DASHBOARD\n')
  .replace(/  function renderCurrentWeek\([^\n]+\n/,'  COACH_CURRENT_WEEK\n')
- .replace(/coach-command\.js\?v=20261028-coach-parity/g,'coach-command.js')
+ .replace(/coach-command\.js\?v=(?:20261028-coach-parity|20261104-saints-ui)/g,'coach-command.js')
  .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'\)return renderDirectorOverview\(\);\r?\n/,'')
  .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'&&!\[[^\n]+\n/,'')
  .replace(/ && HUB_STATE.staff\?\.accessProfile!=='sports_director'/g,'')

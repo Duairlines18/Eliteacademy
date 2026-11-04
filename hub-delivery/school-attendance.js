@@ -27,10 +27,10 @@ function view(data){
  const picker='<label class="att-week-label">Week <select data-att-week>'+Array.from({length:data.totalWeeks},(_,i)=>'<option value="'+(i+1)+'"'+(i+1===data.weekNumber?' selected':'')+'>Week '+(i+1)+(i+1===data.currentWeek?' (current)':'')+'</option>').join('')+'</select></label>';
  const panels=[1,2].map(n=>{
   const knownDates=[...new Set((data.entries||[]).filter(e=>e.sessionNumber===n&&e.sessionDate).map(e=>e.sessionDate))];
-  const dateField=data.writable?'<label class="att-date-label">Session date (optional)<input type="date" data-att-date="'+n+'" value="'+esc(knownDates.length===1?knownDates[0]:'')+'"></label>':'';
+  const dateField=data.writable?'<label class="att-date-label">Session date (required to save)<input type="date" data-att-date="'+n+'" value="'+esc(knownDates.length===1?knownDates[0]:'')+'">'+(knownDates.length>1?'<small class="att-muted">Different recorded dates; retained unless replaced.</small>':'')+'</label>':'';
   const rows=(data.roster||[]).map((a,i)=>{
    const e=entries.get(a.id+'|'+n),status=e?.status||'unrecorded';
-   if(!data.writable)return '<div class="att-compact-row"><strong>'+esc(a.name)+'</strong><span>'+esc(labels[status])+'</span></div>';
+   if(!data.writable)return '<div class="att-compact-row"><strong>'+esc(a.name)+'</strong><span>'+esc(labels[status])+(e?.sessionDate?'<small class="att-muted" style="display:block">'+esc(e.sessionDate)+'</small>':'')+'</span></div>';
    return '<div class="att-compact-row"><strong>'+esc(a.name)+'</strong><input type="hidden" data-att-status data-athlete="'+esc(a.id)+'" data-day="'+n+'" value="'+esc(status)+'"><div class="att-choices" role="group" aria-label="Day '+n+' attendance for '+esc(a.name)+'">'+['present','absent','excused'].map(v=>'<button type="button" data-att-choice="'+v+'" aria-label="'+esc(a.name)+': '+esc(labels[v])+'" aria-pressed="'+(status===v)+'" class="att-choice'+(status===v?' selected':'')+'">'+(status===v?'✓':esc(v==='present'?'P':v==='absent'?'A':'E'))+'</button>').join('')+'</div></div>';
   }).join('');
   return '<div class="att-day-panel" data-att-panel="'+n+'"'+(n!==1?' hidden':'')+'>'+dateField+'<div class="att-compact-head"><span>Athlete</span><span>Present · Absent · Excused</span></div><div class="att-compact-list">'+rows+'</div></div>';
