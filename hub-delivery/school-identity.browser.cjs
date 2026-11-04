@@ -51,13 +51,19 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   ok(await page.locator('.ducc [data-athlete]').count()===6,'coach sees exactly six assigned athletes');
   await page.locator('[data-att-week]').waitFor();
   await page.locator('[data-att-week]').selectOption('2');
-  await page.getByText('Week 2 of 4',{exact:true}).waitFor();checks++;
+  await page.locator('[data-att-week] option[value="2"][selected]').waitFor({state:'attached'});checks++;
   const dates={390:['2026-10-19','2026-10-21'],375:['2026-10-18','2026-10-20'],430:['2026-10-17','2026-10-19'],768:['2026-10-16','2026-10-18'],1440:['2026-10-15','2026-10-17']}[width];
   const person=width===390?'fixture-athlete-1':'fixture-athlete-2';
   await page.locator('[data-att-date="1"]').fill(dates[0]);
+  const choose=async(day,status)=>{
+   await page.locator('[data-att-daytab="'+day+'"]').click();
+   const row=page.locator('[data-att-panel="'+day+'"] .att-compact-row').filter({has:page.locator('[data-athlete="'+person+'"]')});
+   if(await row.locator('[data-att-status]').inputValue()!==status)await row.locator('[data-att-choice="'+status+'"]').click();
+  };
+  await choose(1,'present');
+  await page.locator('[data-att-daytab="2"]').click();
   await page.locator('[data-att-date="2"]').fill(dates[1]);
-  await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="1"]').selectOption('present');
-  await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="2"]').selectOption('present');
+  await choose(2,'present');
   let failOnce=true;
   await page.route('**/functions/v1/hub-data',async route=>{
    if(failOnce&&route.request().postDataJSON()?.action==='attendance-save'){failOnce=false;return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Synthetic weak-Wi-Fi failure'})});}
@@ -70,12 +76,15 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   await page.getByRole('status').filter({hasText:'Attendance saved.'}).waitFor();checks++;
   await page.reload();await page.locator('[data-att-week]').waitFor();
   await page.locator('[data-att-week]').selectOption('2');
-  await page.getByText('Week 2 of 4',{exact:true}).waitFor();
+  await page.locator('[data-att-week] option[value="2"][selected]').waitFor({state:'attached'});
   ok(await page.locator('[data-att-status][data-athlete="'+person+'"][data-day="2"]').inputValue()==='present','reconciliation persists after refresh');
   await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
   await page.locator('[data-att-week]').waitFor();await page.locator('[data-att-week]').selectOption('2');
-  await page.getByText('Week 2 of 4',{exact:true}).waitFor();
-  ok(await page.locator('.att-row').filter({hasText:width===390?'Athlete 01':'Athlete 02'}).innerText().then(t=>t.includes('2/2 attended')&&t.includes(dates[0])&&t.includes(dates[1])),'director sees shared coach register and actual dates');
+  await page.locator('[data-att-week] option[value="2"][selected]').waitFor({state:'attached'});
+  for(const day of [1,2]){
+   await page.locator('[data-att-daytab="'+day+'"]').click();
+   ok(await page.locator('[data-att-panel="'+day+'"] .att-compact-row').filter({hasText:width===390?'Athlete 01':'Athlete 02'}).innerText().then(t=>t.includes('Attended')&&t.includes(dates[day-1])),'director sees shared coach register and actual date');
+  }
   ok(await page.locator('[data-att-save],[data-att-status]').count()===0,'director cannot change attendance');
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'attendance view fits viewport');
   await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');
