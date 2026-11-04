@@ -4159,6 +4159,55 @@ document.addEventListener('click',function(e){
 
   @media(min-width:720px){.hub-role-grid{grid-template-columns:1fr 1fr}.hub-dashboard-grid,.hub-review-grid{grid-template-columns:1fr 1fr}.hub-dashboard-actions{grid-template-columns:repeat(2,1fr)}.hub-summary-grid{grid-template-columns:repeat(3,1fr)}.hub-athlete-grid{grid-template-columns:1fr 1fr}.hub-choice-grid{grid-template-columns:repeat(3,1fr)}}
   @media(min-width:980px){.hub-dashboard-actions{grid-template-columns:repeat(3,1fr)}.hub-athlete-grid{grid-template-columns:repeat(3,1fr)}.hub-video-grid{grid-template-columns:repeat(3,1fr)!important}}
+
+/* School-only identity: Saints red, black and white with restrained Du Airlines gold. */
+.hub-saints{--saints-red:#cf2e2e;--saints-deep:#651c26;--saints-ivory:#f6f2ed;--saints-line:rgba(207,46,46,.28)}
+.hub-saints .hub-page-head .hub-eyebrow,.hub-saints .hub-week-label{color:#ed8585}
+.hub-saints .hub-athlete-day-choice strong,.hub-saints .hub-school-session-name{color:var(--saints-ivory)}
+.hub-saints .hub-school-day-picker .hub-athlete-day-choice{border-color:var(--saints-line);background:linear-gradient(145deg,rgba(101,28,38,.2),#111)}
+.hub-saints .hub-school-day-picker .hub-athlete-day-choice:hover,.hub-saints .hub-school-day-picker .hub-athlete-day-choice:focus-visible{border-color:#ed8585}
+.hub-saints .hub-school-day-picker .hub-athlete-day-choice.selected{border-color:#ed8585;background:rgba(101,28,38,.28)}
+.hub-saints .hub-school-day-picker .hub-athlete-day-choice small{color:#c7b6b8}
+.hub-saints .hub-athlete-week-focus{border-color:var(--saints-line)}
+.hub-saints .hub-current-week{border-color:var(--saints-line);background:linear-gradient(170deg,rgba(101,28,38,.22),#101010)}
+.saints-director-view{display:grid;gap:1rem}
+.saints-director-view .hub-page-head{margin-bottom:.3rem}
+.saints-director-hero{border:1px solid rgba(207,46,46,.35);border-radius:16px;padding:clamp(1.2rem,4vw,1.8rem);background:linear-gradient(135deg,#361018,#191014 72%,#101010)}
+.saints-director-kicker{color:#f0a0a0;font-size:.67rem;font-weight:750;letter-spacing:.14em;margin:0 0 .6rem}
+.saints-director-hero h2{font-family:var(--serif);font-size:clamp(1.55rem,5vw,2.4rem);line-height:1.2;margin:0 0 .65rem;color:var(--saints-ivory)}
+.saints-director-pill{display:inline-block;padding:.3rem .65rem;border:1px solid rgba(255,215,184,.32);border-radius:30px;font-size:.75rem;color:#ffe0c1}
+.saints-director-hero-focus{color:#f4e5e1;line-height:1.55;margin:.9rem 0 .65rem}
+.saints-director-muted{font-size:.78rem;color:#bcb0b1;line-height:1.5;margin:.55rem 0 0}
+.saints-director-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}
+.saints-director-metrics>div{padding:.85rem .5rem;background:#141414;border:1px solid var(--saints-line);border-radius:11px;text-align:center}
+.saints-director-metrics strong{display:block;font-size:1.45rem;color:#f4ede9;font-weight:750}
+.saints-director-metrics span{display:block;font-size:.67rem;color:#c0b2b3;line-height:1.35}
+.saints-director-card{border:1px solid var(--saints-line);border-radius:14px;background:#111;padding:1.1rem}
+.saints-director-section-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.35rem .8rem;margin-bottom:.9rem}
+.saints-director-section-head h2{font-family:var(--serif);font-size:1.3rem;margin:0;color:var(--saints-ivory)}
+.saints-director-section-head>span{color:#c6aaac;font-size:.72rem}
+.saints-roadmap{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.4rem;margin:0;padding:0}
+.saints-roadmap li{display:flex;flex-direction:column;min-width:0;padding:.65rem .4rem;border:1px solid #333;border-radius:9px;background:#191919;gap:.3rem}
+.saints-roadmap li.current{background:linear-gradient(160deg,#651c26,#2a1519);border-color:#cf5151}
+.saints-roadmap-num{font-size:.73rem;color:#e99b9b}
+.saints-roadmap strong{font-size:.69rem;color:#f5ece9}
+.saints-roadmap small{font-size:.61rem;line-height:1.35;color:#bdb0b0}
+.saints-roadmap em{font-size:.6rem;font-style:normal;color:#d7acac;margin-top:auto}
+.saints-director-sessions{display:grid;gap:.55rem}
+.saints-director-session{display:grid;grid-template-columns:58px minmax(0,1fr);gap:.2rem .7rem;align-items:baseline;border-bottom:1px solid #332528;padding:.5rem 0}
+.saints-director-session:last-child{border-bottom:0}
+.saints-director-session>span{font-size:.75rem;color:#ed8585;font-weight:750;grid-row:span 2}
+.saints-director-session strong{font-size:.87rem;color:#f4efed;font-weight:650}
+.saints-director-session small{color:#b9abad;font-size:.73rem}
+.saints-director-attendance>summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;list-style:none}
+.saints-director-attendance>summary::-webkit-details-marker{display:none}
+.saints-director-attendance>summary strong{display:block;font-family:var(--serif);font-size:1.3rem}
+.saints-director-attendance>summary small{display:block;color:#b9abad;font-size:.75rem;margin-top:.2rem}
+.saints-director-attendance>summary>span:last-child{font-size:1.3rem;color:#ed8585}
+.saints-director-attendance[open]>summary>span:last-child{transform:rotate(45deg)}
+.saints-director-attendance .du-att{border:0;padding:0;margin:1rem 0 0;background:transparent}
+.saints-director-view :focus-visible{outline:2px solid #ffb0b0;outline-offset:3px}
+@media(max-width:360px){.saints-roadmap{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <script src="/coach-command/coach-command.js?v=20261104-saints-ui"></script>
 <link rel="stylesheet" href="/hub-delivery/school.css">
@@ -4580,7 +4629,7 @@ document.addEventListener('click',function(e){
     if(HUB_STATE.audience!=='professional')links.splice(1,0,['journey','#/hub/journey',staff?'Group Journey':'My Journey']);
     return '<header class="hub-topbar"><div class="hub-wrap hub-topbar-row"><a class="hub-brand" href="'+dashboard+'">DU AIRLINES <span>PERFORMANCE HUB</span></a><button class="hub-menu-button" type="button" aria-expanded="false" aria-controls="hubNav">Menu</button><nav class="hub-nav" id="hubNav" aria-label="Performance Hub">'+links.map(x=>'<a href="'+x[1]+'"'+(active===x[0]?' aria-current="page"':'')+'>'+x[2]+'</a>').join('')+'<button class="hub-logout" type="button">Log Out</button></nav></div></header>';
   }
-  function shell(content,active){return '<div class="hub-shell">'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
+  function shell(content,active){const saints=/st\.?\s*george/i.test([HUB_STATE.cohort?.name,HUB_STATE.programme?.school].filter(Boolean).join(" "));return '<div class="hub-shell'+(saints?' hub-saints':'')+'">'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
   let HUB_VIDEO_LAST_FOCUS=null;
   let HUB_VIDEO_BODY_OVERFLOW='';
   let HUB_VIDEO_HISTORY_PUSHED=false;
@@ -4884,9 +4933,16 @@ document.addEventListener('click',function(e){
   }
   function renderDirectorOverview(){
     const p=programme(),school=HUB_STATE.cohort?.name||p.school||'School';
-    const roadmap=Number(p.totalWeeks)===4&&/plyometric skills pilot/i.test(p.title||'')?'<div class="hub-note-card"><h3>Four-week development objective</h3><p>Week 1: Land — quiet contacts and balanced holds. Week 2: Spring — rhythm and single-leg control. Week 3: Project — controlled horizontal jumping. Week 4: Own — repeatable control and readiness review.</p><p>These foundations support more advanced long and triple jump preparation toward February. Weeks 2–4 remain unreleased; this is the learning roadmap.</p></div>':'';
-    const overview='<div class="hub-note-card"><h3>'+escapeHtml(weekLabel(p))+'</h3><p><strong>This week’s purpose</strong></p><p>'+escapeHtml(p.weeklyObjective||'Programme being prepared.')+'</p><p>'+trainingSessions(p).filter(x=>!/optional/i.test(x.title||'')).length+' coached sessions · '+trainingSessions(p).filter(x=>/optional/i.test(x.title||'')).length+' optional home session</p><p>Start date: '+escapeHtml(HUB_STATE.cohort?.startDate||'Awaiting confirmation')+'</p></div>';
-    root.innerHTML=shell(pageHead('Sports Director','School Overview',school+' · '+HUB_STATE.staff.displayName,'#/hub/staff')+overview+roadmap+'<div id="schoolAttendanceRoot"></div>'+compactSchoolWeek(p)+routinesShortcut(),'dashboard');
+    const sessions=trainingSessions(p),coached=sessions.filter(x=>!/optional|recovery|prehab/i.test(x.title||'')),optional=sessions.length-coached.length;
+    const week=Math.max(1,Number(p.week)||1),total=Number(p.totalWeeks)||4;
+    const rosterCount=Array.isArray(HUB_STATE.roster)?HUB_STATE.roster.length:null;
+    const stages=[['Land','Quiet contacts and balanced holds'],['Spring','Rhythm and single-leg control'],['Project','Controlled horizontal jumping'],['Own','Repeatable control and readiness review']];
+    const roadmap=total===4&&/plyometric skills pilot/i.test(p.title||'')?'<section class="saints-director-card"><div class="saints-director-section-head"><h2>Four-week development journey</h2><span>Learning roadmap</span></div><ol class="saints-roadmap">'+stages.map((stage,i)=>'<li class="'+(i+1===week?'current':i+1<week?'past':'upcoming')+'"><span class="saints-roadmap-num">'+String(i+1).padStart(2,'0')+'</span><strong>'+stage[0]+'</strong><small>'+stage[1]+'</small><em>'+(i+1===week?'Current':'Planned')+'</em></li>').join('')+'</ol><p class="saints-director-muted">Later weeks remain unreleased until published by Coach Du.</p></section>':'';
+    const overview='<section class="saints-director-hero"><p class="saints-director-kicker">ST GEORGE’S COLLEGE · PERFORMANCE COHORT</p><h2>'+escapeHtml(school)+'</h2><div class="saints-director-pill">Week '+week+' of '+total+'</div><p class="saints-director-hero-focus">'+escapeHtml(p.weeklyObjective||'Programme being prepared.')+'</p><p class="saints-director-muted">Start date: '+escapeHtml(HUB_STATE.cohort?.startDate||'Awaiting confirmation')+'</p></section>';
+    const metrics='<div class="saints-director-metrics">'+(rosterCount===null?'':'<div><strong>'+rosterCount+'</strong><span>Athletes</span></div>')+'<div><strong>'+coached.length+'</strong><span>Coached sessions</span></div><div><strong>'+optional+'</strong><span>Optional sessions</span></div></div>';
+    const sessionCards='<section class="saints-director-card"><div class="saints-director-section-head"><h2>This week’s sessions</h2><span>Coach-led delivery</span></div><div class="saints-director-sessions">'+sessions.map((s,i)=>'<div class="saints-director-session"><span>'+escapeHtml(s.day||'Day '+(i+1))+'</span><strong>'+escapeHtml(s.title||'Training session')+'</strong><small>'+(/optional|recovery|prehab/i.test(s.title||'')?'Optional home session':'Coached session')+'</small></div>').join('')+'</div></section>';
+    const participation='<details class="saints-director-card saints-director-attendance"><summary><span><strong>Participation overview</strong><small>Coach-recorded attendance · read only</small></span><span aria-hidden="true">+</span></summary><div id="schoolAttendanceRoot"></div></details>';
+    root.innerHTML=shell('<div class="saints-director-view">'+pageHead('Sports Director','Programme Overview','School leadership view · '+school,'#/hub/staff')+overview+metrics+roadmap+sessionCards+participation+'</div>','dashboard');
     mountSchoolAttendance();
   }
   function renderStaffDashboard(){
