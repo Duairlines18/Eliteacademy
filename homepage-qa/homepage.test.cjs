@@ -138,7 +138,7 @@ const withoutHubRepair=source=>source
 // Normalize only its named functions/guards; public forms and remaining routes stay byte-checked.
 const withoutSchoolIdentity=source=>source
  .replace(/\r?\n\/\* SCHOOL_THEME_START:[\s\S]*?\/\* SCHOOL_THEME_END \*\/\r?\n/,'')
- .replace(/  \/\/ SCHOOL_THEME_LOOKUP_START:[\s\S]*?  \/\/ SCHOOL_THEME_LOOKUP_END\r?\n/,'  function shell(content,active){return \'<div class="hub-shell">\'+nav(active)+\'<main class="hub-main"><div class="hub-wrap">\'+content+\'</div></main></div\';}\r\n')
+ .replace(/  \/\/ SCHOOL_THEME_LOOKUP_START:[\s\S]*?  \/\/ SCHOOL_THEME_LOOKUP_END\r?\n/,'  function shell(content,active){return \'<div class="hub-shell">\'+nav(active)+\'<main class="hub-main"><div class="hub-wrap">\'+content+\'</div></main></div>\';}\r\n')
  .replace(/<link rel="stylesheet" href="\/hub-delivery\/school\.css">\r?\n/,'')
  .replace(/  function compactSchoolWeek\([\s\S]*?(?=  function weekBlock\()/,'  SCHOOL_WEEK_CARDS\n')
  .replace(/<script src="\/hub-delivery\/school-attendance\.js(?:\?v=20261104-compact)?"><\/script>\r?\n/,'')
