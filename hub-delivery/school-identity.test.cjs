@@ -23,3 +23,18 @@ test('director oversight explains the four-week skills roadmap without exposing 
  vm.runInNewContext(html.slice(start,end)+';renderDirectorOverview();',ctx);
  for(const text of ['Land','Spring','Project','Own','February','Weeks 2–4 remain unreleased'])assert.ok(ctx.root.innerHTML.includes(text),text);
 });
+
+test('school palette applies only to matching school identity and leaves other audiences unthemed',()=>{
+ const start=html.indexOf('  // SCHOOL_THEME_LOOKUP_START'),end=html.indexOf('  // SCHOOL_THEME_LOOKUP_END',start);
+ assert.ok(start>=0&&end>start);
+ const ctx={HUB_STATE:{cohort:{name:'St. George’s — LOCAL TEST FIXTURE'},programme:{school:'Other School'}}};
+ vm.createContext(ctx);
+ vm.runInContext(html.slice(start,end)+';globalThis.theme=schoolTheme;',ctx);
+ assert.equal(ctx.theme()?.accent,'#cf2e2e');
+ ctx.HUB_STATE.cohort={name:'St George’s College'};
+ assert.equal(ctx.theme()?.deep,'#651c26');
+ ctx.HUB_STATE.cohort={name:'Hillcrest College'};
+ assert.equal(ctx.theme(),null);
+ ctx.HUB_STATE.cohort=null;ctx.HUB_STATE.programme={school:'Private Athlete'};
+ assert.equal(ctx.theme(),null);
+});
