@@ -4639,7 +4639,7 @@ document.addEventListener('click',function(e){
   function schoolTheme(){
     const raw=String(HUB_STATE.cohort?.name||HUB_STATE.programme?.school||"");
     const key=raw.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g," ").trim();
-    return SCHOOL_THEMES[key]||null;
+    return SCHOOL_THEMES[key]||SCHOOL_THEMES[Object.keys(SCHOOL_THEMES).find(school=>key.startsWith(school.replace(/ college$/,'')+' '))]||null;
   }
   function schoolThemeStyle(theme){return theme?' style="'+Object.entries(theme).map(([k,v])=>'--school-'+k+':'+v).join(';')+'"':'';}
   function shell(content,active){const theme=schoolTheme();return '<div class="hub-shell'+(theme?' hub-school-themed':'')+'"'+schoolThemeStyle(theme)+'>'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
