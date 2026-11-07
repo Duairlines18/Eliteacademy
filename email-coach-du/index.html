@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Email Coach Du | DU Airlines Elite Academy</title>
+<style>body{margin:0;background:#063b31;color:#fff;font-family:system-ui,-apple-system,Arial,sans-serif;display:grid;place-items:center;min-height:100vh}.card{max-width:460px;margin:24px;padding:36px 28px;text-align:center;border:1px solid #cda456;border-radius:18px}h1{margin-top:12px}p{line-height:1.6;color:#eee}.button{display:inline-block;background:#e7bc65;color:#103c32;padding:15px 26px;border-radius:50px;text-decoration:none;font-weight:700;margin-top:12px}.brand{letter-spacing:.12em;color:#e7bc65;font-size:13px;font-weight:700}</style></head>
+<body><main class="card"><div class="brand">DU AIRLINES · ELITE ACADEMY</div><h1>Let's talk about your athlete.</h1><p>Tap below to open a ready-to-edit email to Coach Du. Nothing is sent until you choose to send it.</p><a class="button" id="email" href="mailto:coachdu@duairlineseliteacademy.com">Email Coach Du</a><p style="font-size:13px">If your email app does not open, write to coachdu@duairlineseliteacademy.com.</p></main>
+<script>
+const subject = "Question about coaching for my child";
+const body = "Hi Coach Du,\n\nI saw your athlete development flyer and would love to learn more about coaching for my child.\n\nMy child's age: \nSport: \nMain goal: \n\nCould you share how getting started works?\n\nThanks!";
+const link = "mailto:coachdu@duairlineseliteacademy.com?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+document.getElementById("email").href=link;
+// Attempt one-tap handoff from the short link; the button remains as a reliable fallback.
+window.addEventListener("load",()=>{window.location.href=link});
+</script></body></html>
