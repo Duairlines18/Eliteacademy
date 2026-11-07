@@ -29,6 +29,10 @@ if(!baseline&&fs.existsSync(rollout))await db.exec(fs.readFileSync(rollout,'utf8
 if(process.env.HUB_QA_AUDIT_HISTORY==='1'){
  const name=fs.readdirSync(new URL('migrations/',root)).find(x=>x.endsWith('_delivery_audit_history.sql'));
  await db.exec(read('migrations/'+name));
+ if(process.env.HUB_QA_ASSIGNMENT_HISTORY==='1'){
+  const next=fs.readdirSync(new URL('migrations/',root)).find(x=>x.endsWith('_delivery_assignment_history.sql'));
+  await db.exec(read('migrations/'+next));
+ }
 }
 try{
  await test('database integration: exact SQL over synthetic local records',async t=>{
