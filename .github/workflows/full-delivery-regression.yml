@@ -80,7 +80,7 @@ jobs:
       - name: Install pinned disposable PostgreSQL engine
         run: npm install --prefix /tmp/du-delivery-qa --no-save @electric-sql/pglite@0.5.13
       - name: Verify immutable publication and block history
-        run: node --test supabase/qa/delivery-history.database.mjs supabase/qa/assignment-history.database.mjs
+        run: node --test supabase/qa/delivery-history.database.mjs supabase/qa/assignment-history.database.mjs supabase/qa/feedback-history.database.mjs
         env:
           PGLITE_MODULE: /tmp/du-delivery-qa/node_modules/@electric-sql/pglite/dist/index.js
       - name: Verify existing database behaviour with audit enabled
