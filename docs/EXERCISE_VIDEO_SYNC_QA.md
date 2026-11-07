@@ -9,3 +9,9 @@ Nine targeted tests cover current URL replacement, missing/inactive lookup, ambi
 Still open: database-generated legacy maps remain name-bound unless explicitly migrated; legacy rename requires a reviewed remap, never a fuzzy runtime substitution. Existing stored video_links URLs are not backfilled, so admin publication preflight may correctly require resaving an old block after library edits. Semantic review of all library videos and automatic database/library history synchronization are not claimed complete. Do not redeploy every Edge Function blindly: retain each live endpoint's existing dependencies/JWT settings and verify its bundle before deployment.
 
 Independent review found that account adjustments could discard renamed code references. Full parent/private adjustment-path and personal-swap regressions reproduced this and now pass. Explicit demo codes are updated with the approved replacement so the original movement cannot remain selected behind a new name.
+
+## Shared publication preflight
+
+The website offline delivery QA and Control Room publication validator now use the same checked-in implementation. Reviewed `exerciseCode` references select one active library entry without name fallback. Name-only legacy references must match exactly one active entry. Saved demo URLs are compared by YouTube video identity, so equivalent watch/Shorts links pass while a different video blocks publication. Preflight only reports issues; it never rewrites stored URLs, prescriptions or library records.
+
+Eleven contract regressions cover duplicate names, invalid explicit codes, equivalent URL formats, wrong video IDs, ambiguous legacy references, input preservation duplicate query parameters duplicate-name library ordering encoded query parameters and ID-only canonical demos. These are synthetic source-level checks; authenticated role views, actual footage review, mobile playback and deployment remain separate gates.
