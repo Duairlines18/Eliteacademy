@@ -29,7 +29,7 @@ for(const [path,route,title,description] of pages){
 <meta name="twitter:title" content="${escape(title)}">
 <meta name="twitter:description" content="${escape(description)}">
 <meta name="theme-color" content="#0f271c">
-<script>location.replace(${JSON.stringify(target)} + location.search);</script>
+<script>location.replace('/' + location.search + ${JSON.stringify(target.slice(1))});</script>
 </head><body><main><h1>${escape(title)}</h1><p>${escape(description)}</p><p><a href="${target}">Continue to ${escape(title)}</a></p></main></body></html>
 `;
  fs.mkdirSync(path,{recursive:true});fs.writeFileSync(`${path}/index.html`,html);

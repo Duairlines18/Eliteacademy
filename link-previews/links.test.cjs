@@ -16,7 +16,7 @@ for(const [path,route] of Object.entries(paths)) test(`${path} has independent c
  for(const search of ['', '?source=coach%20name&campaign=november']){
   let target;
   vm.runInNewContext(script,{location:{search,replace:value=>target=value},URLSearchParams});
-  assert.equal(target,'/'+route+(search||''));
+  assert.equal(target,'/'+search+route);
  }
  assert.ok(html.includes(`href="/${route}"`),'manual fallback opens same route');
 });

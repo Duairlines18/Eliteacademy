@@ -12,6 +12,6 @@ Share the full path URL for destination-specific previews:
 - https://duairlineseliteacademy.com/hub/login/
 - https://duairlineseliteacademy.com/my-journey/
 
-These static pages expose exact destination metadata to crawlers and open the existing application route. Existing `#/` routes remain compatible; fragments never reach crawlers, so old hash links use the homepage preview. Query parameters on clean links are forwarded into the hash route, preserving registration source attribution. No access codes or member identities appear in public metadata.
+These static pages expose exact destination metadata to crawlers and open the existing application route. Existing `#/` routes remain compatible; fragments never reach crawlers, so old hash links use the homepage preview. Query parameters on clean links are forwarded into the application URL, preserving registration source attribution. No access codes or member identities appear in public metadata.
 
 Regenerate committed entry pages with `node link-previews/build.cjs`; verify with `node --test link-previews/links.test.cjs`. Deployment blocks if these checks fail. Platform caches may retain previews for previously shared URLs; they are outside the website's control.
