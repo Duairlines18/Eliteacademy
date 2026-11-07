@@ -190,7 +190,8 @@ export function shapeBootstrap(input: {
           .flatMap((link: any) => {
             if (!Number.isInteger(link?.item_index) || link.item_index < 0
               || typeof block.content.items[link.item_index] !== 'string') return [];
-            const exercise = (input.exercises || []).find(ex => ex.active !== false && ex.name === link.exercise);
+            const matches = (input.exercises || []).filter(ex => ex.active !== false && (link.exerciseCode ? ex.code === link.exerciseCode : ex.name === link.exercise));
+            const exercise = matches.length === 1 ? matches[0] : null;
             if (!exercise) return [];
             const url = exercise.video_url || (exercise.video_id ? 'https://www.youtube.com/watch?v=' + exercise.video_id : '');
             return url ? [{itemIndex: block.content.items.slice(0, link.item_index).filter((item: unknown) => typeof item === 'string').length,
