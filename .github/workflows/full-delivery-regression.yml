@@ -89,3 +89,12 @@ jobs:
           PGLITE_MODULE: /tmp/du-delivery-qa/node_modules/@electric-sql/pglite/dist/index.js
           HUB_QA_AUDIT_HISTORY: '1'
           HUB_QA_ASSIGNMENT_HISTORY: '1'
+      - name: Verify durable exercise demo mappings and publish readback
+        run: |
+          node --test supabase/qa/durable-video-links.database.mjs
+          node supabase/qa/database.integration.mjs
+        env:
+          PGLITE_MODULE: /tmp/du-delivery-qa/node_modules/@electric-sql/pglite/dist/index.js
+          HUB_QA_DURABLE_VIDEOS: '1'
+          HUB_QA_AUDIT_HISTORY: '1'
+          HUB_QA_ASSIGNMENT_HISTORY: '1'
