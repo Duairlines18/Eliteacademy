@@ -19,7 +19,7 @@ try {
  await test('generated legacy demo stores stable exercise code',async()=>assert.equal((await save({items:['Bridge — 2 x 8']})).video_links[0].exerciseCode,'BR'));
  await test('reviewed code survives library rename and refreshes canonical URL',async()=>{
   await db.exec("update exercises set name='Glute Bridge',video_url='https://youtu.be/newbridge01' where code='BR'");
-  try {const result=await save(selected());assert.deepEqual(result.video_links,[{item_index:0,exercise:'Glute Bridge',exerciseCode:'BR',video_url:'https://youtu.be/newbridge01'}]);}
+  try {const result=await save(selected());assert.deepEqual(result.video_links,[{item_index:0,exercise:'Glute Bridge',exerciseCode:'BR',video_url:'https://youtu.be/newbridge01',reviewed_item:selected().items[0]}]);}
   finally {await db.exec("update exercises set name='Bridge',video_url='https://youtu.be/bridgevid01' where code='BR'");}
  });
  await test('unknown explicit code cannot fall back to instruction name',async()=>assert.rejects(save(selected('MISSING')),/reviewed demo/i));
@@ -80,6 +80,18 @@ try {
   finally {await db.exec("delete from exercises where id in ('3','4')");}
  });
  await test('reviewed link cannot reference a nonexistent items array',async()=>assert.rejects(save({instruction:'Rest today',video_links:[{item_index:0,exerciseCode:'MISSING'}]}),/reviewed demo/i));
+ await test('renewed same-code review permits a dose edit without changing the movement',async()=>{
+  const row=(await db.query("insert into session_blocks(title,content) values ('QA movement',$1::jsonb) returning id,content",[JSON.stringify(selected())])).rows[0];
+  const item='Bridge — 3 x 8',next={...row.content,items:[item],video_links:[{...row.content.video_links[0],reviewed_item:item}]};
+  const result=(await db.query('update session_blocks set content=$1::jsonb where id=$2 returning content',[JSON.stringify(next),row.id])).rows[0].content;
+  assert.equal(result.video_links[0].exerciseCode,'BR');assert.equal(result.video_links[0].reviewed_item,item);
+ });
+ await test('stale text binding cannot approve a different instruction',async()=>assert.rejects(save({...selected(),video_links:[{item_index:0,exerciseCode:'BR',reviewed_item:'A different line'}]}),/reviewed demo.*instruction/i));
+ await test('explicit no-demo review is durable even when a note mentions a known movement',async()=>{
+  const item='Rest after Bridge — no demonstration needed',link={item_index:0,no_demo:true,reviewed_item:item};
+  const after=await save({items:[item],video_links:[link]});assert.deepEqual(after.video_links,[link]);
+ });
+ await test('no-demo marker cannot suppress a different instruction',async()=>assert.rejects(save({items:['Rest'],video_links:[{item_index:0,no_demo:true,reviewed_item:'Other note'}]}),/reviewed demo/i));
  await test('restoring captured definition leaves every saved block untouched',async()=>{
   const snapshot=(await db.query('select * from session_blocks order by id')).rows;
   await db.exec(originalDefinition);assert.equal(await definition(),originalDefinition);

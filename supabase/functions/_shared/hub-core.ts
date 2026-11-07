@@ -188,8 +188,11 @@ export function shapeBootstrap(input: {
         // URLs come from the current authorized library, never stale JSON URLs.
         videoLinks: (Array.isArray(block.content.video_links) ? block.content.video_links : [])
           .flatMap((link: any) => {
+            if (link?.no_demo === true) return [];
             if (!Number.isInteger(link?.item_index) || link.item_index < 0
               || typeof block.content.items[link.item_index] !== 'string') return [];
+            if (Object.prototype.hasOwnProperty.call(link,'reviewed_item')
+              && link.reviewed_item !== block.content.items[link.item_index]) return [];
             const matches = (input.exercises || []).filter(ex => ex.active !== false && (link.exerciseCode ? ex.code === link.exerciseCode : ex.name === link.exercise));
             const exercise = matches.length === 1 ? matches[0] : null;
             if (!exercise) return [];

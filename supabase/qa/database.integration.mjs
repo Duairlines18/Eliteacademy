@@ -145,7 +145,7 @@ try{
     await db.exec("update exercises set name='Bridge',video_url='https://www.youtube.com/watch?v=abcdefghijk' where code='BR'");
     const movement={items:['Bridge — 2 x 8'],prescriptions:[{exerciseCode:'BR',dosage:'2 x 8',rest:'60 seconds'}]};
     const canonical=await rpc(movement,before);
-    assert.deepEqual(canonical.content,{...movement,video_links:[{item_index:0,exercise:'Bridge',...(process.env.HUB_QA_DURABLE_VIDEOS==='1'?{exerciseCode:'BR'}:{}),video_url:'https://www.youtube.com/watch?v=abcdefghijk'}]});
+    assert.deepEqual(canonical.content,{...movement,video_links:[{item_index:0,exercise:'Bridge',...(process.env.HUB_QA_DURABLE_VIDEOS==='1'?{exerciseCode:'BR',reviewed_item:movement.items[0]}:{}),video_url:'https://www.youtube.com/watch?v=abcdefghijk'}]});
     await rpc(before,canonical.content);assert.deepEqual(await content(),before);
     await db.query("update session_blocks set title='Air Zim Warm-Up' where id=$1",[block]).then(()=>assert.fail('Protected warm-up was allowed to lose its prescriptions'),error=>assert.match(error.message,/complete exercise prescriptions/));
    }finally{await db.exec('rollback');}

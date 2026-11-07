@@ -63,12 +63,16 @@ export function applyAccountAdjustments(bundle: any, profile: any, extraExercise
         if(links.some((link: any)=>(link.exerciseCode ? link.exerciseCode===substitution.fromExerciseCode : link.exercise===oldExercise.name) && link.item_index===index))throw new Error('Coach review required: ambiguous substitution instruction.');
         return line;
       };
+      const previousItems=content.items;
       if(Array.isArray(content.items))content.items=content.items.map(rewrite);
       if(Array.isArray(content.exerciseCodes))content.exerciseCodes=content.exerciseCodes.map((code: string)=>code===substitution.fromExerciseCode?substitution.toExerciseCode:code);
       if(Array.isArray(content.video_links))content.video_links=links.map((link: any)=>{
-        if(link.exerciseCode ? link.exerciseCode!==substitution.fromExerciseCode : link.exercise!==oldExercise.name)return link;
+        const binding=Object.prototype.hasOwnProperty.call(link,'reviewed_item') && link.reviewed_item===previousItems?.[link.item_index]
+          ? {reviewed_item:content.items?.[link.item_index]} : {};
+        if(link.exerciseCode ? link.exerciseCode!==substitution.fromExerciseCode : link.exercise!==oldExercise.name)return {...link,...binding};
         const {video_url:_oldUrl,video_id:_oldId,...rest}=link;
-        return {...rest,exercise:replacement.name,...(link.exerciseCode?{exerciseCode:substitution.toExerciseCode}:{})};
+        return {...rest,exercise:replacement.name,...(link.exerciseCode?{exerciseCode:substitution.toExerciseCode}:{}),
+          ...binding};
       });
     }
     return {...block,content};

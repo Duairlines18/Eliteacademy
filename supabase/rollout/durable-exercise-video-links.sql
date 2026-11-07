@@ -11,7 +11,7 @@ BEGIN
  IF jsonb_typeof(NEW.content->'items') IS DISTINCT FROM 'array' THEN
    IF EXISTS (SELECT 1 FROM jsonb_array_elements(
      CASE WHEN jsonb_typeof(NEW.content->'video_links')='array' THEN NEW.content->'video_links' ELSE '[]'::jsonb END
-   ) v(link) WHERE v.link ? 'exerciseCode') THEN
+   ) v(link) WHERE v.link ? 'exerciseCode' OR v.link->'no_demo'='true'::jsonb) THEN
      RAISE EXCEPTION 'Reviewed demo requires a visible instruction row' USING ERRCODE='23514';
    END IF;
    RETURN NEW;
@@ -25,7 +25,25 @@ BEGIN
  FOR reviewed IN SELECT value FROM jsonb_array_elements(
    CASE WHEN jsonb_typeof(NEW.content->'video_links')='array'
         THEN NEW.content->'video_links' ELSE '[]'::jsonb END
- ) WHERE value ? 'exerciseCode' LOOP
+ ) WHERE value ? 'exerciseCode' OR value->'no_demo'='true'::jsonb LOOP
+   IF reviewed->'no_demo'='true'::jsonb THEN
+     IF reviewed ? 'exerciseCode' OR
+        jsonb_typeof(reviewed->'item_index') IS DISTINCT FROM 'number' OR
+        coalesce(reviewed->>'item_index','') !~ '^[0-9]+$' THEN
+       RAISE EXCEPTION 'Reviewed demo exclusion requires one valid instruction row' USING ERRCODE='23514';
+     END IF;
+     IF (reviewed->>'item_index')::numeric >= jsonb_array_length(NEW.content->'items') THEN
+       RAISE EXCEPTION 'Reviewed demo exclusion points to a missing instruction' USING ERRCODE='23514';
+     END IF;
+     IF reviewed->'reviewed_item' IS DISTINCT FROM NEW.content->'items'->((reviewed->>'item_index')::integer) OR EXISTS (
+       SELECT 1 FROM jsonb_array_elements(NEW.content->'video_links') other(link)
+       WHERE other.link->'item_index'=reviewed->'item_index' AND other.link ? 'exerciseCode'
+     ) OR (NEW.content->'videoLinksAlignWithPrescriptions'='true'::jsonb AND
+       NEW.content->'prescriptions'->((reviewed->>'item_index')::integer)->>'exerciseCode' IS NOT NULL) THEN
+       RAISE EXCEPTION 'Reviewed demo exclusion conflicts with its instruction or selection' USING ERRCODE='23514';
+     END IF;
+     CONTINUE;
+   END IF;
    IF jsonb_typeof(reviewed->'exerciseCode') IS DISTINCT FROM 'string' OR
       coalesce(btrim(reviewed->>'exerciseCode'),'')='' OR
       jsonb_typeof(reviewed->'item_index') IS DISTINCT FROM 'number' OR
@@ -37,6 +55,10 @@ BEGIN
        AND e.active AND nullif(btrim(e.video_url),'') IS NOT NULL) <> 1 THEN
      RAISE EXCEPTION 'Reviewed demo is missing, inactive, ambiguous or points to a missing row' USING ERRCODE='23514';
    END IF;
+   IF reviewed ? 'reviewed_item' AND reviewed->'reviewed_item' IS DISTINCT FROM
+      NEW.content->'items'->((reviewed->>'item_index')::integer) THEN
+     RAISE EXCEPTION 'Reviewed demo is bound to a different instruction' USING ERRCODE='23514';
+   END IF;
    -- Generated output also carries codes. A caller editing text must remove or
    -- reselect that row's mapping rather than carrying its old positional code.
    IF TG_OP='UPDATE' THEN
@@ -46,7 +68,8 @@ BEGIN
          THEN OLD.content->'video_links' ELSE '[]'::jsonb END) prior(link)
        WHERE prior.link->'item_index'=reviewed->'item_index'
          AND prior.link->>'exerciseCode'=reviewed->>'exerciseCode'
-     ) THEN
+     ) AND reviewed->'reviewed_item' IS DISTINCT FROM
+           NEW.content->'items'->((reviewed->>'item_index')::integer) THEN
        RAISE EXCEPTION 'Instruction changed: review or clear its saved demo selection before saving' USING ERRCODE='23514';
      END IF;
    END IF;
@@ -86,6 +109,11 @@ BEGIN
         THEN NEW.content->'video_links' ELSE '[]'::jsonb END) v(link)
    JOIN public.exercises e ON e.code=v.link->>'exerciseCode'
    WHERE e.active AND nullif(btrim(e.video_url),'') IS NOT NULL
+ ), no_demo_rows AS (
+   SELECT DISTINCT (v.link->>'item_index')::integer item_index
+   FROM jsonb_array_elements(CASE WHEN jsonb_typeof(NEW.content->'video_links')='array'
+        THEN NEW.content->'video_links' ELSE '[]'::jsonb END) v(link)
+   WHERE v.link->'no_demo'='true'::jsonb
  ), coded AS (
    SELECT (p.ord-1)::integer item_index,e.id,e.code,e.name,e.video_url
    FROM jsonb_array_elements(
@@ -122,6 +150,7 @@ BEGIN
    SELECT c.* FROM candidates c
    WHERE NOT EXISTS (SELECT 1 FROM coded k WHERE k.item_index=c.item_index)
      AND NOT EXISTS (SELECT 1 FROM reviewed_links r WHERE r.item_index=c.item_index)
+     AND NOT EXISTS (SELECT 1 FROM no_demo_rows r WHERE r.item_index=c.item_index)
      AND NOT EXISTS (SELECT 1 FROM candidates duplicate WHERE duplicate.item_index=c.item_index
        AND duplicate.needle=c.needle AND duplicate.id<>c.id)
      AND NOT EXISTS (SELECT 1 FROM public.exercises duplicate WHERE duplicate.active AND duplicate.id<>c.id
@@ -134,10 +163,15 @@ BEGIN
        AND position(' '||c.needle||' ' IN ' '||longer.needle||' ')>0
    )
  )
- SELECT coalesce(jsonb_agg(jsonb_build_object(
-   'item_index',item_index,'exercise',name,'exerciseCode',code,'video_url',video_url
- ) ORDER BY item_index,name),'[]'::jsonb)
- INTO links FROM (SELECT DISTINCT item_index,id,code,name,video_url FROM selected UNION SELECT item_index,id,code,name,video_url FROM coded UNION SELECT item_index,id,code,name,video_url FROM reviewed_links) s;
+ SELECT coalesce(jsonb_agg(payload ORDER BY item_index,payload->>'exercise'),'[]'::jsonb)
+ INTO links FROM (
+ SELECT item_index,jsonb_build_object(
+   'item_index',item_index,'exercise',name,'exerciseCode',code,'video_url',video_url,
+   'reviewed_item',NEW.content->'items'->item_index
+ ) payload
+ FROM (SELECT DISTINCT item_index,id,code,name,video_url FROM selected UNION SELECT item_index,id,code,name,video_url FROM coded UNION SELECT item_index,id,code,name,video_url FROM reviewed_links) s
+ UNION ALL SELECT item_index,jsonb_build_object('item_index',item_index,'no_demo',true,'reviewed_item',NEW.content->'items'->item_index) FROM no_demo_rows
+ ) final_links;
  NEW.content=jsonb_set(NEW.content,'{video_links}',links,true);
  RETURN NEW;
 END $function$
