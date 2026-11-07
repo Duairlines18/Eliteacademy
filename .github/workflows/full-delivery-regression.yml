@@ -3,6 +3,11 @@ on:
   pull_request:
     paths:
       - 'index.html'
+      - 'link-previews/**'
+      - 'soccer/**'
+      - 'club-registration/**'
+      - 'track/**'
+      - 'hub/**'
       - 'athlete-qa/**'
       - 'coach-command/**'
       - 'parent-qa/**'
@@ -29,6 +34,7 @@ jobs:
           node --test athlete-qa/*.test.cjs athlete-qa/*.test.mjs coach-command/*.test.cjs coach-command/*.test.mjs parent-qa/*.test.cjs hub-delivery/*.test.cjs supabase/qa/*.test.mjs performance-journey/*.test.cjs performance-journey/*.test.mjs qa/*.test.cjs
           node --test supabase/qa/school-http.integration.mjs
           node homepage-qa/homepage.test.cjs
+          node --test link-previews/links.test.cjs
   browser-smoke:
     runs-on: ubuntu-latest
     steps:

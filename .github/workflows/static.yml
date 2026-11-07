@@ -41,6 +41,8 @@ jobs:
           node athlete-qa/air-zim.test.cjs
           node coach-command/saved-video-links.test.mjs
           node parent-qa/parent-session.test.cjs
+      - name: Verify public share links
+        run: node --test link-previews/links.test.cjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Include responsive session cards in deployed HTML
