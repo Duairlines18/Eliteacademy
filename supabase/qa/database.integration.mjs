@@ -26,6 +26,10 @@ const originalDefinitions=(await definitions()).rows;
 const privileges=()=>db.query("select r.rolname,has_function_privilege(r.rolname,'public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,jsonb,boolean)','EXECUTE') as allowed from pg_roles r where rolname in ('anon','authenticated','service_role') order by rolname");
 const originalPrivileges=(await privileges()).rows;
 if(!baseline&&fs.existsSync(rollout))await db.exec(fs.readFileSync(rollout,'utf8'));
+if(process.env.HUB_QA_AUDIT_HISTORY==='1'){
+ const name=fs.readdirSync(new URL('migrations/',root)).find(x=>x.endsWith('_delivery_audit_history.sql'));
+ await db.exec(read('migrations/'+name));
+}
 try{
  await test('database integration: exact SQL over synthetic local records',async t=>{
   await t.test('instruction-only prescription updates and restores without losing literal details',async()=>{
