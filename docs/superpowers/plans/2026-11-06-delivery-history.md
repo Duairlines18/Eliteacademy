@@ -24,5 +24,5 @@ Service-role attribution must remain honest. Parent/athlete must not read other 
 
 ### Task 3 — Make the check repeatable and reviewable
 - [x] Add the isolated database test to delivery CI with pinned dependency; document scope, rollout checks, failure handling and rollback limits.
-- [ ] Review complete diff; resolve substantive findings with failing tests.
-- [ ] Push isolated branch and create PR with exact validation and undeployed status. Production migration and authenticated browser proof remain pending.
+- [x] Review complete diff; resolve substantive findings with failing tests.
+- [x] Push isolated branch and create PR with exact validation and undeployed status. Production migration and authenticated browser proof remain pending.

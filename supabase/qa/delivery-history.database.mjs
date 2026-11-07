@@ -104,6 +104,29 @@ try{
    const changed=await latest();assert.equal(changed.before_snapshot.days[0].blocks.filter(x=>x.title==='Bulk changed').length,0);assert.equal(changed.after_snapshot.days[0].blocks.filter(x=>x.title==='Bulk changed').length,3);
    assert.equal(changed.subject_ids.length,3);
   }));
+  await t.test('block identity changes retain both old and new IDs and the exact before image',()=>isolated(async()=>{
+   const next='70000000-0000-4000-8000-000000000009';await db.query("update session_blocks set id=$1,title='Changed identity' where id=$2",[next,block]);
+   const e=await latest();assert.ok(e);assert.ok(e.subject_ids.includes(block));assert.ok(e.subject_ids.includes(next));assert.equal(e.before_snapshot.days[0].blocks[0].id,block);assert.equal(e.after_snapshot.days[0].blocks[0].id,next);
+  }));
+  await t.test('reparenting a published week preserves the old programme and assignment context',()=>isolated(async()=>{
+   const next='10000000-0000-4000-8000-000000000002';await db.query('update programme_weeks set programme_id=$1 where id=$2',[next,week]);
+   const e=await latest();assert.equal(e.before_snapshot.week.programme_id,programme);assert.equal(e.before_snapshot.programme.id,programme);assert.equal(e.after_snapshot.programme.id,next);
+   assert.ok(e.before_snapshot.assignment_context.some(x=>x.direct_programme_id===programme));assert.equal(e.before_snapshot.cohort_context.length,0);
+  }));
+  await t.test('mixed upsert into published blocks rejects atomically instead of recording false before images',()=>isolated(async()=>{
+   const before=await stored(),n=await count();
+   await denied(()=>db.query("insert into session_blocks(id,training_day_id,title,content) values($1,$3,'Upsert changed',$4),($2,$3,'Upsert new',$4) on conflict(id) do update set title=excluded.title",[block,'70000000-0000-4000-8000-000000000009',day,JSON.stringify(before)]),/Published workout insert conflict/);
+   assert.deepEqual(await stored(),before);assert.equal(await count(),n);assert.equal(await scalar('select count(*)::int from session_blocks where training_day_id=$1',[day]),1);
+  }));
+  await t.test('draft upserts stay compatible and insert scope cannot leak into a subsequent normal edit',()=>isolated(async()=>{
+   const id='70000000-0000-4000-8000-000000000002',d='60000000-0000-4000-8000-000000000002';
+   await db.query("insert into session_blocks(id,training_day_id,title,content) values($1,$2,'Draft upsert','{\"items\":[\"Recovery\"]}') on conflict(id) do update set title=excluded.title",[id,d]);
+   assert.equal(await count(),0);await db.query("update session_blocks set title='Normal published edit' where id=$1",[block]);assert.equal(await count(),1);
+  }));
+  await t.test('published insert with DO NOTHING retains unchanged conflicts and audits successful inserts only',()=>isolated(async()=>{
+   const before=await stored();await db.query("insert into session_blocks(id,training_day_id,title,content) values($1,$3,'Ignored',$4),($2,$3,'New',$4) on conflict(id) do nothing",[block,'70000000-0000-4000-8000-000000000009',day,JSON.stringify(before)]);
+   const e=await latest();assert.deepEqual(await stored(),before);assert.equal(e.before_snapshot.days[0].blocks.length,1);assert.equal(e.after_snapshot.days[0].blocks.length,2);assert.equal(e.subject_ids.length,1);
+  }));
   await t.test('archiving and subsequent edits retain the original published state',()=>isolated(async()=>{
    await db.query("update programme_weeks set status='archived' where id=$1",[week]);let e=await latest();assert.equal(e.before_snapshot.week.status,'live');assert.equal(e.after_snapshot.week.status,'archived');
    await db.query("update session_blocks set title='Archived correction' where id=$1",[block]);e=await latest();assert.equal(e.before_snapshot.days[0].blocks[0].title,'QA block');assert.equal(e.after_snapshot.days[0].blocks[0].title,'Archived correction');

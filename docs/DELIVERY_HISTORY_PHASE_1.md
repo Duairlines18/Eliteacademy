@@ -4,7 +4,7 @@
 
 An additive migration records programme-week publication/state changes and changes to blocks belonging to a published or previously published week. It does not replace the existing publishing RPCs or their authorization/validation. No frontend, exercise prescription, assignment or existing history record is rewritten.
 
-`delivery_audit_events` stores immutable, versioned before/after database snapshots. The snapshot includes the week, days/blocks, exercise-library definitions, and candidate athlete/cohort assignment context. Database triggers cover both the Control Room and other authorized SQL/RPC writers. Block transition tables reconstruct the entire changed statement, avoiding mixed old/new bulk snapshots. A history insert failure aborts the workout change in the same transaction.
+`delivery_audit_events` stores immutable, versioned before/after database snapshots. The snapshot includes the week, days/blocks, exercise-library definitions, and candidate athlete/cohort assignment context. Database triggers cover both the Control Room and other authorized SQL/RPC writers. Block transition tables reconstruct bulk before/after states. An UPSERT that tries to update a published block is rejected atomically; PostgreSQL exposes its INSERT and UPDATE halves separately, so accepting it here would create misleading snapshots. Existing update RPCs and ordinary INSERT/UPDATE/DELETE remain supported; draft upserts and ON CONFLICT DO NOTHING retain compatibility. A history insert failure aborts the workout change in the same transaction.
 
 This is database-state evidence, not a delivery or viewing receipt from the athlete. Assignment context is captured when the content/week operation runs. For example, the existing publishing RPC advances an athlete before publishing its week: the before-content image contains the then-current assignment context, not the athlete's previous current week. Assignment transition auditing is subsequent work.
 
@@ -50,7 +50,7 @@ There is no production backfill. Old histories cannot be invented from present m
 
 ## Rollback if a staged migration causes errors
 
-Disable/drop only the new `delivery_audit_week`, `delivery_audit_block_insert`, `delivery_audit_block_update`, and `delivery_audit_block_delete` triggers under a reviewed change. Existing publish/update functions were not replaced. Retain the audit table and private helpers so evidence is not discarded. Do not drop old snapshots, restore entire programmes or bypass validation as a rollback. Disabling capture stops future audit coverage; record the gap and investigate before re-enabling.
+Disable/drop only the new `delivery_audit_week`, `delivery_audit_block_insert`, `delivery_audit_block_update`, `delivery_audit_block_delete`, `delivery_audit_insert_begin`, `delivery_audit_insert_row`, and `zz_delivery_audit_insert_end` triggers under a reviewed change. Existing publish/update functions were not replaced. Retain the audit table and private helpers so evidence is not discarded. Do not drop old snapshots, restore entire programmes or bypass validation as a rollback. Disabling capture stops future audit coverage; record the gap and investigate before re-enabling.
 
 ## Next priorities
 

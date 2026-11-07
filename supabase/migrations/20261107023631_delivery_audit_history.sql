@@ -67,11 +67,11 @@ create function delivery_audit_private.snapshot_week(
       'parent_user_id',a.parent_user_id,'athlete_user_id',a.athlete_user_id,
       'exercise_substitutions',to_jsonb(a)->'exercise_substitutions','coach_note',to_jsonb(a)->'coach_note'
     ) order by a.id) from public.athletes a left join public.cohorts c on c.id=a.cohort_id
-      where a.access_status='active' and (a.programme_id=w.programme_id or c.programme_id=w.programme_id)),'[]'::jsonb),
+      where a.access_status='active' and (a.programme_id=p.id or c.programme_id=p.id)),'[]'::jsonb),
     'cohort_context',coalesce((select jsonb_agg(jsonb_build_object('id',c.id,'programme_id',c.programme_id,
       'current_week',c.current_week,'tier',c.tier,'status',c.status) order by c.id)
-      from public.cohorts c where c.programme_id=w.programme_id),'[]'::jsonb)
-  ) from public.programme_weeks w left join public.programmes p on p.id=w.programme_id where w.id=p_week_id;
+      from public.cohorts c where c.programme_id=p.id),'[]'::jsonb)
+  ) from public.programme_weeks w left join public.programmes p on p.id=(coalesce(p_week_override,to_jsonb(w))->>'programme_id')::uuid where w.id=p_week_id;
 $$;
 
 create function delivery_audit_private.record_week() returns trigger
@@ -104,9 +104,9 @@ declare
 begin
   if tg_op='UPDATE' then
     select coalesce(jsonb_agg(to_jsonb(o)),'[]') into old_rows
-      from du_audit_old_blocks o join du_audit_new_blocks n using(id) where to_jsonb(o) is distinct from to_jsonb(n);
+      from du_audit_old_blocks o left join du_audit_new_blocks n using(id) where to_jsonb(o) is distinct from to_jsonb(n);
     select coalesce(jsonb_agg(to_jsonb(n)),'[]') into new_rows
-      from du_audit_new_blocks n join du_audit_old_blocks o using(id) where to_jsonb(o) is distinct from to_jsonb(n);
+      from du_audit_new_blocks n left join du_audit_old_blocks o using(id) where to_jsonb(o) is distinct from to_jsonb(n);
   elsif tg_op='INSERT' then
     select coalesce(jsonb_agg(to_jsonb(n)),'[]') into new_rows from du_audit_new_blocks n;
   else
@@ -127,6 +127,38 @@ begin
   return null;
 end;
 $$;
+-- PostgreSQL fires separate transition-table triggers for the INSERT and UPDATE
+-- halves of an UPSERT. A published conflict must fail rather than invent a combined
+-- before image. Track attempted insert IDs before conflict resolution, so this also
+-- covers a conflict that waits for another transaction. A stack supports nesting.
+create function delivery_audit_private.insert_scope() returns trigger
+language plpgsql security definer set search_path='' as $$
+declare scopes jsonb:=coalesce(nullif(current_setting('delivery_audit.insert_scopes',true),'')::jsonb,'[]'::jsonb);
+begin
+  if tg_when='BEFORE' then scopes:=scopes||jsonb_build_array('[]'::jsonb);
+  else scopes:=scopes-(jsonb_array_length(scopes)-1); end if;
+  perform set_config('delivery_audit.insert_scopes',scopes::text,true);
+  return null;
+end;
+$$;
+create function delivery_audit_private.guard_insert_update() returns trigger
+language plpgsql security definer set search_path='' as $$
+declare scopes jsonb:=coalesce(nullif(current_setting('delivery_audit.insert_scopes',true),'')::jsonb,'[]'::jsonb); last_scope integer;
+begin
+  if jsonb_array_length(scopes)=0 then return new; end if;
+  if tg_op='INSERT' then
+    last_scope:=jsonb_array_length(scopes)-1;
+    scopes:=jsonb_set(scopes,array[last_scope::text],(scopes->last_scope)||to_jsonb(new.id::text));
+    perform set_config('delivery_audit.insert_scopes',scopes::text,true);
+  elsif exists(select 1 from jsonb_array_elements(scopes) scope where scope ? old.id::text)
+    and exists(select 1 from public.training_days d join public.programme_weeks w on w.id=d.programme_week_id
+      where d.id in (old.training_day_id,new.training_day_id) and (w.published_at is not null
+        or exists(select 1 from public.delivery_audit_events e where e.programme_week_id=w.id))) then
+    raise exception 'Published workout insert conflict. Reload and use the existing workout block editor.';
+  end if;
+  return new;
+end;
+$$;
 revoke all on all functions in schema delivery_audit_private from public, anon, authenticated, service_role;
 create trigger delivery_audit_week after insert or update on public.programme_weeks
 for each row execute function delivery_audit_private.record_week();
@@ -136,3 +168,10 @@ create trigger delivery_audit_block_update after update on public.session_blocks
 referencing old table as du_audit_old_blocks new table as du_audit_new_blocks for each statement execute function delivery_audit_private.record_blocks();
 create trigger delivery_audit_block_delete after delete on public.session_blocks
 referencing old table as du_audit_old_blocks for each statement execute function delivery_audit_private.record_blocks();
+create trigger delivery_audit_insert_begin before insert on public.session_blocks
+for each statement execute function delivery_audit_private.insert_scope();
+create trigger delivery_audit_insert_row before insert or update on public.session_blocks
+for each row execute function delivery_audit_private.guard_insert_update();
+-- Statement AFTER triggers run alphabetically; pop only after capture finishes.
+create trigger zz_delivery_audit_insert_end after insert on public.session_blocks
+for each statement execute function delivery_audit_private.insert_scope();
