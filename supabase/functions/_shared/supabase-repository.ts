@@ -344,7 +344,21 @@ export class SupabaseHubRepository {
   }
 
   async findCohortContext(id: string) { return assertResult(await this.client.from('cohorts').select('id,status,current_week,programme_id,tier').eq('id',id).maybeSingle(),'Cohort context lookup failed'); }
-  async findFeedbackBySubmissionId(submissionId: string) { return assertResult(await this.client.from('feedback').select('id,status,athlete_id,staff_id,cohort_id,week_number,feedback_type,payload').contains('payload',{submissionId}).limit(1).maybeSingle(),'Feedback duplicate lookup failed'); }
+  async findFeedbackBySubmissionId(submissionId: string) {
+    const current = assertResult(await this.client.from('feedback')
+      .select('id,status,athlete_id,staff_id,cohort_id,week_number,feedback_type,payload')
+      .contains('payload', {submissionId}).limit(1).maybeSingle(), 'Feedback duplicate lookup failed');
+    if (current) return current;
+    // Older weekly answers are retained when a new response replaces the live row.
+    // A delayed retry must acknowledge its original submission, never overwrite the newer one.
+    const revision = assertResult(await this.client.from('feedback_revision_events')
+      .select('after_record')
+      .contains('after_record', {payload:{submissionId}})
+      .order('sequence_id', {ascending:false})
+      .limit(1).maybeSingle(), 'Feedback history duplicate lookup failed');
+    const historical = revision?.after_record;
+    return historical && historical.payload?.submissionId === submissionId ? historical : null;
+  }
   async findFeedbackForContext({athleteId,staffId,cohortId,weekNumber,feedbackType}:any){let query=this.client.from('feedback').select('id,status').eq('feedback_type',feedbackType).eq('week_number',weekNumber);query=athleteId?query.eq('athlete_id',athleteId):query.is('athlete_id',null);query=staffId?query.eq('staff_id',staffId):query.is('staff_id',null);query=cohortId?query.eq('cohort_id',cohortId):query.is('cohort_id',null);return assertResult(await query.limit(1).maybeSingle(),'Feedback context lookup failed');}
   async insertFeedback(row:Record<string,unknown>){return assertResult(await this.client.from('feedback').insert(row).select('id,status').single(),'Feedback insert failed');}
   async updateFeedback(id:string,row:Record<string,unknown>){return assertResult(await this.client.from('feedback').update(row).eq('id',id).select('id,status').single(),'Feedback update failed');}
