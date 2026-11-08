@@ -1,0 +1,24 @@
+name: Feedback retention database QA
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/*feedback_revision_history.sql'
+      - 'supabase/qa/feedback-history.database.mjs'
+      - '.github/workflows/feedback-retention-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  feedback-history:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install pinned disposable PostgreSQL engine
+        run: npm install --prefix /tmp/du-feedback-qa --no-save @electric-sql/pglite@0.5.13
+      - name: Verify append-only feedback history, RLS, review and rollback
+        run: node --test supabase/qa/feedback-history.database.mjs
+        env:
+          PGLITE_MODULE: /tmp/du-feedback-qa/node_modules/@electric-sql/pglite/dist/index.js
