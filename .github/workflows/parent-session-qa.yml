@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: npm install --prefix /tmp/du-parent-qa --no-save playwright@1.56.1 @electric-sql/pglite@0.5.13
+      - run: npm install --prefix /tmp/du-parent-qa --no-save playwright@1.62.1 @electric-sql/pglite@0.5.13
       - run: node /tmp/du-parent-qa/node_modules/playwright/cli.js install --with-deps chromium webkit
       - run: node --check parent-setup/setup.js && node --check parent-qa/session-card-polish.js
       - run: node --test supabase/qa/parent-onboarding.test.mjs supabase/qa/account-delivery.test.mjs supabase/qa/access-security.test.mjs
