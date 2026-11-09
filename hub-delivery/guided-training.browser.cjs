@@ -57,7 +57,9 @@ const {chromium}=require('playwright');
    for(let i=0;i<4;i++)await page.locator('[data-guided-next]').click();
    ok(await page.locator('[data-completion-toggle]').getAttribute('data-completed')==='true','routine completion persists on reload');
    await page.getByRole('link',{name:'← Your Routines',exact:true}).click();
-   ok(await page.locator('.hub-main .hub-card').count()===1,'Your Routines contains one combined card');
+   const routineLinks=page.locator('.hub-main .hub-grid > a.hub-card');
+   ok(await routineLinks.filter({hasText:'My Warm-Up'}).count()===1,'Your Routines contains exactly one combined warm-up card');
+   ok(await routineLinks.filter({hasText:/^(?!.*My Warm-Up).*(?:Mobility|Standard Volleyball Warm-Up)/i}).count()===0,'Your Routines does not expose duplicate preparation cards');
    await page.goto(base+'/#/hub/session/'+day.id);await page.locator('[data-workout-mode="guided"]').waitFor();
    failSave=true;
   }
