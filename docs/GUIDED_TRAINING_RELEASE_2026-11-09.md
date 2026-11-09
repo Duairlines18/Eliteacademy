@@ -57,7 +57,7 @@ All authentication, completion transport, RLS and original programme/assignment 
 
 **Decision: NO-GO.** Keep this candidate as a draft until the hosted, browser/device, private-backup and backend-parity gates above pass. Do not request final merge/deployment approval yet.
 
-## Continuation verification — November 9, 2026, 4:15 AM Central
+## Continuation verification — November 9, 2026
 
 - Verified GitHub Actions for commit `5515f4c`: all four workflows completed successfully. The full-delivery browser job passed all eight mobile/desktop checks, including guided parent/private accounts, routines, onboarding, plain language, school identity and coach parity. These use synthetic fixtures, not hosted account credentials.
 - Fresh local reruns: 191 application tests, 85 Control Room tests, 7 disposable preparation/rollback tests, 1 synthetic HTTP integration, 9 share-link tests and 14 story tests passed. Homepage structure, syntax and preservation passed. CRLF-aware whitespace checks passed.
