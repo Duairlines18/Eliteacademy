@@ -19,6 +19,8 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    ok(await page.locator('.hub-school-day-picker a').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('linear-gradient')),'school day cards render gradient');
    ok(await page.locator('.hub-school-day-picker').innerText().then(t=>t.includes('Movement foundations')&&t.includes('Capacity and control')&&t.includes('Optional home day')),'school cards show session purpose');
    await page.locator('[aria-label="Choose training day"] a').first().click();
+   ok(await page.locator('.hub-athlete-session-group').count()===0,'Saints day omits Form selector');
+   ok(!await page.locator('.hub-main').innerText().then(t=>t.includes('Choose your Form')),'Saints day has no Form prompt');
    const warmup=page.locator('.hub-athlete-warmup');if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
    const toggle=page.locator('[data-completion-toggle]').first();await toggle.waitFor();
    // A different athlete remains incomplete despite preceding athlete's activity.
