@@ -28,8 +28,8 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
    ok(await page.locator('.hub-main').innerText().then(t=>t.includes('1 × 20 m')&&t.includes('Walk-back recovery')),'dose and rest preserved');
    ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'workout fits viewport');
-   await page.locator('.hub-athlete-tips summary').first().click();
-   ok(await page.locator('.hub-athlete-tips[open]').innerText().then(t=>t.includes('Stay tall; controlled rhythm.')),'short technique cue expands');
+   // Coach cues are now visible directly on the workout sheet; no disclosure click is required.
+   ok(await page.locator('.hub-main').innerText().then(t=>t.includes('Stay tall; controlled rhythm.')),'short technique cue visible without opening tips');
    await page.evaluate(()=>{window.__copied='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>{window.__copied=t}}});});
    await page.locator('[data-athlete-copy]').click();
    ok(await page.evaluate(()=>['A-March','1 × 20 m','Walk-back recovery','Stay tall; controlled rhythm.','4lQsMyKRRn8'].every(t=>window.__copied.includes(t))),'athlete copy contains full dose, rest, cue and matching demo');
