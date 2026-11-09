@@ -16,6 +16,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    await page.goto('http://127.0.0.1:4173/qa/'+slot+'#/hub/athlete');
    await page.getByRole('heading',{name:'Hi, St. George’s Athlete '+slot,exact:true}).waitFor();checks++;
    ok(await page.locator('.hub-school-day-picker a').count()===3,'two coached days and optional home day');
+   ok(await page.locator('.hub-school-day-picker a').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('linear-gradient')),'school day cards render gradient');
    ok(await page.locator('.hub-school-day-picker').innerText().then(t=>t.includes('Movement foundations')&&t.includes('Capacity and control')&&t.includes('Optional home day')),'school cards show session purpose');
    await page.locator('[aria-label="Choose training day"] a').first().click();
    const warmup=page.locator('.hub-athlete-warmup');if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
@@ -50,6 +51,8 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   ok(await page.locator('#school-send, #coachFeedbackForm, [data-completion-toggle]').count()===0,'director has no upload, feedback or completion mutation controls');
   await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');await page.getByRole('heading',{name:'Team Command',exact:true}).waitFor();checks++;
   ok(await page.locator('.ducc [data-athlete]').count()===6,'coach sees exactly six assigned athletes');
+  ok(await page.locator('.ducc [data-day]').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('linear-gradient')),'coach day cards render gradient');
+  ok(await page.locator('.ducc [data-day]').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('114, 27, 44')||getComputedStyle(el).backgroundImage.includes('114,27,44')),'Saints coach day card uses crimson');
   await page.locator('[data-att-week]').waitFor();
   await page.locator('[data-att-week]').selectOption('2');
   await page.locator('[data-att-week] option[value="2"][selected]').waitFor({state:'attached'});checks++;
