@@ -10,7 +10,7 @@ function fixture(audience='parent',role='athlete'){
   shell:s=>s,pageHead:(label,title,desc,back)=>`<a href="${back}">${label}</a><h1>${title}</h1>${desc}`,
   renderWorkoutExperience:s=>{ctx.rendered=s;return '<button data-workout-mode="guided">Guided Workout</button><a href="https://youtu.be/abcdefghijk">Watch demo</a>';},
   isSchoolReferenceViewer:()=>audience==='school',schoolGroup:()=> 'Form 2',groupPicker:()=>'<select>Form 2</select>',
-  assignedAirZim:()=>null,renderNotFound:()=>{ctx.root.innerHTML='Not found';},airZimTool:()=>''};
+  routineTrainingReturn:()=>'',assignedAirZim:()=>null,renderNotFound:()=>{ctx.root.innerHTML='Not found';},airZimTool:()=>''};
  ctx.p={sessions:[{id:'warm',day:'Game Warm-Up',title:'Standard Warm-Up',watch:'Keep comfortable',prescriptions:[{exerciseCode:'WU01',dosage:'2 x 8'}]},{id:'d1',day:'Day 1',title:'Core + Mobility'}]};
  vm.createContext(ctx);vm.runInContext(app.slice(start,end)+';globalThis.api={assignedRoutines,trainingSessions,routinesShortcut,renderRoutines,renderRoutine};',ctx);
  return ctx;

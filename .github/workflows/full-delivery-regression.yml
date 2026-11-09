@@ -35,6 +35,12 @@ jobs:
           node --test supabase/qa/school-http.integration.mjs
           node homepage-qa/homepage.test.cjs
           node --test link-previews/links.test.cjs
+      - name: Verify reversible guided-routine data preparation
+        run: |
+          npm install --prefix /tmp/du-guided-qa --no-save @electric-sql/pglite@0.5.13
+          node --test supabase/qa/guided-routines.database.mjs
+        env:
+          PGLITE_MODULE: /tmp/du-guided-qa/node_modules/@electric-sql/pglite/dist/index.js
   browser-smoke:
     runs-on: ubuntu-latest
     steps:
@@ -54,6 +60,8 @@ jobs:
         run: node qa/private-onboarding.browser.cjs
       - name: Verify routines across Hub roles on mobile and desktop
         run: node hub-delivery/routines.browser.cjs
+      - name: Verify guided parent and private programmes with independent synthetic accounts
+        run: node hub-delivery/guided-training.browser.cjs
       - name: Verify plain-language workouts, order and visible conditions across Hub roles
         run: node hub-delivery/plain-language.browser.cjs
       - name: Verify six identified school athletes and named staff on mobile and desktop
