@@ -104,7 +104,7 @@ const withoutCompactVideo=source=>source
  .replace("    modal.classList.remove('loading','expanded');","    modal.classList.remove('loading');");
 // Existing Pages additions are now tracked in source; exact parity is tested in qa/release-assets.test.cjs.
 const withoutDeploymentAdditions=source=>source.replace(/<link rel="stylesheet" href="\/parent-qa\/session-card-polish\.css">\r?\n?<script defer src="\/parent-qa\/session-card-polish\.js"><\/script>\r?\n?<script defer src="\/performance\/coachdu-hub-bridge\.js"><\/script>\r?\n?/,'').replace(/  function renderAccountStatus\(audience,error\)\{\r?\n    if\(audience==='professional' && error\?\.code==='NO_ASSIGNMENT'\)\{[\s\S]*?\r?\n    \}\r?\n\r?\n/,'  function renderAccountStatus(audience,error){\r\n');
-const withoutHubAssets=source=>source.replace(/\/\* SCHOOL_THEME_START:[\s\S]*?\/\* SCHOOL_THEME_END \*\/\r?\n/,'').replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\r?\n?<script src="\/parent-setup\/setup\.js"><\/script>\r?\n?/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=(?:20261019|20261109-guided)"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
+const withoutHubAssets=source=>source.replace(/\/\* SCHOOL_THEME_START:[\s\S]*?\/\* SCHOOL_THEME_END \*\/\r?\n/,'').replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\r?\n?<script src="\/parent-setup\/setup\.js"><\/script>\r?\n?/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=(?:20261019|20261109-guided|20261109-unified)"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
 const actualHomepage=withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart))))));
 const expectedHomepage=currentProduction.slice(0,currentProduction.indexOf(routeStart)).replace(oldShareMetadata,approvedShareMetadata);
 if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')){
@@ -117,6 +117,7 @@ if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')
 assert.equal(actualHomepage.replace(/\r\n/g,'\n'),expectedHomepage.replace(/\r\n/g,'\n'),'locked homepage remains unchanged apart from isolated Hub asset links (line endings ignored)');
 // Owner-approved routines navigation; behavior is covered by hub-delivery/routines.test.cjs.
 const withoutHubRepair=source=>source
+ .replace(/    if\(handleRoutineCardAction\(event\)\)return;\r?\n/,'')
  .replace(/normalizeWorkoutSession\((sessionData|s|workout),EXERCISES,programme\(\)\)/g,'normalizeWorkoutSession($1,EXERCISES)')
  // Approved #96/#97 guided rendering and routine links have focused behavior tests.
  .replace(/  function renderWorkoutExperience\([\s\S]*?(?=  function nav\()/,'  function renderWorkoutExperience(){ /* covered by guided tests */ }\n')
@@ -128,6 +129,7 @@ const withoutHubRepair=source=>source
  .replace(/        if\(audience==='parent'\)\{\r?\n          const goals=[\s\S]*?(?=        if\(audience==='private-athlete'\)\{)/,'')
  .replace(/  function assignedRoutines\([\s\S]*?(?=  function renderSchoolAthleteCompact\()/,'')
  .replace(/    links\.splice\(1,0,\['routines','#\/hub\/routines','Your Routines'\]\);\r?\n/,'')
+ .replace(/    else if\(route.startsWith\('\/routines\/day\/'\)\)renderRoutineCard\(\);\r?\n/,'')
  .replace(/    else if\(route==='\/routines'[^\n]*\n/g,'')
  .replace(/    else if\(route==='\/routines\/air-zim'[^\n]*\n/g,'')
  .replace(/const sessions=trainingSessions\(p\);/g,'const sessions=Array.isArray(p.sessions)?p.sessions:[];')

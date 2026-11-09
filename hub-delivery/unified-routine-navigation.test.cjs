@@ -31,3 +31,15 @@ test('missing, duplicate and foreign routine IDs do not become cards',()=>{
  assert.deepEqual(routineCards({sessions:[d]},d),[]);
  assert.deepEqual(routineCards({sessions:[d,{id:'air'},{id:'air'}]},d),[]);
 });
+test('inline Air Zim is assigned only from the selected day, without changing its prescription',()=>{
+ const air={id:'a',day:'Monday',prescriptions:[{sectionTitle:'Air Zim Warm-Up',exerciseCode:'WU01',dosage:'1 × 8'},{sectionTitle:'Main',exerciseCode:'STR02'}]};
+ const p={sessions:[air,{id:'rehab',day:'Tuesday',watch:'No running'}]},before=JSON.stringify(p);
+ const cards=routineCards(p,air);
+ assert.equal(cards.length,1);assert.equal(cards[0].sectionTitle,'Air Zim Warm-Up');assert.equal(cards[0].sessions[0],air);
+ assert.deepEqual(routineCards(p,p.sessions[1]),[]);assert.equal(JSON.stringify(p),before);
+});
+test('inline Air Zim moves out of main view after keys are allocated',()=>{
+ const s={id:'a',prescriptions:[{sectionTitle:'Air Zim Warm-Up'}]},p={sessions:[s]};
+ const sections=[{title:'Air Zim Warm-Up',items:[{key:'p:0:0:WU01'}]},{title:'Main',items:[{key:'p:1:1:STR02'}]}];
+ assert.deepEqual(require('./delivery.js').trainingSections({...p,separateWarmups:true},s,sections),[sections[1]]);
+});

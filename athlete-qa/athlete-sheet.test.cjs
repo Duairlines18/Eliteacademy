@@ -130,7 +130,8 @@ assert.match(app,/if\(HUB_STATE\.audience==='parent'\)return renderParentSimpleD
 assert.match(app,/function parentTrainingDays\(/,'parent-only day picker exists');
 assert.match(app,/function parentSessionLabel\(/,'game warm-up has a parent-specific label resolver');
 assert.match(app,/\?'Game Warm-Up'/,'game warm-up remains clearly labeled');
-assert.match(app,/parentAthlete\?parentTrainingDays\(p,s\.id\):compactAthleteWeek\(p,s\.id\)/,'parent session navigation uses parent picker');
+assert.doesNotMatch(extract('  function renderSession(', '  function renderProgress('),/parentTrainingDays\(p,s\.id\)|compactAthleteWeek\(p,s\.id\)/,'selected workout contains no sibling day cards');
+assert.match(app,/← Back to Week/,'selected workout returns to week');
 assert.match(app,/if\(mode==='quick'\)return .*schoolAthleteDelivery\(sections,sessionData\)/,'parent quick view retains compact workout and demos');
 assert.match(app,/Guided Workout<\/button>/,'parent guided toggle is present');
 assert.match(app,/guidedCard\(items\[cursor\]/,'parent guided mode uses original step-by-step card');

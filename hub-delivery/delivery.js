@@ -18,7 +18,8 @@
   }
   function trainingSections(programme,session,sections){
     const prep=preparationFor(programme,session);
-    return prep.routines.length?sections.filter(s=>!prep.replacedSectionOrders.includes(s.order)):sections;
+    const visible=prep.routines.length?sections.filter(s=>!prep.replacedSectionOrders.includes(s.order)):sections;
+    return programme.separateWarmups===true&&(session.prescriptions||[]).some(rx=>rx.sectionTitle==='Air Zim Warm-Up')?visible.filter(s=>s.title!=='Air Zim Warm-Up'):visible;
   }
   function explainDose(value){
     const dose=text(value),m=dose.match(/^(\d+)\s*[×x]\s*(\d+(?:\s*[–-]\s*\d+)?)(?:\s*(seconds?|secs?|s|breaths?|steps?))?(?:\s*\/\s*(leg|side))?$/i);
@@ -92,15 +93,17 @@
     const sessions=Array.isArray(programme.sessions)?programme.sessions:[];
     const preparation=preparationFor(programme,session);
     if(preparation.routines.length===2){
-      return [{id:'combined:'+session.id,title:'My Warm-Up',kind:'combined',sessions:preparation.routines}];
+      return [{id:'combined:'+preparation.routines.map(r=>r.id).join(':'),title:'My Warm-Up',kind:'combined',sessions:preparation.routines}];
     }
     // Never infer a standard warm-up for an injured athlete or an unassigned day.
     const assignedIds=Array.isArray(session.preparation?.routineIds)?session.preparation.routineIds:[];
     const assigned=assignedIds.map(id=>sessions.filter(s=>s.id===id));
     if(assigned.some(matches=>matches.length!==1))return [];
-    return assigned.map(matches=>matches[0]).filter(r=>r.id!==session.id).map(r=>({
+    const cards=assigned.map(matches=>matches[0]).filter(r=>r.id!==session.id).map(r=>({
       id:'routine:'+r.id,title:r.title||r.day||'My Warm-Up',kind:'single',sessions:[r]
     }));
+    if(!cards.length&&(session.prescriptions||[]).some(rx=>rx.sectionTitle==='Air Zim Warm-Up'))cards.push({id:'air-zim:'+session.id,title:'Air Zim Warm-Up',kind:'inline',sectionTitle:'Air Zim Warm-Up',sessions:[session]});
+    return cards;
   }
   function dayDetail(programme={},sessionId=''){
     const overviewData=overview(programme);
