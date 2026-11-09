@@ -1,0 +1,24 @@
+/* Du Airlines Dynamic Elite: additive presentation-only theme.
+   School-specific accents are tokens; no changes to workout data or permissions. */
+:root{--du-elite-green:#0f3729;--du-elite-gold:#d4af60;--du-elite-crimson:#8b1730;--du-elite-ink:#101411}
+.hub-premium-training,.hub-premium-routines,.hub-premium-journey,.hub-premium-standard{border-color:rgba(212,175,96,.36)!important;background:radial-gradient(circle at 100% 0,rgba(21,91,59,.23),transparent 55%),linear-gradient(145deg,#14241c,#101411)!important}
+.hub-premium-standard{border-left:3px solid var(--du-elite-gold)!important}
+.hub-premium-routines .hub-button{border-radius:12px;min-height:44px}
+.hub-parent-session-card{background:linear-gradient(145deg,#153b2b,#111b17)!important;border-color:rgba(212,175,96,.38)!important;color:#f8f3e9!important}
+.hub-parent-session-card.selected{background:linear-gradient(145deg,#1d5038,#14251c)!important;border-color:var(--du-elite-gold)!important;box-shadow:inset 0 0 0 1px rgba(212,175,96,.45),0 8px 22px rgba(0,0,0,.18)}
+.hub-parent-session-card:focus-visible,.hub-athlete-day-choice:focus-visible,.hub-school-day-picker a:focus-visible,.ducc [data-day]:focus-visible{outline:3px solid #f1ce80;outline-offset:3px}
+.hub-athlete-day-choice{background:linear-gradient(145deg,#153827,#131b17);border-color:rgba(212,175,96,.35)}
+.hub-athlete-day-choice.selected{background:linear-gradient(145deg,#20543b,#1a2c22);border-color:var(--du-elite-gold)}
+.hub-athlete-day-choice strong{color:#f0cf89}
+.hub-school-day-picker a{border-radius:15px;border:1px solid rgba(180,55,76,.65);background:linear-gradient(135deg,#741a2d,#34151d);color:#fff4f1;min-height:72px;transition:border-color .18s ease,filter .18s ease}
+.hub-school-day-picker a:hover{filter:brightness(1.12)}
+/* Team Command currently serves the Saints cohort; future schools can override tokens
+   through a school-specific class or data attribute rather than duplicate components. */
+.ducc{--du-team-accent:#a72a42;--du-team-accent-dark:#4b1722;--du-team-outline:#d5ad61}
+.ducc [data-day]{border-radius:14px;border:1px solid var(--du-team-accent);background:linear-gradient(135deg,var(--du-team-accent-dark),#211518);color:#fff5f2;min-height:70px}
+.ducc [data-day][aria-pressed="true"],.ducc [data-day].selected{border:2px solid var(--du-team-outline);background:linear-gradient(135deg,#8b1730,#39151f)}
+.ducc [data-action="workout"]{background:#841b32;color:#fff;border-radius:12px;min-height:44px}
+.ducc [data-action="workout"]:focus-visible{outline:3px solid #f1ce80;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.hub-school-day-picker a{transition:none}}
+@media(max-width:600px){.hub-school-day-picker a,.ducc [data-day]{overflow-wrap:anywhere}.hub-premium-training,.hub-premium-routines,.hub-premium-journey{padding:17px!important}}
+@media print{.hub-school-day-picker a,.ducc [data-day],.hub-parent-session-card{background:#fff!important;color:#111!important;border-color:#555!important;box-shadow:none!important}}
