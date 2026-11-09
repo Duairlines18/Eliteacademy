@@ -69,10 +69,10 @@ test('Saints athlete day omits coach notes and selected Form control at source',
  assert.ok(rendered.includes('Back to Week'));
  assert.ok(rendered.includes('Prescribed workout'));
 });
-test('Saints athlete without an assigned Form retains the dose selection fallback',()=>{
+test('Saints athlete without an assigned Form has no Form selection control',()=>{
  const rendered=renderSchoolDay({group:''});
- assert.ok(rendered.includes('Choose your Form'));
- assert.ok(rendered.includes('<select>Forms</select>'));
+ assert.ok(!rendered.includes('Choose your Form'));
+ assert.ok(!rendered.includes('<select>Forms</select>'));
  assert.ok(!rendered.includes('Coach notes'));
 });
 test('other schools retain notes and their Form selector',()=>{
