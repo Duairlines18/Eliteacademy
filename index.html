@@ -4646,7 +4646,7 @@ document.addEventListener('click',function(e){
     return SCHOOL_THEMES[key]||SCHOOL_THEMES[Object.keys(SCHOOL_THEMES).find(school=>key.startsWith(school.replace(/ college$/,'')+' '))]||null;
   }
   function schoolThemeStyle(theme){return theme?' style="'+Object.entries(theme).map(([k,v])=>'--school-'+k+':'+v).join(';')+'"':'';}
-  function shell(content,active){const theme=schoolTheme();return '<div class="hub-shell'+(theme?' hub-school-themed':'')+'"'+schoolThemeStyle(theme)+'>'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
+  function shell(content,active){const theme=schoolTheme();return '<div class="hub-shell'+(theme?' hub-school-themed':'')+'"'+(theme===SCHOOL_THEMES["st georges college"]?' data-school-theme="saints"':'')+schoolThemeStyle(theme)+'>'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
   // SCHOOL_THEME_LOOKUP_END
   let HUB_VIDEO_LAST_FOCUS=null;
   let HUB_VIDEO_BODY_OVERFLOW='';
