@@ -68,3 +68,16 @@ All authentication, completion transport, RLS and original programme/assignment 
 - Fresh WU01 observation and one reload remained at currentTime=0, readyState=0, videoWidth=0 and videoHeight=0. Decoded movement review remains blocked. No physical iPhone is connected.
 
 **Decision remains NO-GO:** keep PR #98 draft and preserve production. Remaining release requirements are successful hosted demo authentication and persistence/isolation checks, decoded movement review including iPhone playback, and final endpoint-specific backend compatibility verification. No production changes were applied in this continuation.
+
+## Hosted parent demo follow-up — November 9, 2026
+
+The user completed manual parent demo sign-in. Fresh visible evidence confirmed Chenge Demo Parent Week 9, the expected three days and the independently assigned demo session IDs.
+
+- Demo WU06 completion saved through the guided UI. Database readback confirmed ownership by the parent demo only; a full browser reload showed 2/14 complete rather than the prior 1/14.
+- Opening the genuine Andria session URL while signed in as the demo returned Page not found; no genuine workout was displayed.
+- Submitted explicitly labelled synthetic parent-demo feedback through the live form. The UI confirmed receipt and the database readback matched all submitted answers under the parent demo, parent_weekly, Week 9. No genuine athlete feedback was written. This test feedback remains visibly labelled QA DEMO ONLY.
+- Log Out returned to the access selector. Reopening the previous demo workout redirected to login. Secure reauthentication was offered; its result was declined, so no subsequent logout/login persistence pass is claimed. The demo completion remains available for that next readback.
+- Transactional production RLS test under the actual non-admin parent demo identity: own target week count=1; foreign target week count=0. Attempts to update genuine Andria/Ano completions and feedback affected zero rows. Entire test transaction rolled back. This is database-policy evidence, not a forged cross-user request against the Edge Function.
+- Private demo hosted sign-in, its completion/feedback persistence, post-logout parent persistence and candidate release UI remain unverified. Video and physical-device gates remain unresolved.
+
+Production frontend, backend functions and programme prescriptions remain unchanged. PR #98 remains a draft. The only persisted live test changes were the parent demo completion and clearly labelled synthetic feedback.
