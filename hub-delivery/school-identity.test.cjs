@@ -38,3 +38,13 @@ test('school palette applies only to matching school identity and leaves other a
  ctx.HUB_STATE.cohort=null;ctx.HUB_STATE.programme={school:'Private Athlete'};
  assert.equal(ctx.theme(),null);
 });
+
+test('school training day keeps saved restrictions and athlete notes visible',()=>{
+ const start=html.indexOf('  function renderSession(id){'),end=html.indexOf('\n  function ',start+1);
+ const workout={id:'rehab',day:'Day 3',title:'Modified rehabilitation',watch:'No running or jumping.',athleteNote:'Stop if pain increases <today>.'};
+ const ctx={programme:()=>({sessions:[workout]}),assignedRoutines:()=>[],renderCoachCommand:()=>false,session:()=>({role:'athlete'}),isSchoolReferenceViewer:()=>true,privateSelfServeViewer:()=>false,HUB_STATE:{audience:'school'},weekLabel:()=> 'Week 1',schoolGroup:()=>'',groupPicker:()=>'',preparationNavigation:()=>'',renderWorkoutExperience:()=>'',shell:s=>s,escapeHtml:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;'),root:{}};
+ vm.runInNewContext(html.slice(start,end)+';renderSession("rehab");',ctx);
+ assert.ok(ctx.root.innerHTML.includes('No running or jumping.'),'saved restriction must remain visible in school day');
+ assert.ok(ctx.root.innerHTML.includes('Stop if pain increases &lt;today&gt;.'),'athlete note must remain visible and escaped');
+ assert.ok(ctx.root.innerHTML.includes('Quiet, controlled landings.'),'existing school guidance retained');
+});
