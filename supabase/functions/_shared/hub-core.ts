@@ -82,10 +82,12 @@ function firstText(blocks: any[], key: string): string {
 function prescriptionsFrom(blocks: any[]) {
   return blocks.flatMap(block => Array.isArray(block?.content?.prescriptions)
     ? block.content.prescriptions
-        .filter((item: any) => typeof item?.exerciseCode === 'string' && item.exerciseCode.trim())
-        .map((item: any) => ({
+        .map((item: any, sourceOrder: number) => ({item, sourceOrder}))
+        .filter(({item}: any) => typeof item?.exerciseCode === 'string' && item.exerciseCode.trim())
+        .map(({item, sourceOrder}: any) => ({
           sectionTitle: typeof block?.title === 'string' ? block.title.trim() : '',
           sectionOrder: Number.isFinite(block?.sort_order) ? block.sort_order : 0,
+          sourceOrder,
           exerciseCode: item.exerciseCode.trim(),
           dosage: typeof item.dosage === 'string' ? item.dosage : '',
           rest: typeof item.rest === 'string' ? item.rest : '',
@@ -168,9 +170,11 @@ export function shapeBootstrap(input: {
   const allBlocks = (input.blocks || []).map((block: any) => {
     const original = Array.isArray(block?.content?.items) ? block.content.items : [];
     const instructions = (Array.isArray(block?.content?.prescriptions) ? block.content.prescriptions : [])
-      .filter((row: any) => !row?.exerciseCode && typeof row?.instruction === 'string' && row.instruction.trim())
-      .map((row: any) => row.instruction);
-    return {...block,content:{...(block.content || {}),items:[...original,...[...instructions, ...(typeof block?.content?.instruction === 'string' && block.content.instruction.trim() ? [block.content.instruction] : [])].filter((line: string) => !original.includes(line))]}};
+      .map((row: any, sourceOrder: number) => ({row, sourceOrder}))
+      .filter(({row}: any) => !row?.exerciseCode && typeof row?.instruction === 'string' && row.instruction.trim())
+      .filter(({row}: any) => !original.includes(row.instruction));
+    const rootInstruction = typeof block?.content?.instruction === 'string' && block.content.instruction.trim() && !original.includes(block.content.instruction) ? [block.content.instruction] : [];
+    return {...block,itemSourceOrders:[...original.map(() => null),...instructions.map(({sourceOrder}: any) => sourceOrder),...rootInstruction.map(() => null)],content:{...(block.content || {}),items:[...original,...instructions.map(({row}: any) => row.instruction),...rootInstruction]}};
   });
 
   const sessions = trainingDays.map((day, index) => {
@@ -184,6 +188,7 @@ export function shapeBootstrap(input: {
         title: typeof block.title === 'string' ? block.title.trim() : 'Session Instructions',
         order: Number.isFinite(block.sort_order) ? block.sort_order : 0,
         items: block.content.items.filter((item: unknown) => typeof item === 'string'),
+        sourceOrders: block.itemSourceOrders.filter((_: unknown, index: number) => typeof block.content.items[index] === 'string'),
         // Keep the database's reviewed movement selection and original row scope.
         // URLs come from the current authorized library, never stale JSON URLs.
         videoLinks: (Array.isArray(block.content.video_links) ? block.content.video_links : [])

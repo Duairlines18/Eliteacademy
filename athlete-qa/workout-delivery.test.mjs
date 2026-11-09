@@ -16,6 +16,24 @@ vm.runInContext(extract('  function simpleText(','  function visibleNormalizedSe
 const library=[['SPR01','Wall March'],['SPR02','Wall Switch'],['STR01','Calf Raise'],['CORE01','Hollow Hold'],['CORE02','Dead Bug']].map(([code,name],i)=>({code,name,active:true,video_id:'demo_video'+i,video_url:'https://www.youtube.com/watch?v=demo_video'+i}));
 const clientLibrary=library.map(e=>({...e,title:e.name,videoUrl:e.video_url,videoId:e.video_id}));
 const normalize=(items,extra={})=>ctx.api.normalizeWorkoutSession({itemSections:[{title:'Strength',order:1,items,...extra}]},clientLibrary);
+test('structured running, strength and final instructions keep their approved interleaved order',()=>{
+ const input={role:'athlete',cohort:{id:'c'},programme:{id:'p'},week:{week_number:2},trainingDays:[{id:'d'}],blocks:[{training_day_id:'d',title:'Main session',sort_order:1,content:{prescriptions:[{instruction:'4 × 20m at 80%; rest 2 minutes.'},{exerciseCode:'STR01',dosage:'2 × 8/leg'},{instruction:'Walk back and check how you feel.'},{exerciseCode:'CORE02',dosage:'2 × 6/side'},{instruction:'Record any pain after the session.'}]}}],exercises:library};
+ const payload=shapeBootstrap(input),w=ctx.api.normalizeWorkoutSession(payload.programme.sessions[0],payload.exercises);
+ assert.deepEqual(Array.from(w.sections[0].items,i=>i.code||i.title),['4 × 20m at 80%','STR01','Walk back and check how you feel.','CORE02','Record any pain after the session.']);
+});
+test('safety and positioning conditions are visible without opening technique tips',()=>{
+ const w=ctx.api.normalizeWorkoutSession({prescriptions:[{sectionTitle:'Core',sectionOrder:1,exerciseCode:'CORE02',dosage:'2 × 6/side',cues:'Only if pain-free. Keep legs supported.'}]},clientLibrary);
+ const output=ctx.api.schoolAthleteDelivery(w.sections,{});
+ assert.match(output,/Only if pain-free/);
+ const visible=output.replace(/<details\b[\s\S]*?<\/details>/g,'');
+ assert.match(visible,/Only if pain-free/);assert.match(visible,/Keep legs supported/);
+});
+test('workout sheet explains a dose without changing its prescribed numbers or inventing rest',()=>{
+ const w=ctx.api.normalizeWorkoutSession({prescriptions:[{sectionTitle:'Strength',sectionOrder:1,exerciseCode:'STR01',dosage:'2 × 8/leg',rest:''}]},clientLibrary);
+ const output=ctx.api.schoolAthleteDelivery(w.sections,{});
+ assert.match(output,/2 × 8\/leg/);assert.match(output,/8 repetitions on each leg/);assert.match(output,/2 times/);
+ assert.doesNotMatch(output,/Rest: 60|Rest: 90/);
+});
 test('repository loads canonical demos for text blocks without a duplicate exerciseCodes list',async()=>{
  const tables={cohorts:[{id:'c',programme_id:'p',current_week:6,status:'live'}],programmes:[{id:'p'}],programme_weeks:[{id:'w',programme_id:'p',week_number:6,status:'live',verification_status:'verified',published_at:'2026-10-18',tier_id:null}],training_days:[{id:'d',programme_week_id:'w'}],session_blocks:[{id:'b',training_day_id:'d',content:{items:['Wall March 2 × 10'],video_links:[{item_index:0,exercise:'Wall March'}]}}],exercises:library};
  const db={from(table){let rows=[...(tables[table]||[])];const q={select(){return q},eq(k,v){rows=rows.filter(r=>r[k]===v);return q},in(k,v){rows=rows.filter(r=>v.includes(r[k]));return q},is(k,v){rows=rows.filter(r=>(r[k]??null)===v);return q},not(k,op,v){rows=rows.filter(r=>r[k]!==v);return q},order(){return q},maybeSingle(){return Promise.resolve({data:rows[0]||null,error:null})},then(resolve,reject){return Promise.resolve({data:rows,error:null}).then(resolve,reject)}};return q}};

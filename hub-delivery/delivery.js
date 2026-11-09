@@ -2,6 +2,23 @@
   'use strict';
   const weekdays=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
   const text=value=>typeof value==='string'?value.trim():'';
+  function explainDose(value){
+    const dose=text(value),m=dose.match(/^(\d+)\s*[×x]\s*(\d+(?:\s*[–-]\s*\d+)?)(?:\s*(seconds?|secs?|s|breaths?|steps?))?(?:\s*\/\s*(leg|side))?$/i);
+    if(!m)return '';
+    const [,sets,count,unit,side]=m,where=side?' on each '+side:'',times=' Do this '+sets+(sets==='1'?' time.':' times.');
+    if(unit&&/^(s|sec|second)/i.test(unit))return 'Hold for '+count+' seconds'+where+'.'+times;
+    return 'Do '+count+' '+(unit?unit.toLowerCase():'repetitions')+where+'.'+times;
+  }
+  function trainingHelp(value){
+    const s=text(value),lines=[];
+    if(/\bISO(?:metric)?\b/i.test(s))lines.push('Hold the position without moving.');
+    if(/\bflying\b/i.test(s))lines.push('Build up smoothly, then run the marked distance at the effort shown.');
+    if(/\btempo\b/i.test(s))lines.push('Run steadily at the effort shown.');
+    if(/\bapproach\b/i.test(s))lines.push('Practise your run-up rhythm.');
+    if(/\d\s*%/.test(s))lines.push('The percentage shows effort: 100% is your hardest. Use the effort shown.');
+    if(/\beffort\s*\d+(?:[–-]\d+)?\s*\/\s*10|\bRPE\b/i.test(s))lines.push('Effort is rated from 1 (very easy) to 10 (your hardest).');
+    return lines;
+  }
   function safeVideo(value,id){
     const raw=text(value)||(typeof id==='string'&&/^[A-Za-z0-9_-]{11}$/.test(id)?'https://www.youtube.com/watch?v='+id:'');
     try{const u=new URL(raw);if(u.protocol!=='https:'||u.username||u.password||u.port)return '';
@@ -52,7 +69,7 @@
     if(programme.scheduledFor){const start=new Date(programme.scheduledFor);if(Number.isFinite(start.getTime())){const end=new Date(start.getTime()+6*86400000),fmt={month:'short',day:'numeric',timeZone:'UTC'};scheduledRange=start.toLocaleDateString('en-US',fmt)+'–'+end.toLocaleDateString('en-US',fmt);}}
     return {days,unplaced,warmups,training,dateRange:text(programme.dateRange)||(range?range[0]:scheduledRange||'Dates to confirm'),focus:objective};
   }
-  const api=Object.freeze({safeVideo,canCopy,copyWorkout,overview});
+  const api=Object.freeze({safeVideo,canCopy,copyWorkout,overview,explainDose,trainingHelp});
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.DuHubDelivery=api;
 })(typeof globalThis==='object'?globalThis:this);

@@ -54,6 +54,8 @@ jobs:
         run: node qa/private-onboarding.browser.cjs
       - name: Verify routines across Hub roles on mobile and desktop
         run: node hub-delivery/routines.browser.cjs
+      - name: Verify plain-language workouts, order and visible conditions across Hub roles
+        run: node hub-delivery/plain-language.browser.cjs
       - name: Verify six identified school athletes and named staff on mobile and desktop
         run: node hub-delivery/school-identity.browser.cjs
       - name: Verify coach dashboard, current week and saved workout links across screen sizes
