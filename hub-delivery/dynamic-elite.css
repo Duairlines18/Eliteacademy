@@ -28,3 +28,9 @@
 /* Saints coach/director: mirror the rich crimson athlete day cards without affecting other schools. */
 .ducc:has(.saints-director-attendance) [data-day],[data-school-theme="saints"] .ducc [data-day]{background:linear-gradient(135deg,#721b2c 0%,#511a29 55%,#171519 100%);border-color:#8b2639;color:#fff5f2}
 .ducc:has(.saints-director-attendance) [data-day][aria-pressed="true"],.ducc:has(.saints-director-attendance) [data-day].selected,[data-school-theme="saints"] .ducc [data-day][aria-pressed="true"],[data-school-theme="saints"] .ducc [data-day].selected{background:linear-gradient(135deg,#91233c,#4a1827);border:2px solid var(--du-team-outline)}
+
+/* Saints athlete day: remove verbose coach notes. Hide an already-selected form
+   control only; an unselected group must remain accessible because legacy
+   form-specific prescriptions require it to display the correct dosage. */
+[data-school-theme="saints"] .hub-athlete-session-title + .hub-field-session .hub-objective{display:none}
+[data-school-theme="saints"] .hub-athlete-session-group:has(.hub-group-option.selected){display:none}
