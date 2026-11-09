@@ -2,6 +2,19 @@ const test=require('node:test'),assert=require('node:assert/strict');
 let api={};try{api=require('./delivery.js')}catch{}
 const session={id:'day',day:'Monday',title:'Strength',duration:'30 min',objective:'Controlled effort',watch:'No running',athleteNote:'Stop if symptoms return.'};
 const sections=[{title:'Standard Warm-Up',items:[{title:'March',dosage:'30 sec',cue:'Tall posture'}]},{title:'Strength',items:[{title:'Bridge',dosage:'2 x 8',rest:'60 sec',cue:'Squeeze glutes',avoid:'Back arch',videoUrl:'https://youtu.be/abcdefghijk'}]}];
+test('plain-English doses preserve sets, repetitions, sides, timed holds and breathing',()=>{
+ assert.equal(api.explainDose('2 × 8/leg'),'Do 8 repetitions on each leg. Do this 2 times.');
+ assert.equal(api.explainDose('3 × 15–20 seconds'),'Hold for 15–20 seconds. Do this 3 times.');
+ assert.equal(api.explainDose('2 × 5 breaths'),'Do 5 breaths. Do this 2 times.');
+ for(const dose of ['coach decides','4 × 30m at 85%','2 sets of 3 × 150m','2 × 10 steps each direction','<script>'])assert.equal(api.explainDose(dose),'');
+});
+test('training help explains terms without prescribing another distance, intensity or rest',()=>{
+ assert.match(api.trainingHelp('Calf ISO Hold').join(' '),/without moving/);
+ assert.match(api.trainingHelp('3 × 20m flying efforts at 85%').join(' '),/Build up smoothly/);
+ assert.match(api.trainingHelp('6 × 100m at 65%').join(' '),/percentage shows effort/);
+ assert.match(api.trainingHelp('effort 2–3/10').join(' '),/1 \(very easy\) to 10/);
+ assert.deepEqual(api.trainingHelp('Dead Bug'),[]);
+});
 test('WhatsApp output retains identity, ordered warm-up, doses, cues, safety and valid demos',()=>{assert.equal(typeof api.copyWorkout,'function');const text=api.copyWorkout({athleteName:'Test Athlete',week:6,session,sections});for(const str of ['Test Athlete','Week 6','Monday','Strength','March','30 sec','2 x 8','60 sec','Tall posture','Squeeze glutes','Back arch','No running','Stop if symptoms return.','https://youtu.be/abcdefghijk'])assert.ok(text.includes(str),str);assert.ok(text.indexOf('March')<text.indexOf('Bridge'));});
 test('bad/missing/non-video demo URLs create no copied links',()=>{assert.equal(typeof api.safeVideo,'function');for(const s of ['javascript:alert(1)','https://youtube.com/playlist?list=bad','https://youtube.com/@coach','https://example.com/watch?v=abcdefghijk','https://youtube.com/watch?v=short','https://youtube.com.evil.test/watch?v=abcdefghijk'])assert.equal(api.safeVideo(s),'');assert.equal(api.safeVideo('https://www.youtube.com/shorts/abcdefghijk'),'https://www.youtube.com/shorts/abcdefghijk');});
 test('copy is hidden for parents, mixed or unknown accounts, unpublished weeks',()=>{assert.equal(typeof api.canCopy,'function');assert.equal(api.canCopy({audience:'parent',published:true,delivery:{copyWorkout:true}}),false);assert.equal(api.canCopy({audience:'private-athlete',published:true,delivery:{model:'review-required',copyWorkout:false}}),false);assert.equal(api.canCopy({audience:'private-athlete',published:false,delivery:{copyWorkout:true}}),false);assert.equal(api.canCopy({audience:'private-athlete',published:true}),false);assert.equal(api.canCopy({audience:'private-athlete',published:true,delivery:{model:'private-athlete',copyWorkout:true}}),true);assert.equal(api.canCopy({school:true,published:true}),true);});

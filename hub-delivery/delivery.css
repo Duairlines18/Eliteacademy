@@ -4,6 +4,8 @@
 @media(max-width:360px){.hub-week-calendar{grid-template-columns:1fr}.hub-week-calendar article:last-child{grid-column:auto}}
 
 .hub-copy-fallback{display:block;width:100%;max-width:100%;margin-top:.75rem;background:#191612;color:#eee6dd;border:1px solid #cba75c;border-radius:8px;padding:.75rem;font:inherit;line-height:1.5}
+.hub-dose-help,.hub-term-help,.hub-visible-coach-note,.hub-rest-help{margin:.4rem 0;font-size:.875rem;line-height:1.55;overflow-wrap:anywhere;white-space:normal}
+.hub-dose-help,.hub-term-help,.hub-rest-help{color:#cbc4bb}.hub-visible-coach-note{color:#f1d39b;border-left:2px solid #cba75c;padding-left:.65rem}.hub-rest-help{padding:.75rem;border:1px solid #4b4235;border-radius:8px}
 
 /* Premium parent/private athlete dashboard: presentation only; no video or programme changes. */
 .hub-premium-standard,.hub-premium-routines,.hub-premium-journey{margin:1.1rem 0;padding:clamp(1rem,3vw,1.5rem);border:1px solid rgba(199,162,90,.32);border-radius:16px;background:linear-gradient(135deg,rgba(199,162,90,.10),rgba(8,22,17,.42))}
