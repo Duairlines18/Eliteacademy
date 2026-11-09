@@ -37,5 +37,5 @@ test('private athletes reach the same guided renderer as parents, with own sessi
  assert.match(ctx.render({id:'anos-own-day'}),/Guided anos-own-day p:1:0:MOB04/);
 });
 test('guided preparation loads its matching delivery helper revision',()=>{
- assert.match(html,/<script src="\/hub-delivery\/delivery\.js\?v=20261109-guided"><\/script>/);
+ assert.match(html,/<script src="\/hub-delivery\/delivery\.js\?v=20261109-unified"><\/script>/);
 });
