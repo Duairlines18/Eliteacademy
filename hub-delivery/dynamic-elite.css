@@ -12,12 +12,13 @@
 .hub-athlete-day-choice strong{color:#f0cf89}
 .hub-school-day-picker a{border-radius:15px;border:1px solid rgba(180,55,76,.65);background:linear-gradient(135deg,#741a2d,#34151d);color:#fff4f1;min-height:72px;transition:border-color .18s ease,filter .18s ease}
 .hub-school-day-picker a:hover{filter:brightness(1.12)}
-/* Team Command currently serves the Saints cohort; future schools can override tokens
-   through a school-specific class or data attribute rather than duplicate components. */
-.ducc{--du-team-accent:#a72a42;--du-team-accent-dark:#4b1722;--du-team-outline:#d5ad61}
+/* Default academy palette stays green/gold. School-specific accents must be scoped
+   to a verified school identity; never paint every school crimson. */
+.ducc{--du-team-accent:#2d7551;--du-team-accent-dark:#163a2a;--du-team-outline:#d5ad61}
+.ducc:has(.saints-director-attendance),.ducc:has([data-school-theme="saints"]){--du-team-accent:#a72a42;--du-team-accent-dark:#4b1722}
 .ducc [data-day]{border-radius:14px;border:1px solid var(--du-team-accent);background:linear-gradient(135deg,var(--du-team-accent-dark),#211518);color:#fff5f2;min-height:70px}
-.ducc [data-day][aria-pressed="true"],.ducc [data-day].selected{border:2px solid var(--du-team-outline);background:linear-gradient(135deg,#8b1730,#39151f)}
-.ducc [data-action="workout"]{background:#841b32;color:#fff;border-radius:12px;min-height:44px}
+.ducc [data-day][aria-pressed="true"],.ducc [data-day].selected{border:2px solid var(--du-team-outline);background:linear-gradient(135deg,var(--du-team-accent),var(--du-team-accent-dark))}
+.ducc [data-action="workout"]{background:var(--du-team-accent);color:#fff;border-radius:12px;min-height:44px}
 .ducc [data-action="workout"]:focus-visible{outline:3px solid #f1ce80;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.hub-school-day-picker a{transition:none}}
 @media(max-width:600px){.hub-school-day-picker a,.ducc [data-day]{overflow-wrap:anywhere}.hub-premium-training,.hub-premium-routines,.hub-premium-journey{padding:17px!important}}
