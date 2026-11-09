@@ -39,12 +39,50 @@ test('school palette applies only to matching school identity and leaves other a
  assert.equal(ctx.theme(),null);
 });
 
-test('school training day keeps saved restrictions and athlete notes visible',()=>{
+test('other schools keep saved restrictions and athlete notes visible',()=>{
  const start=html.indexOf('  function renderSession(id){'),end=html.indexOf('\n  function ',start+1);
  const workout={id:'rehab',day:'Day 3',title:'Modified rehabilitation',watch:'No running or jumping.',athleteNote:'Stop if pain increases <today>.'};
- const ctx={programme:()=>({sessions:[workout]}),assignedRoutines:()=>[],renderCoachCommand:()=>false,session:()=>({role:'athlete'}),isSchoolReferenceViewer:()=>true,privateSelfServeViewer:()=>false,HUB_STATE:{audience:'school'},weekLabel:()=> 'Week 1',schoolGroup:()=>'',groupPicker:()=>'',preparationNavigation:()=>'',renderWorkoutExperience:()=>'',shell:s=>s,escapeHtml:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;'),root:{}};
+ const ctx={schoolTheme:()=>null,SCHOOL_THEMES:{'st georges college':{}},programme:()=>({sessions:[workout]}),assignedRoutines:()=>[],renderCoachCommand:()=>false,session:()=>({role:'athlete'}),isSchoolReferenceViewer:()=>true,privateSelfServeViewer:()=>false,HUB_STATE:{audience:'school'},weekLabel:()=> 'Week 1',schoolGroup:()=>'',groupPicker:()=>'',preparationNavigation:()=>'',renderWorkoutExperience:()=>'',shell:s=>s,escapeHtml:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;'),root:{}};
  vm.runInNewContext(html.slice(start,end)+';renderSession("rehab");',ctx);
  assert.ok(ctx.root.innerHTML.includes('No running or jumping.'),'saved restriction must remain visible in school day');
  assert.ok(ctx.root.innerHTML.includes('Stop if pain increases &lt;today&gt;.'),'athlete note must remain visible and escaped');
  assert.ok(ctx.root.innerHTML.includes('Quiet, controlled landings.'),'existing school guidance retained');
+});
+
+function renderSchoolDay({saints=true,role='athlete',group='Form 2'}={}){
+ const start=html.indexOf('  function renderSession(id){'),end=html.indexOf('\n  function ',start+1);
+ const theme={},workout={id:'day1',day:'Day 1',title:'Foundations',watch:'Saved instruction'};
+ const ctx={SCHOOL_THEMES:{'st georges college':theme},schoolTheme:()=>saints?theme:null,
+ programme:()=>({sessions:[workout]}),assignedRoutines:()=>[],renderCoachCommand:()=>false,
+ session:()=>({role}),isSchoolReferenceViewer:()=>true,privateSelfServeViewer:()=>false,
+ HUB_STATE:{audience:'school'},weekLabel:()=> 'Week 1',schoolGroup:()=>group,groupPicker:()=>'<select>Forms</select>',
+ preparationNavigation:()=>'',renderWorkoutExperience:()=>'<div>Prescribed workout</div>',shell:s=>s,
+ escapeHtml:s=>String(s),root:{},airZimTool:()=>''};
+ vm.runInNewContext(html.slice(start,end)+';renderSession("day1");',ctx);
+ return ctx.root.innerHTML;
+}
+test('Saints athlete day omits coach notes and selected Form control at source',()=>{
+ const rendered=renderSchoolDay();
+ assert.ok(!rendered.includes('Coach notes'));
+ assert.ok(!rendered.includes('Saved instruction'));
+ assert.ok(!rendered.includes('hub-athlete-session-group'));
+ assert.ok(rendered.includes('Back to Week'));
+ assert.ok(rendered.includes('Prescribed workout'));
+});
+test('Saints athlete without an assigned Form retains the dose selection fallback',()=>{
+ const rendered=renderSchoolDay({group:''});
+ assert.ok(rendered.includes('Choose your Form'));
+ assert.ok(rendered.includes('<select>Forms</select>'));
+ assert.ok(!rendered.includes('Coach notes'));
+});
+test('other schools retain notes and their Form selector',()=>{
+ const rendered=renderSchoolDay({saints:false});
+ assert.ok(rendered.includes('Coach notes'));
+ assert.ok(rendered.includes('Saved instruction'));
+ assert.ok(rendered.includes('hub-athlete-session-group'));
+});
+test('Saints staff retain coach guidance',()=>{
+ const rendered=renderSchoolDay({role:'staff'});
+ assert.ok(rendered.includes('Coach notes'));
+ assert.ok(rendered.includes('Saved instruction'));
 });
