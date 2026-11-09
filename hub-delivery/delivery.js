@@ -87,7 +87,27 @@
     if(programme.scheduledFor){const start=new Date(programme.scheduledFor);if(Number.isFinite(start.getTime())){const end=new Date(start.getTime()+6*86400000),fmt={month:'short',day:'numeric',timeZone:'UTC'};scheduledRange=start.toLocaleDateString('en-US',fmt)+'–'+end.toLocaleDateString('en-US',fmt);}}
     return {days,unplaced,warmups,training,dateRange:text(programme.dateRange)||(range?range[0]:scheduledRange||'Dates to confirm'),focus:objective};
   }
-  const api=Object.freeze({safeVideo,canCopy,copyWorkout,overview,explainDose,trainingHelp,displayRest,preparationFor,trainingSections});
+  // Presentation-only routine groups. Keep the original session IDs and completion keys.
+  function routineCards(programme={},session={}){
+    const sessions=Array.isArray(programme.sessions)?programme.sessions:[];
+    const preparation=preparationFor(programme,session);
+    if(preparation.routines.length===2){
+      return [{id:'combined:'+session.id,title:'My Warm-Up',kind:'combined',sessions:preparation.routines}];
+    }
+    // Never infer a standard warm-up for an injured athlete or an unassigned day.
+    const assignedIds=Array.isArray(session.preparation?.routineIds)?session.preparation.routineIds:[];
+    const assigned=assignedIds.map(id=>sessions.filter(s=>s.id===id));
+    if(assigned.some(matches=>matches.length!==1))return [];
+    return assigned.map(matches=>matches[0]).filter(r=>r.id!==session.id).map(r=>({
+      id:'routine:'+r.id,title:r.title||r.day||'My Warm-Up',kind:'single',sessions:[r]
+    }));
+  }
+  function dayDetail(programme={},sessionId=''){
+    const overviewData=overview(programme);
+    const selected=overviewData.training.find(s=>s.id===sessionId);
+    return selected?{session:selected,routines:routineCards(programme,selected)}:null;
+  }
+  const api=Object.freeze({safeVideo,canCopy,copyWorkout,overview,explainDose,trainingHelp,displayRest,preparationFor,trainingSections,routineCards,dayDetail});
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.DuHubDelivery=api;
 })(typeof globalThis==='object'?globalThis:this);
