@@ -2,6 +2,24 @@
   'use strict';
   const weekdays=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
   const text=value=>typeof value==='string'?value.trim():'';
+  function displayRest(dosage,rest){
+    return /^1\s*[×x]\s*/.test(text(dosage))&&/between sets/i.test(text(rest))?'':text(rest);
+  }
+  function preparationFor(programme={},session={}){
+    const empty={routines:[],replacedSectionOrders:[]},spec=session.preparation,sessions=programme.sessions||[];
+    if(!spec||!Array.isArray(spec.routineIds)||spec.routineIds.length!==2||new Set(spec.routineIds).size!==2)return empty;
+    const routines=spec.routineIds.map(id=>sessions.filter(s=>s.id===id));
+    if(routines.some(matches=>matches.length!==1)||routines.some(matches=>matches[0].id===session.id))return empty;
+    const found=routines.map(matches=>matches[0]);
+    if(found[0].routineKind!=='mobility'||found[1].routineKind!=='warm-up')return empty;
+    // Only the original preparation block at order zero can be replaced. Never hide main training.
+    if(!Array.isArray(spec.replacedSectionOrders)||spec.replacedSectionOrders.length!==1||spec.replacedSectionOrders[0]!==0)return empty;
+    return {routines:found,replacedSectionOrders:[0]};
+  }
+  function trainingSections(programme,session,sections){
+    const prep=preparationFor(programme,session);
+    return prep.routines.length?sections.filter(s=>!prep.replacedSectionOrders.includes(s.order)):sections;
+  }
   function explainDose(value){
     const dose=text(value),m=dose.match(/^(\d+)\s*[×x]\s*(\d+(?:\s*[–-]\s*\d+)?)(?:\s*(seconds?|secs?|s|breaths?|steps?))?(?:\s*\/\s*(leg|side))?$/i);
     if(!m)return '';
@@ -57,7 +75,7 @@
   }
   function overview(programme={}){
     const sessions=Array.isArray(programme.sessions)?programme.sessions:[];
-    const warmups=sessions.filter(s=>/^(?:game|standard|air zim)\s*warm[ -]?up$/i.test(text(s.day))||/^standard warm[ -]?up\b/i.test(text(s.title))&& !/^day\s*\d+/i.test(text(s.day)));
+    const warmups=sessions.filter(s=>['mobility','warm-up'].includes(s.routineKind)||/^(?:game|standard|air zim)\s*warm[ -]?up$/i.test(text(s.day))||/^standard warm[ -]?up\b/i.test(text(s.title))&& !/^day\s*\d+/i.test(text(s.day)));
     const training=sessions.filter(s=>!warmups.includes(s));
     const days=weekdays.map(day=>({day,sessions:[],note:''})),unplaced=[];
     for(const s of training){const day=weekdays.find(day=>new RegExp('^'+day+'(?:\\b)','i').test(text(s.day))||new RegExp('^'+day+'(?:\\b)','i').test(text(s.title)));if(day)days.find(d=>d.day===day).sessions.push(s);else unplaced.push(s);}
@@ -69,7 +87,7 @@
     if(programme.scheduledFor){const start=new Date(programme.scheduledFor);if(Number.isFinite(start.getTime())){const end=new Date(start.getTime()+6*86400000),fmt={month:'short',day:'numeric',timeZone:'UTC'};scheduledRange=start.toLocaleDateString('en-US',fmt)+'–'+end.toLocaleDateString('en-US',fmt);}}
     return {days,unplaced,warmups,training,dateRange:text(programme.dateRange)||(range?range[0]:scheduledRange||'Dates to confirm'),focus:objective};
   }
-  const api=Object.freeze({safeVideo,canCopy,copyWorkout,overview,explainDose,trainingHelp});
+  const api=Object.freeze({safeVideo,canCopy,copyWorkout,overview,explainDose,trainingHelp,displayRest,preparationFor,trainingSections});
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.DuHubDelivery=api;
 })(typeof globalThis==='object'?globalThis:this);

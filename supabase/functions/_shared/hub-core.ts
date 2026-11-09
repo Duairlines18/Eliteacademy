@@ -227,6 +227,20 @@ export function shapeBootstrap(input: {
       prescriptions,
       athleteNote: athleteNotes.join('\n'),
     };
+    const kind = firstText(blocks, 'routineKind');
+    if (['mobility', 'warm-up'].includes(kind)) session.routineKind = kind;
+    const preparation = blocks.map(block => block?.content?.preparation).find(Boolean);
+    const ids = preparation?.routineIds;
+    if (Array.isArray(ids) && ids.length === 2 && new Set(ids).size === 2
+        && ids.every(id => typeof id === 'string' && id !== day.id
+          && trainingDays.filter(target => target.id === id).length === 1)
+        && ['mobility', 'warm-up'].every((expected, index) =>
+          firstText(allBlocks.filter(block => block.training_day_id === ids[index]), 'routineKind') === expected)
+        && Array.isArray(preparation.replacedSectionOrders)
+        && preparation.replacedSectionOrders.length === 1 && preparation.replacedSectionOrders[0] === 0
+        && blocks.some(block => block.sort_order === 0 && block.title === 'Established Standard Warm-Up')) {
+      session.preparation = {routineIds: [...ids], replacedSectionOrders: [0]};
+    }
     if (role === 'staff') session.staffNote = staffNotes.join('\n');
     return session;
   });

@@ -16,7 +16,7 @@
 /* Default academy palette stays green/gold. School-specific accents must be scoped
    to a verified school identity; never paint every school crimson. */
 .ducc{--du-team-accent:#2d7551;--du-team-accent-dark:#163a2a;--du-team-outline:#d5ad61}
-.ducc:has(.saints-director-attendance),.ducc:has([data-school-theme="saints"]){--du-team-accent:#a72a42;--du-team-accent-dark:#4b1722}
+.ducc:has(.saints-director-attendance),[data-school-theme="saints"] .ducc{--du-team-accent:#a72a42;--du-team-accent-dark:#4b1722}
 .ducc [data-day]{border-radius:14px;border:1px solid var(--du-team-accent);background:linear-gradient(135deg,var(--du-team-accent-dark),#211518);color:#fff5f2;min-height:70px}
 .ducc [data-day][aria-pressed="true"],.ducc [data-day].selected{border:2px solid var(--du-team-outline);background:linear-gradient(135deg,var(--du-team-accent),var(--du-team-accent-dark))}
 .ducc [data-action="workout"]{background:var(--du-team-accent);color:#fff;border-radius:12px;min-height:44px}
@@ -26,5 +26,5 @@
 @media print{.hub-school-day-picker a,.ducc [data-day],.hub-parent-session-card{background:#fff!important;color:#111!important;border-color:#555!important;box-shadow:none!important}}
 
 /* Saints coach/director: mirror the rich crimson athlete day cards without affecting other schools. */
-.ducc:has(.saints-director-attendance) [data-day],.ducc:has([data-school-theme="saints"]) [data-day]{background:linear-gradient(135deg,#721b2c 0%,#511a29 55%,#171519 100%);border-color:#8b2639;color:#fff5f2}
-.ducc:has(.saints-director-attendance) [data-day][aria-pressed="true"],.ducc:has(.saints-director-attendance) [data-day].selected,.ducc:has([data-school-theme="saints"]) [data-day][aria-pressed="true"],.ducc:has([data-school-theme="saints"]) [data-day].selected{background:linear-gradient(135deg,#91233c,#4a1827);border:2px solid var(--du-team-outline)}
+.ducc:has(.saints-director-attendance) [data-day],[data-school-theme="saints"] .ducc [data-day]{background:linear-gradient(135deg,#721b2c 0%,#511a29 55%,#171519 100%);border-color:#8b2639;color:#fff5f2}
+.ducc:has(.saints-director-attendance) [data-day][aria-pressed="true"],.ducc:has(.saints-director-attendance) [data-day].selected,[data-school-theme="saints"] .ducc [data-day][aria-pressed="true"],[data-school-theme="saints"] .ducc [data-day].selected{background:linear-gradient(135deg,#91233c,#4a1827);border:2px solid var(--du-team-outline)}
