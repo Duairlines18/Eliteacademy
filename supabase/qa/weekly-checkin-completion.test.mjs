@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
+import {blockedCheckin} from '../functions/_shared/checkin-service.ts';
+import {SupabaseHubRepository} from '../functions/_shared/supabase-repository.ts';
+const source=fs.readFileSync(new URL('../functions/workout-completions/index.ts',import.meta.url),'utf8').replace(/^import .*;\n/gm,'');
+for(const audience of ['parent','private-athlete'])for(const action of ['library','list','set'])test(`${audience}: ${action} completion endpoint enforces check-in without reading training`,async()=>{
+ let handler,lookups=0;const actor='40000000-0000-4000-8000-000000000001';
+ const client={auth:{getUser:async()=>({data:{user:{id:actor}}})},from:table=>{if(table!=='athletes')throw Error('Training read while blocked: '+table);const q={select:()=>q,or:async()=>({data:[{id:'a',parent_user_id:audience==='parent'?actor:null,athlete_user_id:audience==='private-athlete'?actor:null,programme_id:'p',current_week:1,access_status:'active',access_reason:'complimentary',payment_status:'not_required'}]})};return q;},rpc:async(name,args)=>{assert.equal(name,'weekly_checkin_state');assert.equal(args.p_actor,actor);assert.equal(args.p_audience,audience);lookups++;return {data:{enabled:true,due:[{id:'due'}],held:false}}}};
+ const ctx={Deno:{env:{get:name=>name==='SUPABASE_URL'?'https://example.invalid':name==='SUPABASE_SERVICE_ROLE_KEY'?'synthetic-server-key':null},serve:h=>handler=h},createClient:()=>client,Response,Request,Set,console,blockedCheckin,SupabaseHubRepository};vm.createContext(ctx);vm.runInContext(source,ctx);
+ const response=await handler(new Request('https://example.invalid',{method:'POST',headers:{origin:'https://duairlineseliteacademy.com',authorization:'Bearer synthetic-token'},body:JSON.stringify({action,sessionKey:'spoof',itemKey:'spoof',completed:true})}));assert.equal(response.status,409);const data=await response.json();assert.equal(data.code,'CHECKIN_REQUIRED');assert.equal(data.completions,undefined);assert.equal(lookups,1);
+});

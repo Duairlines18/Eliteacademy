@@ -28,6 +28,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Install disposable check-in database and UI QA dependencies
+        run: npm install --prefix /tmp/du-checkin-qa --no-save @electric-sql/pglite@0.5.13 jsdom@26.1.0
+      - name: Verify mandatory check-in database rollout, RLS, retries, amendments and safety
+        run: node --test supabase/qa/weekly-checkins.database.mjs
       - name: Full delivery regression tests
         run: |
           set -e
@@ -52,6 +56,14 @@ jobs:
         run: |
           npm install --no-save playwright@1.62.1
           npx playwright install --with-deps chromium
+      - name: Verify mandatory parent and private check-in entry on mobile and desktop
+        run: node hub-delivery/weekly-checkins.browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mandatory-checkin-screenshots
+          path: /tmp/checkins-*.png
+          if-no-files-found: ignore
       - name: Run real browser smoke checks
         run: node homepage-qa/browser.test.cjs
       - name: Verify dashboard refresh and previous-week feedback on mobile and desktop

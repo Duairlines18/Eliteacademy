@@ -1,3 +1,4 @@
+import {blockedCheckin,checkinActions,handleCheckinAction} from './checkin-service.ts';
 import { corsHeaders } from './hub-core.ts';
 import { ensureParentProfile, saveParentOnboarding, bootstrapParentAthlete, saveParentFeedback, loadParentHistory } from './parent-service.ts';
 
@@ -29,6 +30,12 @@ export async function handleParentRequest(request: Request, ports: any) {
 
   const services = ports.services || defaultServices;
   try {
+    if(checkinActions.has(body?.action)) return json(origin,200,await handleCheckinAction({user,audience:'parent',body,repository:ports.repository}));
+    if(['bootstrap','history','programme-week'].includes(body?.action)) {
+      const checkins=await ports.repository.weeklyCheckinState(user.id,'parent');
+      const blocked=blockedCheckin(checkins);
+      if(blocked)return json(origin,409,{code:blocked,error:blocked==='CHECKIN_REQUIRED'?'Complete your check-in before opening training.':'Coach Du needs to review your safety report before training resumes.',checkins});
+    }
     let result;
     switch (body?.action) {
       case 'profile':
@@ -55,6 +62,8 @@ export async function handleParentRequest(request: Request, ports: any) {
     return json(origin, 200, result);
   } catch (error) {
     const code = typeof error?.code === 'string' ? error.code : '';
+    if(error?.code==='CHECKIN_CONFLICT')return json(origin,409,{code:'CHECKIN_CONFLICT',error:'This check-in changed. Reload it before saving again.'});
+    if(error?.message==='Invalid check-in information.')return json(origin,400,{code:'INVALID_CHECKIN',error:error.message});
     if (error instanceof Error && (error.message === 'Invalid parent onboarding information.' || error.message === 'Invalid feedback information.')) {
       return json(origin, 400, { code: 'INVALID_PROFILE', error: error.message });
     }

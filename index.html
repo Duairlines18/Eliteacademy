@@ -2091,6 +2091,7 @@ footer,
 }
 </style><link rel="stylesheet" href="/performance-journey/journey.css?v=20261017">
 <!-- DU STORY NAV START --><style>#home-view .du-story-entry{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:1.5rem 0 0;color:var(--cream)}#home-view .du-story-entry>span{display:flex;flex-direction:column;gap:.35rem}#home-view .du-story-entry small{font-size:.6rem;letter-spacing:.16em;color:var(--gold-soft)}#home-view .du-story-entry strong{font:500 1.55rem var(--serif);color:var(--gold-soft)}#home-view .du-story-entry span span{font-size:.8rem;color:var(--sage);max-width:55ch}#home-view .du-story-entry>b{font-size:1.5rem;color:var(--gold-soft);min-width:44px;text-align:center}#home-view .du-story-entry:focus-visible{outline:2px solid var(--gold-soft);outline-offset:6px}#home-view .du-story-entry:hover strong{text-decoration:underline;text-underline-offset:4px}</style><!-- DU STORY NAV END --><script src="/hub-delivery/delivery.js?v=20261109-unified"></script>
+<link rel="stylesheet" href="/hub-delivery/weekly-checkins.css?v=20261112"><script src="/hub-delivery/weekly-checkins.js?v=20261112"></script>
 <script src="/hub-delivery/premium-v2.js?v=20261020"></script>
 <link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261019">
 <link rel="stylesheet" href="/parent-qa/session-card-polish.css">
@@ -4302,7 +4303,9 @@ document.addEventListener('click',function(e){
   let HUB_REVALIDATING=false;
   function sessionStamp(){return HUB_REQUEST_EPOCH+'|'+JSON.stringify(session());}
   function resetHubState(){HUB_REQUEST_EPOCH++;WORKOUT_COMPLETIONS=new Map();Object.keys(GUIDED_CURSOR).forEach(key=>delete GUIDED_CURSOR[key]);WORKOUT_MODE='quick';HUB_STATE={programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};}
+  const CHECKIN_UI=DuWeeklyCheckins.create({root,getSession:session,post:body=>authEdgePost(HUB_CONFIG.accountFunctions[session()?.audience],body),clearTraining:()=>{HUB_STATE.programme=null;WORKOUT_COMPLETIONS=new Map();},onReady:()=>render(),onLogout:()=>logout()});
   function logout(){
+    CHECKIN_UI.forget();
     const active=session();
     if(active?.mode==='account'){
       const client=accountClient();
@@ -4865,6 +4868,7 @@ document.addEventListener('click',function(e){
       if(accountNeedsOnboarding(audience,profile)){renderAccountOnboarding(audience,profile);return;}
       try{
         setSession({mode:'account',audience,role:'athlete'});
+        if(CHECKIN_UI.eligible()){location.hash='#/hub/athlete';await render();return;}
         await loadAccountHubData(audience);
         location.hash='#/hub/athlete';
       }catch(error){
@@ -5210,6 +5214,15 @@ document.addEventListener('click',function(e){
       catch(error){if(renderStamp!==sessionStamp())return;renderAccountAccess(s.audience,error.message||'Unable to load your setup. Please sign in again.');}
       return;
     }
+    if(CHECKIN_UI.eligible()){
+      if(['/checkin-safety','/checkin-issue'].includes(route)){await CHECKIN_UI.guard(route);return;}
+      if(!HUB_STATE.programme){
+        try{const profile=await accountProfile(s.audience);if(renderStamp!==sessionStamp())return;if(accountNeedsOnboarding(s.audience,profile)){renderAccountOnboarding(s.audience,profile);return;}}
+        catch(error){if(renderStamp===sessionStamp())renderAccountAccess(s.audience,error.message||'Please sign in again.');return;}
+      }
+      if(await CHECKIN_UI.guard(route))return;
+      if(renderStamp!==sessionStamp()||(location.hash.replace('#/hub','')||'/')!==route)return;
+    }
     if(!HUB_STATE.programme){
       root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">PRIVATE PERFORMANCE ACCESS</p><h1 class="hub-login-heading">Loading your programme…</h1><p class="hub-login-sub">Validating your Hub session.</p></section></div>';
       try{
@@ -5371,7 +5384,7 @@ document.addEventListener('click',function(e){
     const guidedPrev=event.target.closest('[data-guided-prev]');if(guidedPrev){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout));GUIDED_CURSOR[s.id]=Math.max(0,(GUIDED_CURSOR[s.id]||0)-1);renderSession(s.id);}return;}
     const guidedNext=event.target.closest('[data-guided-next]');if(guidedNext){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout));GUIDED_CURSOR[s.id]=Math.min(Math.max(0,items.length-1),(GUIDED_CURSOR[s.id]||0)+1);renderSession(s.id);}return;}
     const quickOpen=event.target.closest('[data-quick-open]');if(quickOpen){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===quickOpen.dataset.quickOpen);if(index>=0){GUIDED_CURSOR[s.id]=index;WORKOUT_MODE='guided';renderSession(s.id);}}return;}
-    const completionButton=event.target.closest('[data-completion-toggle]');if(completionButton){const completionRoute=location.hash;const sessionKey=completionButton.dataset.sessionKey||location.hash.replace('#/hub/session/',''),itemKey=completionButton.dataset.itemKey||'',next=completionButton.dataset.completed!=='true';if(!sessionKey||!itemKey)return;completionButton.disabled=true;const original=completionButton.textContent;completionButton.textContent='Saving…';saveWorkoutCompletion(sessionKey,itemKey,next).then(row=>{if(!row||location.hash!==completionRoute)return;const s=programme()?.sessions?.find(x=>x.id===sessionKey);if(s&&next){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===itemKey);if(index>=0&&index<items.length-1)GUIDED_CURSOR[s.id]=index+1;}renderSession(sessionKey);}).catch(error=>{console.warn('Unable to save completion',error);completionButton.disabled=false;completionButton.textContent='Try again';setTimeout(()=>{if(completionButton.isConnected)completionButton.textContent=original;},1600);});return;}
+    const completionButton=event.target.closest('[data-completion-toggle]');if(completionButton){const completionRoute=location.hash;const sessionKey=completionButton.dataset.sessionKey||location.hash.replace('#/hub/session/',''),itemKey=completionButton.dataset.itemKey||'',next=completionButton.dataset.completed!=='true';if(!sessionKey||!itemKey)return;completionButton.disabled=true;const original=completionButton.textContent;completionButton.textContent='Saving…';saveWorkoutCompletion(sessionKey,itemKey,next).then(row=>{if(!row||location.hash!==completionRoute)return;const s=programme()?.sessions?.find(x=>x.id===sessionKey);if(s&&next){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===itemKey);if(index>=0&&index<items.length-1)GUIDED_CURSOR[s.id]=index+1;}renderSession(sessionKey);if(CHECKIN_UI.enabled){const training=DuHubDelivery.overview(programme()).training;const allFinished=training.length&&training.every(day=>{const items=flattenedWorkoutItems(visibleNormalizedSections(normalizeWorkoutSession(day,EXERCISES,{...programme(),separateWarmups:true})));return items.length&&items.every(item=>isWorkoutComplete(day.id,item.key));});if(allFinished)authEdgePost(HUB_CONFIG.accountFunctions[session().audience],{action:'open-end-checkin'}).then(()=>render()).catch(()=>{});}}).catch(error=>{console.warn('Unable to save completion',error);completionButton.disabled=false;completionButton.textContent='Try again';setTimeout(()=>{if(completionButton.isConnected)completionButton.textContent=original;},1600);});return;}
     const schoolGroupButton=event.target.closest('[data-school-group]');if(schoolGroupButton){localStorage.setItem(schoolGroupStorageKey(),schoolGroupButton.dataset.schoolGroup||'');const route=location.hash.replace('#/hub','')||'/';if(route.startsWith('/session/'))renderSession(route.split('/')[2]);else render();return;}
     const choice=event.target.closest('.hub-choice');if(choice){const group=choice.closest('[data-choice-group]');const multi=group?.dataset.multi==='true';if(multi){const label=choice.textContent.trim();if(label==='Nothing noticeable yet'||label==='No noticeable change'){group.querySelectorAll('.hub-choice').forEach(x=>x.classList.remove('selected'));choice.classList.add('selected');}else{group.querySelectorAll('.hub-choice').forEach(x=>{if(['Nothing noticeable yet','No noticeable change'].includes(x.textContent.trim()))x.classList.remove('selected');});choice.classList.toggle('selected');}}else{group.querySelectorAll('.hub-choice').forEach(x=>x.classList.remove('selected'));choice.classList.add('selected');}return;}
   });
@@ -5456,6 +5469,8 @@ document.addEventListener('click',function(e){
   });
   // Refresh published assignments when returning to the dashboard, never during a workout.
   async function refreshVisibleProgramme(){
+    if(CHECKIN_UI.eligible()&&CHECKIN_UI.enabled&&!document.hidden&&isHubRoute()&&!location.hash.includes('/login')&&!location.hash.includes('/setup')){if(root.querySelector('#mandatoryCheckinForm,#wcIssueForm'))return;HUB_STATE.programme=null;await render();return;}
+
     const route=location.hash;
     if(document.hidden||HUB_REVALIDATING||!['#/hub','#/hub/athlete','#/hub/staff'].includes(route))return;
     const active=session();
@@ -5471,6 +5486,7 @@ document.addEventListener('click',function(e){
       console.warn('Programme refresh unavailable; keeping the current workout.',error);
     }finally{HUB_REVALIDATING=false;}
   }
+  setInterval(()=>{if(CHECKIN_UI.enabled&&!document.hidden&&!document.querySelector('#mandatoryCheckinForm,#wcIssueForm')&&isHubRoute())refreshVisibleProgramme();},60000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleProgramme();});
   window.addEventListener('focus',()=>refreshVisibleProgramme());
   window.addEventListener('hashchange',()=>{setTimeout(render,50);setTimeout(refreshVisibleProgramme,100);});

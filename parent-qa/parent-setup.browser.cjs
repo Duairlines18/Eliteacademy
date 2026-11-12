@@ -8,7 +8,8 @@ const assert=require('node:assert/strict'),http=require('node:http'),fs=require(
    const page=await browser.newPage({viewport:{width,height:844}});let saves=[],fail=true;
    await page.addInitScript(()=>{window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:'fixture'}}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})}})};localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify({mode:'account',audience:'parent',role:'athlete'}));});
    await page.route('**/*',async route=>{if(route.request().url().startsWith(base))return route.continue();if(route.request().url().includes('/functions/v1/parent-hub-data')){
-    const body=route.request().postDataJSON();if(body.action==='profile')return route.fulfill({json:{parent:{firstName:'Parent',lastName:'Test'},athlete:{fullName:'Athlete Test'},onboardingComplete:false,onboarding:{hubFrequency:'1 day'},accessState:'PENDING_ACTIVATION'}});
+    const body=route.request().postDataJSON();if(body.action==='checkin-state')return route.fulfill({json:{checkins:{enabled:false}}});
+   if(body.action==='profile')return route.fulfill({json:{parent:{firstName:'Parent',lastName:'Test'},athlete:{fullName:'Athlete Test'},onboardingComplete:false,onboarding:{hubFrequency:'1 day'},accessState:'PENDING_ACTIVATION'}});
     saves.push(body);if(body.action==='save-onboarding'&&fail)return route.fulfill({status:500,json:{error:'Save failed. Try again.'}});
     return route.fulfill({json:{onboardingComplete:body.action==='save-onboarding',accessState:'PENDING_ACTIVATION'}});
    }return route.abort();});

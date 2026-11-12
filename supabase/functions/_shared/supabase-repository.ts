@@ -32,6 +32,35 @@ export class SupabaseHubRepository {
     this.client = client;
   }
 
+  async checkinRpc(name:string,args:Record<string,unknown>) {
+    const result=await this.client.rpc(name,args);
+    if(result.error){
+      const error:any=new Error('Check-in service is unavailable.');
+      if(/changed|retry|not due/i.test(result.error.message))error.code='CHECKIN_CONFLICT';
+      throw error;
+    }
+    return result.data;
+  }
+  async weeklyCheckinState(actor:string,audience:string){return this.checkinRpc('weekly_checkin_state',{p_actor:actor,p_audience:audience});}
+  async openWeeklyEndCheckin(actor:string,audience:string){return this.checkinRpc('open_weekly_end_checkin',{p_actor:actor,p_audience:audience});}
+  async saveWeeklyCheckin(actor:string,audience:string,requirement:string,submission:string,payload:any,revision:number,safety:boolean){return this.checkinRpc('save_weekly_checkin',{p_actor:actor,p_audience:audience,p_requirement:requirement,p_submission:submission,p_payload:payload,p_expected_revision:revision,p_safety:safety});}
+  async reportWeeklyCheckinIssue(actor:string,audience:string,submission:string,payload:any,safety:boolean){return this.checkinRpc('report_weekly_checkin_issue',{p_actor:actor,p_audience:audience,p_submission:submission,p_payload:payload,p_safety:safety});}
+  async isCheckinAdmin(userId:string){return Boolean(assertResult(await this.client.from('admin_profiles').select('user_id').eq('user_id',userId).maybeSingle(),'Admin lookup failed'));}
+  async checkinAdminOverview(){
+    const [athletes,requirements,holds,issues,config]=await Promise.all([
+      this.client.from('athletes').select('id,full_name,display_name,access_status,checkin_timezone').in('access_status',['active','paused']).or('parent_user_id.not.is.null,athlete_user_id.not.is.null'),
+      this.client.from('weekly_checkin_requirements').select('*,feedback:feedback_id(payload,status,reviewed_at,admin_reply)').order('period_start',{ascending:false}).limit(1000),
+      this.client.from('weekly_checkin_holds').select('*,feedback:feedback_id(payload,status)').is('released_at',null).order('created_at',{ascending:false}),
+      this.client.from('feedback').select('id,athlete_id,payload,status,created_at,reviewed_at,admin_reply').eq('feedback_type','athlete_issue').eq('payload->>formVersion','2.0').order('created_at',{ascending:false}).limit(100),
+      this.client.from('weekly_checkin_config').select('*').single(),
+    ]);
+    return {athletes:assertResult(athletes,'Athlete review lookup failed'),requirements:assertResult(requirements,'Check-in review lookup failed'),holds:assertResult(holds,'Safety review lookup failed'),issues:assertResult(issues,'Issue review lookup failed'),config:assertResult(config,'Check-in config lookup failed')};
+  }
+  async releaseWeeklyCheckinHold(admin:string,hold:string,generation:number,note:string){return this.checkinRpc('release_weekly_checkin_hold',{p_admin:admin,p_hold:hold,p_generation:generation,p_note:note});}
+  async reviewWeeklyCheckinFeedback(id:string,note:string){
+    const result=await this.client.from('feedback').update({status:'reviewed',reviewed_at:new Date().toISOString(),admin_reply:note}).eq('id',id).in('feedback_type',['mandatory_week_start','mandatory_week_end','athlete_issue']).select('id').single();
+    return {reviewed:true,id:assertResult(result,'Feedback review failed').id};
+  }
   async findProfessionalMember(userId: string) {
     return assertResult(
       await this.client.from('professional_members')
