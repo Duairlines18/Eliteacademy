@@ -31,6 +31,14 @@ Coach review: `/hub/checkin-review/` (existing Supabase admin account; backend v
 - Hosted login / production deployment / production migration: not performed.
 - Local Playwright: blocked by Chromium launch (`socket() failed: Operation not permitted`). Browser tests are checked into CI; do not describe mobile/desktop visual QA as passed until its workflow completes.
 
+## November 12 continuation verification
+
+- Fixed the CI browser failure's duplicate route refresh: eligible navigation now schedules the entry guard once, while school/professional dashboard refresh behavior is preserved. A new regression failed before the fix and passes after it.
+- Updated the homepage preservation normalizer for only the check-in asset tags and named entry hooks. The immutable homepage/integration baselines remain unchanged; both checks pass.
+- Fresh local results: 239 application tests, 17 check-in database tests, 7 reversible guided-routine database tests, 1 school HTTP authorization test, 9 public-link tests and 14 story checks passed.
+- Local Chromium remains blocked by `socket() failed: Operation not permitted`. Mobile/desktop browser verification is still pending. The previous CI head failed before this fix, so its result is not release approval.
+- Fix commit: `a6bd60f`. Automatic approval review rejected the feature-branch push because it requires explicit authorization for the remote write. No retry through another route was attempted. Obtain push authorization, then rerun all PR checks before requesting merge/deploy/activation approval. Production remains unchanged.
+
 ## Approved release sequence (do not execute before approval)
 
 1. Record production static commit and deployed Edge versions. Confirm existing feedback audit migration is installed. Back up schema/config and record row counts without exposing athlete data.

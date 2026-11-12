@@ -5489,7 +5489,7 @@ document.addEventListener('click',function(e){
   setInterval(()=>{if(CHECKIN_UI.enabled&&!document.hidden&&!document.querySelector('#mandatoryCheckinForm,#wcIssueForm')&&isHubRoute())refreshVisibleProgramme();},60000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleProgramme();});
   window.addEventListener('focus',()=>refreshVisibleProgramme());
-  window.addEventListener('hashchange',()=>{setTimeout(render,50);setTimeout(refreshVisibleProgramme,100);});
+  window.addEventListener('hashchange',()=>{setTimeout(render,50);if(!CHECKIN_UI.eligible())setTimeout(refreshVisibleProgramme,100);});
   window.addEventListener('popstate',()=>setTimeout(render,50));
   initializePasswordRecovery().then(recovery=>{if(!recovery&&isHubRoute())setTimeout(render,60);});
 })();
