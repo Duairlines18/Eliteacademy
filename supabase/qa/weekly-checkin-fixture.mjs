@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import {pathToFileURL} from 'node:url';
 const {PGlite}=await import(pathToFileURL(process.env.PGLITE_MODULE || '/tmp/du-checkin-qa/node_modules/@electric-sql/pglite/dist/index.js').href);
 export const ids={athlete:'30000000-0000-4000-8000-000000000001',user:'40000000-0000-4000-8000-000000000001',parent:'40000000-0000-4000-8000-000000000002',other:'40000000-0000-4000-8000-000000000003',admin:'40000000-0000-4000-8000-000000000009',week:'50000000-0000-4000-8000-000000000001',next:'50000000-0000-4000-8000-000000000002',programme:'60000000-0000-4000-8000-000000000001'};
-export async function createCheckinFixture(){
+export async function createCheckinFixture({sunday=true}={}){
 const db=new PGlite();
 const scalar=async(q,p=[])=>Object.values((await db.query(q,p)).rows[0])[0];
 await db.exec(`create schema auth;create role anon;create role authenticated;create role service_role bypassrls;
@@ -21,6 +21,7 @@ insert into admin_profiles values('${ids.admin}');
 grant usage on schema public,auth to anon,authenticated,service_role;grant all on athletes,cohorts,programme_weeks,programme_tiers,feedback,admin_profiles to service_role;grant select on admin_profiles to authenticated;`);
 await db.exec(fs.readFileSync(new URL('../migrations/20261107055415_feedback_revision_history.sql',import.meta.url),'utf8'));
 await db.exec(fs.readFileSync(new URL('../migrations/20261112090000_mandatory_weekly_checkins.sql',import.meta.url),'utf8'));
+if(sunday)await db.exec(fs.readFileSync(new URL('../migrations/20261113040957_parent_sunday_checkins.sql',import.meta.url),'utf8'));
 const state=(date,role='private-athlete',user=ids.user)=>scalar('select public.weekly_checkin_state($1,$2,$3)',[user,role,date]);
 const save=(r,p,id='submission-0000000000001',revision=0,safety=false,user=ids.user,role='private-athlete',date='2026-11-13T16:00Z')=>scalar('select public.save_weekly_checkin($1,$2,$3,$4,$5,$6,$7,$8)',[user,role,r,id,p,revision,safety,date]);
 const answer={formVersion:'2.0',completion:'some',challenge:'right',recovery:'good',outside:'no',incompleteReason:'school',note:''};

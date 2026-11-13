@@ -9,7 +9,6 @@ const END = {
   completion: ['all','most','some','none'],
   challenge: ['easy','right','manageable','difficult'],
   recovery: ['good','sore','fatigued','unwell'],
-  outside: ['no','practice','match','both'],
 };
 function invalid(): never { throw new Error('Invalid check-in information.'); }
 function option(value: unknown, values: string[], parent: boolean): string {
@@ -30,7 +29,10 @@ export function normalizeCheckin(kind: string, input: any, audience: string): Re
   const parent = audience === 'parent';
   const payload: Record<string,any> = {formVersion:'2.0',submittedBy:audience};
   for (const [key, values] of Object.entries(kind === 'start' ? START : END)) payload[key] = option(input[key],values,parent);
-  const activities = kind === 'start' ? ['plannedOutside','recentOutside'] : ['outside'];
+  // Older cached clients may still submit the retired end-of-week activity question.
+  // Accept their explicit answer without requiring or inventing one for the shorter form.
+  if (kind === 'end' && input.outside !== undefined) payload.outside = option(input.outside,['no','practice','match','both'],parent);
+  const activities = kind === 'start' ? ['plannedOutside','recentOutside'] : payload.outside !== undefined ? ['outside'] : [];
   for (const key of activities) {
     if (!['no','unknown'].includes(payload[key])) payload[key+'Details'] = text(input[key+'Details'],true,300);
   }
