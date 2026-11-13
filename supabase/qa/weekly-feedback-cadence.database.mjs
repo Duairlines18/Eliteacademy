@@ -56,3 +56,22 @@ test('calendar cadence does not rewrite submitted parent history',async()=>{
   assert.equal(again.requirements[0].submitted_at!==null,true);
  }finally{await f.db.close();}
 });
+
+test('calendar cadence respects regional Monday and Friday boundaries despite assignment start dates',async()=>{
+ const f=await createCheckinFixture({cadence:true});
+ try{
+  await f.db.exec("update weekly_checkin_config set enabled=true; update athletes set programme_start_date='2026-09-09',checkin_timezone='Africa/Harare'");
+  const before=await f.state('2026-11-15T21:59:59Z');
+  assert.equal(before.requirements.some(r=>r.kind==='start'),false);
+  const monday=await f.state('2026-11-15T22:00:00Z');
+  assert.equal(monday.today,'2026-11-16');assert.equal(monday.due.filter(r=>r.kind==='start').length,1);
+  const thursday=await f.state('2026-11-19T21:59:59Z');
+  assert.equal(thursday.due.some(r=>r.kind==='end'&&r.period_start==='2026-11-16'),false);
+  const friday=await f.state('2026-11-19T22:00:00Z');
+  assert.equal(friday.due.some(r=>r.kind==='end'&&r.period_start==='2026-11-16'),true);
+  await f.db.exec("update athletes set checkin_timezone='America/Chicago',programme_start_date='2026-11-11'");
+  assert.equal((await f.state('2026-11-20T05:59:59Z')).today,'2026-11-19');
+  assert.equal((await f.state('2026-11-20T06:00:00Z')).today,'2026-11-20');
+  assert.equal(await f.scalar('select count(*)::int from programme_weeks'),2);
+ }finally{await f.db.close();}
+});

@@ -6,7 +6,7 @@ import {handleParentRequest} from '../functions/_shared/parent-handler.ts';
 import {handlePrivateAthleteRequest} from '../functions/_shared/private-athlete-handler.ts';
 const code=fs.readFileSync(new URL('../../hub-delivery/weekly-checkins.js',import.meta.url),'utf8');
 for(const audience of ['parent','private-athlete'])test(`${audience}: entry UI uses real handler/validation/SQL saves, conditional fields, retry, amendment and hold`,async()=>{
- const {db,scalar,ids}=await createCheckinFixture();
+ const {db,scalar,ids}=await createCheckinFixture({cadence:true});
  try{
  await db.exec('update weekly_checkin_config set enabled=true');
  const user=audience==='parent'?ids.parent:ids.user,handler=audience==='parent'?handleParentRequest:handlePrivateAthleteRequest;
@@ -34,4 +34,16 @@ for(const audience of ['parent','private-athlete'])test(`${audience}: entry UI u
  // A response arriving after logout must not render another person's draft/content.
  dom.window.close();
  }finally{await db.close();}
+});
+
+for(const audience of ['parent','private-athlete'])test(`${audience}: verification retry keeps the selected session protected until recovery`,async()=>{
+ const dom=new JSDOM('<main id="root"></main>',{url:'https://duairlineseliteacademy.com/#/hub/session/day-1',runScripts:'outside-only'});
+ const w=dom.window;w.eval(code);const root=w.document.getElementById('root');let offline=true,ready=0;
+ const ui=w.DuWeeklyCheckins.create({root,getSession:()=>({mode:'account',audience}),clearTraining:()=>{},onReady:()=>ready++,onLogout:()=>{},post:async()=>{if(offline)throw Error('offline');return {checkins:{enabled:true,due:[],held:false,requirements:[]}};}});
+ try{
+  assert.equal(await ui.guard('/session/day-1'),true);assert.match(root.textContent,/Unable to verify/);
+  root.querySelector('[data-wc-retry]').click();assert.equal(ready,1);assert.equal(w.location.hash,'#/hub/session/day-1');
+  assert.equal(await ui.guard('/session/day-1'),true);assert.match(root.textContent,/Unable to verify/);
+  offline=false;root.querySelector('[data-wc-retry]').click();assert.equal(await ui.guard('/session/day-1'),false);assert.equal(w.location.hash,'#/hub/session/day-1');
+ }finally{w.close();}
 });

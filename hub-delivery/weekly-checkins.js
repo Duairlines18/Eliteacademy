@@ -40,7 +40,7 @@
   const eligible=()=>{const s=getSession();return s?.mode==='account'&&['parent','private-athlete'].includes(s.audience);};
   const parent=()=>getSession()?.audience==='parent';
   function shell(title,body){container.innerHTML='<section class="wc-screen"><div class="wc-wrap"><p class="wc-brand">DU AIRLINES · PERFORMANCE HUB</p><h1 tabindex="-1">'+esc(title)+'</h1>'+body+'<nav class="wc-support" aria-label="Check-in support"><a href="#/hub/checkin-safety">Safety information</a><a href="#/hub/checkin-issue">Report an issue</a><a href="mailto:coachdu@duairlineseliteacademy.com">Contact Coach Du</a><button type="button" data-wc-logout>Log out</button></nav></div></section>';container.querySelector('[data-wc-logout]').onclick=onLogout;}
-  function errorScreen(message){shell('Unable to verify your check-in','<p>Your training will open after we can verify your check-in.</p><p role="alert">'+esc(message||'Please try again.')+'</p><button type="button" class="wc-primary" data-wc-retry>Try again</button>');container.querySelector('[data-wc-retry]').onclick=()=>{location.hash='#/hub/athlete';onReady();};}
+  function errorScreen(message){shell('Unable to verify your check-in','<p>Your training will open after we can verify your check-in.</p><p role="alert">'+esc(message||'Please try again.')+'</p><button type="button" class="wc-primary" data-wc-retry>Try again</button>');container.querySelector('[data-wc-retry]').onclick=()=>onReady();}
   function form(requirement){
    active=requirement;
    const prior=drafts.get(requirement.id);
