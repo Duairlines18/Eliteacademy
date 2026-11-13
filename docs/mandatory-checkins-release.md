@@ -4,7 +4,7 @@ Status: implementation on `feat/mandatory-weekly-checkins`; production unchanged
 
 ## What changes
 
-Authenticated parents and private athletes pass through a dedicated entry step. Four standardized questions plus applicable followups are validated on the server. Missing reports block delivery; submissions clear only their own requirement. Unknown answers are explicit. An accurate partial end report satisfies the requirement and can be amended. Only newly enrolled current assignments generate requirements; outstanding requirements persist across assignment changes.
+Authenticated parents and private athletes pass through a dedicated entry step. Four start questions for private athletes and three end/Sunday questions plus applicable followups are validated on the server. Missing reports block delivery; submissions clear only their own requirement. Unknown answers are explicit. An accurate partial end report satisfies the requirement and can be amended. Only newly enrolled current assignments generate requirements; outstanding requirements persist across assignment changes.
 
 One unique requirement exists per athlete, assigned programme week and check-in kind. Saves lock the requirement, preserve revisions in the existing feedback audit and reject stale amendments. Receipt keys make exact retries idempotent and cannot acknowledge another actor/context. Safety holds retain the original concerning answer even after a healthy amendment. Ordinary feedback review cannot release them; an explicit generation-checked admin decision with a review note is required. This controls coaching access, not medical clearance.
 
@@ -52,3 +52,12 @@ Coach review: `/hub/checkin-review/` (existing Supabase admin account; backend v
 ## Rollback
 
 First disable enforcement: `update public.weekly_checkin_config set enabled=false where id=true;`. This also restores direct programme reads under the pre-existing RLS policies. Retain all new tables and saved answers. If needed restore the recorded static commit and prior Edge functions. Do not drop feedback, requirements, receipts, holds, review events or revision history. Re-enable only after the corrected release is verified and approved.
+
+## Approved November 12 readability and parent cadence revision
+
+- Black check-in/review screens, white text, dark answer cards, green actions and gold accents. Measured text contrasts exceed 4.5:1. Asset versions change to avoid stale styles.
+- End/Sunday form has three selections and one optional note: “Anything sport-related or anything else Coach Du should know?” Retired outside-activity answers from older clients remain accepted; existing history remains stored.
+- Parent-only schedule: first Sunday November 15; one calendar report every Sunday, carried forward until submitted. No separate parent start check-in or early completion opening. No pre-enrollment backlog; once enrolled, missed Sundays persist. An unchanged programme still gets a fresh parent report each Sunday.
+- Parent report dates are authoritative. Programme/week IDs snapshot the assignment available when the report requirement is enrolled; historical assignment content is not guessed when the first login is Monday or later. Parent and coach screens identify the calendar period. Private athletes retain assignment-based start/end enforcement and original rollout.
+- Apply `20261113040957_parent_sunday_checkins.sql`, deploy updated parent/private normalizers, then merge static changes after CI. Existing enforcement stays enabled and the migration preserves saved reports, revisions, receipts and holds.
+- Rollback begins by disabling enforcement; preserve the new calendar column, reports and indexes. Prior static commit is `f0365b894ce246c538275a46fd305d277e662bee`; previous parent/private Edge versions are 13/17.

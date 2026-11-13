@@ -3,6 +3,16 @@ import assert from 'node:assert/strict';
 import {normalizeCheckin,checkinSafety} from '../functions/_shared/weekly-checkins.ts';
 const base={formVersion:'2.0',body:'good',readiness:'ready',plannedOutside:'no',recentOutside:'no',note:''};
 const end={formVersion:'2.0',completion:'all',challenge:'right',recovery:'good',outside:'no',note:''};
+test('end check-in accepts three selections and optional sport note without inventing outside activity',()=>{
+ const input={formVersion:'2.0',completion:'all',challenge:'right',recovery:'good',note:'  School trials next Tuesday  '};
+ for(const audience of ['parent','private-athlete']){
+  const result=normalizeCheckin('end',input,audience);
+  assert.equal(result.note,'School trials next Tuesday');
+  assert.equal(Object.hasOwn(result,'outside'),false);
+  assert.equal(Object.hasOwn(result,'outsideDetails'),false);
+  assert.equal(normalizeCheckin('end',{...input,note:''},audience).note,'');
+ }
+});
 test('standard start and end use stable values',()=>{assert.equal(normalizeCheckin('start',base,'private-athlete').readiness,'ready');assert.equal(normalizeCheckin('end',end,'parent').completion,'all');assert.equal(checkinSafety(base),false);});
 test('every unspecified/invalid answer fails server validation',()=>{for(const key of ['body','readiness','plannedOutside','recentOutside'])assert.throws(()=>normalizeCheckin('start',{...base,[key]:'invalid'},'private-athlete'),/Invalid check-in/);assert.throws(()=>normalizeCheckin('end',{...end,completion:undefined},'parent'));});
 test('parent unknown is explicit, never healthy or completed, and unavailable to private athletes',()=>{const unknown={...base,body:'unknown',readiness:'unknown',plannedOutside:'unknown',recentOutside:'unknown'};assert.equal(normalizeCheckin('start',unknown,'parent').body,'unknown');assert.throws(()=>normalizeCheckin('start',unknown,'private-athlete'));assert.equal(normalizeCheckin('end',{...end,completion:'unknown'},'parent').completion,'unknown');});
