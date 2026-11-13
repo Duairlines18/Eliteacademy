@@ -6,7 +6,7 @@ import {handleParentRequest} from '../functions/_shared/parent-handler.ts';
 import {handlePrivateAthleteRequest} from '../functions/_shared/private-athlete-handler.ts';
 const code=fs.readFileSync(new URL('../../hub-delivery/weekly-checkins.js',import.meta.url),'utf8');
 for(const audience of ['parent','private-athlete'])test(`${audience}: entry UI uses real handler/validation/SQL saves, conditional fields, retry, amendment and hold`,async()=>{
- const {db,scalar,ids}=await createCheckinFixture();
+ const {db,scalar,ids}=await createCheckinFixture({cadence:true});
  try{
  await db.exec('update weekly_checkin_config set enabled=true');
  const user=audience==='parent'?ids.parent:ids.user,handler=audience==='parent'?handleParentRequest:handlePrivateAthleteRequest;
@@ -16,7 +16,7 @@ for(const audience of ['parent','private-athlete'])test(`${audience}: entry UI u
  const repo={weeklyCheckinState:(actor,role)=>scalar('select weekly_checkin_state($1,$2,$3)',[actor,role,now]),saveWeeklyCheckin:(actor,role,r,sub,p,rev,safety)=>scalar('select save_weekly_checkin($1,$2,$3,$4,$5,$6,$7,$8)',[actor,role,r,sub,p,rev,safety,now])};
  const root=w.document.getElementById('root');
  const ui=w.DuWeeklyCheckins.create({root,getSession:()=>session,clearTraining:()=>cleared++,onReady:()=>ready++,onLogout:()=>{session=null;ui.forget();},post:async body=>{sent.push(body);if(fail)throw Error('Temporarily unavailable');const response=await handler(new Request('https://example.invalid',{method:'POST',headers:{origin:'https://duairlineseliteacademy.com'},body:JSON.stringify(body)}),{verifyUser:async()=>({id:user}),repository:repo});const data=await response.json();if(!response.ok)throw Object.assign(Error(data.error),{code:data.code});return data;}});
- assert.equal(await ui.guard('/session/day'),true);assert.match(root.textContent,audience==='parent'?/Sunday check-in/:/End-of-week/);assert.equal(cleared,1);
+ assert.equal(await ui.guard('/session/day'),true);assert.match(root.textContent,audience==='parent'?/Weekly training review/:/End-of-week/);assert.equal(cleared,1);
  const choose=(name,value)=>{const el=root.querySelector(`[name="${name}"][value="${value}"]`);assert.ok(el,`${name} ${value} exists`);el.checked=true;el.dispatchEvent(new w.Event('change',{bubbles:true}));};
  const fill=(name,value)=>{const el=root.querySelector(`[name="${name}"]`);assert.ok(el,name+' exists');el.value=value;el.dispatchEvent(new w.Event('input',{bubbles:true}));};
  assert.equal(root.querySelectorAll('#mandatoryCheckinForm > fieldset').length,3);
@@ -34,4 +34,16 @@ for(const audience of ['parent','private-athlete'])test(`${audience}: entry UI u
  // A response arriving after logout must not render another person's draft/content.
  dom.window.close();
  }finally{await db.close();}
+});
+
+for(const audience of ['parent','private-athlete'])test(`${audience}: verification retry keeps the selected session protected until recovery`,async()=>{
+ const dom=new JSDOM('<main id="root"></main>',{url:'https://duairlineseliteacademy.com/#/hub/session/day-1',runScripts:'outside-only'});
+ const w=dom.window;w.eval(code);const root=w.document.getElementById('root');let offline=true,ready=0;
+ const ui=w.DuWeeklyCheckins.create({root,getSession:()=>({mode:'account',audience}),clearTraining:()=>{},onReady:()=>ready++,onLogout:()=>{},post:async()=>{if(offline)throw Error('offline');return {checkins:{enabled:true,due:[],held:false,requirements:[]}};}});
+ try{
+  assert.equal(await ui.guard('/session/day-1'),true);assert.match(root.textContent,/Unable to verify/);
+  root.querySelector('[data-wc-retry]').click();assert.equal(ready,1);assert.equal(w.location.hash,'#/hub/session/day-1');
+  assert.equal(await ui.guard('/session/day-1'),true);assert.match(root.textContent,/Unable to verify/);
+  offline=false;root.querySelector('[data-wc-retry]').click();assert.equal(await ui.guard('/session/day-1'),false);assert.equal(w.location.hash,'#/hub/session/day-1');
+ }finally{w.close();}
 });

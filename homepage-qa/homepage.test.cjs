@@ -37,7 +37,7 @@ const withoutDashboardRefresh=source=>source
 // Reverse only its named entry hooks and exact asset tags; keep the baseline fixed.
 const withoutMandatoryCheckins=source=>source
  .replace('/hub-delivery/weekly-checkins.css?v=20261112-dark','/hub-delivery/weekly-checkins.css?v=20261112')
- .replace('/hub-delivery/weekly-checkins.js?v=20261112-short','/hub-delivery/weekly-checkins.js?v=20261112')
+ .replace('/hub-delivery/weekly-checkins.js?v=20261113-retry','/hub-delivery/weekly-checkins.js?v=20261112')
  .replace('<link rel="stylesheet" href="/hub-delivery/weekly-checkins.css?v=20261112"><script src="/hub-delivery/weekly-checkins.js?v=20261112"></script>\n','')
  .replace(/  const CHECKIN_UI=DuWeeklyCheckins\.create\([^\n]+\n/,'')
  .replace(/    CHECKIN_UI\.forget\(\);\n/,'')
