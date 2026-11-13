@@ -31,7 +31,7 @@ jobs:
       - name: Install disposable check-in database and UI QA dependencies
         run: npm install --prefix /tmp/du-checkin-qa --no-save @electric-sql/pglite@0.5.13 jsdom@26.1.0
       - name: Verify mandatory check-in database rollout, RLS, retries, amendments and safety
-        run: node --test supabase/qa/weekly-checkins.database.mjs supabase/qa/parent-sunday-checkins.database.mjs
+        run: node --test supabase/qa/weekly-checkins.database.mjs supabase/qa/parent-sunday-checkins.database.mjs supabase/qa/weekly-feedback-cadence.database.mjs
       - name: Full delivery regression tests
         run: |
           set -e
