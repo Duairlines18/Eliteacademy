@@ -30,6 +30,7 @@ jobs:
           node coach-command/air-zim.test.cjs
           node parent-qa/parent-session.test.cjs
           node parent-qa/session-card-polish.test.cjs
+          npm install --prefix /tmp/du-checkin-qa --no-save @electric-sql/pglite@0.5.13 jsdom@26.1.0
           node --test supabase/qa/*.test.mjs
       - name: Install browser test tooling
         run: |

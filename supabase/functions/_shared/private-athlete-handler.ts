@@ -1,3 +1,4 @@
+import {blockedCheckin,checkinActions,handleCheckinAction} from './checkin-service.ts';
 import {corsHeaders} from './hub-core.ts';
 import {ensurePrivateAthleteProfile,savePrivateAthleteOnboarding,bootstrapPrivateAthlete,savePrivateAthleteFeedback,loadPrivateAthleteHistory,loadPrivateAthleteProgrammeWeek} from './private-athlete-service.ts';
 
@@ -13,6 +14,12 @@ export async function handlePrivateAthleteRequest(request:Request,ports:any){
   let body:any;try{body=await request.json();}catch{return json(origin,400,{code:'INVALID_REQUEST',error:'Invalid request.'});}
   const services=ports.services||defaults;
   try{
+    if(checkinActions.has(body?.action)) return json(origin,200,await handleCheckinAction({user,audience:'private-athlete',body,repository:ports.repository}));
+    if(['bootstrap','history','programme-week'].includes(body?.action)) {
+      const checkins=await ports.repository.weeklyCheckinState(user.id,'private-athlete');
+      const blocked=blockedCheckin(checkins);
+      if(blocked)return json(origin,409,{code:blocked,error:blocked==='CHECKIN_REQUIRED'?'Complete your check-in before opening training.':'Coach Du needs to review your safety report before training resumes.',checkins});
+    }
     let result;
     if(body?.action==='profile')result=await services.ensurePrivateAthleteProfile({user,repository:ports.repository});
     else if(body?.action==='save-onboarding')result=await services.savePrivateAthleteOnboarding({user,input:body.profile,repository:ports.repository});
@@ -24,6 +31,8 @@ export async function handlePrivateAthleteRequest(request:Request,ports:any){
     return json(origin,200,result);
   }catch(error){
     const code=typeof error?.code==='string'?error.code:'';
+    if(error?.code==='CHECKIN_CONFLICT')return json(origin,409,{code:'CHECKIN_CONFLICT',error:'This check-in changed. Reload it before saving again.'});
+    if(error?.message==='Invalid check-in information.')return json(origin,400,{code:'INVALID_CHECKIN',error:error.message});
     if(error instanceof Error&&(error.message==='Invalid private athlete onboarding information.'||error.message==='Invalid feedback information.'))return json(origin,400,{code:'INVALID_PROFILE',error:error.message});
     if(code==='PENDING_ACTIVATION'||code==='ACCESS_PAUSED')return json(origin,403,{code,error:error.message});
     if(code==='NO_ASSIGNMENT'||code==='PROGRAMME_PENDING'||code==='HISTORY_NOT_FOUND'||code==='WEEK_NOT_AVAILABLE')return json(origin,409,{code,error:error.message});

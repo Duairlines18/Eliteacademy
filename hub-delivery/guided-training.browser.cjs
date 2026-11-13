@@ -24,6 +24,7 @@ const {chromium}=require('playwright');
   await page.route('**/*',async route=>{
    const req=route.request(),url=req.url();if(url.startsWith(base))return route.continue();if(!url.includes('/functions/v1/'))return route.abort();
    const body=req.postDataJSON()||{};let data={};
+   if(body.action==='checkin-state')return route.fulfill({json:{checkins:{enabled:false}}});
    if(body.action==='profile')data={onboardingComplete:true,onboarding:{sportPathway:'Track',primaryGoals:['Core'],trainingEnvironment:'Home',equipment:['Bodyweight only'],weeklyAvailability:'3 days',scheduleNotes:'Current weekly training schedule: Approved\nCurrent pain / injury / restriction: Follow approved restrictions\nPrevious significant injuries: Coach aware'}};
    if(body.action==='bootstrap')data={contentStatus:'published',audience,viewer:{firstName:'Synthetic'},athlete:{id:prefix+'athlete',displayName:'Synthetic'},programme:{id:prefix+'programme',title:'Assigned programme',week:parent?9:2,totalWeeks:10,sessions},exercises,delivery:{model:'private-athlete',copyWorkout:true}};
    if(body.action==='library')data={exercises};

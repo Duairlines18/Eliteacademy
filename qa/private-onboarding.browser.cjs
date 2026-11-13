@@ -14,7 +14,7 @@ const {chromium}=require('playwright');
   let athlete={id:'synthetic-athlete',athlete_user_id:'synthetic-user',full_name:'Test Athlete',display_name:'Test',athlete_type:'private',access_status:'active',access_reason:'complimentary',payment_status:'not_required',paid:false,programme_id:'synthetic-programme',current_week:1,onboarding_complete:false,onboarding_data:{}};
   let failSave=false;const saves=[];
   const bundle={cohort:{id:'synthetic-athlete',current_week:1},programme:{id:'synthetic-programme',name:'Private Athlete Speed & Jumps',duration_weeks:10},week:{week_number:1,status:'live',verification_status:'verified',published_at:'2026-10-01',weekly_objective:'Build your foundations'},trainingDays:[{id:'day-1',day_key:'Day 1',title:'Movement and Acceleration',sort_order:1},{id:'day-2',day_key:'Day 2',title:'Foundational Strength',sort_order:2},{id:'day-3',day_key:'Day 3',title:'Core and Jump Preparation',sort_order:3}],blocks:[{training_day_id:'day-1',title:'Warm-up',content:{items:['March — 2 x 8']}},{training_day_id:'day-2',title:'Strength',content:{items:['Bridge — 2 x 8']}},{training_day_id:'day-3',title:'Core',content:{items:['Dead bug — 2 x 8']}}],exercises:[]};
-  const repo={
+  const repo={weeklyCheckinState:async()=>({enabled:false}),
    findPrivateAthlete:async id=>{assert.equal(id,'synthetic-user');return structuredClone(athlete);},
    ensurePrivateAthlete:async user=>{assert.equal(user.id,'synthetic-user');return structuredClone(athlete);},
    updatePrivateAthleteOnboarding:async(id,fields)=>{assert.equal(id,'synthetic-user');saves.push(fields);athlete={...athlete,...structuredClone(fields)};return structuredClone(athlete);},
