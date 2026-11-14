@@ -21,11 +21,26 @@ await db.exec(read('qa/fixtures/database.sql'));
 await db.exec(read('qa/fixtures/audited-hub-policies.sql'));
 await db.exec(read('migrations/20261011_admin_update_workout_block.sql'));
 await db.exec(read('qa/fixtures/admin-publish-baseline.sql'));
+const durableVideos=process.env.HUB_QA_DURABLE_VIDEOS==='1';
+if(durableVideos){
+ await db.exec('alter table exercises add column name text;alter table exercises add column video_url text');
+ await db.exec("update exercises set name='Bridge',video_url='https://www.youtube.com/watch?v=abcdefghijk' where code='BR'");
+ await db.exec(read('qa/fixtures/audited-session-triggers.sql'));
+ await db.exec(read('rollout/durable-exercise-video-links.sql'));
+}
 const definitions=()=>db.query("select proname,pg_get_functiondef(oid) as definition from pg_proc where proname in ('admin_update_workout_block','admin_publish_programme_week') order by proname");
 const originalDefinitions=(await definitions()).rows;
 const privileges=()=>db.query("select r.rolname,has_function_privilege(r.rolname,'public.admin_update_workout_block(uuid,uuid,integer,uuid,jsonb,jsonb,boolean)','EXECUTE') as allowed from pg_roles r where rolname in ('anon','authenticated','service_role') order by rolname");
 const originalPrivileges=(await privileges()).rows;
 if(!baseline&&fs.existsSync(rollout))await db.exec(fs.readFileSync(rollout,'utf8'));
+if(process.env.HUB_QA_AUDIT_HISTORY==='1'){
+ const name=fs.readdirSync(new URL('migrations/',root)).find(x=>x.endsWith('_delivery_audit_history.sql'));
+ await db.exec(read('migrations/'+name));
+ if(process.env.HUB_QA_ASSIGNMENT_HISTORY==='1'){
+  const next=fs.readdirSync(new URL('migrations/',root)).find(x=>x.endsWith('_delivery_assignment_history.sql'));
+  await db.exec(read('migrations/'+next));
+ }
+}
 try{
  await test('database integration: exact SQL over synthetic local records',async t=>{
   await t.test('instruction-only prescription updates and restores without losing literal details',async()=>{
@@ -59,7 +74,7 @@ try{
   });
   await t.test('shared edits require explicit confirmation and remain reversible',async()=>{
    await db.query("insert into athletes(id,programme_id,access_status) values ('30000000-0000-4000-8000-000000000002',$1,'active')",[programme]);await setAuth(uid(9),'service_role');const before=await content(),next={items:['QA shared change']};
-   await assert.rejects(rpc(next,before),/Shared programme edit/);const result=await rpc(next,before,true);assert.equal(result.affected_other_athletes,1);await rpc(before,next,true);await db.exec("delete from athletes where id='30000000-0000-4000-8000-000000000002'");
+   await assert.rejects(rpc(next,before),/Shared programme edit/);const result=await rpc(next,before,true);assert.equal(result.affected_other_athletes,1);await rpc(before,result.content,true);await db.exec("delete from athletes where id='30000000-0000-4000-8000-000000000002'");
   });
   await t.test('publication policies execute and parent/athlete get identical published rows',async()=>{
    await db.exec(read('rollout/hub-publication-policies.sql'));
@@ -118,8 +133,10 @@ try{
   });
   await t.test('existing canonical demo trigger may update links while every prescribed field survives',async()=>{
    await db.exec('begin');try{
-    await db.exec('alter table exercises add column name text;alter table exercises add column video_url text');
-    await db.exec(read('qa/fixtures/audited-session-triggers.sql'));
+    if(!durableVideos){
+     await db.exec('alter table exercises add column name text;alter table exercises add column video_url text');
+     await db.exec(read('qa/fixtures/audited-session-triggers.sql'));
+    }
     await db.query('update session_blocks set content=content where id=$1',[block]);
     await setAuth(uid(9),'service_role');const before=await content();
     const next={items:['QA running: 3 x 80m; rest 3 minutes'],prescriptions:[{instruction:'QA running: 3 x 80m; rest 3 minutes'}]};
@@ -128,7 +145,7 @@ try{
     await db.exec("update exercises set name='Bridge',video_url='https://www.youtube.com/watch?v=abcdefghijk' where code='BR'");
     const movement={items:['Bridge — 2 x 8'],prescriptions:[{exerciseCode:'BR',dosage:'2 x 8',rest:'60 seconds'}]};
     const canonical=await rpc(movement,before);
-    assert.deepEqual(canonical.content,{...movement,video_links:[{item_index:0,exercise:'Bridge',video_url:'https://www.youtube.com/watch?v=abcdefghijk'}]});
+    assert.deepEqual(canonical.content,{...movement,video_links:[{item_index:0,exercise:'Bridge',...(process.env.HUB_QA_DURABLE_VIDEOS==='1'?{exerciseCode:'BR',reviewed_item:movement.items[0]}:{}),video_url:'https://www.youtube.com/watch?v=abcdefghijk'}]});
     await rpc(before,canonical.content);assert.deepEqual(await content(),before);
     await db.query("update session_blocks set title='Air Zim Warm-Up' where id=$1",[block]).then(()=>assert.fail('Protected warm-up was allowed to lose its prescriptions'),error=>assert.match(error.message,/complete exercise prescriptions/));
    }finally{await db.exec('rollback');}
