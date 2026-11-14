@@ -12,7 +12,7 @@ if(!filename)throw new Error('Usage: node qa/check-workout-delivery.mjs /private
 const data=JSON.parse(fs.readFileSync(filename,'utf8'));
 const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const part=(a,b)=>{const start=html.indexOf(a),end=html.indexOf(b,start+a.length);assert.ok(start>=0&&end>start);return html.slice(start,end)};
-const ctx={DuHubDelivery:delivery,programme:()=>({week:0}),HUB_STATE:{audience:'private-athlete'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSchoolReferenceViewer:()=>false,isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),encodeURIComponent};
+const ctx={URL,DuHubDelivery:delivery,programme:()=>({week:0}),HUB_STATE:{audience:'private-athlete'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSchoolReferenceViewer:()=>false,isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),encodeURIComponent};
 vm.createContext(ctx);vm.runInContext(fs.readFileSync(new URL('./workout-validation.js',import.meta.url),'utf8'),ctx);
 vm.runInContext(part('  function simpleText(','  function visibleNormalizedSections(')+part('  function deliverySections(','  function staffAllGroupsExperience(')+part('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')+';globalThis.api={normalizeWorkoutSession,schoolAthleteDelivery,athleteCopyText};',ctx);
 let checkedLinks=0,checkedPrescriptions=0,checkedBlocks=0;
@@ -40,7 +40,18 @@ for(const week of data.weeks){
     if(!rx.exerciseCode&&rx.instruction){assert.ok(section.items.some(i=>[i.title,i.dosage,i.rest,i.cue].join(' ').includes(rx.instruction)||copied.includes(rx.instruction)),'Missing running instruction');continue;}
     const item=section.items.find(i=>i.key.startsWith('p:')&&i.code===rx.exerciseCode&&i.dosage===rx.dosage);
     assert.ok(item,'Missing prescription/dose: '+rx.exerciseCode);
-    assert.equal(item.rest,rx.rest||'');checkedPrescriptions++;
+    assert.equal(item.rest,rx.rest||'');
+    const prescribedExercise=data.exercises.find(e=>e.code===rx.exerciseCode);
+    if(prescribedExercise?.active!==false && prescribedExercise?.video_url){
+      const expected=prescribedExercise.video_url;
+      assert.ok(item.videoUrl===expected||(item.demos||[]).some(d=>d.url===expected),
+        'Prescribed exercise demo not rendered: '+rx.exerciseCode+' in '+block.title);
+      assert.ok(sheet.includes(ctx.escapeHtml(expected)),
+        'Prescribed exercise demo absent from athlete HTML: '+rx.exerciseCode);
+      assert.ok(copied.includes(expected),
+        'Prescribed exercise demo absent from Copy Workout: '+rx.exerciseCode);
+    }
+    checkedPrescriptions++;
    }
    for(const link of block.content.video_links||[]){
     const exercise=data.exercises.find(e=>e.active!==false&&e.name===link.exercise);

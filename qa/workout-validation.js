@@ -4,9 +4,31 @@ function workoutDeliveryIssues(blocks, library) {
   const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   const exercises = Array.isArray(library) ? library : [];
   const byCode = new Map(exercises.map(exercise => [exercise.code, exercise]));
+  // Match the Hub player: only supported HTTPS YouTube URLs with 11-character video IDs.
+  const playableUrl = (value, id) => {
+    const raw = typeof value === 'string' && value.trim()
+      ? value.trim()
+      : typeof id === 'string' && /^[A-Za-z0-9_-]{11}$/.test(id)
+        ? 'https://www.youtube.com/watch?v=' + id : '';
+    try {
+      const url = new URL(raw);
+      if (url.protocol !== 'https:' || url.username || url.password || url.port) return false;
+      const host = url.hostname.toLowerCase();
+      let key = '';
+      if (['youtube.com','www.youtube.com','m.youtube.com','youtube-nocookie.com','www.youtube-nocookie.com'].includes(host)) {
+        if (url.pathname === '/watch') key = url.searchParams.get('v') || '';
+        else {
+          const parts = url.pathname.split('/').filter(Boolean);
+          if (parts.length === 2 && ['shorts','embed'].includes(parts[0])) key = parts[1];
+        }
+      } else if (host === 'youtu.be' || host === 'www.youtu.be') {
+        key = url.pathname.split('/').filter(Boolean).join('/');
+      }
+      return /^[A-Za-z0-9_-]{11}$/.test(key);
+    } catch { return false; }
+  };
   const hasDemo = exercise => exercise && exercise.active !== false &&
-    (/^https:\/\/(?:www\.)?(?:youtube\.com|youtu\.be|youtube-nocookie\.com)\//i.test(exercise.video_url || exercise.videoUrl || '')
-      || /^[A-Za-z0-9_-]{6,100}$/.test(exercise.video_id || exercise.videoId || ''));
+    playableUrl(exercise.video_url || exercise.videoUrl, exercise.video_id || exercise.videoId);
   for (const block of blocks) {
     const content = block?.content || {}, label = block.title || 'Workout';
     const prescriptions = Array.isArray(content.prescriptions) ? content.prescriptions : [];
@@ -26,7 +48,18 @@ function workoutDeliveryIssues(blocks, library) {
       if (!Number.isInteger(link?.item_index) || link.item_index < 0 || typeof items[link.item_index] !== 'string') {
         issues.push(label + ': demo points to a missing instruction row'); continue;
       }
-      if (!hasDemo(exercises.find(exercise => (exercise.name || exercise.title) === link.exercise))) issues.push(label + ': approved active demo missing for ' + link.exercise);
+      const linkedExercise = exercises.find(exercise => (exercise.name || exercise.title) === link.exercise);
+      if (!hasDemo(linkedExercise)) {
+        issues.push(label + ': approved active demo missing for ' + link.exercise);
+        continue;
+      }
+      const canonicalUrl = linkedExercise.video_url || linkedExercise.videoUrl || '';
+      const suppliedUrl = link.video_url || link.videoUrl || '';
+      if (canonicalUrl && suppliedUrl && suppliedUrl !== canonicalUrl) issues.push(label + ': demo URL differs from library for ' + link.exercise);
+      const prescription = prescriptions[link.item_index];
+      if (prescription?.exerciseCode && typeof items[link.item_index] === 'string' && !items[link.item_index].includes(';') && ![prescription.exerciseCode, prescription.alternativeExerciseCode].filter(Boolean).includes(linkedExercise.code)) {
+        issues.push(label + ': demo exercise does not match prescribed code at row ' + (link.item_index + 1));
+      }
     }
     for (const [index, item] of items.entries()) {
       if (typeof item !== 'string' || !item.trim()) {issues.push(label + ': empty instruction row ' + (index + 1)); continue;}
