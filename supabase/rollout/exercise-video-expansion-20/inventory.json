@@ -1,0 +1,290 @@
+[
+  {
+    "ordinal": 1,
+    "code": "PLY12",
+    "name": "Continuous Bench-Assisted Single-Leg Pogos",
+    "video_id": "FNmXU6Y0dSA",
+    "video_url": "https://www.youtube.com/shorts/FNmXU6Y0dSA",
+    "category_slug": "ply",
+    "categories": [
+      "ply",
+      "ank"
+    ],
+    "coaching_cues": "Continuous vertical contacts; stay tall and keep a steady rhythm.",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1001
+  },
+  {
+    "ordinal": 2,
+    "code": "PLY13",
+    "name": "Bench-Assisted Forward & Backward Single-Leg Pogos",
+    "video_id": "HmGQh619zLE",
+    "video_url": "https://www.youtube.com/shorts/HmGQh619zLE",
+    "category_slug": "ply",
+    "categories": [
+      "ply",
+      "ank"
+    ],
+    "coaching_cues": "Keep forward/backward contacts small, controlled and rhythmic.",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1002
+  },
+  {
+    "ordinal": 3,
+    "code": "PLY14",
+    "name": "Bench-Assisted Triangle Single-Leg Pogos",
+    "video_id": "viTsnTKQSe8",
+    "video_url": "https://www.youtube.com/shorts/viTsnTKQSe8",
+    "category_slug": "ply",
+    "categories": [
+      "ply",
+      "ank"
+    ],
+    "coaching_cues": "Maintain control and alignment through triangle-direction contacts.",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1003
+  },
+  {
+    "ordinal": 4,
+    "code": "STR06",
+    "name": "Single-Leg Eccentric Box Squat — Explosive Up",
+    "video_id": "C6DJkHnaJH0",
+    "video_url": "https://www.youtube.com/shorts/C6DJkHnaJH0",
+    "category_slug": "str",
+    "categories": [
+      "str"
+    ],
+    "coaching_cues": "Lower with control; drive upward intentionally.",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1004
+  },
+  {
+    "ordinal": 5,
+    "code": "PLY15",
+    "name": "Seated Tuck-to-Vertical Jump",
+    "video_id": "GIevwzw8new",
+    "video_url": "https://www.youtube.com/shorts/GIevwzw8new",
+    "category_slug": "ply",
+    "categories": [
+      "ply"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1005
+  },
+  {
+    "ordinal": 6,
+    "code": "STR07",
+    "name": "Supported Deep Knee Bend (Assisted Knee-Over-Toe Squat)",
+    "video_id": "OOH7c2sKip8",
+    "video_url": "https://www.youtube.com/shorts/OOH7c2sKip8",
+    "category_slug": "str",
+    "categories": [
+      "str",
+      "mob"
+    ],
+    "coaching_cues": "Use support and comfortable knee travel; never force the range.",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1006
+  },
+  {
+    "ordinal": 7,
+    "code": "ISO03",
+    "name": "Split Squat Isometric Hold (Bodyweight or Weighted)",
+    "video_id": "zvw0VHcCwto",
+    "video_url": "https://www.youtube.com/shorts/zvw0VHcCwto",
+    "category_slug": "iso",
+    "categories": [
+      "iso",
+      "str"
+    ],
+    "coaching_cues": "Hold a stable split-squat position; prescribe hold time, not repetitions.",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1007
+  },
+  {
+    "ordinal": 8,
+    "code": "PLY16",
+    "name": "Box Jump + Stick Landing",
+    "video_id": "DDadUDHgiyU",
+    "video_url": "https://www.youtube.com/shorts/DDadUDHgiyU",
+    "category_slug": "ply",
+    "categories": [
+      "ply"
+    ],
+    "coaching_cues": "Land with control and stabilize; prioritize landing quality over box height.",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1008
+  },
+  {
+    "ordinal": 9,
+    "code": "CORE12",
+    "name": "Bear Series — Opposite Toe Touch",
+    "video_id": "Tpp9h6tXNY8",
+    "video_url": "https://www.youtube.com/shorts/Tpp9h6tXNY8",
+    "category_slug": "core",
+    "categories": [
+      "core",
+      "act"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.",
+    "display_order": 1009
+  },
+  {
+    "ordinal": 10,
+    "code": "MOB05",
+    "name": "Shoulder Airplane",
+    "video_id": "7vF74hmyxPc",
+    "video_url": "https://www.youtube.com/shorts/7vF74hmyxPc",
+    "category_slug": "mob",
+    "categories": [
+      "mob"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1010
+  },
+  {
+    "ordinal": 11,
+    "code": "MOB06",
+    "name": "Couch Stretch",
+    "video_id": "wEe7pfcm8ns",
+    "video_url": "https://www.youtube.com/shorts/wEe7pfcm8ns",
+    "category_slug": "mob",
+    "categories": [
+      "mob"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Potential alternate demonstration of MOB02 Kneeling Couch Stretch; existing record/video preserved pending comparison.",
+    "display_order": 1011
+  },
+  {
+    "ordinal": 12,
+    "code": "MOB07",
+    "name": "Seated Pigeon — Knee-to-Chest Rock",
+    "video_id": "Uj7FxJRnja8",
+    "video_url": "https://www.youtube.com/shorts/Uj7FxJRnja8",
+    "category_slug": "mob",
+    "categories": [
+      "mob"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1012
+  },
+  {
+    "ordinal": 13,
+    "code": "MOB08",
+    "name": "Seated Pigeon — Knee Push Away",
+    "video_id": "ZkRmZh3gxLU",
+    "video_url": "https://www.youtube.com/shorts/ZkRmZh3gxLU",
+    "category_slug": "mob",
+    "categories": [
+      "mob"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1013
+  },
+  {
+    "ordinal": 14,
+    "code": "MOB09",
+    "name": "Seated Pigeon — Figure-4 Forward Lean",
+    "video_id": "aYdisAtwlNA",
+    "video_url": "https://www.youtube.com/shorts/aYdisAtwlNA",
+    "category_slug": "mob",
+    "categories": [
+      "mob"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.",
+    "display_order": 1014
+  },
+  {
+    "ordinal": 15,
+    "code": "ACT09",
+    "name": "Table Position — 6-Movement Activation Series",
+    "video_id": "i7Kdkh2eSqE",
+    "video_url": "https://www.youtube.com/shorts/i7Kdkh2eSqE",
+    "category_slug": "act",
+    "categories": [
+      "act"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.",
+    "display_order": 1015
+  },
+  {
+    "ordinal": 16,
+    "code": "ACT10",
+    "name": "Seated Leg Raise Series",
+    "video_id": "licUqHf0kuw",
+    "video_url": "https://www.youtube.com/shorts/licUqHf0kuw",
+    "category_slug": "act",
+    "categories": [
+      "act",
+      "core"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.",
+    "display_order": 1016
+  },
+  {
+    "ordinal": 17,
+    "code": "ACT11",
+    "name": "Superman Activation Series",
+    "video_id": "nDrQyHNwtRg",
+    "video_url": "https://www.youtube.com/shorts/nDrQyHNwtRg",
+    "category_slug": "act",
+    "categories": [
+      "act"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.",
+    "display_order": 1017
+  },
+  {
+    "ordinal": 18,
+    "code": "ACT12",
+    "name": "Glute Bridge Activation Series",
+    "video_id": "TYSVGbdo-lI",
+    "video_url": "https://www.youtube.com/shorts/TYSVGbdo-lI",
+    "category_slug": "act",
+    "categories": [
+      "act",
+      "str"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.",
+    "display_order": 1018
+  },
+  {
+    "ordinal": 19,
+    "code": "MOB10",
+    "name": "Body Circles Mobility Series",
+    "video_id": "BeWvd3n4lk0",
+    "video_url": "https://www.youtube.com/shorts/BeWvd3n4lk0",
+    "category_slug": "mob",
+    "categories": [
+      "mob"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.",
+    "display_order": 1019
+  },
+  {
+    "ordinal": 20,
+    "code": "MOB11",
+    "name": "Ground Mobility Series",
+    "video_id": "wm0LZwdtImk",
+    "video_url": "https://www.youtube.com/shorts/wm0LZwdtImk",
+    "category_slug": "mob",
+    "categories": [
+      "mob"
+    ],
+    "coaching_cues": "",
+    "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.",
+    "display_order": 1020
+  }
+]
