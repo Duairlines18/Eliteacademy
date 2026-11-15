@@ -35,6 +35,7 @@
  }
  function create(options){
   const {root:container,post,getSession,clearTraining,onReady,onLogout}=options;
+  const identityKey=()=>options.getIdentity?options.getIdentity():JSON.stringify(getSession());
   let state=null,version=0,identity='',active=null,activeDraft=null;
   const drafts=new Map();
   const eligible=()=>{const s=getSession();return s?.mode==='account'&&['parent','private-athlete'].includes(s.audience);};
@@ -64,24 +65,28 @@
   }
   function hold(){shell('Coach Du needs to review this','<div class="wc-notice"><p>Your report has been saved. Training is on hold while Coach Du reviews it.</p><p>Submitting a check-in does not give medical clearance. Contact Coach Du about the next step.</p></div><a class="wc-primary" href="mailto:coachdu@duairlineseliteacademy.com">Contact Coach Du</a>');}
   function safetyInfo(){shell('Safety information','<p>Stop any exercise that causes pain or makes symptoms worse. Do not use a check-in as permission to continue through pain or illness.</p><p>If symptoms need urgent help, seek local medical care. For a child, involve their parent or guardian.</p><p>Coach Du can review and adjust training. Feedback submission is not medical clearance.</p><a href="#/hub/athlete">Return to check-in / Hub</a>');}
-  function issue(){shell('Report an issue','<p>Tell Coach Du what is affecting training. You can send this even while a check-in is overdue.</p><form id="wcIssueForm">'+radios('reason','What is affecting training?',[['pain','Pain / injury / tightness'],['illness','Illness'],['schedule','School / schedule'],['other','Other']],null,false,false)+'<label class="wc-text">What should Coach Du know?<textarea name="note" maxlength="1000" required rows="4"></textarea></label><p data-wc-error role="alert"></p><button type="submit" class="wc-primary">Send to Coach Du</button></form>');const el=container.querySelector('#wcIssueForm');let id=null,serialized=null;el.onsubmit=async e=>{e.preventDefault();const data=read(el),input={reason:data.reason,note:data.note},value=JSON.stringify(input),button=el.querySelector('[type=submit]');if(value!==serialized){id=crypto.randomUUID();serialized=value;}const stamp=JSON.stringify(getSession());button.disabled=true;try{await post({action:'report-checkin-issue',input,submissionId:id});if(stamp!==JSON.stringify(getSession())||!el.isConnected)return;shell('Issue sent to Coach Du','<p>Your report is saved.</p><a href="#/hub/athlete">Return to check-in / Hub</a>');}catch(err){el.querySelector('[data-wc-error]').textContent=err.message||'Unable to send. Try again.';button.disabled=false;}};}
+  function issue(){shell('Report an issue','<p>Tell Coach Du what is affecting training. You can send this even while a check-in is overdue.</p><form id="wcIssueForm">'+radios('reason','What is affecting training?',[['pain','Pain / injury / tightness'],['illness','Illness'],['schedule','School / schedule'],['other','Other']],null,false,false)+'<label class="wc-text">What should Coach Du know?<textarea name="note" maxlength="1000" required rows="4"></textarea></label><p data-wc-error role="alert"></p><button type="submit" class="wc-primary">Send to Coach Du</button></form>');const el=container.querySelector('#wcIssueForm');let id=null,serialized=null;el.onsubmit=async e=>{e.preventDefault();const data=read(el),input={reason:data.reason,note:data.note},value=JSON.stringify(input),button=el.querySelector('[type=submit]');if(value!==serialized){id=crypto.randomUUID();serialized=value;}const stamp=identityKey();button.disabled=true;try{await post({action:'report-checkin-issue',input,submissionId:id});if(stamp!==identityKey()||!el.isConnected)return;shell('Issue sent to Coach Du','<p>Your report is saved.</p><a href="#/hub/athlete">Return to check-in / Hub</a>');}catch(err){el.querySelector('[data-wc-error]').textContent=err.message||'Unable to send. Try again.';button.disabled=false;}};}
   function list(){const reqs=state.requirements||[];shell('Your weekly check-ins','<p>Completed reports stay saved. Update a report if you have more information.</p>'+reqs.slice().reverse().map(r=>'<article class="wc-history"><strong>'+(parent()?'Sunday check-in · Week of '+esc(r.period_start):'Week '+esc(r.week_number)+' · '+(r.kind==='start'?'Start':'End')+' of week')+'</strong><p>'+esc(r.period_start)+' · '+(r.submitted_at?'Submitted':r.due_date<=state.today?'Due':'Opens '+esc(r.due_date))+'</p>'+(r.submitted_at?'<button type="button" data-wc-amend="'+esc(r.id)+'">View / update report</button>':'')+'</article>').join('')+(!parent()&&reqs.some(r=>r.kind==='end'&&!r.submitted_at&&r.due_date>state.today)?'<button type="button" class="wc-primary" data-wc-open-end>I have finished this week’s training</button><p>This opens your end-of-week check-in early.</p>':'')+'<a href="#/hub/athlete">Back to Hub</a>');container.querySelectorAll('[data-wc-amend]').forEach(button=>button.onclick=()=>form(reqs.find(r=>r.id===button.dataset.wcAmend)));const open=container.querySelector('[data-wc-open-end]');if(open)open.onclick=async()=>{open.disabled=true;try{await post({action:'open-end-checkin'});onReady();}catch(err){errorScreen(err.message);}};}
   async function guard(route){
    if(!eligible())return false;
-   const nextIdentity=JSON.stringify(getSession());if(identity!==nextIdentity){identity=nextIdentity;drafts.clear();active=null;}
+   const nextIdentity=identityKey();if(identity!==nextIdentity){identity=nextIdentity;state=null;drafts.clear();active=null;}
    const requestVersion=++version,stamp=identity;
    // Support must remain usable even if the verification endpoint is temporarily unavailable.
    if(route==='/checkin-safety'){clearTraining();safetyInfo();return true;}
    if(route==='/checkin-issue'){clearTraining();issue();return true;}
-   shell('Checking your weekly check-in…','<p>Please wait a moment.</p>');
-   try{const data=await post({action:'checkin-state'});if(requestVersion!==version||stamp!==JSON.stringify(getSession())||(location.hash.replace('#/hub','')||'/')!==route)return true;state=data.checkins;if(!state||typeof state.enabled!=='boolean')throw Error('Check-in verification is unavailable.');
+   // Recheck every route on the server without replacing an already verified
+   // account's page with an intermediate check-in screen. This is display state,
+   // never permission to skip the request or open the next route early.
+   const previouslyClear=state&&typeof state.enabled==='boolean'&&(!state.enabled||(Array.isArray(state.due)&&state.due.length===0&&state.held===false));
+   if(!previouslyClear)shell('Checking your weekly check-in…','<p>Please wait a moment.</p>');
+   try{const data=await post({action:'checkin-state'});if(requestVersion!==version||stamp!==identityKey()||(location.hash.replace('#/hub','')||'/')!==route)return true;state=data.checkins;if(!state||typeof state.enabled!=='boolean')throw Error('Check-in verification is unavailable.');
     if(!state.enabled)return false;
     if(!Array.isArray(state.due)||typeof state.held!=='boolean')throw Error('Check-in verification is unavailable.');
     if(state.due.length){clearTraining();form(state.due[0]);return true;}
     if(state.held){clearTraining();hold();return true;}
     if(route==='/feedback'||route==='/checkin'){list();return true;}
     return false;
-   }catch(err){if(requestVersion!==version||stamp!==JSON.stringify(getSession()))return true;clearTraining();errorScreen(err.message);return true;}
+   }catch(err){if(requestVersion!==version||stamp!==identityKey()||(location.hash.replace('#/hub','')||'/')!==route)return true;clearTraining();errorScreen(err.message);return true;}
   }
   function forget(){version++;identity='';state=null;drafts.clear();active=null;activeDraft=null;}
   return {guard,eligible,forget,get enabled(){return state?.enabled===true;}};
