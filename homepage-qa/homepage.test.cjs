@@ -85,6 +85,8 @@ const withoutAirZimPresentation=source=>source
  .replace(/  function normalizeExerciseCategories\([^\n]+\n/,'  CATEGORY_TRANSLATION\n')
  .replace(/  async function loadHubData\([\s\S]*?(?=  function categoryRoute\()/,'  SHARED_BOOTSTRAP\n')
  // Workout delivery has its own dose/rest/cue/demo regression suite.
+ // Coaching parsing is covered by exercise-coaching-standard.test.mjs, including all 85 entries.
+ .replace(/  function coachingParts\([^\n]+\n/,'  COACHING_NOTE_PARSER\n')
  .replace(/  function normalizedTextItem\([\s\S]*?(?=  function normalizeWorkoutSession\()/,'  WORKOUT_TEXT_DELIVERY\n')
  .replace(/  function athleteCopyText\([\s\S]*?(?=  function schoolAthleteDelivery\()/,'  WORKOUT_COPY_DELIVERY\n')
  .replace(/  function normalizeWorkoutSession\([\s\S]*?(?=  function visibleNormalizedSections\()/,'  WORKOUT_NORMALIZER\n')

@@ -7,7 +7,7 @@ const {chromium}=require('playwright');
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch({headless:true});
  const codes=['WU01','WU06','WU07','WU05','WU03','SPR01','PLY03','STR02','PLY01','MOB04','CORE01'];
  const names=['Ankle Rock','Leg Swing Front / Back','Leg Swing Side / Side','High-Knee Hip Rotation Out','Walking Lunge + Rotation','A-March','Two-Leg Pogos','Step-Up','Snap Down','Diaphragmatic Breathing','Dead Bug'];
- const exercises=codes.map((code,i)=>({code,title:names[i],videoId:'abcdefghijk',videoUrl:'https://youtu.be/abcdefghijk',description:'Use the prescribed comfortable position.',coachingCues:'Cue: Stay controlled.',active:true}));
+ const exercises=codes.map((code,i)=>({code,title:names[i],videoId:'abcdefghijk',videoUrl:'https://youtu.be/abcdefghijk',description:'Use the prescribed comfortable position.',coachingCues:'Cue: Stay controlled. Avoid: Rushing transitions.',active:true}));
  let checks=0;const ok=(value,label)=>{assert.ok(value,label);checks++;};
  try{for(const width of [390,1440])for(const who of ['parent','parent-demo','private','private-demo']){
   const parent=who.startsWith('parent'),audience=parent?'parent':'private-athlete',prefix=who+'-',completions=new Map(),errors=[];
@@ -69,6 +69,8 @@ const {chromium}=require('playwright');
   await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();
   const firstKey=parent?'p:1:8:STR02':'p:1:0:MOB04';ok(await page.locator('[data-completion-toggle]').getAttribute('data-item-key')===firstKey,'original completion key retained');
   ok(await page.locator('.hub-guided-teach').count()>=2,'instructions and cue visible');ok(await page.locator('[data-guided-next]').isEnabled(),'next available');
+  ok((await page.locator('.hub-guided-teach.avoid').innerText()).includes('Rushing transitions.'),'library Avoid remains visible with saved custom cue');
+  ok((await page.locator('.hub-guided-teach-grid').innerText()).includes('Only if comfortable.'),'saved custom cue stays visible');
   if(!parent)ok((await page.locator('.hub-objective').innerText()).includes('No jumping'),'injury restrictions visible');
   await page.locator('[data-completion-toggle]').click();await page.getByRole('button',{name:'Try again',exact:true}).waitFor();ok(!completions.has(day.id+'|'+firstKey),'failed save does not mark complete');await page.locator('[data-completion-toggle]').click();await page.waitForFunction(()=>document.querySelector('.hub-guided-step')?.textContent==='2 of 2');
   await page.reload();await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();ok((await page.locator('.hub-guided-step').innerText())==='2 of 2','reload resumes unfinished exercise');
