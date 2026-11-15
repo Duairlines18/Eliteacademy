@@ -62,6 +62,8 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Verify mandatory parent and private check-in entry on mobile and desktop
         run: node hub-delivery/weekly-checkins.browser.cjs
+      - name: Verify smooth Hub navigation and mandatory gate enforcement
+        run: node hub-delivery/navigation.browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
