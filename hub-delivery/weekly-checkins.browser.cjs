@@ -33,6 +33,10 @@ const {chromium}=require('playwright');
   await choose(parent?'recovery':'body',parent?'unwell':'pain');await page.locator('[name=symptoms]').fill('Ankle tightness');await choose('painApplicable','yes');await page.locator('[name=severity]').selectOption('4');await choose('movement','unsure');await page.locator('#mandatoryCheckinForm button[type=submit]').click();await page.getByRole('heading',{name:'Coach Du needs to review this'}).waitFor();assert.equal(state.held,true);assert.equal(req.payload.severity,4);
   await page.getByRole('link',{name:'Safety information',exact:true}).click();await page.getByRole('heading',{name:'Safety information',exact:true}).waitFor();assert.equal(await page.getByRole('link',{name:'Contact Coach Du',exact:true}).count(),1);assert.equal(await page.getByRole('button',{name:'Log out',exact:true}).count(),1);
   state.held=false;failStatus=true;await page.evaluate(()=>location.hash='#/hub/session/day-1');await page.getByRole('heading',{name:'Unable to verify your check-in'}).waitFor();assert.equal(await page.locator('#hub-root').getByText('Bridge — 2 x 8; rest 60 sec',{exact:true}).count(),0);
+  // Hash/popstate renders can still be verifying the failed status after the
+  // first error heading appears. Keep the fixture offline until they settle,
+  // so an in-flight render cannot consume recovery before the retry click.
+  await page.waitForLoadState('networkidle');
   failStatus=false;await page.getByRole('button',{name:'Try again',exact:true}).click();await page.locator('a[href="#/hub/session/day-1"]').first().waitFor();
   state.due=[{...req,id:'next-end',kind:'end',payload:null,revision:0,submitted_at:null}];state.requirements.push(state.due[0]);await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await page.locator('#mandatoryCheckinForm').waitFor();assert.match(await page.locator('#hub-root').innerText(),parent?/Sunday check-in/:/End-of-week/);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);await page.screenshot({path:`/tmp/checkins-${audience}-${width}.png`,fullPage:true});
