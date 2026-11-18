@@ -1,0 +1,1532 @@
+[
+  {
+    "code": "ACC01",
+    "name": "Wall March",
+    "video_id": "bBfLvmrHDkc",
+    "video_url": "https://www.youtube.com/shorts/bBfLvmrHDkc",
+    "before": {
+      "description": "Face a stable wall with hands at shoulder height. Lean from your ankles in a straight line; lift one knee, place the foot back under your hip and alternate as assigned. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise acceleration posture and controlled single-leg support.",
+      "coaching_cues": "Cue: Long body. Hips forward. Foot under hip. Avoid: Folding at the waist, arching the lower back or reaching the foot ahead.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Face a firm wall with your hands at shoulder height. Lean from your ankles. Lift one knee, set your foot down under your hip and switch legs.",
+      "purpose": "Practise acceleration posture and controlled single-leg support.",
+      "coaching_cues": "Cue: Step down under your hip. Avoid: Bending at the waist. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACC02",
+    "name": "Wall Switch",
+    "video_id": "aIRTnxFAZNE",
+    "video_url": "https://www.youtube.com/shorts/aIRTnxFAZNE",
+    "before": {
+      "description": "Set a straight-body lean against a stable wall. Exchange the raised and supporting legs as demonstrated, landing the supporting foot under the hip; reset if posture changes. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise coordinated leg exchanges while holding an acceleration position.",
+      "coaching_cues": "Cue: Push the wall. Switch under hips. Keep your shape. Avoid: Bouncing the hips, collapsing through the shoulders or trading control for speed.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lean into a firm wall with your body in a straight line and one knee up. Switch legs as shown and put the new support foot down under your hip.",
+      "purpose": "Practise coordinated leg exchanges while holding an acceleration position.",
+      "coaching_cues": "Cue: Switch under your hips. Avoid: Letting your hips bounce up and down. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACC03",
+    "name": "Falling Start",
+    "video_id": "IdFSYpV9z20",
+    "video_url": "https://www.youtube.com/shorts/IdFSYpV9z20",
+    "before": {
+      "description": "On a clear, non-slip lane, stand tall with feet under hips. Lean forward from the ankles until a step is needed, then push into the assigned run and slow down beyond the finish. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise projecting the body into the first acceleration steps.",
+      "coaching_cues": "Cue: Lean as one. Push away. Rise gradually. Avoid: Bending at the waist, falling beyond control or stopping abruptly at the finish.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "On a clear lane with room to slow down, stand tall and lean forward from your ankles. When you need to step, push into your run. Slow down after the finish.",
+      "purpose": "Practise projecting the body into the first acceleration steps.",
+      "coaching_cues": "Cue: Lean as one piece. Avoid: Bending at the waist or leaning past your control. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACC04",
+    "name": "Two-Point Start",
+    "video_id": "sD1iGWZ_4Qs",
+    "video_url": "https://www.youtube.com/shorts/sD1iGWZ_4Qs",
+    "before": {
+      "description": "Use a staggered stance on a clear lane, with the front foot loaded and arms ready. Push into the first steps and let the body rise as speed builds. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise a balanced standing start and purposeful first steps.",
+      "coaching_cues": "Cue: Push back. Drive arms. Rise with speed. Avoid: Reaching for a long first step, jumping upward or forcing the head down.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Put one foot in front of the other on a clear lane. Put your weight on the front foot and push into your first steps. Rise as you build speed.",
+      "purpose": "Practise a balanced standing start and purposeful first steps.",
+      "coaching_cues": "Cue: Push the ground back. Avoid: Reaching too far on the first step. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACC05",
+    "name": "10–30m Acceleration",
+    "video_id": "",
+    "video_url": "",
+    "before": {
+      "description": "Use the start Coach Du assigns and check the lane and run-out are clear. Accelerate over the prescribed 10–30 m at the assigned effort, then ease down gradually. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Build speed through progressive acceleration over the assigned distance.",
+      "coaching_cues": "Cue: Push with intent. Build each step. Run through the finish. Avoid: Overstriding, forcing a low posture or adding distance or effort beyond the programme.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Use the start, distance and effort your coach assigned. Build speed on a clear lane. Leave room to ease down after the finish.",
+      "purpose": "Build speed through progressive acceleration over the assigned distance.",
+      "coaching_cues": "Cue: Build speed with each step. Avoid: Reaching too far ahead with your feet. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT01",
+    "name": "Glute Bridge",
+    "video_id": "nD1CM76NlVs",
+    "video_url": "https://www.youtube.com/shorts/nD1CM76NlVs",
+    "before": {
+      "description": "Lie on your back on a mat with knees bent and feet flat. Press through the feet to lift the hips in line with the trunk, then lower smoothly. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop controlled hip extension using the glute muscles.",
+      "coaching_cues": "Cue: Ribs settled. Squeeze glutes. Lower slowly. Avoid: Pushing so high that the lower back arches, or letting the knees drift inward.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your back with both feet flat and your knees bent. Push through your feet to lift your hips, then lower slowly.",
+      "purpose": "Develop controlled hip extension using the glute muscles.",
+      "coaching_cues": "Cue: Squeeze your glutes as your hips rise. Avoid: Arching your lower back to lift higher. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT02",
+    "name": "Single-Leg Glute Bridge",
+    "video_id": "zZD--pmOBLM",
+    "video_url": "https://www.youtube.com/shorts/zZD--pmOBLM",
+    "before": {
+      "description": "Lie on your back with one foot planted and the other leg held as demonstrated. Lift and lower the hips while keeping both sides of the pelvis level; use the assigned range. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop hip extension and pelvic control on one supporting leg.",
+      "coaching_cues": "Cue: Level hips. Push through the planted foot. Control down. Avoid: Twisting the pelvis, arching the lower back or continuing through cramp or pain.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your back with one foot flat. Hold the other leg in the position your coach assigns. Push through the foot on the floor to lift your hips, then lower slowly.",
+      "purpose": "Develop hip extension and pelvic control on one supporting leg.",
+      "coaching_cues": "Cue: Keep both hips level. Avoid: One hip dropping or your lower back arching. Stop if it hurts or you lose control. Stop if you feel a cramp or pain.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT03",
+    "name": "Side-Lying Hip Abduction",
+    "video_id": "c3eH-sc8uBM",
+    "video_url": "https://www.youtube.com/shorts/c3eH-sc8uBM",
+    "before": {
+      "description": "Lie on your side with the pelvis stacked and the top leg long. Lift that leg a small distance from the hip, then lower slowly without rolling the trunk. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop controlled strength at the side of the hip.",
+      "coaching_cues": "Cue: Stack hips. Reach long. Lower slowly. Avoid: Rolling backward, turning the toes upward to gain height or lifting beyond control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your side with one hip above the other. Keep your top leg straight, lift it a little and lower it slowly.",
+      "purpose": "Develop controlled strength at the side of the hip.",
+      "coaching_cues": "Cue: Keep your top hip stacked. Avoid: Rolling backward to lift higher. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT04",
+    "name": "Clamshell",
+    "video_id": "SRLwCVGL53E",
+    "video_url": "https://www.youtube.com/shorts/SRLwCVGL53E",
+    "before": {
+      "description": "Lie on your side with hips and knees bent, feet together. Open the top knee only as far as you can without rolling backward, then close slowly. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise hip rotation while keeping the pelvis stable.",
+      "coaching_cues": "Cue: Feet together. Hips stacked. Open from the hip. Avoid: Twisting the lower back, rolling the pelvis or forcing a large range.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your side with your knees bent and feet together. Lift the top knee a little, then lower it slowly.",
+      "purpose": "Practise hip rotation while keeping the pelvis stable.",
+      "coaching_cues": "Cue: Keep your feet touching. Avoid: Rolling your top hip backward. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT05",
+    "name": "Fire Hydrant",
+    "video_id": "s73ByyYa1l4",
+    "video_url": "https://www.youtube.com/shorts/s73ByyYa1l4",
+    "before": {
+      "description": "Start on hands and knees on a mat. With the knee bent, lift one thigh out to the side within a comfortable range and return slowly. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop hip control while maintaining a stable trunk.",
+      "coaching_cues": "Cue: Hands under shoulders. Hips level. Move from the hip. Avoid: Leaning away, arching the back or rotating the whole pelvis.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start on your hands and knees. Keep one knee bent as you lift it out to the side. Lower it slowly.",
+      "purpose": "Develop hip control while maintaining a stable trunk.",
+      "coaching_cues": "Cue: Keep your hips facing the floor. Avoid: Turning your whole body to lift the knee higher. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT06",
+    "name": "Lateral Band Walk",
+    "video_id": "vAUZlEFjM9U",
+    "video_url": "https://www.youtube.com/shorts/vAUZlEFjM9U",
+    "before": {
+      "description": "Place a resistance band where shown in the demo and take a small athletic stance. Step sideways, then bring the trailing foot in under control while keeping band tension. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop lateral hip control while stepping against a band.",
+      "coaching_cues": "Cue: Small steps. Knees follow toes. Control the trailing foot. Avoid: Dragging the feet, snapping them together or using a band too strong to control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Put the band in the position your coach assigns. Bend your knees slightly, step sideways and bring your other foot in slowly.",
+      "purpose": "Develop lateral hip control while stepping against a band.",
+      "coaching_cues": "Cue: Keep a little tension in the band. Avoid: Dragging your second foot or letting the band go slack. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT07",
+    "name": "Monster Walk",
+    "video_id": "K-RCj59qZ5Y",
+    "video_url": "https://www.youtube.com/shorts/K-RCj59qZ5Y",
+    "before": {
+      "description": "Use the band position and walking direction demonstrated. Take short diagonal steps from a comfortable athletic stance, maintaining controlled band tension. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop hip control during resisted diagonal stepping.",
+      "coaching_cues": "Cue: Steady hips. Small steps. Keep tension. Avoid: Swaying the trunk, letting knees collapse inward or overstretching the band.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Put the band in the position your coach assigns. Bend your knees slightly and take short diagonal steps in the assigned direction.",
+      "purpose": "Develop hip control during resisted diagonal stepping.",
+      "coaching_cues": "Cue: Small steps, steady hips. Avoid: Taking steps so wide that you sway. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT08",
+    "name": "Single-Leg Bridge Hold",
+    "video_id": "JkdDIbfxMTQ",
+    "video_url": "https://www.youtube.com/shorts/JkdDIbfxMTQ",
+    "before": {
+      "description": "Lie on your back, plant one foot and hold the other leg as shown. Lift to a level-hip bridge and hold for the assigned seconds while breathing; lower to finish. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop single-leg hip extension control during a timed hold.",
+      "coaching_cues": "Cue: Hips level. Ribs settled. Breathe steadily. Avoid: Counting repetitions instead of hold time, arching the back or holding after the hips drop.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your back with one foot flat. Hold the other leg as assigned. Lift your hips, keep breathing during the hold and lower slowly.",
+      "purpose": "Develop single-leg hip extension control during a timed hold.",
+      "coaching_cues": "Cue: Keep both hips level. Avoid: Letting one hip drop during the hold. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT09",
+    "name": "Table Position — 6-Movement Activation Series",
+    "video_id": "i7Kdkh2eSqE",
+    "video_url": "https://www.youtube.com/shorts/i7Kdkh2eSqE",
+    "before": {
+      "description": "Sequence not yet verified. Watch the full demonstration first. Ask Coach Du to confirm the movement sequence and starting positions before your first session; use only the assigned variations in the confirmed order. Keep transitions controlled and use the sets, repetitions or time on your training sheet.",
+      "purpose": "Prepare controlled activation in the demonstrated table-position series.",
+      "coaching_cues": "Cue: Steady support. Control transitions. Breathe. Avoid: Letting the shoulders collapse, rushing transitions or adding movements not assigned.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Ask Coach Du to confirm the movement sequence before you start. Use the order and positions your coach gives you.",
+      "purpose": "Prepare controlled activation in the demonstrated table-position series.",
+      "coaching_cues": "Cue: Keep your body steady as you change position. Avoid: Guessing the order or rushing between positions.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT10",
+    "name": "Seated Leg Raise Series",
+    "video_id": "licUqHf0kuw",
+    "video_url": "https://www.youtube.com/shorts/licUqHf0kuw",
+    "before": {
+      "description": "Sequence not yet verified. Watch the full demonstration first. Ask Coach Du to confirm the movement sequence and starting positions before your first session; use only the assigned variations in the confirmed order. Keep transitions controlled and use the sets, repetitions or time on your training sheet.",
+      "purpose": "Practise controlled seated leg movement with a steady trunk.",
+      "coaching_cues": "Cue: Sit tall. Move smoothly. Use a small range. Avoid: Throwing the legs, rocking backward to gain height or forcing hip range.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Ask Coach Du to confirm the movement sequence before you start. Use the order and positions your coach gives you.",
+      "purpose": "Practise controlled seated leg movement with a steady trunk.",
+      "coaching_cues": "Cue: Lift and lower each leg slowly. Avoid: Guessing the order or rushing between positions.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT11",
+    "name": "Superman Activation Series",
+    "video_id": "nDrQyHNwtRg",
+    "video_url": "https://www.youtube.com/shorts/nDrQyHNwtRg",
+    "before": {
+      "description": "Sequence not yet verified. Watch the full demonstration first. Ask Coach Du to confirm the movement sequence and starting positions before your first session; use only the assigned variations in the confirmed order. Keep transitions controlled and use the sets, repetitions or time on your training sheet.",
+      "purpose": "Practise controlled back-body activation in the demonstrated series.",
+      "coaching_cues": "Cue: Length before height. Easy breathing. Small controlled lifts. Avoid: Throwing limbs upward, straining the neck or forcing the lower back into an arch.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Ask Coach Du to confirm the movement sequence before you start. Use the order and positions your coach gives you.",
+      "purpose": "Practise controlled back-body activation in the demonstrated series.",
+      "coaching_cues": "Cue: Lift only as far as you can control. Avoid: Guessing the order or rushing between positions.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ACT12",
+    "name": "Glute Bridge Activation Series",
+    "video_id": "TYSVGbdo-lI",
+    "video_url": "https://www.youtube.com/shorts/TYSVGbdo-lI",
+    "before": {
+      "description": "Sequence not yet verified. Watch the full demonstration first. Ask Coach Du to confirm the movement sequence and starting positions before your first session; use only the assigned variations in the confirmed order. Keep transitions controlled and use the sets, repetitions or time on your training sheet.",
+      "purpose": "Practise controlled hip extension through the demonstrated bridge variations.",
+      "coaching_cues": "Cue: Level hips. Ribs settled. Control each change. Avoid: Arching the lower back, rushing changes or treating every variation as extra assigned volume.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Ask Coach Du to confirm the movement sequence before you start. Use the order and positions your coach gives you.",
+      "purpose": "Practise controlled hip extension through the demonstrated bridge variations.",
+      "coaching_cues": "Cue: Keep your hips steady. Avoid: Guessing the order or rushing between positions.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ANK01",
+    "name": "Calf Raise",
+    "video_id": "C3BmRILCdK8",
+    "video_url": "https://www.youtube.com/shorts/C3BmRILCdK8",
+    "before": {
+      "description": "Stand with feet stable and use light hand support if needed. Rise through the balls of the feet and lower smoothly; use the one- or two-leg version prescribed. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop controlled calf strength through the assigned ankle range.",
+      "coaching_cues": "Cue: Rise tall. Keep ankles aligned. Control down. Avoid: Rolling onto the outside of the foot, bouncing or adding load before balance is steady.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand tall and hold a firm support if needed. Rise onto the balls of your feet, then lower slowly. Use the one-leg or two-leg version you were assigned.",
+      "purpose": "Develop controlled calf strength through the assigned ankle range.",
+      "coaching_cues": "Cue: Rise straight up. Avoid: Rolling onto the outer edge of your foot. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ANK02",
+    "name": "Bent-Knee Soleus Hold",
+    "video_id": "OAedc9Bl7rc",
+    "video_url": "https://www.youtube.com/shorts/OAedc9Bl7rc",
+    "before": {
+      "description": "Use stable hand support if needed. Keep the knee comfortably bent, raise the heel to the demonstrated position and hold for the prescribed seconds while breathing. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop calf capacity with the knee bent during a timed hold.",
+      "coaching_cues": "Cue: Knee stays bent. Heel steady. Foot aligned. Avoid: Straightening the knee, rolling the ankle outward or forcing a painful heel height.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Hold a firm support if needed. Bend the knee slightly, lift the heel and keep the knee bent for the assigned time. Keep breathing.",
+      "purpose": "Develop calf capacity with the knee bent during a timed hold.",
+      "coaching_cues": "Cue: Keep the knee bent. Avoid: Straightening the knee as you get tired. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ANK03",
+    "name": "Calf ISO Hold",
+    "video_id": "IcitpPYKq2c",
+    "video_url": "https://www.youtube.com/shorts/IcitpPYKq2c",
+    "before": {
+      "description": "Stand with light support if needed and rise onto the balls of the feet. Hold the assigned one- or two-leg position for the prescribed seconds, then lower under control. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop calf strength and ankle control during a timed hold.",
+      "coaching_cues": "Cue: Stand tall. Heel steady. Keep breathing. Avoid: Bouncing, rolling the ankle or staying up after control is lost.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Use the one-leg or two-leg position you were assigned. Rise onto the balls of your feet, hold for the assigned time, then lower slowly.",
+      "purpose": "Develop calf strength and ankle control during a timed hold.",
+      "coaching_cues": "Cue: Keep your heel at the same height. Avoid: Letting the heel drop during the hold. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ANK04",
+    "name": "Tibialis Raise",
+    "video_id": "4bidZUlkXV4",
+    "video_url": "https://www.youtube.com/shorts/4bidZUlkXV4",
+    "before": {
+      "description": "Keep heels grounded in the supported position shown. Lift the toes and forefeet toward the shins, then lower smoothly without shifting the whole body. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop control of the muscles that lift the front of the foot.",
+      "coaching_cues": "Cue: Heels down. Toes up. Control the return. Avoid: Rocking backward and forward, lifting the heels or forcing ankle range.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Set up with a firm support as your coach shows you. Keep your heels down. Lift the front of your feet toward your shins, then lower slowly.",
+      "purpose": "Develop control of the muscles that lift the front of the foot.",
+      "coaching_cues": "Cue: Heels down, toes up. Avoid: Rocking your body back to lift your feet. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE01",
+    "name": "Dead Bug",
+    "video_id": "wJbZ9qqVZ2Q",
+    "video_url": "https://www.youtube.com/shorts/wJbZ9qqVZ2Q",
+    "before": {
+      "description": "Lie on a mat with arms above the chest and hips and knees bent. Reach the opposite arm and leg away only as far as the lower back stays controlled; return and alternate as assigned. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise trunk control while the opposite arm and leg move.",
+      "coaching_cues": "Cue: Ribs settled. Reach slowly. Breathe out. Avoid: Arching the lower back, rushing or reaching farther than you can control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your back with your knees bent and arms above your chest. Reach one arm and the opposite leg away. Bring them back and switch sides.",
+      "purpose": "Practise trunk control while the opposite arm and leg move.",
+      "coaching_cues": "Cue: Keep your lower back steady. Avoid: Reaching so far that your back arches. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE02",
+    "name": "Front Plank",
+    "video_id": "cQ7fXKV7LlQ",
+    "video_url": "https://www.youtube.com/shorts/cQ7fXKV7LlQ",
+    "before": {
+      "description": "Place forearms on a mat with elbows under shoulders and use the prescribed knee or toe support. Hold the body in one line for the assigned time while breathing. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Develop trunk stability while maintaining a straight-body hold.",
+      "coaching_cues": "Cue: Long body. Gentle brace. Keep breathing. Avoid: Sagging or hiking the hips, straining the neck or holding beyond good alignment.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Put your elbows under your shoulders. Use your knees or toes as assigned. Hold your body in one line and keep breathing.",
+      "purpose": "Develop trunk stability while maintaining a straight-body hold.",
+      "coaching_cues": "Cue: Keep your body in one line. Avoid: Letting your hips sag. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE03",
+    "name": "Side Plank",
+    "video_id": "HtGt0ISXRcE",
+    "video_url": "https://www.youtube.com/shorts/HtGt0ISXRcE",
+    "before": {
+      "description": "Lie on your side with the elbow under the shoulder. Lift into the prescribed knee- or foot-supported side plank and hold a straight line for the assigned time. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Develop lateral trunk and hip stability.",
+      "coaching_cues": "Cue: Push the floor away. Lift hips. Breathe. Avoid: Collapsing into the shoulder, rotating the chest or holding after the hips drop.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your side with your elbow under your shoulder. Use your knees or feet as assigned, then lift your hips and hold while breathing.",
+      "purpose": "Develop lateral trunk and hip stability.",
+      "coaching_cues": "Cue: Lift your hips and stay steady. Avoid: Letting the top hip roll forward. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE04",
+    "name": "Bird Dog",
+    "video_id": "zPEiaA3TIl4",
+    "video_url": "https://www.youtube.com/shorts/zPEiaA3TIl4",
+    "before": {
+      "description": "Start on hands and knees, hands under shoulders and knees under hips. Reach the opposite arm and leg long, return slowly and alternate as assigned. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise trunk stability during opposite arm and leg movement.",
+      "coaching_cues": "Cue: Reach long. Level hips. Keep the back quiet. Avoid: Lifting limbs so high the back arches, twisting the pelvis or shifting weight sharply.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start on hands and knees. Reach one arm forward and the opposite leg back. Return slowly and switch sides.",
+      "purpose": "Practise trunk stability during opposite arm and leg movement.",
+      "coaching_cues": "Cue: Keep both hips facing the floor. Avoid: Twisting your hips to reach farther. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE05",
+    "name": "Plank Shoulder Tap",
+    "video_id": "-jpIJVsQaFo",
+    "video_url": "https://www.youtube.com/shorts/-jpIJVsQaFo",
+    "before": {
+      "description": "Start in the prescribed push-up position on a mat, feet wide enough for balance. Lift one hand to tap the opposite shoulder and replace it slowly before switching. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Develop trunk control while briefly supporting on one arm.",
+      "coaching_cues": "Cue: Press the floor. Quiet hips. Slow tap. Avoid: Rocking side to side, dropping the hips or rushing the hand change.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start in the push-up position you were assigned. Tap the opposite shoulder with one hand, put it back down and switch sides.",
+      "purpose": "Develop trunk control while briefly supporting on one arm.",
+      "coaching_cues": "Cue: Keep your hips still. Avoid: Rocking from side to side. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE06",
+    "name": "Hollow Hold",
+    "video_id": "FoEa8jNHFJA",
+    "video_url": "https://www.youtube.com/shorts/FoEa8jNHFJA",
+    "before": {
+      "description": "Lie on a mat and set the arm and leg position demonstrated. Lift or extend only as far as the lower back stays controlled; shorten the position if needed and hold for the assigned time. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Develop trunk control while the arms and legs create a longer lever.",
+      "coaching_cues": "Cue: Ribs down. Reach long. Keep breathing. Avoid: Arching the back, pulling the neck forward or using a longer lever than you can hold.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your back and use the arm and leg position your coach assigns. Hold while you can keep your lower back steady and breathe normally.",
+      "purpose": "Develop trunk control while the arms and legs create a longer lever.",
+      "coaching_cues": "Cue: Keep your lower back steady. Avoid: Letting your back arch as your legs reach out. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE07",
+    "name": "Bear Hold",
+    "video_id": "aLwndUO5Mvc",
+    "video_url": "https://www.youtube.com/shorts/aLwndUO5Mvc",
+    "before": {
+      "description": "Start on hands and knees with toes tucked. Lift the knees just clear of the mat and hold for the assigned seconds while keeping the back steady. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Develop trunk and shoulder control in a low hovering position.",
+      "coaching_cues": "Cue: Knees low. Push the floor. Breathe. Avoid: Lifting the hips high, rounding or sagging the back, or holding your breath.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start on hands and knees with your toes tucked under. Lift your knees just off the floor. Stay there and keep breathing.",
+      "purpose": "Develop trunk and shoulder control in a low hovering position.",
+      "coaching_cues": "Cue: Float your knees just off the floor. Avoid: Lifting your hips so high that your knees move away from your hands. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE08",
+    "name": "Bear Shoulder Tap",
+    "video_id": "DTUL7sb_Ceo",
+    "video_url": "https://www.youtube.com/shorts/DTUL7sb_Ceo",
+    "before": {
+      "description": "Start in a low bear hold on a mat. Tap the opposite shoulder with one hand, replace it and alternate only while the hips remain controlled. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Develop trunk control while changing hand support in a bear position.",
+      "coaching_cues": "Cue: Knees low. Slow hands. Quiet hips. Avoid: Rocking side to side, letting the knees drop suddenly or rushing beyond control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start with your hands down and knees just off the floor. Tap the opposite shoulder with one hand, put it back and switch sides.",
+      "purpose": "Develop trunk control while changing hand support in a bear position.",
+      "coaching_cues": "Cue: Keep your hips still. Avoid: Rocking your hips with each tap. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE09",
+    "name": "Side Plank + Leg Lift",
+    "video_id": "qC7HjKu7uUA",
+    "video_url": "https://www.youtube.com/shorts/qC7HjKu7uUA",
+    "before": {
+      "description": "Set the prescribed side-plank support with the elbow under the shoulder. Lift the top leg a small distance and lower smoothly while keeping the hips raised. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Develop lateral trunk stability while controlling the top leg.",
+      "coaching_cues": "Cue: Long body. Hips stacked. Small leg lift. Avoid: Rolling the pelvis, dropping the supporting hip or lifting the leg at the expense of balance.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Set up in the side plank you were assigned, with your elbow under your shoulder. Lift the top leg a little, then lower it slowly.",
+      "purpose": "Develop lateral trunk stability while controlling the top leg.",
+      "coaching_cues": "Cue: Keep your hips up as you lift. Avoid: Dropping your hips when the top leg moves. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE10",
+    "name": "Dead Bug Heel Tap",
+    "video_id": "v8u-DWDX6K4",
+    "video_url": "https://www.youtube.com/shorts/v8u-DWDX6K4",
+    "before": {
+      "description": "Lie on a mat with hips and knees bent as shown. Lower one heel to lightly touch the floor, return and alternate while the ribs and lower back stay controlled. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise trunk control during alternating heel reaches.",
+      "coaching_cues": "Cue: Move slowly. Ribs settled. Light heel touch. Avoid: Arching the back, dropping the leg or increasing range when control is lost.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your back with your knees bent and feet off the floor. Lower one heel to tap the floor lightly. Bring it back and switch sides.",
+      "purpose": "Practise trunk control during alternating heel reaches.",
+      "coaching_cues": "Cue: Tap softly and keep your back steady. Avoid: Arching your back to reach the floor. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE11",
+    "name": "Plank Knee Drive",
+    "video_id": "bJtHsgKpyd0",
+    "video_url": "https://www.youtube.com/shorts/bJtHsgKpyd0",
+    "before": {
+      "description": "Start in a push-up position with hands under shoulders. Draw one knee toward the chest in a comfortable range, return the foot and alternate as assigned. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Develop trunk stability during a controlled knee drive.",
+      "coaching_cues": "Cue: Press the floor. Quiet hips. Control the knee. Avoid: Sagging the back, twisting the pelvis or turning the drill into an unassigned fast run.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start in a push-up position with hands under shoulders. Bring one knee toward your chest, put the foot back and switch sides.",
+      "purpose": "Develop trunk stability during a controlled knee drive.",
+      "coaching_cues": "Cue: Keep your hips steady. Avoid: Letting your hips bounce with each step. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "CORE12",
+    "name": "Bear Series — Opposite Toe Touch",
+    "video_id": "Tpp9h6tXNY8",
+    "video_url": "https://www.youtube.com/shorts/Tpp9h6tXNY8",
+    "before": {
+      "description": "Sequence not yet verified. Watch the full demonstration first. Ask Coach Du to confirm the movement sequence and starting positions before your first session; use only the assigned variations in the confirmed order. Keep transitions controlled and use the sets, repetitions or time on your training sheet.",
+      "purpose": "Practise coordination and trunk control in the demonstrated bear series.",
+      "coaching_cues": "Cue: Control the support. Move slowly. Breathe. Avoid: Rushing hand-foot exchanges, collapsing onto the wrists or forcing a reach.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Ask Coach Du to confirm the movement sequence before you start. Use the order and positions your coach gives you.",
+      "purpose": "Practise coordination and trunk control in the demonstrated bear series.",
+      "coaching_cues": "Cue: Keep your hips steady when you reach. Avoid: Guessing the order or rushing between positions.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ISO01",
+    "name": "Quarter-Squat ISO Hold",
+    "video_id": "tx3FFbtkTnk",
+    "video_url": "https://www.youtube.com/shorts/tx3FFbtkTnk",
+    "before": {
+      "description": "Stand with feet at a comfortable width. Lower into the assigned shallow squat and hold for the prescribed seconds while the feet stay grounded. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop lower-body control while holding a shallow squat.",
+      "coaching_cues": "Cue: Whole foot down. Knees follow toes. Breathe. Avoid: Forcing extra depth, letting knees collapse inward or holding after posture changes.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand with feet at a comfortable width. Bend your knees a little and hold that position for the assigned time. Keep breathing.",
+      "purpose": "Develop lower-body control while holding a shallow squat.",
+      "coaching_cues": "Cue: Keep your whole foot on the floor. Avoid: Lifting your heels as you hold. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ISO02",
+    "name": "Hamstring Bridge ISO Hold",
+    "video_id": "-8t1Zswfh2M",
+    "video_url": "https://www.youtube.com/shorts/-8t1Zswfh2M",
+    "before": {
+      "description": "Lie on a mat and position the heels at the distance shown. Press the heels down to raise the hips and hold for the assigned seconds with the ribs controlled. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop hamstring and hip control during a bridge hold.",
+      "coaching_cues": "Cue: Heels press down. Hips steady. Breathe. Avoid: Arching the lower back, sliding the feet or continuing through cramp or pain.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your back with your heels at the distance your coach assigns. Press your heels down, lift your hips and hold while breathing.",
+      "purpose": "Develop hamstring and hip control during a bridge hold.",
+      "coaching_cues": "Cue: Press your heels down. Avoid: Arching your lower back to lift higher. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "ISO03",
+    "name": "Split Squat Isometric Hold (Bodyweight or Weighted)",
+    "video_id": "zvw0VHcCwto",
+    "video_url": "https://www.youtube.com/shorts/zvw0VHcCwto",
+    "before": {
+      "description": "Use a stable split stance and lower to a comfortable assigned depth. Hold still for the prescribed seconds on each side; add weight only when explicitly assigned. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop strength and position control in a timed split-squat hold.",
+      "coaching_cues": "Cue: Front foot grounded. Knee follows toes. Hold and breathe. Avoid: Bouncing through repetitions, forcing depth or adding weight before you can hold the position.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand with one foot in front of the other. Bend both knees to the assigned depth and hold. Add weight only if your coach assigns it.",
+      "purpose": "Develop strength and position control in a timed split-squat hold.",
+      "coaching_cues": "Cue: Keep your front foot flat. Avoid: Letting the front knee fall inward. Stop if it hurts or you lose control.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB01",
+    "name": "90/90 Hip Rotation",
+    "video_id": "pW9QAqCau3Y",
+    "video_url": "https://www.youtube.com/shorts/pW9QAqCau3Y",
+    "before": {
+      "description": "Sit in the 90/90 position shown, supporting yourself with your hands if needed. Move between the demonstrated hip positions slowly within your available range. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Explore comfortable hip rotation with control.",
+      "coaching_cues": "Cue: Sit tall. Move from hips. Use a small range. Avoid: Forcing either knee to the floor, twisting through pain or using momentum.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Sit with both knees bent at about a right angle. Use your hands for support if needed. Turn slowly from your hips in the direction your coach shows you.",
+      "purpose": "Explore comfortable hip rotation with control.",
+      "coaching_cues": "Cue: Move slowly from your hips. Avoid: Forcing either knee to the floor.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB02",
+    "name": "Kneeling Couch Stretch",
+    "video_id": "hSX1K5LVGJw",
+    "video_url": "https://www.youtube.com/shorts/hSX1K5LVGJw",
+    "before": {
+      "description": "Use a padded kneeling position with the rear foot supported as demonstrated. Keep the ribs settled and move into a gentle stretch without forcing the back knee or lower back. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Gently explore front-of-hip and thigh flexibility.",
+      "coaching_cues": "Cue: Squeeze rear glute gently. Ribs settled. Breathe. Avoid: Arching the back, pressing painfully into the kneecap or forcing the heel toward the hip.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Kneel with padding under the back knee and set the back foot on the support as assigned. Ease into a gentle stretch at the front of your hip.",
+      "purpose": "Gently explore front-of-hip and thigh flexibility.",
+      "coaching_cues": "Cue: Stay tall and breathe. Avoid: Arching your back to feel a stronger stretch.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB03",
+    "name": "Calf Stretch",
+    "video_id": "iHlzoeOT9ZA",
+    "video_url": "https://www.youtube.com/shorts/iHlzoeOT9ZA",
+    "before": {
+      "description": "Use a stable support and the foot and knee position shown. Keep the stretching heel down and shift into a gentle calf stretch, breathing steadily. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Gently explore calf and ankle range.",
+      "coaching_cues": "Cue: Heel grounded. Foot forward. Ease into it. Avoid: Bouncing, turning the foot outward to gain range or pushing through sharp pain.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Hold a firm support and set your feet and knees as your coach shows you. Keep the stretching heel down as you ease forward.",
+      "purpose": "Gently explore calf and ankle range.",
+      "coaching_cues": "Cue: Keep your heel down. Avoid: Bouncing into the stretch.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB04",
+    "name": "Diaphragmatic Breathing",
+    "video_id": "gSrUPWTSU-g",
+    "video_url": "https://www.youtube.com/shorts/gSrUPWTSU-g",
+    "before": {
+      "description": "Lie or sit comfortably with the neck and shoulders relaxed. Breathe gently into the lower ribs and abdomen, then let the air out slowly without straining. Use the breathing time assigned; return to normal breathing if you feel light-headed.",
+      "purpose": "Practise relaxed breathing and a controlled reset.",
+      "coaching_cues": "Cue: Soft shoulders. Quiet breath. Long easy exhale. Avoid: Forcing deep breaths, holding the breath or continuing if you feel dizzy.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Sit or lie down and relax your shoulders. Breathe gently into your lower ribs, then breathe out slowly. If you feel light-headed, return to normal breathing.",
+      "purpose": "Practise relaxed breathing and a controlled reset.",
+      "coaching_cues": "Cue: Soft shoulders, easy exhale. Avoid: Forcing a deep breath or holding it.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB05",
+    "name": "Shoulder Airplane",
+    "video_id": "7vF74hmyxPc",
+    "video_url": "https://www.youtube.com/shorts/7vF74hmyxPc",
+    "before": {
+      "description": "Use the starting position and arm path demonstrated by Coach Du. Move the arms smoothly through a comfortable range while keeping the ribs and neck relaxed; confirm the variant with Coach Du if unclear. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Explore shoulder movement while controlling the trunk.",
+      "coaching_cues": "Cue: Easy shoulders. Quiet ribs. Smooth motion. Avoid: Shrugging, forcing the arms behind the body or arching the back to gain range.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Ask your coach to show the starting position and arm path. Move your arms slowly as shown and stay in a comfortable range.",
+      "purpose": "Explore shoulder movement while controlling the trunk.",
+      "coaching_cues": "Cue: Keep your neck relaxed. Avoid: Shrugging your shoulders to lift your arms farther.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB06",
+    "name": "Couch Stretch",
+    "video_id": "wEe7pfcm8ns",
+    "video_url": "https://www.youtube.com/shorts/wEe7pfcm8ns",
+    "before": {
+      "description": "Use the supported position shown in this couch-stretch demonstration and pad any kneeling contact. Ease into a gentle stretch with ribs settled; match the demonstrated variant rather than forcing depth. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Gently explore front-of-hip and thigh flexibility.",
+      "coaching_cues": "Cue: Gentle glute squeeze. Ribs settled. Breathe. Avoid: Forcing the back knee, arching the lower back or pulling the foot farther than comfortable.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Potential alternate demonstration of MOB02 Kneeling Couch Stretch; existing record/video preserved pending comparison.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Set up in the supported position your coach shows you. Pad your knee if you kneel. Ease into a gentle stretch and breathe normally.",
+      "purpose": "Gently explore front-of-hip and thigh flexibility.",
+      "coaching_cues": "Cue: Stay tall and breathe. Avoid: Arching your lower back to go deeper.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Potential alternate demonstration of MOB02 Kneeling Couch Stretch; existing record/video preserved pending comparison.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB07",
+    "name": "Seated Pigeon — Knee-to-Chest Rock",
+    "video_id": "Uj7FxJRnja8",
+    "video_url": "https://www.youtube.com/shorts/Uj7FxJRnja8",
+    "before": {
+      "description": "Sit in the pigeon position demonstrated. Support the leg as shown and use a small knee-to-chest rocking action from the hip, staying upright and within a comfortable range. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Explore comfortable seated hip mobility with a knee-to-chest action.",
+      "coaching_cues": "Cue: Sit tall. Gentle rock. Move from the hip. Avoid: Pulling hard on the knee, rounding to force range or continuing through joint pain.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Sit in the position your coach shows you. Support the leg and gently rock the knee a little toward your chest, then release.",
+      "purpose": "Explore comfortable seated hip mobility with a knee-to-chest action.",
+      "coaching_cues": "Cue: Small, slow rocks. Avoid: Pulling hard on the knee.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB08",
+    "name": "Seated Pigeon — Knee Push Away",
+    "video_id": "ZkRmZh3gxLU",
+    "video_url": "https://www.youtube.com/shorts/ZkRmZh3gxLU",
+    "before": {
+      "description": "Sit in the demonstrated pigeon position and support the leg. Gently guide the knee away only within a comfortable hip range, then release the pressure with control. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Explore comfortable hip opening in a seated pigeon position.",
+      "coaching_cues": "Cue: Sit tall. Light pressure. Easy breathing. Avoid: Forcing the knee down, bouncing or mistaking knee pain for a useful stretch.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Sit in the position your coach shows you and support the leg. Gently guide the knee away, then release the pressure slowly.",
+      "purpose": "Explore comfortable hip opening in a seated pigeon position.",
+      "coaching_cues": "Cue: Move only as far as feels comfortable. Avoid: Pressing hard on the knee.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB09",
+    "name": "Seated Pigeon — Figure-4 Forward Lean",
+    "video_id": "aYdisAtwlNA",
+    "video_url": "https://www.youtube.com/shorts/aYdisAtwlNA",
+    "before": {
+      "description": "Set the seated figure-4 position demonstrated. Keep the spine long and hinge forward gently from the hips until a comfortable stretch is felt, then ease back. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Explore hip flexibility through a controlled forward lean.",
+      "coaching_cues": "Cue: Long spine. Hinge from hips. Gentle stretch. Avoid: Rounding deeply, pushing the knee down or forcing a painful range.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Sit with one ankle across the opposite thigh as shown. Keep your back long and lean forward a little from the hips, then ease back.",
+      "purpose": "Explore hip flexibility through a controlled forward lean.",
+      "coaching_cues": "Cue: Lean from your hips. Avoid: Rounding your back to go farther.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB10",
+    "name": "Body Circles Mobility Series",
+    "video_id": "BeWvd3n4lk0",
+    "video_url": "https://www.youtube.com/shorts/BeWvd3n4lk0",
+    "before": {
+      "description": "Sequence not yet verified. Watch the full demonstration first. Ask Coach Du to confirm the movement sequence and starting positions before your first session; use only the assigned variations in the confirmed order. Keep transitions controlled and use the sets, repetitions or time on your training sheet.",
+      "purpose": "Explore comfortable joint movement through the demonstrated body-circle series.",
+      "coaching_cues": "Cue: Small circles. Easy rhythm. Comfortable range. Avoid: Forcing larger circles, twisting through joint pain or adding unassigned movements.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Ask Coach Du to confirm the movement sequence before you start. Use the order and positions your coach gives you.",
+      "purpose": "Explore comfortable joint movement through the demonstrated body-circle series.",
+      "coaching_cues": "Cue: Make small, slow circles. Avoid: Guessing the order or rushing between positions.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "MOB11",
+    "name": "Ground Mobility Series",
+    "video_id": "wm0LZwdtImk",
+    "video_url": "https://www.youtube.com/shorts/wm0LZwdtImk",
+    "before": {
+      "description": "Sequence not yet verified. Watch the full demonstration first. Ask Coach Du to confirm the movement sequence and starting positions before your first session; use only the assigned variations in the confirmed order. Keep transitions controlled and use the sets, repetitions or time on your training sheet.",
+      "purpose": "Explore controlled mobility through the demonstrated floor-based series.",
+      "coaching_cues": "Cue: Move smoothly. Support your weight. Easy breathing. Avoid: Forcing end positions, rushing floor transitions or continuing through joint pain.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Ask Coach Du to confirm the movement sequence before you start. Use the order and positions your coach gives you.",
+      "purpose": "Explore controlled mobility through the demonstrated floor-based series.",
+      "coaching_cues": "Cue: Move slowly between positions. Avoid: Guessing the order or rushing between positions.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied. Preserve as one series; demonstrated movement order has not been verified.\nCoaching audit 2026-11-15: sequence-pending-coach-verification; general-cues-only; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY01",
+    "name": "Snap Down",
+    "video_id": "Dv6blgFNo28",
+    "video_url": "https://www.youtube.com/shorts/Dv6blgFNo28",
+    "before": {
+      "description": "Stand tall on a clear, non-slip surface. Drop quickly into the athletic position shown, then become still with hips, knees and ankles softly bent. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise moving quickly into a controlled landing position.",
+      "coaching_cues": "Cue: Quick down. Quiet feet. Own the position. Avoid: Slamming the feet, landing with straight knees or letting knees collapse inward.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand tall on a clear surface that gives you grip. Drop quickly into a shallow landing with your hips and knees bent. Hold still.",
+      "purpose": "Practise moving quickly into a controlled landing position.",
+      "coaching_cues": "Cue: Quiet feet, then freeze. Avoid: Landing with stiff knees. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY02",
+    "name": "Broad Jump + Stick",
+    "video_id": "SZhqfsybVp8",
+    "video_url": "https://www.youtube.com/shorts/SZhqfsybVp8",
+    "before": {
+      "description": "Stand with both feet stable and a clear landing area. Jump forward as assigned, absorb through hips, knees and ankles, then hold balance before resetting. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop horizontal jumping power and controlled two-foot landings.",
+      "coaching_cues": "Cue: Push forward. Land quietly. Hold still. Avoid: Chasing distance beyond control, landing stiff-legged or falling forward after contact.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Check that the landing area is clear. Jump forward from both feet, bend your knees as you land and hold still before the next jump.",
+      "purpose": "Develop horizontal jumping power and controlled two-foot landings.",
+      "coaching_cues": "Cue: Land quietly and hold. Avoid: Jumping farther than you can land in balance. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY03",
+    "name": "Two-Leg Pogos",
+    "video_id": "l6kbuPq2aHU",
+    "video_url": "https://www.youtube.com/shorts/l6kbuPq2aHU",
+    "before": {
+      "description": "Stand tall on a suitable, non-slip training surface. Make low, continuous jumps from both feet, keeping the knees softly responsive and contacts under the body. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise small, rhythmic two-foot ankle contacts.",
+      "coaching_cues": "Cue: Stay tall. Small bounce. Even rhythm. Avoid: Deep squatting, rigidly straight knees or continuing when contacts become heavy or uneven.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand tall on a surface with good grip. Make small, steady bounces on both feet with soft knees.",
+      "purpose": "Practise small, rhythmic two-foot ankle contacts.",
+      "coaching_cues": "Cue: Low bounces, steady beat. Avoid: Bending into a deep squat between bounces. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY04",
+    "name": "Drop to Hold",
+    "video_id": "ZXRiDxgcJZE",
+    "video_url": "https://www.youtube.com/shorts/ZXRiDxgcJZE",
+    "before": {
+      "description": "Use only the starting height or position Coach Du assigns. Drop into the demonstrated landing, absorb through hips, knees and ankles and become still before resetting; if using a box, step off rather than jump up first. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise absorbing a drop and holding a stable landing.",
+      "coaching_cues": "Cue: Absorb softly. Knees follow toes. Hold balance. Avoid: Adding height, rebounding immediately or landing with rigid legs.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start at the height or position your coach assigns. If using a box, step off it. Bend your hips and knees as you land and hold still.",
+      "purpose": "Practise absorbing a drop and holding a stable landing.",
+      "coaching_cues": "Cue: Land softly and hold. Avoid: Jumping up off the box or bouncing straight back up. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY05",
+    "name": "Single-Leg Hop + Stick",
+    "video_id": "IEGb_26TH6Q",
+    "video_url": "https://www.youtube.com/shorts/IEGb_26TH6Q",
+    "before": {
+      "description": "Stand balanced on the assigned leg with a clear landing space. Hop as prescribed, absorb on that leg and hold balance before the next repetition. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop control of a single-leg hop and landing.",
+      "coaching_cues": "Cue: Push with control. Soft knee. Stick the landing. Avoid: Chasing distance, letting the knee collapse inward or hopping again before balance is regained.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Balance on the leg you were assigned. Hop as prescribed, land on that same leg and get steady before the next hop.",
+      "purpose": "Develop control of a single-leg hop and landing.",
+      "coaching_cues": "Cue: Land softly and hold still. Avoid: Letting your landing knee drop inward. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY06",
+    "name": "Forward / Backward Pogos",
+    "video_id": "_cOsAkPbA-Q",
+    "video_url": "https://www.youtube.com/shorts/_cOsAkPbA-Q",
+    "before": {
+      "description": "Start tall with both feet under you on a clear surface. Make small two-foot contacts forward and backward as shown, keeping the distance short and rhythm even. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise rhythmic forward and backward ankle contacts.",
+      "coaching_cues": "Cue: Small travel. Quick rhythm. Feet under body. Avoid: Large leaps, drifting out of balance or letting contacts become loud and heavy.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start tall on both feet with space in front and behind. Make small bounces forward and back with a steady rhythm.",
+      "purpose": "Practise rhythmic forward and backward ankle contacts.",
+      "coaching_cues": "Cue: Keep the bounces small. Avoid: Taking long jumps that pull you off balance. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY07",
+    "name": "Single-Leg Pogos",
+    "video_id": "GE64gjOBNzU",
+    "video_url": "https://www.youtube.com/shorts/GE64gjOBNzU",
+    "before": {
+      "description": "Balance on the assigned leg on a suitable training surface. Make low repeated contacts under the hip, using the other leg for balance as shown. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise rhythmic ankle contacts and balance on one leg.",
+      "coaching_cues": "Cue: Tall body. Small bounce. Steady rhythm. Avoid: Hopping too high, letting the knee collapse inward or continuing after rhythm is lost.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Balance on the leg you were assigned. Make low, steady bounces under that hip, using the other leg for balance as shown.",
+      "purpose": "Practise rhythmic ankle contacts and balance on one leg.",
+      "coaching_cues": "Cue: Stay tall and bounce low. Avoid: Continuing once your contacts get heavy or uneven. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY08",
+    "name": "Jump Squat + Stick",
+    "video_id": "v20rnNpFVfE",
+    "video_url": "https://www.youtube.com/shorts/v20rnNpFVfE",
+    "before": {
+      "description": "Start in a comfortable athletic stance. Dip and jump vertically, then absorb the landing and hold still before resetting for the next repetition. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop vertical jumping power with a controlled stop on landing.",
+      "coaching_cues": "Cue: Push tall. Land softly. Hold balance. Avoid: Landing stiff-legged, knees collapsing inward or rushing into the next jump.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start with your feet set to jump. Bend your hips and knees, jump straight up and land softly. Hold still before the next rep.",
+      "purpose": "Develop vertical jumping power with a controlled stop on landing.",
+      "coaching_cues": "Cue: Jump up, land and hold. Avoid: Taking the next jump before you are steady. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY09",
+    "name": "Repeated Vertical Jumps",
+    "video_id": "vlToXrdgJos",
+    "video_url": "https://www.youtube.com/shorts/vlToXrdgJos",
+    "before": {
+      "description": "Use a clear landing area and the jump rhythm Coach Du prescribes. Jump vertically, absorb each landing and move into the next jump while posture remains controlled. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise repeated vertical jumping with consistent alignment.",
+      "coaching_cues": "Cue: Push up. Land aligned. Keep rhythm. Avoid: Chasing height after technique fades, rigid landings or adding extra contacts.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Check the landing space is clear. Jump straight up and land softly each time. Use the rhythm your coach gives you.",
+      "purpose": "Practise repeated vertical jumping with consistent alignment.",
+      "coaching_cues": "Cue: Land quietly on each jump. Avoid: Keeping going when landings get heavy or uneven. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY10",
+    "name": "Lateral Bound + Stick",
+    "video_id": "B0Yd3lnlW2E",
+    "video_url": "https://www.youtube.com/shorts/B0Yd3lnlW2E",
+    "before": {
+      "description": "Balance on one leg with clear space to the side. Push sideways onto the other leg, absorb through that hip and knee and hold still before resetting. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop lateral power and single-leg landing control.",
+      "coaching_cues": "Cue: Push sideways. Land softly. Hips level. Avoid: Reaching too far, knee collapse or stepping again before balance is controlled.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Balance on one leg with clear space to the side. Push sideways, land on the other leg and hold your balance.",
+      "purpose": "Develop lateral power and single-leg landing control.",
+      "coaching_cues": "Cue: Push sideways, then hold. Avoid: Letting the landing knee fall inward. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY11",
+    "name": "Continuous Skater Bounds",
+    "video_id": "8YtmCCxMFZQ",
+    "video_url": "https://www.youtube.com/shorts/8YtmCCxMFZQ",
+    "before": {
+      "description": "Set a clear side-to-side space. Bound from one leg to the other as assigned, controlling each landing before directing the next push. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise continuous lateral jumping and controlled weight transfer.",
+      "coaching_cues": "Cue: Push across. Control contact. Keep rhythm. Avoid: Chasing distance, uncontrolled trunk sway or continuing when landings become unstable.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Clear space on either side. Jump sideways from one foot to the other. Control each landing before you push back.",
+      "purpose": "Practise continuous lateral jumping and controlled weight transfer.",
+      "coaching_cues": "Cue: Control the landing, then push back. Avoid: Going wider or faster than you can control. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY12",
+    "name": "Continuous Bench-Assisted Single-Leg Pogos",
+    "video_id": "FNmXU6Y0dSA",
+    "video_url": "https://www.youtube.com/shorts/FNmXU6Y0dSA",
+    "before": {
+      "description": "Secure the bench and position the assisted leg exactly as shown. Make small vertical contacts on the working leg, keeping the support steady and rhythm even. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise continuous vertical single-leg contacts with bench assistance.",
+      "coaching_cues": "Cue: Stay tall. Bounce vertically. Light contacts. Avoid: Using a loose bench, pushing excessively through the assisted leg or letting the knee collapse inward.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Make sure the bench cannot move. Set the supported leg in the position your coach shows you. Make low bounces on the other leg.",
+      "purpose": "Practise continuous vertical single-leg contacts with bench assistance.",
+      "coaching_cues": "Cue: Small bounces under your hip. Avoid: Letting the bench or supported leg shift. Stop if it hurts or you lose control.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY13",
+    "name": "Bench-Assisted Forward & Backward Single-Leg Pogos",
+    "video_id": "HmGQh619zLE",
+    "video_url": "https://www.youtube.com/shorts/HmGQh619zLE",
+    "before": {
+      "description": "Secure the bench and set the assisted leg as demonstrated. Use short forward and backward contacts on the working leg while keeping the support position controlled. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise forward and backward single-leg contacts with bench assistance.",
+      "coaching_cues": "Cue: Small travel. Tall posture. Even rhythm. Avoid: Leaping too far, twisting the pelvis or losing safe contact with the bench.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Make sure the bench cannot move and set the supported leg as shown. Use the working leg to make short bounces forward and back.",
+      "purpose": "Practise forward and backward single-leg contacts with bench assistance.",
+      "coaching_cues": "Cue: Keep the bounces short. Avoid: Reaching so far that you lose balance. Stop if it hurts or you lose control.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY14",
+    "name": "Bench-Assisted Triangle Single-Leg Pogos",
+    "video_id": "viTsnTKQSe8",
+    "video_url": "https://www.youtube.com/shorts/viTsnTKQSe8",
+    "before": {
+      "description": "Secure the bench and match the supported position shown. Follow the demonstrated triangle path with short contacts on the working leg, resetting if balance changes. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise controlled single-leg contacts in three directions with bench assistance.",
+      "coaching_cues": "Cue: Small triangle. Knee follows toes. Steady rhythm. Avoid: Widening the triangle beyond control, twisting the knee or using an unstable bench.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Make sure the bench cannot move and set the supported leg as shown. Make small bounces on the working leg along the triangle your coach shows you.",
+      "purpose": "Practise controlled single-leg contacts in three directions with bench assistance.",
+      "coaching_cues": "Cue: Keep each bounce small. Avoid: Rushing around the triangle when you lose balance. Stop if it hurts or you lose control.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY15",
+    "name": "Seated Tuck-to-Vertical Jump",
+    "video_id": "GIevwzw8new",
+    "video_url": "https://www.youtube.com/shorts/GIevwzw8new",
+    "before": {
+      "description": "Secure the seat and clear the landing space. Match the demonstrated tuck and seated position, then drive into the vertical jump as shown; absorb the landing and reset rather than adding extra jumps. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise producing a vertical jump from the demonstrated seated position.",
+      "coaching_cues": "Cue: Drive up. Land softly. Reset with control. Avoid: Rocking beyond control, using an unstable seat or adding an unassigned landing or repeat jump.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Use a seat that cannot move and check the landing area. Ask your coach to show the tuck and seated position. Jump up from that position, land softly and reset.",
+      "purpose": "Practise producing a vertical jump from the demonstrated seated position.",
+      "coaching_cues": "Cue: Jump straight up, land softly. Avoid: Adding a bounce straight after landing. Stop if it hurts or you lose control.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "PLY16",
+    "name": "Box Jump + Stick Landing",
+    "video_id": "DDadUDHgiyU",
+    "video_url": "https://www.youtube.com/shorts/DDadUDHgiyU",
+    "before": {
+      "description": "Use a stable box of the height Coach Du assigns. Jump onto it, land with hips, knees and ankles softly bent and hold balance; step down carefully before resetting. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Practise jumping onto a box and stabilizing the landing.",
+      "coaching_cues": "Cue: Land quietly. Knees follow toes. Stand balanced. Avoid: Chasing box height, landing near the edge or jumping down for extra contacts.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Use a stable box at the height your coach assigns. Jump onto it, bend your knees as you land and hold your balance. Step down between jumps.",
+      "purpose": "Practise jumping onto a box and stabilizing the landing.",
+      "coaching_cues": "Cue: Land softly and stand steady. Avoid: Jumping back down between reps. Stop if it hurts or you lose control.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "POST01",
+    "name": "Hip-Lock Hold",
+    "video_id": "oWW7nZgqUNQ",
+    "video_url": "https://www.youtube.com/shorts/oWW7nZgqUNQ",
+    "before": {
+      "description": "Stand balanced on one leg, using light hand support if needed. Raise the other knee to the position shown and hold for the assigned time without twisting. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise upright single-leg posture and pelvic control.",
+      "coaching_cues": "Cue: Stand tall. Hips level. Foot grounded. Avoid: Leaning sideways, gripping the floor excessively or lifting the knee by rounding the back.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand on one leg and use light support if needed. Raise the other knee as your coach shows you. Hold for the assigned time and keep breathing.",
+      "purpose": "Practise upright single-leg posture and pelvic control.",
+      "coaching_cues": "Cue: Stay tall with hips facing forward. Avoid: Twisting to lift the knee higher. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "RUN01",
+    "name": "Progressive 40m Build-Up",
+    "video_id": "bj8mm2fTEfU",
+    "video_url": "https://www.youtube.com/shorts/bj8mm2fTEfU",
+    "before": {
+      "description": "Use a clear 40 m lane plus room to slow down. Begin relaxed and build smoothly to the assigned effort, then ease down beyond the finish. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Prepare for faster running by gradually increasing speed.",
+      "coaching_cues": "Cue: Build smoothly. Relax shoulders. Run through. Avoid: Sprinting hard from the first step, exceeding the assigned effort or stopping suddenly.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Use a clear 40 m lane with room to slow down. Start relaxed, build to the assigned effort, then ease down past the finish.",
+      "purpose": "Prepare for faster running by gradually increasing speed.",
+      "coaching_cues": "Cue: Build speed a little at a time. Avoid: Going out at full speed. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "SPR01",
+    "name": "A-March",
+    "video_id": "4lQsMyKRRn8",
+    "video_url": "https://www.youtube.com/shorts/4lQsMyKRRn8",
+    "before": {
+      "description": "Stand tall on a clear lane. March forward with coordinated opposite arm and leg action, placing each foot under the body rather than reaching ahead. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise upright marching rhythm and foot placement for running.",
+      "coaching_cues": "Cue: Tall hips. Toes up. Step under you. Avoid: Leaning back, stamping the foot or lifting the knee by rounding the trunk.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "March forward tall. Lift one knee with the opposite arm, put your foot down under you and switch sides.",
+      "purpose": "Practise upright marching rhythm and foot placement for running.",
+      "coaching_cues": "Cue: Step down under your hip. Avoid: Reaching your foot far out in front. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "SPR02",
+    "name": "A-Skip",
+    "video_id": "V2OsnUiq4Ac",
+    "video_url": "https://www.youtube.com/shorts/V2OsnUiq4Ac",
+    "before": {
+      "description": "Use a clear lane and begin with a controlled skip. Lift one knee with the opposite arm and switch in a steady rhythm, contacting beneath the body. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise coordinated skipping rhythm for running.",
+      "coaching_cues": "Cue: Tall posture. Light skip. Match arms and legs. Avoid: Reaching forward with the foot, chasing knee height or rushing beyond coordination.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Skip forward with a steady beat. Lift one knee with the opposite arm, then make contact under you as you switch.",
+      "purpose": "Practise coordinated skipping rhythm for running.",
+      "coaching_cues": "Cue: Stay tall and keep the beat. Avoid: Reaching forward to make each skip longer. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "SPR03",
+    "name": "Ankling",
+    "video_id": "U7e-InL5o04",
+    "video_url": "https://www.youtube.com/shorts/U7e-InL5o04",
+    "before": {
+      "description": "Stand tall on a clear lane. Use the small ankle-led stepping action shown, moving forward gently with feet contacting close under the body. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise low running contacts and ankle rhythm.",
+      "coaching_cues": "Cue: Small steps. Light contacts. Tall hips. Avoid: Overstriding, excessive bouncing or forcing the ankles into a rigid position.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stay tall on a clear lane. Take small, quick steps from the ankles as your coach shows you, placing your feet close under you.",
+      "purpose": "Practise low running contacts and ankle rhythm.",
+      "coaching_cues": "Cue: Quick steps under your hips. Avoid: Reaching for long steps. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "SPR04",
+    "name": "Straight-Leg Run",
+    "video_id": "CmsZXZ61Iwg",
+    "video_url": "https://www.youtube.com/shorts/CmsZXZ61Iwg",
+    "before": {
+      "description": "Use a clear lane and the speed demonstrated. Run with long legs and small, natural knee movement, striking down close beneath the hips rather than reaching ahead. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise controlled leg cycling and contacts beneath the body.",
+      "coaching_cues": "Cue: Long legs. Tall hips. Contact under you. Avoid: Locking the knees, leaning back or kicking the feet far in front.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Run along a clear lane at the assigned speed. Keep your legs long with a soft bend at the knees. Place each foot down close under your hip.",
+      "purpose": "Practise controlled leg cycling and contacts beneath the body.",
+      "coaching_cues": "Cue: Step down under your hips. Avoid: Locking the knees or kicking far out in front. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "SPR05",
+    "name": "Dribble Run",
+    "video_id": "HKykH7ctpbo",
+    "video_url": "https://www.youtube.com/shorts/HKykH7ctpbo",
+    "before": {
+      "description": "Use a clear lane and the dribble height shown. Make small cycling actions under the body while moving forward at the assigned speed. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise compact running rhythm with feet working beneath the hips.",
+      "coaching_cues": "Cue: Cycle small. Stay tall. Feet under hips. Avoid: Reaching ahead, lifting the knees beyond the assigned drill or rushing out of rhythm.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Use the step height your coach shows you. Make small cycling steps under you as you move forward at the assigned speed.",
+      "purpose": "Practise compact running rhythm with feet working beneath the hips.",
+      "coaching_cues": "Cue: Small circles under your hips. Avoid: Reaching out in front instead of stepping down under you. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "SPR06",
+    "name": "Fast Feet → Run",
+    "video_id": "",
+    "video_url": "",
+    "before": {
+      "description": "On a clear lane, perform the quick-foot action shown and transition into the assigned run. Keep arm and leg actions coordinated and allow room to slow down. Follow the assigned effort or time; stop if pain or loss of control develops.",
+      "purpose": "Practise moving from a quick-foot rhythm into a controlled run.",
+      "coaching_cues": "Cue: Quick rhythm. Smooth transition. Run through. Avoid: Stomping in place, forcing a sudden reach forward or adding unassigned sprint effort.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "On a clear lane, start with the quick steps your coach assigns, then build into the run. Leave room to slow down.",
+      "purpose": "Practise moving from a quick-foot rhythm into a controlled run.",
+      "coaching_cues": "Cue: Quick feet, then build speed. Avoid: Trying to make the first running step too long. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "STR01",
+    "name": "Split Squat",
+    "video_id": "fq72qz8JHtU",
+    "video_url": "https://www.youtube.com/shorts/fq72qz8JHtU",
+    "before": {
+      "description": "Stand in a stable split stance. Bend both knees to lower within the assigned range, then push through the front foot to return; use support or load only as prescribed. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop single-leg strength and control in a split stance.",
+      "coaching_cues": "Cue: Front foot grounded. Knee follows toes. Control down. Avoid: Knees collapsing inward, losing balance or forcing the rear knee onto the floor.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand with one foot ahead of the other. Bend both knees to the assigned depth, then push through your front foot to stand. Use support or weight as assigned.",
+      "purpose": "Develop single-leg strength and control in a split stance.",
+      "coaching_cues": "Cue: Keep your front foot flat. Avoid: Letting the front knee fall inward. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "STR02",
+    "name": "Step-Up",
+    "video_id": "Tdn9-s7-YPc",
+    "video_url": "https://www.youtube.com/shorts/Tdn9-s7-YPc",
+    "before": {
+      "description": "Use a stable step of the assigned height and place the whole lead foot on it. Push through that leg to stand tall, then lower back down under control. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop single-leg strength and balance while stepping onto a box.",
+      "coaching_cues": "Cue: Whole foot on. Lead leg works. Slow down. Avoid: Jumping off the trailing leg, knee collapse or using a step too high to control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Use a firm step at the assigned height. Put your whole lead foot on it and push through that foot to stand up. Step down slowly.",
+      "purpose": "Develop single-leg strength and balance while stepping onto a box.",
+      "coaching_cues": "Cue: Push through the foot on the step. Avoid: Springing off the foot on the ground. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "STR03",
+    "name": "Single-Leg RDL",
+    "video_id": "o1SF5gKsVH0",
+    "video_url": "https://www.youtube.com/shorts/o1SF5gKsVH0",
+    "before": {
+      "description": "Stand on one leg with a soft knee and use support if assigned. Send the hips backward as the other leg reaches behind, then return tall while keeping the pelvis level. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop hip-hinge strength and single-leg balance.",
+      "coaching_cues": "Cue: Hips back. Long back. Hips face down. Avoid: Opening the pelvis, rounding the back or reaching lower than balance allows.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand on one leg with the knee slightly bent. Send your hips back as the other leg reaches behind. Stand back up and use support if assigned.",
+      "purpose": "Develop hip-hinge strength and single-leg balance.",
+      "coaching_cues": "Cue: Keep both hips facing the floor. Avoid: Turning the lifted hip out. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "STR04",
+    "name": "Reverse Lunge",
+    "video_id": "PPu6dREwL64",
+    "video_url": "https://www.youtube.com/shorts/PPu6dREwL64",
+    "before": {
+      "description": "Stand tall with space behind you. Step back, bend both knees within a comfortable assigned range and push through the front foot to return. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop controlled leg strength through a backward stepping action.",
+      "coaching_cues": "Cue: Step back softly. Front foot grounded. Control the return. Avoid: Stepping onto a narrow line, knees collapsing inward or slamming the rear knee down.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand tall with room behind you. Step back and bend both knees to the assigned depth. Push through the front foot to stand.",
+      "purpose": "Develop controlled leg strength through a backward stepping action.",
+      "coaching_cues": "Cue: Push through the front foot. Avoid: Letting the front knee fall inward. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "STR05",
+    "name": "Bridge Walkout",
+    "video_id": "EdyfB2_DkC8",
+    "video_url": "https://www.youtube.com/shorts/EdyfB2_DkC8",
+    "before": {
+      "description": "Lie on a mat, plant both feet and lift into a controlled bridge. Take small heel steps outward and back as demonstrated, shortening the distance if the hips cannot stay steady. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop hamstring control while maintaining a bridge position.",
+      "coaching_cues": "Cue: Small heel steps. Hips steady. Ribs settled. Avoid: Arching the back, letting hips drop or walking out beyond control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Lie on your back with your feet flat and lift your hips. Take small steps out and back on your heels as shown.",
+      "purpose": "Develop hamstring control while maintaining a bridge position.",
+      "coaching_cues": "Cue: Keep your hips steady. Avoid: Walking so far that your hips drop. Stop if it hurts or you lose control.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "STR06",
+    "name": "Single-Leg Eccentric Box Squat — Explosive Up",
+    "video_id": "C6DJkHnaJH0",
+    "video_url": "https://www.youtube.com/shorts/C6DJkHnaJH0",
+    "before": {
+      "description": "Use a stable box at the assigned height. Lower on the working leg under control to the demonstrated box contact, then drive upward intentionally using the support or reset shown; do not add an unassigned jump. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Develop controlled single-leg lowering and a purposeful upward drive.",
+      "coaching_cues": "Cue: Lower slowly. Knee follows toes. Drive up with intent. Avoid: Dropping onto the box, rocking to escape the bottom position or adding load before control is reliable.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Use a firm box at the assigned height. Lower slowly on the working leg to touch the box as shown. Drive up using the support or reset your coach assigns.",
+      "purpose": "Develop controlled single-leg lowering and a purposeful upward drive.",
+      "coaching_cues": "Cue: Slow down, then drive up. Avoid: Dropping onto the box or adding a jump. Stop if it hurts or you lose control.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "STR07",
+    "name": "Supported Deep Knee Bend (Assisted Knee-Over-Toe Squat)",
+    "video_id": "OOH7c2sKip8",
+    "video_url": "https://www.youtube.com/shorts/OOH7c2sKip8",
+    "before": {
+      "description": "Hold a stable support and match the stance shown. Lower into a comfortable supported knee bend, allowing the knee to travel as demonstrated, then return under control. Use only the assigned load and volume; stop if pain or loss of control develops.",
+      "purpose": "Explore supported knee and ankle range with controlled leg strength.",
+      "coaching_cues": "Cue: Use support. Follow the toes. Move comfortably. Avoid: Forcing depth, bouncing into the bottom or copying extra load or range not assigned.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Hold a firm support and use the stance your coach shows you. Bend your knees as far as assigned and comfortable, then stand up slowly.",
+      "purpose": "Explore supported knee and ankle range with controlled leg strength.",
+      "coaching_cues": "Cue: Stay in control as you lower. Avoid: Pulling yourself deeper than you can control. Stop if it hurts or you lose control.",
+      "admin_notes": "Import batch exercise-video-expansion-20. Exact mapping supplied and release authorized by Coach Du. Playback and movement verification pending; do not treat this entry as independently verified. Coaching sequence, setup, equipment and dosage require review; no default prescription supplied.\nCoaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "WU01",
+    "name": "Ankle Rock",
+    "video_id": "6Dlac5mxD6k",
+    "video_url": "https://www.youtube.com/shorts/6Dlac5mxD6k",
+    "before": {
+      "description": "Use a split or kneeling stance and support as shown. Guide the front knee forward over the foot while the heel remains grounded, then return slowly. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Prepare the ankle for controlled forward knee travel.",
+      "coaching_cues": "Cue: Heel down. Knee follows toes. Easy range. Avoid: Lifting the heel, collapsing the arch or forcing a painful range.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Use the stance your coach assigns. Move the front knee forward over the foot while keeping the heel down, then ease back.",
+      "purpose": "Prepare the ankle for controlled forward knee travel.",
+      "coaching_cues": "Cue: Move the knee, keep the heel down. Avoid: Forcing the knee forward.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "WU02",
+    "name": "Straight-Leg Hamstring Kick",
+    "video_id": "UEzzeExMLLw",
+    "video_url": "https://www.youtube.com/shorts/UEzzeExMLLw",
+    "before": {
+      "description": "Stand tall with space ahead. Walk forward and lift one long leg within a comfortable range, then lower with control and alternate. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Prepare the back of the thigh through controlled leg swings while walking.",
+      "coaching_cues": "Cue: Stay tall. Reach comfortably. Control down. Avoid: Leaning back, snapping the knee straight or forcing the foot higher.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Walk forward and lift one leg at a time with the knee nearly straight. Lift only as high as feels comfortable and lower slowly.",
+      "purpose": "Prepare the back of the thigh through controlled leg swings while walking.",
+      "coaching_cues": "Cue: Stay tall as the leg lifts. Avoid: Throwing the leg up or leaning back.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "WU03",
+    "name": "Walking Lunge + Rotation",
+    "video_id": "e6BRge-9RdY",
+    "video_url": "https://www.youtube.com/shorts/e6BRge-9RdY",
+    "before": {
+      "description": "Step into a comfortable walking lunge. Keep the front foot grounded and rotate the chest toward the front leg as shown, then return and step through. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Prepare the hips and trunk with a controlled lunge and turn.",
+      "coaching_cues": "Cue: Stable foot. Turn through chest. Stay controlled. Avoid: Forcing a long stride, twisting the front knee or rushing the rotation.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Step into a walking lunge. Keep your front foot flat and turn your chest toward the front leg as shown. Face forward again before the next step.",
+      "purpose": "Prepare the hips and trunk with a controlled lunge and turn.",
+      "coaching_cues": "Cue: Keep the front foot flat as you turn. Avoid: Letting your front knee fall inward as you turn.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "WU04",
+    "name": "Adductor Rock-Back",
+    "video_id": "VQOIhPcPNZA",
+    "video_url": "https://www.youtube.com/shorts/VQOIhPcPNZA",
+    "before": {
+      "description": "Start on hands and knees on a mat and extend one leg to the side as demonstrated. Rock the hips backward in a gentle range and return slowly. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Explore inner-thigh mobility with a controlled hip rock.",
+      "coaching_cues": "Cue: Hips back. Long back. Gentle range. Avoid: Forcing the stretch, rounding deeply or continuing through groin or knee pain.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Start on hands and knees. Straighten one leg out to the side as shown. Move your hips gently back, then come forward again.",
+      "purpose": "Explore inner-thigh mobility with a controlled hip rock.",
+      "coaching_cues": "Cue: Rock back slowly. Avoid: Forcing the stretch.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "WU05",
+    "name": "High-Knee Hip Rotation Out",
+    "video_id": "ZchkCbWjOXw",
+    "video_url": "https://www.youtube.com/shorts/ZchkCbWjOXw",
+    "before": {
+      "description": "Stand tall with support if needed. Lift one knee and open the hip outward through a comfortable arc, then return and alternate as assigned. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Prepare controlled outward rotation of the hip.",
+      "coaching_cues": "Cue: Tall body. Quiet pelvis. Move from hip. Avoid: Twisting the whole trunk, forcing the knee outward or losing balance to gain range.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand tall and hold a firm support if needed. Lift one knee, circle it outward and bring the foot down slowly. Switch legs as assigned.",
+      "purpose": "Prepare controlled outward rotation of the hip.",
+      "coaching_cues": "Cue: Stand tall as the knee circles. Avoid: Twisting your whole body with the knee.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "WU06",
+    "name": "Leg Swing Front / Back",
+    "video_id": "nL-SiujsIMk",
+    "video_url": "https://www.youtube.com/shorts/nL-SiujsIMk",
+    "before": {
+      "description": "Stand beside a stable support. Swing one leg gently forward and backward while the pelvis and trunk stay steady; build only the comfortable range shown. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Prepare front-to-back hip movement with controlled leg swings.",
+      "coaching_cues": "Cue: Stand tall. Easy swing. Quiet trunk. Avoid: Forcing height, arching the back or swinging beyond balance.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Stand beside a firm support and hold it lightly. Swing one leg forward and back in a comfortable range.",
+      "purpose": "Prepare front-to-back hip movement with controlled leg swings.",
+      "coaching_cues": "Cue: Keep your upper body still. Avoid: Swinging so high that your back arches.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  },
+  {
+    "code": "WU07",
+    "name": "Leg Swing Side / Side",
+    "video_id": "7euYeH7erNw",
+    "video_url": "https://www.youtube.com/shorts/7euYeH7erNw",
+    "before": {
+      "description": "Face a stable support and hold it lightly. Swing one leg across and away from the body within a comfortable range, keeping the pelvis mostly forward. Keep the movement comfortable; do not force a stretch.",
+      "purpose": "Prepare side-to-side hip movement with controlled leg swings.",
+      "coaching_cues": "Cue: Tall body. Easy rhythm. Control the return. Avoid: Twisting the whole trunk, forcing range or swinging into another person.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    },
+    "after": {
+      "description": "Face a firm support and hold it lightly. Swing one leg across your body and back out to the side in a comfortable range.",
+      "purpose": "Prepare side-to-side hip movement with controlled leg swings.",
+      "coaching_cues": "Cue: Keep your hips facing forward. Avoid: Turning your whole body with the leg.",
+      "admin_notes": "Coaching audit 2026-11-15: named-exercise-text-reviewed; demo-not-independently-verified. Library guidance does not change assigned prescriptions."
+    }
+  }
+]

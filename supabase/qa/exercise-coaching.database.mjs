@@ -4,9 +4,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {pathToFileURL} from 'node:url';
 const {PGlite}=await import(pathToFileURL(process.env.PGLITE_MODULE||'/tmp/du-checkin-qa/node_modules/@electric-sql/pglite/dist/index.js'));
-const root=new URL('../rollout/exercise-coaching-standard/',import.meta.url);
+const rollout=process.env.DU_COACHING_ROLLOUT||'exercise-coaching-standard';
+const root=new URL('../rollout/'+rollout+'/',import.meta.url);
 const read=name=>fs.readFileSync(new URL(name,root),'utf8');
-const changes=JSON.parse(read('changes.json')),content=JSON.parse(read('content.json'));
+const changes=JSON.parse(read('changes.json'));
 const apply=read('apply.sql'),rollback=read('rollback.sql');
 const tables=['programmes','programme_weeks','training_days','session_blocks','saved_blocks','saved_block_items','athlete_overrides','cohort_overrides','athletes','cohorts','professional_members','programme_versions','feedback','workout_item_completions'];
 const coaching=['description','purpose','coaching_cues','admin_notes'];
@@ -27,7 +28,17 @@ async function state(db){
 }
 test('review JSON and both SQL payloads agree exactly',()=>{
  assert.equal(new Set(changes.map(c=>c.code)).size,85);
- for(const c of changes){const row=content.find(e=>e.code===c.code);assert.ok(row,c.code);for(const k of ['name','video_id','video_url'])assert.equal(row[k],c[k]);for(const k of coaching)assert.equal(row[k],c.after[k]);}
+ if(rollout==='exercise-coaching-standard'){
+  const content=JSON.parse(read('content.json'));
+  for(const c of changes){const row=content.find(e=>e.code===c.code);assert.ok(row,c.code);for(const k of ['name','video_id','video_url'])assert.equal(row[k],c[k]);for(const k of coaching)assert.equal(row[k],c.after[k]);}
+ }else{
+  for(const c of changes){
+   assert.ok(c.after.description.trim(),c.code);
+   assert.match(c.after.coaching_cues,/^Cue: [^.!?]+[.!?] Avoid: /,c.code);
+   for(const field of ['purpose','admin_notes'])assert.equal(c.after[field],c.before[field],c.code);
+   if(c.before.admin_notes?.includes('movement order has not been verified'))assert.match(c.after.description,/Ask Coach Du to confirm/);
+  }
+ }
  for(const [sql,reverse] of [[apply,false],[rollback,true]]){
   const embedded=JSON.parse(sql.match(/\$changes\$([\s\S]*?)\$changes\$::jsonb/)[1]);
   assert.deepEqual(embedded,reverse?changes.map(c=>({...c,before:c.after,after:c.before})):changes);

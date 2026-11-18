@@ -10,6 +10,7 @@ const {chromium}=require('playwright');
   const page=await browser.newPage({viewport:{width,height:1000}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.setContent('<style>body{background:#090909;margin:12px}</style><div id="test"></div>');
+  await page.addScriptTag({path:'hub-delivery/delivery.js'});
   await page.addScriptTag({path:'coach-command/coach-command.js'});
   await page.evaluate(data=>window.DuCoachCommand.mount(document.getElementById('test'),data),data);
   for(const [title,expected] of [['Main Strength',4],['Tissue Strength',4],['Reactive Strength',4]]){

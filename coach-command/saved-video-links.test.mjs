@@ -2,7 +2,8 @@ import {shapeBootstrap} from '../supabase/functions/_shared/hub-core.ts';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-const library=[['POST01','Hip-Lock Hold','oWW7nZgqUNQ'],['ISO01','Quarter-Squat ISO Hold','tx3FFbtkTnk'],['ANK04','Tibialis Raise','4bidZUlkXV4'],['ANK03','Calf ISO Hold','IcitpPYKq2c'],['ISO02','Hamstring Bridge ISO Hold','-8t1Zswfh2M'],['PLY01','Snap Down','Dv6blgFNo28'],['PLY03','Two-Leg Pogos','l6kbuPq2aHU'],['PLY02','Broad Jump + Stick','SZhqfsybVp8'],['STR02','Step-Up','Tdn9-s7-YPc']].map(([code,name,video_id])=>({code,name,video_id,video_url:'https://www.youtube.com/shorts/'+video_id,active:true}));
+import delivery from '../hub-delivery/delivery.js';
+const library=[['POST01','Hip-Lock Hold','oWW7nZgqUNQ'],['ISO01','Quarter-Squat ISO Hold','tx3FFbtkTnk'],['ANK04','Tibialis Raise','4bidZUlkXV4'],['ANK03','Calf ISO Hold','IcitpPYKq2c'],['ISO02','Hamstring Bridge ISO Hold','-8t1Zswfh2M'],['PLY01','Snap Down','Dv6blgFNo28'],['PLY03','Two-Leg Pogos','l6kbuPq2aHU'],['PLY02','Broad Jump + Stick','SZhqfsybVp8'],['STR02','Step-Up','Tdn9-s7-YPc']].map(([code,name,video_id])=>({code,name,video_id,video_url:'https://www.youtube.com/shorts/'+video_id,description:code==='ANK03'?'Hold the heel up.':'',active:true}));
 const tissue=['Form 2 — 2 × 20s hip lock; 2 × 20s quarter squat ISO; 2 × 12 tibialis raise; 2 × 20s calf ISO','Form 3 — 2 × 25s hip lock; 2 × 25s quarter squat ISO; 2 × 25s hamstring bridge; 2 × 15 tibialis raise'];
 const reactive=['Lower 6 — 2 × 5 snap-down; 3 × 4 broad jump + stick; 3 × 10 pogos; 3 × 6 step-up'];
 const block=(id,title,items,codes,links)=>({id,title,training_day_id:'day',content:{items,exerciseCodes:codes,video_links:links.flatMap((names,item_index)=>names.map(exercise=>({item_index,exercise,video_url:'https://untrusted.invalid/stale'})))}});
@@ -13,7 +14,7 @@ assert.equal(sections[0].videoLinks?.length,8,'Bootstrap must preserve all saved
 assert.equal(sections[1].videoLinks?.length,4,'Links remain scoped to their original block');
 assert.ok(sections[0].videoLinks.every(x=>x.url.startsWith('https://www.youtube.com/shorts/')),'Resolve fresh URLs from the authorized library');
 const el=()=>({innerHTML:'',children:[],append(...x){this.children.push(...x)},replaceChildren(...x){this.children=x},addEventListener(k,f){this[k]=f}});
-const ctx={window:{},document:{createElement:el},URL};
+const ctx={window:{DuHubDelivery:delivery},document:{createElement:el},URL};
 vm.runInNewContext(fs.readFileSync(new URL('./coach-command.js',import.meta.url),'utf8'),ctx);
 const host=el();ctx.window.DuCoachCommand.mount(host,data);const root=host.children[1];
 root.click({target:{closest:()=>({dataset:{day:'0'}})}});
@@ -21,6 +22,8 @@ for(const e of library)assert.ok(root.innerHTML.includes('Watch '+e.name+' demon
 assert.equal((root.innerHTML.match(/Watch Calf ISO Hold demonstration/g)||[]).length,1,'Form 3 must not inherit Form 2 calf ISO');
 assert.equal((root.innerHTML.match(/Watch Hamstring Bridge ISO Hold demonstration/g)||[]).length,1);
 assert.equal((root.innerHTML.match(/Watch Snap Down demonstration/g)||[]).length,1);
+assert.match(root.innerHTML,/<b>Calf ISO Hold<\/b>.*How to do it.*Hold the heel up\./);
+assert.equal((root.innerHTML.match(/Hold the heel up\./g)||[]).length,1,'Written guidance stays in the assigned Form row');
 assert.ok(!root.innerHTML.includes('untrusted.invalid'));
 const empty=structuredClone(data);empty.programme.sessions[0].itemSections[0].videoLinks=[];
 const h2=el();ctx.window.DuCoachCommand.mount(h2,empty);h2.children[1].click({target:{closest:()=>({dataset:{day:'0'}})}});

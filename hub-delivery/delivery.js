@@ -2,6 +2,28 @@
   'use strict';
   const weekdays=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
   const text=value=>typeof value==='string'?value.trim():'';
+  function coachingParts(note){
+    const value=text(note),avoid=value.match(/\bAvoid:\s*([\s\S]*)$/i);
+    return {cue:(avoid?value.slice(0,avoid.index):value).replace(/^Cue:\s*/i,'').trim(),avoid:avoid?avoid[1].trim():''};
+  }
+  function sessionCoaching(note){
+    const value=text(note),tag=value.match(/^\[([^\]]+)\]\s*/);
+    return {...coachingParts(tag?value.slice(tag[0].length):value),phase:tag?tag[1]:''};
+  }
+  function coachingRows(item){
+    const normalized=value=>text(value).replace(/[.;!?]+$/,'').toLowerCase();
+    const cue=item.libraryCue??item.cue,avoid=item.libraryAvoid??item.avoid;
+    return [
+      ['How to do it',item.description],
+      ['Coach cue',cue],
+      ['Watch for',avoid],
+      ['For this session',[
+        item.sessionCue&&normalized(item.sessionCue)!==normalized(cue)?item.sessionCue:'',
+        item.sessionAvoid&&normalized(item.sessionAvoid)!==normalized(avoid)?'Avoid: '+item.sessionAvoid:'',
+      ].filter(Boolean).join(' · ')],
+      ['Coach alternative',item.substitutionNote],
+    ].filter(([,value])=>text(value));
+  }
   function displayRest(dosage,rest){
     return /^1\s*[×x]\s*/.test(text(dosage))&&/between sets/i.test(text(rest))?'':text(rest);
   }
@@ -63,7 +85,7 @@
       lines.push('',String(section.title||'Workout'));
       for(const item of section.items||[]){
         lines.push('- '+(item.group?'['+item.group+'] ':'')+String(item.title||'Exercise')+(item.dosage?' — '+item.dosage:'')+(item.rest?' · Rest: '+item.rest:''));
-        for(const [label,value] of [['Cue',item.cue],['How',item.description],['Avoid',item.avoid],['Coach alternative',item.substitutionNote]])if(text(value))lines.push('  '+label+': '+text(value));
+        for(const [label,value] of coachingRows(item))if(text(value))lines.push('  '+label+': '+text(value));
         const demos=Array.isArray(item.demos)?item.demos:[{title:item.title,url:item.videoUrl,id:item.videoId}];
         for(const demo of demos){const url=safeVideo(demo.url,demo.id);if(url)lines.push('  Demo'+(demo.title?' — '+demo.title:'')+': '+url);}
       }
@@ -110,7 +132,7 @@
     const selected=overviewData.training.find(s=>s.id===sessionId);
     return selected?{session:selected,routines:routineCards(programme,selected)}:null;
   }
-  const api=Object.freeze({safeVideo,canCopy,copyWorkout,overview,explainDose,trainingHelp,displayRest,preparationFor,trainingSections,routineCards,dayDetail});
+  const api=Object.freeze({coachingParts,sessionCoaching,coachingRows,safeVideo,canCopy,copyWorkout,overview,explainDose,trainingHelp,displayRest,preparationFor,trainingSections,routineCards,dayDetail});
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.DuHubDelivery=api;
 })(typeof globalThis==='object'?globalThis:this);

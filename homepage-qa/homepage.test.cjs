@@ -117,7 +117,7 @@ const withoutCompactVideo=source=>source
  .replace("    modal.classList.remove('loading','expanded');","    modal.classList.remove('loading');");
 // Existing Pages additions are now tracked in source; exact parity is tested in qa/release-assets.test.cjs.
 const withoutDeploymentAdditions=source=>source.replace(/<link rel="stylesheet" href="\/parent-qa\/session-card-polish\.css">\r?\n?<script defer src="\/parent-qa\/session-card-polish\.js"><\/script>\r?\n?<script defer src="\/performance\/coachdu-hub-bridge\.js"><\/script>\r?\n?/,'').replace(/  function renderAccountStatus\(audience,error\)\{\r?\n    if\(audience==='professional' && error\?\.code==='NO_ASSIGNMENT'\)\{[\s\S]*?\r?\n    \}\r?\n\r?\n/,'  function renderAccountStatus(audience,error){\r\n');
-const withoutHubAssets=source=>source.replace(/\/\* SCHOOL_THEME_START:[\s\S]*?\/\* SCHOOL_THEME_END \*\/\r?\n/,'').replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\r?\n?<script src="\/parent-setup\/setup\.js"><\/script>\r?\n?/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=(?:20261019|20261109-guided|20261109-unified)"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=20261019">\r?\n/,'');
+const withoutHubAssets=source=>source.replace(/\/\* SCHOOL_THEME_START:[\s\S]*?\/\* SCHOOL_THEME_END \*\/\r?\n/,'').replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\r?\n?<script src="\/parent-setup\/setup\.js"><\/script>\r?\n?/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=(?:20261019|20261109-guided|20261109-unified|20261118-coaching)"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=(?:20261019|20261118-coaching)">\r?\n/,'');
 const actualHomepage=withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart))))));
 const expectedHomepage=currentProduction.slice(0,currentProduction.indexOf(routeStart)).replace(oldShareMetadata,approvedShareMetadata);
 if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')){
@@ -160,6 +160,21 @@ const withoutHubRepair=source=>source
  .replace(/  function renderParentSimpleDashboard\([\s\S]*?(?=  function renderAthleteDashboard\()/,'  PARENT_DASHBOARD\n')
  .replace(/  function weekBrowser\([\s\S]*?(?=  function compactSchoolWeek\()/,'  PUBLISHED_WEEK_PREVIEW\n')
  .replace(/    const copyButton=[\s\S]*?(?=    const videoClose=)/,'  COPY_CLICK_HANDLER\n');
+// Plain-English exercise guidance has dedicated guided-training and coach parity tests.
+const previousDemoGuidance="(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+(item.cue?'<p><strong>Main cue:</strong> '+escapeHtml(item.cue)+'</p>':'')";
+const quickDemoLink=`<div class="hub-quick-actions"><a class="hub-button secondary hub-guided-demo hub-quick-demo-link" href="'+escapeHtml(item.videoUrl)+'" target="_blank" rel="noopener noreferrer">Watch Demo</a></div>`;
+const withoutCoachingDisplay=source=>source
+ .replace(/  function workoutCoaching\(item\)\{\r?\n[^\r\n]+\r?\n  \}\r?\n/,'')
+ .replaceAll("+'</div>'+workoutCoaching(item)+'</div>", "+'</div>'+"+previousDemoGuidance+"+'</div>")
+ .replace('<span>Exercise guide</span></div></div><div class="hub-school-demo-list">\'+demos.map(item=>{const dosage=item.dosage||\'Follow coach instruction\'', '<span>How to do it</span><p>Your prescription stays visible here. Open only the exact demo you need.</p></div></div><div class="hub-school-demo-list">\'+demos.map(item=>{const dosage=item.dosage||\'Follow coach instruction\'')
+ .replace('<span>Exercise guide</span></div></div><div class="hub-school-demo-list">\'+demos.map(item=>{const dosage=item.dosage||\'Follow programme instruction\'', '<span>How to do it</span><p>Only use these exact demos when you need a technique check. Dosage and rest stay visible beside the exercise.</p></div></div><div class="hub-school-demo-list">\'+demos.map(item=>{const dosage=item.dosage||\'Follow programme instruction\'')
+ .replace(',demo=DuHubDelivery.safeVideo(item.videoUrl,item.videoId);return', ';return')
+ .replace(`escapeHtml(text)+workoutCoaching(item)+(demo?'<a class="hub-athlete-demo" href="'+escapeHtml(demo)+'" target="_blank" rel="noopener noreferrer">▶ Watch demo</a>':'')`, 'escapeHtml(text)')
+ .replace('<span>Full warm-up video</span>', '<span>Need a visual?</span><p>The warm-up playlist is the single visual reference for the sequence above.</p>')
+ .replace("items.filter(item=>item.type==='exercise'&&(item.videoUrl||DuHubDelivery.coachingRows(item).length))", "items.filter(item=>item.type==='exercise'&&item.videoUrl)")
+ .replace(`</div>'+(item.videoUrl?'${quickDemoLink}':'')+'`, `</div>${quickDemoLink}`)
+ .replace("</summary>'+workoutCoaching(item)+((item.videoUrl||item.videoId)?", `</summary>'+(item.cue?'<p><strong>Cue:</strong> '+escapeHtml(item.cue)+'</p>':'')+(item.description?'<p>'+escapeHtml(item.description)+'</p>':'')+(item.avoid?'<p><strong>Avoid:</strong> '+escapeHtml(item.avoid)+'</p>':'')+((item.videoUrl||item.videoId)?`)
+ .replace('workoutCoaching({...parts,description:ex.description})', `(ex.description?'<p>'+escapeHtml(ex.description)+'</p>':'')+(parts.cue?'<p class="hub-library-cue"><strong>Cue:</strong> '+escapeHtml(parts.cue)+'</p>':'')+(parts.avoid?'<p class="hub-library-avoid"><strong>Avoid:</strong> '+escapeHtml(parts.avoid)+'</p>':'')`);
 // Approved person-bound school access has its own identity, persistence and race suites.
 // Normalize only its named functions/guards; public forms and remaining routes stay byte-checked.
 const withoutSchoolIdentity=source=>source
@@ -175,7 +190,7 @@ const withoutSchoolIdentity=source=>source
  // Coach route parity is covered by the authenticated coach browser suite.
  .replace(/  function renderStaffDashboard\([\s\S]*?(?=  function renderCurrentWeek\()/,'  COACH_DASHBOARD\n')
  .replace(/  function renderCurrentWeek\([^\n]+\n/,'  COACH_CURRENT_WEEK\n')
- .replace(/coach-command\.js\?v=(?:20261028-coach-parity|20261104-saints-ui)/g,'coach-command.js')
+ .replace(/coach-command\.js\?v=(?:20261028-coach-parity|20261104-saints-ui|20261118-coaching)/g,'coach-command.js')
  .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'\)return renderDirectorOverview\(\);\r?\n/,'')
  .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'&&!\[[^\n]+\n/,'')
  .replace(/ && HUB_STATE.staff\?\.accessProfile!=='sports_director'/g,'')
@@ -197,7 +212,7 @@ const withoutSchoolIdentity=source=>source
  .replace(/\r\n/g,'\n');
 // Story arrival is covered by my-journey/story.test.cjs; exclude only its exact scoped branch.
 const withoutPartnershipPresentation=source=>source.replace(/      if \(activeView === homeView && location.hash === '#stories'\) \{[\s\S]*?      \} else\r?\n/, '').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});").replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
-const actualIntegration=withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutCompactVideo(withoutPartnershipPresentation(withoutDeploymentAdditions(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)))))))));
+const actualIntegration=withoutCoachingDisplay(withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutCompactVideo(withoutPartnershipPresentation(withoutDeploymentAdditions(html.slice(html.indexOf(routeStart),html.indexOf(homepageController))))))))));
 const expectedIntegration=withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))))));
 if(actualIntegration!==expectedIntegration){
  const a=actualIntegration.replace(/\r\n/g,'\n'),b=expectedIntegration.replace(/\r\n/g,'\n');
