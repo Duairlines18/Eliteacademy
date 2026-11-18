@@ -37,7 +37,15 @@ const {chromium}=require('playwright');
    }
    return route.fulfill({json:data});
   });
-  await page.goto(base+'/#/hub/session/'+day.id);await page.locator('[data-workout-mode="guided"]').waitFor();
+  await page.goto(base+'/#/hub/athlete');
+  await page.getByRole('heading',{name:'My training',exact:true}).waitFor();
+  const main=page.locator('.hub-main');
+  ok(await main.getByRole('heading',{name:'Choose a training day',exact:true}).isVisible(),'the athlete can choose a day directly');
+  ok(!(await main.innerText()).includes('Parent access:'),'training view uses athlete-first language');
+  const trainingCard=main.locator('.hub-parent-session-card').first();
+  await trainingCard.click();
+  ok(page.url().endsWith('/session/'+day.id),'training card opens the selected day');
+  await page.locator('[data-workout-mode="guided"]').waitFor();
   ok(await page.locator('[aria-label="Choose training day"]').count()===0,'selected workout has no other day cards');
   await page.getByRole('link',{name:'← Back to Week',exact:true}).waitFor();
   if(parent){

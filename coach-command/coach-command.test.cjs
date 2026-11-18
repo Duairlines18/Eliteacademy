@@ -5,15 +5,15 @@ const assert=require('node:assert/strict');
 const source=fs.readFileSync(require('node:path').join(__dirname,'coach-command.js'),'utf8');
 const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
 const makeEl=()=>({innerHTML:'',children:[],dataset:{},addEventListener(name,fn){this.handlers??={};this.handlers[name]=fn;},append(...x){this.children.push(...x);},replaceChildren(...x){this.children=x;}});
-const ctx={window:{},document:{createElement:makeEl},URL,console,alert(){throw Error('unexpected alert')}};
+const ctx={window:{DuHubDelivery:require("../hub-delivery/delivery.js")},document:{createElement:makeEl},URL,console,alert(){throw Error('unexpected alert')}};
 vm.runInNewContext(source,ctx,{filename:'coach-command.js'});
 const mount=ctx.window.DuCoachCommand.mount;
 const fixture={role:'staff',cohort:{id:'school-1',name:"Saints <College>",currentWeek:4},programme:{title:'Jumps',sessions:[
-{id:'d1',title:'Acceleration',day:'Day 1',duration:'45 min',requirement:'Mandatory',prescriptions:[{sectionTitle:'Warm-up',exerciseCode:'WU01',dosage:'2 x 10',cues:'Stay tall'}]},
+{id:'d1',title:'Acceleration',day:'Day 1',duration:'45 min',requirement:'Mandatory',prescriptions:[{sectionTitle:'Warm-up',exerciseCode:'WU01',dosage:'2 x 10',cues:'[Activation] Stay tall'}]},
 {id:'d2',title:'Landing',day:'Day 2',requirement:'Mandatory',prescriptions:[]},
 {id:'d3',title:'Mobility',day:'Day 3',requirement:'Optional',prescriptions:[]},
 {id:'d4',title:'Extra published session',day:'Day 4',requirement:'Optional',prescriptions:[]}
-]},exercises:[{code:'WU01',title:'Pogos',videoId:'6Dlac5mxD6k',coachingNote:'Short contacts'}]};
+]},exercises:[{code:'WU01',title:'Pogos',videoId:'6Dlac5mxD6k',description:'Keep each bounce low.',coachingNote:'Cue: Short contacts. Avoid: Heavy landings.'}]};
 assert.throws(()=>mount(makeEl(),{...fixture,role:'athlete'}),/staff/);
 const host=makeEl();mount(host,fixture);const root=host.children[1];
 assert.match(root.innerHTML,/Team Command/);
@@ -32,11 +32,15 @@ root.handlers.click({target:{closest:()=>({dataset:{day:'0'}})}});
 assert.match(root.innerHTML,/Full Workout/);
 assert.match(root.innerHTML,/Pogos/);
 assert.match(root.innerHTML,/2 x 10/);
-assert.match(root.innerHTML,/<details class="coach-cue"><summary>How to do it<\/summary>/);
-assert.doesNotMatch(root.innerHTML,/<details class="coach-cue" open/);
+assert.match(root.innerHTML,/<strong>How to do it<\/strong> Keep each bounce low/);
+assert.match(root.innerHTML,/<strong>Coach cue<\/strong> Short contacts/);
+assert.match(root.innerHTML,/<strong>For this session<\/strong> Stay tall/);
+assert.match(root.innerHTML,/<strong>Watch for<\/strong> Heavy landings/);
+assert.match(root.innerHTML,/<h4>Activation<\/h4>/);
+assert.doesNotMatch(root.innerHTML,/\[Activation\]/);
 const cueDetails=[{open:false},{open:true}];
 root.querySelectorAll=()=>cueDetails;
-ctx.window.print=()=>assert.ok(cueDetails.every(d=>d.open),'Print includes all cue content');
+ctx.window.print=()=>assert.ok(cueDetails.every(d=>d.open),'Print expands warm-up sections for their instructions');
 root.handlers.click({target:{closest:()=>({dataset:{action:'print'}})}});
 assert.equal(cueDetails[0].open,false,'Print restores closed cue');
 assert.equal(cueDetails[1].open,true,'Print preserves open cue');

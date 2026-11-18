@@ -33,7 +33,9 @@ jobs:
       - name: Verify mandatory check-in database rollout, RLS, retries, amendments and safety
         run: node --test supabase/qa/weekly-checkins.database.mjs supabase/qa/parent-sunday-checkins.database.mjs
       - name: Verify coaching content rollout, data preservation, rollback and exercise RLS
-        run: node --test supabase/qa/exercise-coaching.database.mjs
+        run: |
+          node --test supabase/qa/exercise-coaching.database.mjs
+          DU_COACHING_ROLLOUT=plain-english-coaching node --test supabase/qa/exercise-coaching.database.mjs
         env:
           PGLITE_MODULE: /tmp/du-checkin-qa/node_modules/@electric-sql/pglite/dist/index.js
       - name: Full delivery regression tests
