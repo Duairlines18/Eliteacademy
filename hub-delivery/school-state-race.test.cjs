@@ -9,7 +9,7 @@ test('old athlete bootstrap cannot replace a newly selected athlete',async()=>{
 });
 test('late completion list and save cannot poison another athletes in-memory progress',async()=>{
  for(const kind of ['list','set']){
-  const pending=defer();let current='A';const c={session:()=>({role:'athlete'}),sessionStamp:()=>current,isSharedSchoolViewer:()=>false,isIdentifiedSchoolAthlete:()=>true,completionPost:()=>pending.promise,WORKOUT_COMPLETIONS:new Map(),completionKey:(s,i)=>s+'|'+i,console};
+  const pending=defer();let current='A';const c={session:()=>({role:'athlete'}),sessionStamp:()=>current,isSchoolReferenceViewer:()=>false,completionPost:()=>pending.promise,WORKOUT_COMPLETIONS:new Map(),completionKey:(s,i)=>s+'|'+i,console};
   vm.createContext(c);vm.runInContext(extract('  async function loadWorkoutCompletions(', '  function simpleText(')+';globalThis.run={loadWorkoutCompletions,saveWorkoutCompletion}',c);
   const run=kind==='list'?c.run.loadWorkoutCompletions():c.run.saveWorkoutCompletion('day','item',true);current='B';c.WORKOUT_COMPLETIONS=new Map([['B|own',true]]);
   pending.resolve(kind==='list'?{completions:[{sessionKey:'day',itemKey:'item',completed:true}]}:{completion:{sessionKey:'day',itemKey:'item',completed:true}});await run;

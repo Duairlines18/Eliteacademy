@@ -22,21 +22,18 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    ok(await page.locator('.hub-athlete-session-group').count()===0,'Saints day omits Form selector');
    ok(!await page.locator('.hub-main').innerText().then(t=>t.includes('Choose your Form')),'Saints day has no Form prompt');
    const warmup=page.locator('.hub-athlete-warmup');if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
-   const toggle=page.locator('[data-completion-toggle]').first();await toggle.waitFor();
-   // A different athlete remains incomplete despite preceding athlete's activity.
-   if(width===390)ok(await toggle.getAttribute('data-completed')==='false','independent initial progress '+slot);
-   if(await toggle.getAttribute('data-completed')==='true'){await toggle.click();await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='false');}
-   await toggle.click();await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='true');checks++;
-   await page.reload();await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='true');checks++;
-   if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
+   ok(await page.locator('[data-completion-toggle]').count()===0,'school athlete never has completion controls');
    ok(await page.locator('.hub-main').innerText().then(t=>t.includes('1 × 20 m')&&t.includes('Walk-back recovery')),'dose and rest preserved');
    ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'workout fits viewport');
-   // Coach cues are now visible directly on the workout sheet; no disclosure click is required.
+   // Assigned session instructions stay visible while library technique is collapsed.
    ok(await page.locator('.hub-main').innerText().then(t=>t.includes('Stay tall; controlled rhythm.')),'short technique cue visible without opening tips');
    await page.evaluate(()=>{window.__copied='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>{window.__copied=t}}});});
    await page.locator('[data-athlete-copy]').click();
    ok(await page.evaluate(()=>['A-March','1 × 20 m','Walk-back recovery','Stay tall; controlled rhythm.','4lQsMyKRRn8'].every(t=>window.__copied.includes(t))),'athlete copy contains full dose, rest, cue and matching demo');
-   await page.locator('.hub-athlete-demo').first().click();await page.locator('#hubVideoModal').waitFor({state:'visible'});
+   const technique=page.locator('.hub-school-technique').filter({has:page.locator('.hub-athlete-demo')}).first();
+   ok(await technique.evaluate(el=>!el.open),'technique starts collapsed');
+   await technique.locator('summary').click();
+   await technique.locator('.hub-athlete-demo').first().click();await page.locator('#hubVideoModal').waitFor({state:'visible'});
    ok(await page.locator('#hubVideoModal').evaluate(e=>!e.classList.contains('expanded')),'compact video default');
    ok(await page.locator('#hubVideoModal iframe').getAttribute('src').then(src=>src.includes('4lQsMyKRRn8')),'exact prescribed canonical demo');
    await page.locator('[data-hub-video-expand]').click();ok(await page.locator('#hubVideoModal').evaluate(e=>e.classList.contains('expanded')),'optional expand');
@@ -105,10 +102,10 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   await page.locator('.ducc [data-action="back"]').click();
   await page.locator('.ducc [data-day="1"]').click();
   ok(await page.locator('.ducc .warmup').count()===1,'Day 2 includes warm-up before skills');
-  await page.evaluate(()=>{window.__printSnapshot=null;window.print=()=>{const root=document.querySelector('.ducc');window.__printSnapshot={expanded:[...root.querySelectorAll('details')].every(d=>d.open),text:root.innerText};};});
+  await page.evaluate(()=>{window.__printSnapshot=null;window.print=()=>{const root=document.querySelector('.ducc');window.__printSnapshot=root.querySelector('.print-sheet').textContent;};});
   await page.locator('.ducc [data-action="print"]').click();
-  ok(await page.evaluate(()=>window.__printSnapshot.expanded&&['2 × 8','30 seconds','Move smoothly.','3 × 3','Stay balanced.'].every(t=>window.__printSnapshot.text.includes(t))),'print includes expanded warm-up, skills, rest and cues');
-  ok(await page.locator('.ducc .warmup').evaluate(e=>!e.open),'print restores compact warm-up');
+  ok(await page.evaluate(()=>['2 × 8','30 seconds','Move smoothly.','3 × 3','Stay balanced.'].every(t=>window.__printSnapshot.includes(t))),'print includes expanded warm-up, skills, rest and cues');
+  ok(await page.locator('.ducc .warmup').evaluate(e=>!e.open),'print leaves warm-up collapsed');
   await page.emulateMedia({media:'print'});
   ok(await page.locator('.hub-topbar').evaluate(e=>getComputedStyle(e).display==='none'),'print hides navigation');
   ok(await page.locator('#schoolAttendanceRoot').evaluate(e=>getComputedStyle(e).display==='none'),'print excludes register');

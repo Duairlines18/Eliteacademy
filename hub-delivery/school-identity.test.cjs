@@ -12,8 +12,9 @@ test('identified-school form choice is per athlete and assigned form cannot be o
  ctx.HUB_STATE.athlete={id:'second',formTier:null};assert.equal(ctx.api.schoolGroup(),'');
  ctx.HUB_STATE.athlete.formTier='Form 3';values.set(ctx.api.schoolGroupStorageKey(),'Lower 6');assert.equal(ctx.api.schoolGroup(),'Form 3');
 });
-test('identified school mode enables persistence while legacy school/staff stay reference-only',()=>{
- assert.match(html,/isSharedSchoolViewer\(\)&&!isIdentifiedSchoolAthlete\(\)/);
+test('school workout UI does not read or write completions',()=>{
+ assert.match(html,/function completionPost\(body\)\{[^\n]*isSchoolReferenceViewer\(\)\)return null/);
+ assert.match(html,/if\(isIdentifiedSchoolAthlete\(\)\)return schoolAthleteDelivery\(sections,sessionData\)/);
  assert.match(html,/action:'logout'/);assert.match(html,/WORKOUT_COMPLETIONS=new Map\(\);Object.keys\(GUIDED_CURSOR\)/);
  assert.match(html,/data-completion-toggle/);
 });
@@ -46,7 +47,7 @@ test('other schools keep saved restrictions and athlete notes visible',()=>{
  vm.runInNewContext(html.slice(start,end)+';renderSession("rehab");',ctx);
  assert.ok(ctx.root.innerHTML.includes('No running or jumping.'),'saved restriction must remain visible in school day');
  assert.ok(ctx.root.innerHTML.includes('Stop if pain increases &lt;today&gt;.'),'athlete note must remain visible and escaped');
- assert.ok(ctx.root.innerHTML.includes('Quiet, controlled landings.'),'existing school guidance retained');
+ assert.ok(!ctx.root.innerHTML.includes('Quiet, controlled landings.'),'non-jump workouts do not inherit landing instructions');
 });
 
 function renderSchoolDay({saints=true,role='athlete',group='Form 2'}={}){

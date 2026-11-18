@@ -18,7 +18,8 @@ const {chromium}=require('playwright');
    // Day buttons are available on the team overview.
    if(await page.locator('[data-action="back"]').count())await page.locator('[data-action="back"]').click();
    await page.locator('[data-day="'+day+'"]').click();
-   const section=page.locator('.section').filter({has:page.getByRole('heading',{name:title,exact:true})});
+   const section=page.locator('details.section').filter({has:page.locator('summary').filter({hasText:title})});
+   await section.locator(':scope > summary').click();
    const rows=section.locator('.exercise');assert.equal(await rows.count(),3);checks++;
    for(let i=0;i<3;i++){
     assert.equal(await rows.nth(i).locator('[data-video]').count(),expected);checks++;
@@ -26,6 +27,7 @@ const {chromium}=require('playwright');
      assert.equal(await rows.nth(i).getByRole('button',{name:'Watch Single-Leg Glute Bridge demonstration',exact:true}).count(),1);checks++;
      assert.equal(await rows.nth(i).getByRole('button',{name:'Watch Single-Leg Bridge Hold demonstration',exact:true}).count(),0);checks++;
     }
+    await rows.nth(i).locator('.movement-detail > summary').click();
     for(const button of await rows.nth(i).locator('[data-video]').all()){
      const target=await button.getAttribute('data-video');
      await button.click();assert.equal(await page.locator('.video iframe').getAttribute('src'),target);checks++;
