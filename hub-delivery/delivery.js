@@ -77,24 +77,23 @@
     return audience==='private-athlete'&&delivery?.model==='private-athlete'&&delivery.copyWorkout===true;
   }
   function copyWorkout({athleteName,week,session={},sections=[],group=''}){
-    const lines=['DU AIRLINES ELITE ACADEMY',text(athleteName)||'Assigned school programme','Week '+String(week??'to confirm')+' · '+text(session.day),text(session.title)];
+    const heading=['Week '+String(week??'to confirm'),text(session.day),text(session.title)].filter(Boolean).join(' · ');
+    const lines=['DU AIRLINES ELITE ACADEMY',text(athleteName)||'Assigned school programme',heading];
     if(group)lines.push('Training group: '+group);
-    for(const [label,value] of [['Duration',session.duration],['Focus',session.focus],['Objective',session.objective],['Purpose',session.why],['Important',session.watch],['Coach instructions',session.athleteNote]])if(text(value))lines.push(label+': '+text(value));
     for(const section of sections){
-      if(/Additional movement references/i.test(section.title||''))continue;
-      lines.push('',String(section.title||'Workout'));
-      for(const item of section.items||[]){
-        lines.push('- '+(item.group?'['+item.group+'] ':'')+String(item.title||'Exercise')+(item.dosage?' — '+item.dosage:'')+(item.rest?' · Rest: '+item.rest:''));
-        for(const [label,value] of coachingRows(item))if(text(value))lines.push('  '+label+': '+text(value));
+      if(!section.items?.length||/Additional movement references/i.test(section.title||''))continue;
+      lines.push('',(text(section.title)||'Workout').toUpperCase());
+      section.items.forEach((item,index)=>{
+        const title=text(item.title)||'Exercise';
+        lines.push((index+1)+'. '+(item.group?'['+item.group+'] ':'')+title+(item.dosage?' — '+item.dosage:'')+(item.rest?' · Rest: '+item.rest:''));
         const demos=Array.isArray(item.demos)?item.demos:[{title:item.title,url:item.videoUrl,id:item.videoId}];
-        for(const demo of demos){const url=safeVideo(demo.url,demo.id);if(url)lines.push('  Demo'+(demo.title?' — '+demo.title:'')+': '+url);}
-      }
+        for(const demo of demos){
+          const url=safeVideo(demo.url,demo.id),demoTitle=text(demo.title);
+          if(url)lines.push('   Demo'+(demoTitle&&demoTitle!==title?' ('+demoTitle+')':'')+': '+url);
+        }
+      });
     }
-    // Preserve prescribed text in full if a legacy/structured duplicate was normalized away.
-    const known=()=>lines.join('\n').toLowerCase().replace(/\s+/g,' ');
-    const extra=(session.items||[]).filter(raw=>typeof raw==='string'&&!known().includes(raw.trim().toLowerCase().replace(/\s+/g,' ')));
-    if(extra.length)lines.push('','Full programme instructions',...extra.map(s=>'- '+s));
-    return lines.filter((s,i)=>s||i>0).join('\n');
+    return lines.join('\n');
   }
   function overview(programme={}){
     const sessions=Array.isArray(programme.sessions)?programme.sessions:[];

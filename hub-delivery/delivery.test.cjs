@@ -15,7 +15,26 @@ test('training help explains terms without prescribing another distance, intensi
  assert.match(api.trainingHelp('effort 2–3/10').join(' '),/1 \(very easy\) to 10/);
  assert.deepEqual(api.trainingHelp('Dead Bug'),[]);
 });
-test('WhatsApp output retains identity, ordered warm-up, doses, cues, safety and valid demos',()=>{assert.equal(typeof api.copyWorkout,'function');const text=api.copyWorkout({athleteName:'Test Athlete',week:6,session,sections});for(const str of ['Test Athlete','Week 6','Monday','Strength','March','30 sec','2 x 8','60 sec','Tall posture','Squeeze glutes','Back arch','No running','Stop if symptoms return.','https://youtu.be/abcdefghijk'])assert.ok(text.includes(str),str);assert.ok(text.indexOf('March')<text.indexOf('Bridge'));});
+test('athlete copy uses numbered sections and demo lines without portal notes',()=>{
+ const extraSections=[
+  ...sections,
+  {title:'Running',items:[{group:'Form 2',title:'6 × 100 m at 75%',rest:'1 minute',demos:[
+   {title:'Tempo Run',url:'https://www.youtube.com/shorts/abcdefghijk'},
+   {title:'Running Mechanics',url:'https://youtu.be/ABCDEFGHIJK'},
+   {title:'Invalid demo',url:'https://example.com/watch?v=abcdefghijk'},
+  ]},{title:'Cool-down',dosage:'5 min',demos:[],videoUrl:'https://youtu.be/abcdefghijk'}]},
+  {title:'Additional movement references',items:[{title:'Reference exercise'}]},
+ ];
+ const copied=api.copyWorkout({athleteName:'Test Athlete',week:6,session:{...session,items:['Full saved portal notes']},sections:extraSections});
+ assert.equal(copied,[
+  'DU AIRLINES ELITE ACADEMY','Test Athlete','Week 6 · Monday · Strength','',
+  'STANDARD WARM-UP','1. March — 30 sec','',
+  'STRENGTH','1. Bridge — 2 x 8 · Rest: 60 sec','   Demo: https://youtu.be/abcdefghijk','',
+  'RUNNING','1. [Form 2] 6 × 100 m at 75% · Rest: 1 minute',
+  '   Demo (Tempo Run): https://www.youtube.com/shorts/abcdefghijk',
+  '   Demo (Running Mechanics): https://youtu.be/ABCDEFGHIJK','2. Cool-down — 5 min',
+ ].join('\n'));
+});
 test('bad/missing/non-video demo URLs create no copied links',()=>{assert.equal(typeof api.safeVideo,'function');for(const s of ['javascript:alert(1)','https://youtube.com/playlist?list=bad','https://youtube.com/@coach','https://example.com/watch?v=abcdefghijk','https://youtube.com/watch?v=short','https://youtube.com.evil.test/watch?v=abcdefghijk'])assert.equal(api.safeVideo(s),'');assert.equal(api.safeVideo('https://www.youtube.com/shorts/abcdefghijk'),'https://www.youtube.com/shorts/abcdefghijk');});
 test('copy is hidden for parents, mixed or unknown accounts, unpublished weeks',()=>{assert.equal(typeof api.canCopy,'function');assert.equal(api.canCopy({audience:'parent',published:true,delivery:{copyWorkout:true}}),false);assert.equal(api.canCopy({audience:'private-athlete',published:true,delivery:{model:'review-required',copyWorkout:false}}),false);assert.equal(api.canCopy({audience:'private-athlete',published:false,delivery:{copyWorkout:true}}),false);assert.equal(api.canCopy({audience:'private-athlete',published:true}),false);assert.equal(api.canCopy({audience:'private-athlete',published:true,delivery:{model:'private-athlete',copyWorkout:true}}),true);assert.equal(api.canCopy({school:true,published:true}),true);});
 test('overview maps explicit weekdays only and never invents rest or dates',()=>{assert.equal(typeof api.overview,'function');const result=api.overview({week:6,weeklyObjective:'Control the landing.',sessions:[{id:'one',day:'Day 1',title:'Strength'},{id:'two',day:'Friday',title:'Recovery'}]});assert.equal(result.days[0].sessions.length,0);assert.equal(result.days[4].sessions[0].id,'two');assert.equal(result.dateRange,'Dates to confirm');assert.equal(result.unplaced.length,1);});

@@ -40,14 +40,17 @@ test('repository loads canonical demos for text blocks without a duplicate exerc
  const bundle=await new SupabaseHubRepository(db).loadCurrentProgramme('c');
  assert.equal(bundle.exercises.length,1);assert.equal(bundle.exercises[0].code,'SPR01');
 });
-test('dose, coaching cues and rest remain one movement in display and copied workout',()=>{
+test('legacy dosage and rest export as one exercise while coaching cues remain in the portal',()=>{
  const w=normalize(['Calf Raise — 3 × 12; two feet; lower for 3 seconds; rest 45–60 seconds.']);
  assert.equal(w.sections[0].items.length,1);
  const row=w.sections[0].items[0];
  assert.equal(row.title,'Calf Raise');assert.equal(row.dosage,'3 × 12');assert.match(row.rest,/45–60/);assert.match(row.cue,/lower for 3 seconds/);
  const rendered=ctx.api.schoolAthleteDelivery(w.sections,{});
  assert.equal((rendered.match(/class="hub-athlete-movement"/g)||[]).length,1);
- const copied=ctx.api.athleteCopyText({},w.sections);assert.match(copied,/lower for 3 seconds/);assert.match(copied,/45–60/);
+ assert.match(rendered,/lower for 3 seconds/);
+ const copied=ctx.api.athleteCopyText({},w.sections);
+ assert.match(copied,/1\. Calf Raise — 3 × 12 · Rest: 45–60 seconds\./);
+ assert.doesNotMatch(copied,/two feet|lower for 3 seconds/);
 });
 test('legacy trailing dosage resolves an exact movement and demo without inventing a dose',()=>{
  const row=normalize(['Wall March 2 × 10/leg']).sections[0].items[0];
@@ -76,4 +79,4 @@ test('bootstrap carries reviewed text-only demos from current active library, ne
 });
 test('reviewed non-video URLs never reenter normalized Guided or staff rows',()=>{const w=normalize(['Wall March 2 × 10'],{videoLinks:[{itemIndex:0,title:'Wall March',url:'https://youtube.com/playlist?list=bad'}]});assert.equal(w.sections[0].items[0].videoUrl,'');assert.equal(w.sections[0].items[0].demos.length,0);});
 test('Guided running rows retain prescribed pain cues and rest',()=>{const w=normalize(['3 x 80m; stop if pain returns; rest 3 min']);const item=w.sections[0].items[0];const result=ctx.api.guidedCard(item,'Running',0,1,'day');assert.match(result,/stop if pain returns/);assert.match(result,/3 min/);});
-test('raw clipboard fallback cannot reintroduce another school groups dose',()=>{ctx.isSharedSchoolViewer=()=>true;ctx.schoolGroup=()=> 'Form 2';const items=['Form 2 — Calf Raise — 2 × 8','Form 3 — Calf Raise — 3 × 12'];const w=normalize(items);const scoped=w.sections.map(s=>({...s,items:s.items.filter(i=>i.group==='Form 2')}));const copied=ctx.api.athleteCopyText({items},scoped);assert.match(copied,/2 × 8/);assert.doesNotMatch(copied,/3 × 12|Form 3/);ctx.isSharedSchoolViewer=()=>false;ctx.schoolGroup=()=>'';});
+test('clipboard includes only the selected school group’s dose',()=>{ctx.isSharedSchoolViewer=()=>true;ctx.schoolGroup=()=> 'Form 2';const items=['Form 2 — Calf Raise — 2 × 8','Form 3 — Calf Raise — 3 × 12'];const w=normalize(items);const scoped=w.sections.map(s=>({...s,items:s.items.filter(i=>i.group==='Form 2')}));const copied=ctx.api.athleteCopyText({items},scoped);assert.match(copied,/2 × 8/);assert.doesNotMatch(copied,/3 × 12|Form 3/);ctx.isSharedSchoolViewer=()=>false;ctx.schoolGroup=()=>'';});
