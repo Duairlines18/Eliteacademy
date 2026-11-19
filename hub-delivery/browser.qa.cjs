@@ -67,9 +67,9 @@ const fixtures=JSON.parse(fs.readFileSync(process.env.HUB_QA_FIXTURES,'utf8'));
     const copy=page.locator('[data-athlete-copy]');ok(await copy.count()===1,'private copy button');
     ok(await copy.evaluate(el=>el.getBoundingClientRect().height>=44),'copy touch target');await copy.click();await page.getByText('Copied!',{exact:true}).waitFor();
     const text=await page.evaluate(()=>navigator.clipboard.readText());ok(text.includes(name)&&text.includes('Week '+data.programme.week)&&text.includes(workout.title),'clipboard identity/week/title');
-    for(const instruction of workout.items||[])ok(text.includes(instruction),'clipboard retains original published instruction');
     for(const prescription of workout.prescriptions||[]){if(prescription.dosage)ok(text.includes(prescription.dosage),'clipboard dose');if(prescription.rest)ok(text.includes(prescription.rest),'clipboard rest');}
-    if(workout.watch)ok(text.includes(workout.watch),'clipboard safety');if(workout.athleteNote)ok(text.includes(workout.athleteNote),'clipboard saved instructions');
+    ok(/^1\. .+/m.test(text),'clipboard numbers assigned workout rows');
+    ok(!/^(?:\s*(?:How to do it|Coach cue|Watch for|For this session|Coach instructions|Important):|Full programme instructions$)/m.test(text),'clipboard excludes portal coaching text');
     ok(!/javascript:|undefined/.test(text),'clipboard contains no invalid placeholders');
     if(name==='Larry'&&width===390){await page.evaluate(()=>{Object.defineProperty(navigator,'clipboard',{configurable:true,value:undefined});document.execCommand=()=>false;});await copy.click();ok(await page.locator('.hub-copy-fallback').inputValue()===text,'clipboard denial preserves complete selectable output');}
   }
@@ -82,7 +82,7 @@ const fixtures=JSON.parse(fs.readFileSync(process.env.HUB_QA_FIXTURES,'utf8'));
   await page.route('https://fonts.googleapis.com/**',route=>route.fulfill({body:'',contentType:'text/css'}));
   await page.addInitScript(role=>{if(location.hostname!=='127.0.0.1')return;localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify({role,token:'fixture-session-not-production'}));localStorage.setItem('duAirlinesSchoolGroupV1','Form 2');window.DU_TECHNIQUE_REVIEW_ENABLED=false;},role);
   const workout=data.programme.sessions[0];await page.goto(base+'/#/hub/session/'+workout.id,{waitUntil:'domcontentloaded'});await page.locator('[data-athlete-copy]').waitFor();await compactVideo(page);ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'school workout fits '+width);await page.locator('[data-athlete-copy]').click();await page.getByText('Copied!',{exact:true}).waitFor();
-  const copied=await page.evaluate(()=>navigator.clipboard.readText());ok(copied.includes('Authorized School QA'),'authorized school identity copied');for(const row of workout.items||[]){if(role==='athlete'&&row.startsWith('Form 3'))continue;ok(copied.includes(row),'authorized school instructions copied');}ok(role==='staff'?copied.includes('Group stride — 3 × 30m'):!copied.includes('Group stride — 3 × 30m'),'school group scope preserved');ok(errors.length===0,'school runtime errors: '+errors.join('; '));
+  const copied=await page.evaluate(()=>navigator.clipboard.readText());ok(copied.includes('Authorized School QA'),'authorized school identity copied');ok(copied.includes('[Form 2] Group stride — 2 × 20m'),'authorized group dose copied');ok(role==='staff'?copied.includes('[Form 3] Group stride — 3 × 30m'):!copied.includes('Group stride — 3 × 30m'),'school group scope preserved');ok(errors.length===0,'school runtime errors: '+errors.join('; '));
   await context.close();await browser.close();console.log('School '+role+' '+width+'px clipboard and compact player passed');
  }
  console.log(checks+' browser checks passed. Authentication/API were fixtures; clipboard was real.');

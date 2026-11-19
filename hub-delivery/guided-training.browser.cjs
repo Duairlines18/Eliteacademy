@@ -18,7 +18,7 @@ const {chromium}=require('playwright');
   if(parent)day.preparation={routineIds:[mob.id,warm.id],replacedSectionOrders:[0]};
   const otherDays=[{...day,id:prefix+'day2',day:'Wednesday',title:'Second assigned workout'},{...day,id:prefix+'day3',day:'Friday',title:'Third assigned workout'}];
   const sessions=parent?[day,...otherDays,mob,warm]:[day,...otherDays];
-  const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<500}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+  const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<500,permissions:['clipboard-read','clipboard-write']}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await context.addInitScript(({audience,who})=>{localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify({role:'athlete',mode:'account',audience}));window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:who}}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})}})};},{audience,who});
   let failSave=true;
   await page.route('**/*',async route=>{
@@ -48,6 +48,14 @@ const {chromium}=require('playwright');
   await page.locator('[data-workout-mode="guided"]').waitFor();
   ok(await page.locator('[aria-label="Choose training day"]').count()===0,'selected workout has no other day cards');
   await page.getByRole('link',{name:'← Back to Week',exact:true}).waitFor();
+  if(!parent){
+   await page.getByRole('button',{name:'Copy workout',exact:true}).click();
+   await page.getByText('Copied!',{exact:true}).waitFor();
+   const copied=await page.evaluate(()=>navigator.clipboard.readText());
+   ok(copied.includes('Week 2 · Monday · Core Foundation\n\nTODAY’S WORKOUT'),'private copy has a clear session title and section');
+   ok(copied.includes('1. Diaphragmatic Breathing — 2 × 5 breaths · Rest: 45–60 seconds\n   Demo: https://youtu.be/abcdefghijk'),'private copy retains dosage, rest and matching demo');
+   ok(!/No jumping|Only if comfortable|How to do it:|Watch for:/.test(copied),'private copy leaves coaching notes in the portal');
+  }
   if(parent){
    ok(await page.locator('[aria-label="Training stages"] a').count()===1,'one combined warm-up card');
    await page.getByRole('link',{name:'My Warm-Up',exact:true}).click();

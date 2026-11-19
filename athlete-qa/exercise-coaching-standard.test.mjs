@@ -20,7 +20,7 @@ test('all 85 entries have coaching guidance or a review warning, purpose, parsed
   assert.doesNotMatch(row.coaching_cues,/land firm|lock (?:your )?(?:knees|ankles)|push through pain/i);
  }
 });
-test('library, guided parent card, coach movement sheet and copy preserve coaching for every exercise',()=>{
+test('exercise coaching stays visible in the portal while copy keeps the assigned dose and demo',()=>{
  for(const row of rows){
   const dose=/Hold|ISO/.test(row.name)?'2 × 15 seconds':'2 × 5';
   const payload=shapeBootstrap({role:'athlete',cohort:{id:'test'},programme:{id:'test'},week:{week_number:1},trainingDays:[{id:'test-day'}],blocks:[{training_day_id:'test-day',title:'Test',sort_order:1,content:{prescriptions:[{exerciseCode:row.code,dosage:dose}]}}],exercises:[row]});
@@ -29,9 +29,15 @@ test('library, guided parent card, coach movement sheet and copy preserve coachi
   assert.equal(item.description,row.description,row.code);assert.ok(item.avoid,row.code+': avoid lost');assert.equal(item.dosage,dose,row.code+': dose changed');
   const card=ctx.api.guidedCard(item,'Test',0,1,'test-day');assert.ok(card.includes(escapeHtml(item.avoid)),row.code+': guided avoid missing');
   const lib=ctx.api.exerciseCard(ex);assert.ok(lib.includes(escapeHtml(item.avoid)),row.code+': library avoid missing');
-  const copy=ctx.api.athleteCopyText({},[{title:'Test',items:[item]}]);assert.ok(copy.includes(item.avoid),row.code+': copy avoid missing');
+  const copy=ctx.api.athleteCopyText({},[{title:'Test',items:[item]}]);
+  assert.ok(copy.includes('1. '+item.title+' — '+dose),row.code+': copied prescription missing');
+  assert.ok(!copy.includes(item.avoid),row.code+': portal-only Avoid guidance appeared in copy');
   const sheet=ctx.api.schoolAthleteDelivery([{title:'Test',items:[item]}],{id:'test-day'});assert.ok(sheet.includes(escapeHtml(item.avoid)),row.code+': school sheet avoid missing');
-  if(row.video_url)assert.equal(item.videoUrl,row.video_url,row.code+': video changed');
+  if(row.video_url){
+   assert.equal(item.videoUrl,row.video_url,row.code+': video changed');
+   const demo=delivery.safeVideo(item.videoUrl,item.videoId);
+   if(demo)assert.ok(copy.includes('Demo: '+demo),row.code+': approved demo missing from copy');
+  }
  }
 });
 test('unverified series retain visible confirmation instructions and original review notes',()=>{

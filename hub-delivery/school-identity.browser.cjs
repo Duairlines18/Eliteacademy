@@ -33,7 +33,9 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    ok(await march.getByText('For this session Stay tall; controlled rhythm.',{exact:true}).isVisible(),'A-March cue is exact and visible without opening tips');
    await page.evaluate(()=>{window.__copied='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>{window.__copied=t}}});});
    await page.locator('[data-athlete-copy]').click();
-   ok(await page.evaluate(()=>['A-March','1 × 20 m','Walk-back recovery','Stay tall; controlled rhythm.','4lQsMyKRRn8'].every(t=>window.__copied.includes(t))),'athlete copy contains full dose, rest, cue and matching demo');
+   const athleteCopy=await page.evaluate(()=>window.__copied);
+   ok(/\d+\. A-March — 1 × 20 m · Rest: Walk-back recovery\n   Demo: https:\/\/www\.youtube\.com\/shorts\/4lQsMyKRRn8/.test(athleteCopy),'athlete copy places the correct demo beneath the numbered exact dose and rest');
+   ok(!/Stay tall; controlled rhythm|How to do it:|Coach cue:|Watch for:|For this session:|Coach instructions:|Full programme instructions/.test(athleteCopy),'athlete copy excludes portal-only coaching text');
    const technique=march.locator('.hub-school-technique');
    ok((await technique.locator('.hub-athlete-demo').getAttribute('href'))==='https://www.youtube.com/shorts/4lQsMyKRRn8','assigned A-March link is exact');
    ok(await technique.evaluate(el=>!el.open),'technique starts collapsed');
