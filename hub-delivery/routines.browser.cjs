@@ -65,15 +65,22 @@ const {chromium}=require('playwright');
   if(role==='athlete'){
    await page.goto(base+'/#/hub/session/d2');await page.getByRole('link',{name:'Air Zim Warm-Up',exact:true}).click();
    await page.locator('.hub-main h1').filter({hasText:'Air Zim Warm-Up'}).waitFor();
-   await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();
-   ok(await page.locator('.hub-guided-step').innerText()==='1 of 1','Air Zim contains only its assigned movement');
-   const completion=page.locator('[data-completion-toggle]');
-   ok(await completion.getAttribute('data-session-key')==='d2'&&await completion.getAttribute('data-item-key')==='p:0:0:TST01','Air Zim retains original completion identity');
-   ok((await page.locator('.hub-guided-meta').innerText()).includes('1 x 3'),'exact assigned Air Zim dose');
-   ok(!(await page.locator('.hub-main').innerText()).includes('4 x 5'),'main workout stays separate');
-   await completion.click();await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='true');
-   await page.reload();await page.locator('[data-workout-mode="guided"]').click();
-   ok(await completion.getAttribute('data-completed')==='true','Air Zim completion persists after reload');
+   if(audience==='school'){
+    ok(await page.locator('[data-completion-toggle],[data-workout-mode]').count()===0,'school routine is reference-only');
+    ok((await page.locator('.hub-main').innerText()).includes('1 x 3'),'school routine keeps the assigned dose');
+    ok(!(await page.locator('.hub-main').innerText()).includes('4 x 5'),'school warm-up excludes the main workout');
+    ok(completionWrites===0,'school routine does not write completion');
+   }else{
+    await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();
+    ok(await page.locator('.hub-guided-step').innerText()==='1 of 1','Air Zim contains only its assigned movement');
+    const completion=page.locator('[data-completion-toggle]');
+    ok(await completion.getAttribute('data-session-key')==='d2'&&await completion.getAttribute('data-item-key')==='p:0:0:TST01','Air Zim retains original completion identity');
+    ok((await page.locator('.hub-guided-meta').innerText()).includes('1 x 3'),'exact assigned Air Zim dose');
+    ok(!(await page.locator('.hub-main').innerText()).includes('4 x 5'),'main workout stays separate');
+    await completion.click();await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='true');
+    await page.reload();await page.locator('[data-workout-mode="guided"]').click();
+    ok(await completion.getAttribute('data-completed')==='true','Air Zim completion persists after reload');
+   }
    await page.goto(base+'/#/hub/session/d3');await page.getByRole('link',{name:'← Back to Week',exact:true}).waitFor();
    ok(await page.locator('[aria-label="Training stages"]').count()===0,'rehabilitation day receives no inferred standard warm-up');
    ok((await page.locator('.hub-objective').innerText()).includes('No running or jumping.'),'rehabilitation restrictions retained');

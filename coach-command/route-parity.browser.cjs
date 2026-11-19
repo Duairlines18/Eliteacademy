@@ -2,12 +2,22 @@
 // Synthetic authenticated coach records; no live athlete data or writes.
 const assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
+const fs=require('node:fs/promises');
+const path=require('node:path');
 const {chromium}=require('playwright');
 (async()=>{
  const server=spawn(process.execPath,['supabase/qa/school-browser-fixture.mjs'],{stdio:['ignore','pipe','inherit']});
  await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.once('exit',code=>reject(Error('Fixture exited '+code)));});
  let browser;
  let checks=0;
+ const evidence=process.env.DU_COACHING_EVIDENCE;
+ if(evidence)await fs.mkdir(evidence,{recursive:true});
+ async function verifyPrintPages(page,name,expected){
+  const pdf=await page.pdf({path:evidence?path.join(evidence,name+'.pdf'):undefined,format:'A4',preferCSSPageSize:true});
+  // Chromium emits the page dictionaries outside its compressed content streams.
+  assert.equal((pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length,expected,name+' pagination');
+  checks++;
+ }
  try{
   browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE,args:JSON.parse(process.env.CHROMIUM_ARGS||'[]')});
   for(const width of [390,768,1440]){
@@ -21,6 +31,9 @@ const {chromium}=require('playwright');
     await page.waitForTimeout(200);
     if(!route.startsWith('session/')){
      await page.getByRole('heading',{name:'Team Command',exact:true}).waitFor();
+     assert.ok(await page.getByText('Synthetic browser test only.',{exact:true}).isVisible());checks++;
+     if(evidence&&route==='staff'&&[390,1440].includes(width))
+      await page.locator('.ducc').screenshot({path:path.join(evidence,'school-week-'+width+'.png')});
      await page.locator('.ducc [data-day="1"]').click();
     }
     await page.getByRole('heading',{name:'Full Workout',exact:true}).waitFor();
@@ -28,13 +41,79 @@ const {chromium}=require('playwright');
     await page.evaluate(()=>{Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>window.__copied=t}})});
     await page.locator('.ducc [data-action="copy"]').first().click();
     assert.ok(await page.evaluate(()=>['Day 2','A-March','2 × 8','30 seconds','Move smoothly.','3 × 3','60 seconds','Stay balanced.','4lQsMyKRRn8'].every(t=>window.__copied.includes(t))),'complete workout export');checks++;
-    assert.ok(await page.locator('.coach-cue').last().innerText().then(t=>t.includes('Stay balanced.')),'session cue visible without opening a disclosure');checks++;
-    await page.locator('.ducc [data-video]').last().click();
-    assert.ok((await page.locator('.ducc iframe').getAttribute('src')).includes('4lQsMyKRRn8'));checks++;
+    const copied=await page.evaluate(()=>window.__copied);
+    assert.match(copied,/01 — WARM-UP\n\n1\. A-March\n {3}Prescription: 2 × 8\n {3}Rest: 30 seconds/);checks++;
+    assert.match(copied,/Video \(Snap Down\): https:\/\/www\.youtube\.com\/shorts\/Dv6blgFNo28/);checks++;
+    const section=page.locator('.ducc details.section').last();
+    assert.equal(await section.evaluate(el=>el.open),false,'workout block starts compact');checks++;
+    await section.locator(':scope > summary').click();
+    const detail=section.locator('.movement-detail').last();
+    assert.equal(await detail.evaluate(el=>el.open),false,'technique starts collapsed');checks++;
+    assert.ok((await section.innerText()).includes('Stay balanced.'),'assigned session cue remains visible');checks++;
+    assert.ok((await section.innerText()).includes('Drop quickly into a shallow landing.'));checks++;
+    if(evidence&&route==='staff'&&[390,1440].includes(width)){
+     await page.locator('.ducc .warmup > summary').click();
+     await page.locator('.ducc').screenshot({path:path.join(evidence,'coaching-workout-'+width+'.png')});
+     if(width===1440)await fs.writeFile(path.join(evidence,'Copy-Workout.txt'),copied+'\n');
+    }
+    await detail.locator('summary').click();
+    await detail.locator('[data-video]').last().click();
+    assert.ok((await page.locator('.ducc iframe').getAttribute('src')).includes('Dv6blgFNo28'));checks++;
     await page.locator('.ducc [data-action="close-video"]').click();
-    await page.evaluate(()=>{window.__printed=false;window.print=()=>{window.__printed=[...document.querySelectorAll('.ducc details')].every(d=>d.open)}});
+    await page.evaluate(()=>{window.print=()=>{};});
     await page.locator('.ducc [data-action="print"]').click();
-    assert.equal(await page.evaluate(()=>window.__printed),true);checks++;
+    assert.equal(await page.locator('.print-day').count(),1);checks++;
+    assert.ok((await page.locator('.print-day').textContent()).includes('Capacity and control'));checks++;
+    assert.equal(await page.locator('.print-day a').last().getAttribute('href'),'https://www.youtube.com/shorts/Dv6blgFNo28');checks++;
+    if(route==='staff'&&width===1440)await verifyPrintPages(page,'Print-Day',1);
+    await page.locator('.ducc [data-action="print-week"]').click();
+    assert.equal(await page.locator('.print-day').count(),3);checks++;
+    if(route==='staff'&&width===1440)await verifyPrintPages(page,'Print-Week',2);
+    await page.emulateMedia({media:'print'});
+    assert.equal(await page.locator('.ducc .print-sheet').isVisible(),true);
+    assert.equal(await page.locator('.ducc main').isVisible(),false);
+    assert.equal(await page.locator('#schoolAttendanceRoot').isVisible(),false);
+    assert.equal(await page.locator('.hub-shell > :not(.hub-main), .hub-wrap > :not(#du-coach-command-root)').evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).display==='none')),true);checks+=4;
+    await page.emulateMedia({media:'screen'});
+    await page.locator('.ducc [data-action="present"]').click();
+    await page.getByRole('region',{name:'Workout presentation'}).waitFor();
+    assert.equal(await page.locator('.ducc .roster').count(),0);checks++;
+    await page.keyboard.press('ArrowRight');
+    const projection=await page.locator('.ducc .presentation').innerText();
+    for(const value of ['3 × 3','60 seconds','Stay balanced.','Stop if pain increases.'])assert.ok(projection.includes(value),value);
+    assert.ok(await page.locator('.ducc .presentation').evaluate(el=>el.scrollWidth<=el.clientWidth));checks+=5;
+    if(evidence&&route==='staff'&&[768,1440].includes(width))
+     await page.screenshot({path:path.join(evidence,'projector-'+width+'.png')});
+    await page.locator('.presentation [data-video]').click();
+    assert.match(await page.locator('.ducc iframe').getAttribute('src'),/Dv6blgFNo28$/);checks++;
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('.ducc .video').count(),0);checks++;
+    await page.keyboard.press('ArrowLeft');
+    assert.ok(await page.locator('.presentation').getByRole('heading',{name:'Warm-up'}).isVisible());checks++;
+    await page.keyboard.press('Escape');
+    await page.getByRole('heading',{name:'Full Workout',exact:true}).waitFor();
+    assert.ok((await page.locator('.ducc .workout-head').innerText()).includes('Capacity and control'));checks++;
+    if(route==='staff'){
+     await page.locator('.ducc [data-day="2"]').click();
+     assert.ok((await page.locator('.ducc .workout-head').innerText()).includes('OPTIONAL EXTRA'));checks++;
+     await page.locator('.ducc [data-action="present"]').click();
+     for(const [heading,tokens] of [
+      ['Sprint technique',['3 × 40 m at 75%','Walk back.']],
+      ['Jump technique',['Broad Jump + Stick','2 × 3','60 seconds']],
+      ['Strength',['Step-Up','2 × 6 per side','45 seconds']],
+      ['Mobility',['Ankle Rock','1 × 8 per side']],
+      ['Recovery',['Walk easily for 2 minutes.']],
+     ]){
+      await page.locator('.presentation').getByRole('heading',{name:heading,exact:true}).waitFor();
+      const slide=await page.locator('.presentation').innerText();
+      for(const token of tokens){assert.ok(slide.includes(token),token);checks++;}
+      const next=page.locator('.presentation [data-action="next-block"]');
+      if(await next.isEnabled())await next.click();
+     }
+     await page.locator('.ducc [data-action="exit-present"]').click();
+    }
+    await page.locator('.ducc [data-day="0"]').click();
+    assert.ok((await page.locator('.ducc .workout-head').innerText()).includes('Movement foundations'));checks++;
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'fits viewport');checks++;
     await page.locator('.ducc [data-action="back"]').click();
     await page.getByRole('heading',{name:'Team Command',exact:true}).waitFor();checks++;
@@ -42,6 +121,8 @@ const {chromium}=require('playwright');
    await page.goto('http://127.0.0.1:4173/qa/01#/hub/session/fixture-day-1');
    await page.locator('.hub-athlete-one-sheet').waitFor();
    assert.equal(await page.locator('.ducc').count(),0,'athlete route keeps its own view');checks++;
+   if(evidence&&width===390)
+    await page.locator('.hub-main').screenshot({path:path.join(evidence,'athlete-workout-390.png')});
    assert.deepEqual(errors,[]);checks++;
    await page.close();
   }

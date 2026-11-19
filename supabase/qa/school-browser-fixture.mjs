@@ -13,11 +13,25 @@ const cohort={id:'fixture-school',name:'St. George’s — LOCAL TEST FIXTURE',o
 const athletes=Array.from({length:6},(_,i)=>({id:'fixture-athlete-'+(i+1),display_name:'St. George’s Athlete 0'+(i+1),athlete_type:'school',organization_id:'fixture-org',cohort_id:cohort.id,access_status:'active',form_tier:null,onboarding_data:{testing_placeholder:true}}));
 const director={id:'fixture-director',display_name:'Mr Chivandire',access_status:'active',access_profile:'sports_director'};
 const staff={id:'fixture-coach',display_name:'Coach Dube',access_status:'active'};
-const exercise={id:'fixture-march',code:'SPR01',name:'A-March',categories:['warm-up','sprint-mechanics'],video_id:'4lQsMyKRRn8',video_url:'https://www.youtube.com/shorts/4lQsMyKRRn8',active:true};
-const bundle={cohort,programme:{id:cohort.programme_id,name:'LOCAL TEST — Four-week Plyometric Skills Pilot',duration_weeks:4,sport:'School Performance'},week:{week_number:1,status:'live',verification_status:'verified',published_at:'2026-10-24T00:00:00Z',weekly_objective:'Synthetic browser test only.'},trainingDays:[{id:'fixture-day-1',day_key:'Day 1',title:'Movement foundations',duration:'60 minutes',sort_order:1},{id:'fixture-day-2',day_key:'Day 2',title:'Capacity and control',duration:'60 minutes',sort_order:2},{id:'fixture-day-3',day_key:'Day 3',title:'Optional Recovery',duration:'20 minutes',sort_order:3},{id:'fixture-routine',day_key:'Warm-Up Routine',title:'ASIM Warm-Up',sort_order:2}],blocks:[{training_day_id:'fixture-day-1',title:'Movement',sort_order:1,content:{prescriptions:[{exerciseCode:'SPR01',dosage:'1 × 20 m',rest:'Walk-back recovery',cues:'Stay tall; controlled rhythm.'}]}},{training_day_id:'fixture-routine',title:'ASIM Warm-Up',sort_order:1,content:{prescriptions:[{exerciseCode:'SPR01',dosage:'1 × 20 m',rest:'Walk-back recovery',cues:'Stay tall; controlled rhythm.'}]}}],exercises:[exercise]};
+const exercise={id:'fixture-march',code:'SPR01',name:'A-March',description:'March forward and lift one knee at a time.',categories:['warm-up','sprint-mechanics'],video_id:'4lQsMyKRRn8',video_url:'https://www.youtube.com/shorts/4lQsMyKRRn8',active:true};
+const bundle={cohort,programme:{id:cohort.programme_id,name:'LOCAL TEST — Four-week Plyometric Skills Pilot',duration_weeks:4,sport:'School Performance'},week:{week_number:1,status:'live',verification_status:'verified',published_at:'2026-10-24T00:00:00Z',weekly_objective:'Synthetic browser test only.'},trainingDays:[{id:'fixture-day-1',day_key:'Day 1',title:'Movement foundations',duration:'60 minutes',objective:'Build controlled rhythm before faster work.',sort_order:1},{id:'fixture-day-2',day_key:'Day 2',title:'Capacity and control',duration:'60 minutes',objective:'Practise balanced landings.',sort_order:2},{id:'fixture-day-3',day_key:'Day 3',title:'Optional technique and recovery',duration:'20 minutes',objective:'Rehearse simple movements at an easy effort.',sort_order:3},{id:'fixture-routine',day_key:'Warm-Up Routine',title:'ASIM Warm-Up',sort_order:2}],blocks:[{training_day_id:'fixture-day-1',title:'Movement',sort_order:1,content:{prescriptions:[{exerciseCode:'SPR01',dosage:'1 × 20 m',rest:'Walk-back recovery',cues:'Stay tall; controlled rhythm.'}]}},{training_day_id:'fixture-routine',title:'ASIM Warm-Up',sort_order:1,content:{prescriptions:[{exerciseCode:'SPR01',dosage:'1 × 20 m',rest:'Walk-back recovery',cues:'Stay tall; controlled rhythm.'}]}}],exercises:[exercise]};
 // Additional synthetic Day 2 coverage for collapsed warm-up print/export.
 bundle.blocks.push({training_day_id:'fixture-day-2',title:'Warm-up',sort_order:0,content:{prescriptions:[{exerciseCode:'SPR01',dosage:'2 × 8',rest:'30 seconds',cues:'Move smoothly.'}]}},
- {training_day_id:'fixture-day-2',title:'Plyometric skills',sort_order:1,content:{prescriptions:[{exerciseCode:'SPR01',dosage:'3 × 3',rest:'60 seconds',cues:'Stay balanced.'}]}});
+ {training_day_id:'fixture-day-2',title:'Plyometric skills',sort_order:1,content:{prescriptions:[{exerciseCode:'PLY01',dosage:'3 × 3',rest:'60 seconds',cues:'Stay balanced.'}]}});
+// Apply only to the in-memory fixture. URLs use reviewed exercise IDs from the existing catalog.
+for(const [code,name,video_id,description,coaching_cues] of [
+ ['PLY01','Snap Down','Dv6blgFNo28','Drop quickly into a shallow landing.','Cue: Land quietly. Avoid: Stop if pain increases.'],
+ ['PLY02','Broad Jump + Stick','SZhqfsybVp8','Jump forward and hold the landing.'],
+ ['STR02','Step-Up','Tdn9-s7-YPc','Step onto a stable box and stand tall.'],
+ ['WU01','Ankle Rock','6Dlac5mxD6k','Move the knee forward with the heel down.'],
+])bundle.exercises.push({code,name,video_id,video_url:'https://www.youtube.com/shorts/'+video_id,description,coaching_cues,active:true});
+for(const [sort_order,title,prescriptions] of [
+ [0,'Sprint technique',[{instruction:'Progressive build-up runs — 3 × 40 m at 75% · Rest: Walk back.'}]],
+ [1,'Jump technique',[{exerciseCode:'PLY02',dosage:'2 × 3',rest:'60 seconds',cues:'Hold the landing.'}]],
+ [2,'Strength',[{exerciseCode:'STR02',dosage:'2 × 6 per side',rest:'45 seconds',cues:'Stand tall.'}]],
+ [3,'Mobility',[{exerciseCode:'WU01',dosage:'1 × 8 per side',cues:'Keep the heel down.'}]],
+ [4,'Recovery',[{instruction:'Walk easily for 2 minutes.'}]],
+])bundle.blocks.push({training_day_id:'fixture-day-3',title,sort_order,content:{prescriptions,requirement:'Optional'}});
 const repo={findAccessCode:async h=>codes.get(h),findAccessCodeById:async id=>[...codes.values()].find(c=>c.id===id),findCohort:async()=>cohort,findSchoolAthlete:async id=>athletes.find(a=>a.id===id),findSchoolStaff:async id=>id===director.id?director:staff,schoolCompletionSummary:async()=>athletes.map(a=>({athleteId:a.id,recordedItems:(completions.get(`athlete_${a.id}`)||new Map()).size})),isStaffAssigned:async()=>true,listSchoolRoster:async()=>athletes,findSession:async h=>sessions.get(h),createSession:async row=>sessions.set(row.token_hash,{...row,id:row.token_hash}),touchSession:async()=>{},touchCode:async()=>{},revokeSession:async(id,at)=>{sessions.get(id).revoked_at=at;},loadCurrentProgramme:async()=>bundle};
 repo.attendanceProgramme=async()=>bundle.programme;
 repo.readSchoolAttendance=async(c,p,w)=>[...attendance.values()].filter(e=>e.cohort_id===c&&e.programme_id===p&&e.week_number===w);
@@ -40,7 +54,7 @@ const server=http.createServer(async(req,res)=>{
    if(url.pathname.endsWith('/hub-data'))return json(res,200,body.action==='logout'?await logoutSchoolSession(args):await bootstrapHub(args));
    const identity=await authorizeSchoolSession(args);
    if(url.pathname.endsWith('/workout-completions')){
-    if(body.action==='library')return json(res,200,{exercises:[{...exercise,title:exercise.name,videoId:exercise.video_id,videoUrl:exercise.video_url,category:exercise.categories}]});
+    if(body.action==='library')return json(res,200,{exercises:bundle.exercises.map(ex=>({...ex,title:ex.name,videoId:ex.video_id,videoUrl:ex.video_url,category:ex.categories}))});
     const ctx=schoolCompletionContext(identity,req.headers['x-du-viewer']);if(ctx.denied)return json(res,403,{error:'Not permitted'});
     const rows=completions.get(ctx.viewerKey)||new Map();completions.set(ctx.viewerKey,rows);
     if(body.action==='set'){const row={sessionKey:body.sessionKey,itemKey:body.itemKey,completed:body.completed};rows.set(body.sessionKey+'|'+body.itemKey,row);return json(res,200,{completion:row});}
@@ -56,7 +70,7 @@ const server=http.createServer(async(req,res)=>{
    const html=await fs.readFile(path.join(root,'index.html'),'utf8');res.writeHead(200,{'Content-Type':'text/html','Cache-Control':'no-store'});res.end(html.replace('<head>','<head>'+init));return;
   }
   const name=path.resolve(root,'.'+url.pathname);if(!name.startsWith(root+path.sep))throw Error('not found');
-  const data=await fs.readFile(name);res.writeHead(200,{'Content-Type':name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});res.end(data);
+  const data=await fs.readFile(name);res.writeHead(200,{'Content-Type':/\.m?js$/.test(name)?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});res.end(data);
  }catch(error){json(res,error.status||401,{error:error.message||'Fixture unavailable'});}
 });
 server.listen(Number(process.env.DU_SCHOOL_QA_PORT||4173),'0.0.0.0',()=>console.log('Synthetic school browser fixture listening on port 4173. No production writes.'));
