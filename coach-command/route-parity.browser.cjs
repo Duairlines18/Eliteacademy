@@ -12,6 +12,12 @@ const {chromium}=require('playwright');
  let checks=0;
  const evidence=process.env.DU_COACHING_EVIDENCE;
  if(evidence)await fs.mkdir(evidence,{recursive:true});
+ async function verifyPrintPages(page,name,expected){
+  const pdf=await page.pdf({path:evidence?path.join(evidence,name+'.pdf'):undefined,format:'A4',preferCSSPageSize:true});
+  // Chromium emits the page dictionaries outside its compressed content streams.
+  assert.equal((pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length,expected,name+' pagination');
+  checks++;
+ }
  try{
   browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE,args:JSON.parse(process.env.CHROMIUM_ARGS||'[]')});
   for(const width of [390,768,1440]){
@@ -59,17 +65,15 @@ const {chromium}=require('playwright');
     assert.equal(await page.locator('.print-day').count(),1);checks++;
     assert.ok((await page.locator('.print-day').textContent()).includes('Capacity and control'));checks++;
     assert.equal(await page.locator('.print-day a').last().getAttribute('href'),'https://www.youtube.com/shorts/Dv6blgFNo28');checks++;
-    if(evidence&&route==='staff'&&width===1440)
-     await page.pdf({path:path.join(evidence,'Print-Day.pdf'),format:'A4',preferCSSPageSize:true});
+    if(route==='staff'&&width===1440)await verifyPrintPages(page,'Print-Day',1);
     await page.locator('.ducc [data-action="print-week"]').click();
     assert.equal(await page.locator('.print-day').count(),3);checks++;
-    if(evidence&&route==='staff'&&width===1440)
-     await page.pdf({path:path.join(evidence,'Print-Week.pdf'),format:'A4',preferCSSPageSize:true});
+    if(route==='staff'&&width===1440)await verifyPrintPages(page,'Print-Week',2);
     await page.emulateMedia({media:'print'});
     assert.equal(await page.locator('.ducc .print-sheet').isVisible(),true);
     assert.equal(await page.locator('.ducc main').isVisible(),false);
     assert.equal(await page.locator('#schoolAttendanceRoot').isVisible(),false);
-    assert.equal(await page.locator('.hub-wrap > :not(#du-coach-command-root)').evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).display==='none')),true);checks+=4;
+    assert.equal(await page.locator('.hub-shell > :not(.hub-main), .hub-wrap > :not(#du-coach-command-root)').evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).display==='none')),true);checks+=4;
     await page.emulateMedia({media:'screen'});
     await page.locator('.ducc [data-action="present"]').click();
     await page.getByRole('region',{name:'Workout presentation'}).waitFor();

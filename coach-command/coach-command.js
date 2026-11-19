@@ -31,8 +31,8 @@
 @media print{
  @page{margin:12mm}
  body:has(.ducc .print-sheet){background:#fff!important;color:#000!important}
- body:has(.ducc .print-sheet) :is(.hub-topbar,.hub-wrap > :not(#du-coach-command-root)){display:none!important}
- body:has(.ducc .print-sheet) :is(.hub-shell,.hub-main,.hub-wrap,#du-coach-command-root,.ducc){background:#fff!important;color:#000!important;border:0!important;box-shadow:none!important;margin:0!important;padding:0!important;overflow:visible!important}
+ body:has(.ducc .print-sheet) :is(.hub-shell > :not(.hub-main),.hub-wrap > :not(#du-coach-command-root)){display:none!important}
+ body:has(.ducc .print-sheet) :is(#hub-root,.hub-shell,.hub-main,.hub-wrap,#du-coach-command-root,.ducc){min-height:0!important;background:#fff!important;color:#000!important;border:0!important;box-shadow:none!important;margin:0!important;padding:0!important;overflow:visible!important}
  .ducc:has(.print-sheet)>:not(.print-sheet){display:none!important}
  .ducc .print-sheet{display:block;color:#000;background:#fff;font:10pt/1.35 system-ui,sans-serif}
  .ducc .print-brand{font-weight:750;letter-spacing:.08em}.ducc .print-sheet a{color:#000;text-decoration:underline}
