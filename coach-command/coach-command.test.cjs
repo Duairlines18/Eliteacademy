@@ -33,6 +33,7 @@ assert.match(root.innerHTML,/Full Workout/);
 assert.match(root.innerHTML,/Pogos/);
 assert.match(root.innerHTML,/2 x 10/);
 assert.match(root.innerHTML,/<strong>How to do it<\/strong> Keep each bounce low/);
+assert.ok(root.innerHTML.indexOf('<strong>How to do it</strong> Keep each bounce low') < root.innerHTML.indexOf('<details class="movement-detail">'), 'plain-English instruction must be visible without expanding technique');
 assert.match(root.innerHTML,/<strong>Coach cue<\/strong> Short contacts/);
 assert.match(root.innerHTML,/<strong>For this session<\/strong> Stay tall/);
 assert.match(root.innerHTML,/<strong>Watch for<\/strong> Heavy landings/);
