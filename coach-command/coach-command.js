@@ -112,7 +112,7 @@
       return rows.map(([label,value])=>'<p><strong>'+esc(label)+'</strong> '+esc(value)+'</p>').join('');
     }
     function teachingRows(rows){
-      return rows.filter(([label,value])=>label==='Coach cue'||label==='For this session'||label==='Coach alternative'||label==='Watch for'||(label==='How to do it'&&/confirm the movement sequence/i.test(value)));
+      return rows.filter(([label,value])=>label==='How to do it'||label==='Coach cue'||label==='For this session'||label==='Coach alternative'||label==='Watch for'||(label==='How to do it'&&/confirm the movement sequence/i.test(value)));
     }
     function demoButtons(demos){
       return showVideos&&demos.length?'<div class="demo-links">'+demos.map(d=>'<button type="button" class="button secondary" data-video="'+esc(d.url)+'" aria-label="Watch '+esc(d.title)+' demonstration">▶ '+esc(d.title)+'</button>').join('')+'</div>':'';
