@@ -35,8 +35,10 @@ body:has(.ducc .presentation){overflow:hidden}
 .ducc .presentation-card{min-width:0;border-left:4px solid #e6c580;padding-left:clamp(12px,2vw,25px)}
 .ducc .presentation-block{color:#f1d9a7;font-weight:700;font-size:clamp(14px,1.2vw,19px)}
 .ducc .presentation h3{margin:3px 0 5px;color:#fff8e9;font-size:clamp(26px,5vw,74px);line-height:1.08}
+.ducc .presentation h3.long-title{font-size:clamp(24px,3.55vw,54px)}
 .ducc .presentation h3.legacy-instruction{font-size:clamp(22px,3vw,46px);white-space:pre-line}
 .ducc .presentation .dose{color:#ffde9e;font-size:clamp(20px,3vw,44px);font-weight:780;line-height:1.21;white-space:pre-line}
+.ducc .presentation .dose.long-dose{font-size:clamp(19px,2.1vw,34px)}
 .ducc .presentation-demo{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .ducc .presentation-guidance{display:grid;gap:9px}
 .ducc .presentation-guidance p,.ducc .presentation-details p{white-space:pre-line}
@@ -229,6 +231,8 @@ body:has(.ducc .presentation){overflow:hidden}
         saved.avoid, library.avoid, reviewedRows?.get('Watch for'), ...cues.filter(value=>important.test(value)),
         ...notes.flatMap(note=>note.split(/\n/).filter(line=>important.test(line))),
       ].filter(Boolean))];
+      const exerciseName=ex.title||row.exerciseCode;
+      const nameClass=exercises.has(row.exerciseCode)?(exerciseName.length>54?'long-title':''):'legacy-instruction';
       const dose=prescriptionLine(row);
       const alternative=exercises.get(row.alternativeExerciseCode)?.title;
       const context=[
@@ -248,8 +252,8 @@ body:has(.ducc .presentation){overflow:hidden}
         (purpose(s)?'<p class="presentation-purpose">'+esc(purpose(s))+'</p>':'')+
         '<div class="presentation-layout"><div class="presentation-card">'+
         '<p class="presentation-block">'+esc([title,saved.phase].filter(Boolean).join(' · '))+'</p>'+
-        '<h3'+(exercises.has(row.exerciseCode)?'':' class="legacy-instruction"')+'>'+esc(ex.title||row.exerciseCode)+'</h3>'+
-        (dose?'<p class="dose">'+esc(dose)+'</p>':'')+
+        '<h3'+(nameClass?' class="'+nameClass+'"':'')+'>'+esc(exerciseName)+'</h3>'+
+        (dose?'<p class="dose'+(dose.length>72?' long-dose':'')+'">'+esc(dose)+'</p>':'')+
         (demos.length?'<div class="presentation-demo">'+demos.map(demo=>
           '<button type="button" class="button primary" data-present-video="'+esc(demo.url)+'" data-demo-title="'+esc(demo.title)+'">Watch Demo'+
           (demos.length>1?' · '+esc(demo.title):'')+'</button>').join('')+'</div>':
