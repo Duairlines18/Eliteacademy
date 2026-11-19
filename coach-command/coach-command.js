@@ -26,6 +26,7 @@
 .ducc .presentation-movement p{font-size:clamp(16px,2.1vw,29px)}.ducc .presentation-movement .dose{color:#f1ce89;font-weight:750}
 .ducc .presentation-movement .demo-links button{font-size:1rem}
 .ducc .print-sheet{display:none}
+.ducc .print-sheet .print-day{break-before:auto;page-break-inside:auto}.ducc .print-sheet li{break-inside:avoid;page-break-inside:avoid;margin:0 0 9px}.ducc .print-sheet h2,.ducc .print-sheet h3,.ducc .print-sheet h4{break-after:avoid;page-break-after:avoid}.ducc .print-sheet li p{margin:2px 0}.ducc .print-sheet ul{padding-left:22px}
 @media(max-width:540px){.ducc .days{grid-template-columns:1fr}.ducc .day{min-height:54px}.ducc .day strong,.ducc .day span{display:inline}.ducc .day span{margin:0 0 0 7px}}
 @media print{
  @page{margin:12mm}
@@ -148,7 +149,7 @@
           const details=movementCoaching(p,ex);
           const reviewed=reviewedMovementCoaching(p,matchingDemos(p));
           return '<li>'+(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase?'<h4>'+esc(phase)+'</h4>':'')+
-            '<b>'+esc(ex.title||p.exerciseCode)+'</b>'+(prescriptionLine(p)?' · '+esc(prescriptionLine(p)):'')+
+            '<b>'+esc((index+1)+'. '+(ex.title||p.exerciseCode))+'</b>'+(p.dosage?'<p><strong>Prescription:</strong> '+esc(p.dosage)+'</p>':'')+(p.rest?'<p><strong>Rest:</strong> '+esc(p.rest)+'</p>':'')+
             renderRows(details)+reviewed.map(({title,rows})=>'<p><b>'+esc(title)+'</b></p>'+renderRows(rows)).join('')+'</li>';
         }).join('')+'</ul>').join('')+'</section>').join('');
       root.querySelectorAll('.print-sheet').forEach(node=>node.remove());
