@@ -30,7 +30,8 @@ test('day and week print use a dedicated sheet and exclude locked and roster con
  assert.doesNotMatch(h.printed(),/Foundations|Private athlete|iframe/);
  await h.click('print-week');
  assert.match(h.printed(),/Day 1.*Day 2/);
- assert.match(h.printed(),/Keep your heel down.*Quiet feet.*6 × 100 m.*1 minute/);
+ assert.match(h.printed(),/<strong>2 × 8 · Rest: 30 seconds<\/strong>.*How to do it<\/strong> Move your knee forward.*Forcing the range.*Quiet feet.*6 × 100 m at 75%.*6 × 100 m · Rest: 1 minute/);
+ assert.doesNotMatch(h.printed(),/Keep your heel down/);
  assert.doesNotMatch(h.printed(),/Private athlete|Unreleased workout|Secret dose|iframe/);
  assert.equal(h.root.children.filter(x=>x.className==='print-sheet').length,1);
 });

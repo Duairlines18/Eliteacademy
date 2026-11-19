@@ -170,14 +170,18 @@
         '<section class="print-day"><h2>'+esc(dayLabel(s,index))+' · '+esc(s.title||'Workout')+(optional(s)?' · Optional extra':'')+'</h2>'+
         [s.duration,purpose(s),...sessionNotes(s)].filter(Boolean).map(value=>'<p>'+esc(value)+'</p>').join('')+
         sections(s).map(([title,ps])=>'<h3>'+esc(title)+'</h3><ul>'+ps.map((p,index)=>{
-          const ex=exercises.get(p.exerciseCode)||{},phase=delivery.sessionCoaching(p.cues).phase;
+          const ex=exercises.get(p.exerciseCode)||{};
+          const {phase,cue}=delivery.sessionCoaching(p.cues);
           const details=movementCoaching(p,ex);
+          const hasDistinctSessionCue=cue&&details.some(([label,value])=>label==='For this session'&&value.startsWith(cue));
+          const printDetails=details.filter(([label])=>!hasDistinctSessionCue||label!=='Coach cue');
+          const dose=prescriptionLine(p);
           const demos=matchingDemos(p);
           const reviewed=reviewedMovementCoaching(p,demos);
           const references=demos.map(demo=>'<a href="'+esc(demo.url)+'">'+esc(demo.title)+'</a>');
           return '<li>'+(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase?'<h4>'+esc(phase)+'</h4>':'')+
-            '<b>'+esc((index+1)+'. '+(ex.title||p.exerciseCode))+'</b>'+(p.dosage?'<p><strong>Prescription:</strong> '+esc(p.dosage)+'</p>':'')+(p.rest?'<p><strong>Rest:</strong> '+esc(p.rest)+'</p>':'')+
-            renderRows(details)+reviewed.map(({title,rows})=>'<p><b>'+esc(title)+'</b></p>'+renderRows(rows)).join('')+(references.length?'<p><strong>Demo:</strong> '+references.join(' · ')+'</p>':'')+'</li>';
+            '<b>'+esc((index+1)+'. '+(ex.title||p.exerciseCode))+'</b>'+(dose?'<p><strong>'+esc(dose)+'</strong></p>':'')+
+            renderRows(printDetails)+reviewed.map(({title,rows})=>'<p><b>'+esc(title)+'</b></p>'+renderRows(rows)).join('')+(references.length?'<p><strong>Demo:</strong> '+references.join(' · ')+'</p>':'')+'</li>';
         }).join('')+'</ul>').join('')+'</section>').join('');
       root.querySelectorAll('.print-sheet').forEach(node=>node.remove());
       root.append(sheet);
