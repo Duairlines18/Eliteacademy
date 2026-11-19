@@ -18,19 +18,24 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    ok(await page.locator('.hub-school-day-picker a').count()===3,'two coached days and optional home day');
    ok(await page.locator('.hub-school-day-picker a').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('linear-gradient')),'school day cards render gradient');
    ok(await page.locator('.hub-school-day-picker').innerText().then(t=>t.includes('Movement foundations')&&t.includes('Capacity and control')&&t.includes('Optional home day')),'school cards show session purpose');
-   await page.locator('[aria-label="Choose training day"] a').first().click();
+   await page.getByRole('navigation',{name:'Choose training day'}).getByRole('link',{name:/^Day 1\b/}).click();
+   await page.getByRole('heading',{name:'Day 1 · Movement foundations',exact:true}).waitFor();
+   const march=page.locator('.hub-athlete-movement').filter({has:page.getByText('A-March',{exact:true})});
+   await march.waitFor({state:'visible'});
    ok(await page.locator('.hub-athlete-session-group').count()===0,'Saints day omits Form selector');
    ok(!await page.locator('.hub-main').innerText().then(t=>t.includes('Choose your Form')),'Saints day has no Form prompt');
    const warmup=page.locator('.hub-athlete-warmup');if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
    ok(await page.locator('[data-completion-toggle]').count()===0,'school athlete never has completion controls');
-   ok(await page.locator('.hub-main').innerText().then(t=>t.includes('1 × 20 m')&&t.includes('Walk-back recovery')),'dose and rest preserved');
+   ok(await march.getByText('1 × 20 m',{exact:true}).isVisible(),'A-March prescription is exact and visible');
+   ok(await march.getByText('Rest: Walk-back recovery',{exact:true}).isVisible(),'A-March recovery is exact and visible');
    ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'workout fits viewport');
    // Assigned session instructions stay visible while library technique is collapsed.
-   ok(await page.locator('.hub-main').innerText().then(t=>t.includes('Stay tall; controlled rhythm.')),'short technique cue visible without opening tips');
+   ok(await march.getByText('For this session Stay tall; controlled rhythm.',{exact:true}).isVisible(),'A-March cue is exact and visible without opening tips');
    await page.evaluate(()=>{window.__copied='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>{window.__copied=t}}});});
    await page.locator('[data-athlete-copy]').click();
    ok(await page.evaluate(()=>['A-March','1 × 20 m','Walk-back recovery','Stay tall; controlled rhythm.','4lQsMyKRRn8'].every(t=>window.__copied.includes(t))),'athlete copy contains full dose, rest, cue and matching demo');
-   const technique=page.locator('.hub-school-technique').filter({has:page.locator('.hub-athlete-demo')}).first();
+   const technique=march.locator('.hub-school-technique');
+   ok((await technique.locator('.hub-athlete-demo').getAttribute('href'))==='https://www.youtube.com/shorts/4lQsMyKRRn8','assigned A-March link is exact');
    ok(await technique.evaluate(el=>!el.open),'technique starts collapsed');
    await technique.locator('summary').click();
    await technique.locator('.hub-athlete-demo').first().click();await page.locator('#hubVideoModal').waitFor({state:'visible'});

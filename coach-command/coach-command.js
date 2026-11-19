@@ -31,11 +31,12 @@
 @media print{
  @page{margin:12mm}
  body:has(.ducc .print-sheet){background:#fff!important;color:#000!important}
- body:has(.ducc .print-sheet) :is(.hub-topbar,#schoolAttendanceRoot,.hub-premium-routines){display:none!important}
+ body:has(.ducc .print-sheet) :is(.hub-topbar,.hub-wrap > :not(#du-coach-command-root)){display:none!important}
  body:has(.ducc .print-sheet) :is(.hub-shell,.hub-main,.hub-wrap,#du-coach-command-root,.ducc){background:#fff!important;color:#000!important;border:0!important;box-shadow:none!important;margin:0!important;padding:0!important;overflow:visible!important}
  .ducc:has(.print-sheet)>:not(.print-sheet){display:none!important}
  .ducc .print-sheet{display:block;color:#000;background:#fff;font:10pt/1.35 system-ui,sans-serif}
- .ducc .print-sheet h1{font-size:17pt}.ducc .print-sheet h2{font-size:13pt;margin-top:12px}.ducc .print-sheet h3{font-size:11pt;margin:6px 0 2px}
+ .ducc .print-brand{font-weight:750;letter-spacing:.08em}.ducc .print-sheet a{color:#000;text-decoration:underline}
+ .ducc .print-sheet h1{font-size:17pt;margin:3px 0 5px}.ducc .print-sheet h2{font-size:13pt;margin-top:12px}.ducc .print-sheet h3{font-size:11pt;margin:6px 0 2px}
  .ducc .print-sheet h4{font-size:10pt;margin:4px 0}.ducc .print-sheet p{margin:2px 0;white-space:pre-line}
  .ducc .print-sheet :is(h1,h2,h3,h4){color:#000!important;break-after:avoid}
  .ducc .print-sheet li{break-inside:avoid;margin:0 0 4px}.ducc .print-sheet ul{margin:0;padding-left:18px}
@@ -63,7 +64,7 @@
     const style=document.createElement('style');style.textContent=styles;host.replaceChildren(style);
     const root=document.createElement('div');root.className='ducc';host.append(root);
     const session=()=>sessions[day]||{};
-    const optional=s=>/optional|extra/i.test(txt(s.requirement))||/optional|extra/i.test(txt(s.day));
+    const optional=s=>/optional|extra/i.test(txt(s.requirement))||/optional|extra/i.test(txt(s.day))||/^optional\b/i.test(txt(s.title));
     const prescriptions=s=>Array.isArray(s.prescriptions)?s.prescriptions:[];
     const dayLabel=(s,index)=>txt(s.day)||'Day '+(index+1);
     const cohortLabel=()=>[data.cohort.name,'Week '+(data.cohort.currentWeek||programme.week||'—')].join(' · ');
@@ -71,16 +72,44 @@
     const sessionNotes=(s,includeStaff=false)=>[...new Set([s.watch,s.athleteNote,includeStaff&&!/george/i.test(data.cohort.name||'')?s.staffNote:''].map(txt).filter(Boolean))];
     const purpose=s=>txt(s.why)||txt(s.objective);
     const isWarmup=title=>/warm[\s-]?up|preparation|activation/i.test(title);
-    const sections=s=>{const map=new Map();for(const p of prescriptions(s)){const k=txt(p.sectionTitle)||'Workout';if(!map.has(k))map.set(k,[]);map.get(k).push(p);}{const legacy=Array.isArray(s.itemSections)&&s.itemSections.length?s.itemSections:[{title:'Session instructions',items:Array.isArray(s.items)?s.items:[]}];for(const block of legacy){const k=txt(block.title)||'Session instructions';const entries=(Array.isArray(block.items)?block.items:[]).map((x,itemIndex)=>({exerciseCode:x,dosage:'',cues:'',...(Array.isArray(block.videoLinks)?{savedDemos:block.videoLinks.filter(link=>link.itemIndex===itemIndex)}:{})})).filter(p=>typeof p.exerciseCode==='string'&&p.exerciseCode.trim());if(entries.length&&!map.has(k))map.set(k,entries);}}return [...map];};
+    function sections(s){
+      const map=new Map();
+      function add(title,order,row){
+        const key=order+'|'+title;
+        if(!map.has(key))map.set(key,{title,order,rows:[]});
+        map.get(key).rows.push(row);
+      }
+      for(const row of prescriptions(s))add(txt(row.sectionTitle)||'Workout',row.sectionOrder??0,row);
+      const saved=Array.isArray(s.itemSections)&&s.itemSections.length?s.itemSections:[{title:'Session instructions',items:s.items}];
+      for(const block of saved){
+        const items=Array.isArray(block.items)?block.items:[];
+        items.forEach((item,index)=>{
+          if(!txt(item))return;
+          const savedDemos=Array.isArray(block.videoLinks)?block.videoLinks.filter(link=>link.itemIndex===index):undefined;
+          add(txt(block.title)||'Session instructions',block.order??0,{exerciseCode:item,sourceOrder:block.sourceOrders?.[index],savedDemos});
+        });
+      }
+      return [...map.values()].sort((a,b)=>a.order-b.order).map(({title,rows})=>{
+        if(rows.every(row=>Number.isInteger(row.sourceOrder)))rows.sort((a,b)=>a.sourceOrder-b.sourceOrder);
+        return [title,rows];
+      });
+    }
     // Legacy school workouts are tier-specific text, not exercise-code prescriptions.
     // Only show demo links when a named movement matches the existing video library.
-    const demoCatalog=[...exercises.values()].filter(ex=>safeVideo(ex.videoUrl||(ex.videoId?'https://www.youtube.com/watch?v='+ex.videoId:''))).sort((a,b)=>(b.title||'').length-(a.title||'').length);
+    const libraryDemo=ex=>delivery.safeVideo(ex.videoUrl,ex.videoId);
+    const demoCatalog=[...exercises.values()].filter(libraryDemo).sort((a,b)=>(b.title||'').length-(a.title||'').length);
     function matchingDemos(p){
       const exact=exercises.get(p.exerciseCode);
-      if(exact){const url=safeVideo(exact.videoUrl||(exact.videoId?'https://www.youtube.com/watch?v='+exact.videoId:''));return url?[{title:exact.title||p.exerciseCode,url}]:[];}
+      if(exact){
+        const url=libraryDemo(exact);
+        return url?[{title:exact.title||p.exerciseCode,url}]:[];
+      }
       if(Array.isArray(p.savedDemos)){
-        const seen=new Set();return p.savedDemos.flatMap(link=>{const url=safeVideo(link.url),title=txt(link.title),key=title+'|'+url;
-          if(!url||!title||seen.has(key))return [];seen.add(key);return [{title,url}];});
+        const seen=new Set();return p.savedDemos.flatMap(link=>{
+          const url=delivery.safeVideo(link.url),title=txt(link.title),key=title+'|'+url;
+          if(!url||!title||seen.has(key))return [];
+          seen.add(key);return [{title,url}];
+        });
       }
       const source=txt(p.exerciseCode).toLowerCase(),out=[],seen=new Set();
       for(const ex of demoCatalog){
@@ -89,7 +118,7 @@
         const escaped=title.split('').map(ch=>'^$.*+?()[]{}|'.includes(ch)?String.fromCharCode(92)+ch:ch).join('');
         const match=new RegExp('(^|[^a-z])'+escaped+'(?=$|[^a-z])','i').test(source);
         if(!match)continue;
-        const url=safeVideo(ex.videoUrl||(ex.videoId?'https://www.youtube.com/watch?v='+ex.videoId:''));
+        const url=libraryDemo(ex);
         if(url){out.push({title:ex.title,url});seen.add(title);}
       }
       return out;
@@ -112,23 +141,19 @@
     function renderRows(rows){
       return rows.map(([label,value])=>'<p><strong>'+esc(label)+'</strong> '+esc(value)+'</p>').join('');
     }
-    function teachingRows(rows){
-      return rows.filter(([label,value])=>label==='How to do it'||label==='Coach cue'||label==='For this session'||label==='Coach alternative'||label==='Watch for'||(label==='How to do it'&&/confirm the movement sequence/i.test(value)));
-    }
     function demoButtons(demos){
-      return showVideos&&demos.length?'<div class="demo-links">'+demos.map(d=>'<button type="button" class="button secondary" data-video="'+esc(d.url)+'" aria-label="Watch '+esc(d.title)+' demonstration">▶ '+esc(d.title)+'</button>').join('')+'</div>':'';
+      return showVideos&&demos.length?'<div class="demo-links">'+demos.map(d=>'<button type="button" class="button secondary" data-video="'+esc(safeVideo(d.url))+'" aria-label="Watch '+esc(d.title)+' demonstration">▶ '+esc(d.title)+'</button>').join('')+'</div>':'';
     }
     function workoutRow(p,previous){
       const phase=delivery.sessionCoaching(p.cues).phase;
       const heading=phase&&phase!==delivery.sessionCoaching(previous?.cues).phase?'<h4>'+esc(phase)+'</h4>':'';
       const ex=exercises.get(p.exerciseCode)||{},demos=matchingDemos(p);
       const rows=movementCoaching(p,ex);
-      const immediate=teachingRows(rows);
-      const detail=renderRows(rows.filter(row=>!immediate.includes(row)))+reviewedMovementCoaching(p,demos).map(({title,rows})=>
+      const detail=reviewedMovementCoaching(p,demos).map(({title,rows})=>
         '<div class="coach-cue"><b>'+esc(title)+'</b>'+renderRows(rows)+'</div>').join('')+demoButtons(demos);
       const dosage=prescriptionLine(p);
       return heading+'<div class="exercise"><div class="exercise-content"><b>'+esc(ex.title||p.exerciseCode)+'</b>'+
-        (dosage?'<p class="muted">'+esc(dosage)+'</p>':'')+(immediate.length?'<div class="coach-cue session-note">'+renderRows(immediate)+'</div>':'')+
+        (dosage?'<p class="muted">'+esc(dosage)+'</p>':'')+(rows.length?'<div class="coach-cue session-note">'+renderRows(rows)+'</div>':'')+
         (detail?'<details class="movement-detail"><summary>'+(showVideos&&demos.length?'Technique &amp; demo':'Technique')+'</summary><div class="coach-cue">'+detail+'</div></details>':'')+'</div></div>';
     }
     function weekCards(){
@@ -141,16 +166,18 @@
       if(!printable.length)return;
       const sheet=document.createElement('article');
       sheet.className='print-sheet';
-      sheet.innerHTML='<h1>'+esc(week?'Training week':'Training session')+'</h1><p>'+esc(cohortLabel())+'</p>'+printable.map(({s,index})=>
+      sheet.innerHTML='<p class="print-brand">DU AIRLINES ELITE ACADEMY</p><h1>'+esc(week?'Training week':'Training session')+'</h1><p>'+esc(cohortLabel())+'</p>'+printable.map(({s,index})=>
         '<section class="print-day"><h2>'+esc(dayLabel(s,index))+' · '+esc(s.title||'Workout')+(optional(s)?' · Optional extra':'')+'</h2>'+
         [s.duration,purpose(s),...sessionNotes(s)].filter(Boolean).map(value=>'<p>'+esc(value)+'</p>').join('')+
         sections(s).map(([title,ps])=>'<h3>'+esc(title)+'</h3><ul>'+ps.map((p,index)=>{
           const ex=exercises.get(p.exerciseCode)||{},phase=delivery.sessionCoaching(p.cues).phase;
           const details=movementCoaching(p,ex);
-          const reviewed=reviewedMovementCoaching(p,matchingDemos(p));
+          const demos=matchingDemos(p);
+          const reviewed=reviewedMovementCoaching(p,demos);
+          const references=demos.map(demo=>'<a href="'+esc(demo.url)+'">'+esc(demo.title)+'</a>');
           return '<li>'+(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase?'<h4>'+esc(phase)+'</h4>':'')+
             '<b>'+esc((index+1)+'. '+(ex.title||p.exerciseCode))+'</b>'+(p.dosage?'<p><strong>Prescription:</strong> '+esc(p.dosage)+'</p>':'')+(p.rest?'<p><strong>Rest:</strong> '+esc(p.rest)+'</p>':'')+
-            renderRows(details)+reviewed.map(({title,rows})=>'<p><b>'+esc(title)+'</b></p>'+renderRows(rows)).join('')+'</li>';
+            renderRows(details)+reviewed.map(({title,rows})=>'<p><b>'+esc(title)+'</b></p>'+renderRows(rows)).join('')+(references.length?'<p><strong>Demo:</strong> '+references.join(' · ')+'</p>':'')+'</li>';
         }).join('')+'</ul>').join('')+'</section>').join('');
       root.querySelectorAll('.print-sheet').forEach(node=>node.remove());
       root.append(sheet);
@@ -158,29 +185,29 @@
     }
     function presentation(s){
       const blocks=sections(s),[title,ps]=blocks[block];
-      return '<section class="presentation" tabindex="-1" aria-label="Workout presentation"><div class="actions"><button class="button secondary" data-action="exit-present">← Workout</button><div class="actions"><button class="button secondary" data-action="prev-block"'+(block?'':' disabled')+'>Previous block</button><button class="button secondary" data-action="next-block"'+(block+1<blocks.length?'':' disabled')+'>Next block</button></div></div>'+
+      return '<section class="presentation" tabindex="-1" aria-label="Workout presentation"><div class="actions"><button class="button secondary" data-action="exit-present">Exit presentation</button><div class="actions"><button class="button secondary" data-action="prev-block"'+(block?'':' disabled')+'>Previous block</button><button class="button secondary" data-action="next-block"'+(block+1<blocks.length?'':' disabled')+'>Next block</button></div></div>'+
         '<p class="session-kicker">'+esc(dayLabel(s,day))+' · '+esc(s.title||'Workout')+' · '+(block+1)+' / '+blocks.length+'</p><h2>'+esc(title)+'</h2>'+
         [purpose(s),...sessionNotes(s)].filter(Boolean).map(value=>'<p class="session-note">'+esc(value)+'</p>').join('')+
         ps.map((p,index)=>{
           const ex=exercises.get(p.exerciseCode)||{},phase=delivery.sessionCoaching(p.cues).phase;
           const rows=movementCoaching(p,ex),demos=matchingDemos(p);
-          const essentials=teachingRows(rows);
-          const instruction=rows.find(([label])=>label==='How to do it');
-          if(instruction&&!essentials.includes(instruction)&&!essentials.some(([label])=>label==='Coach cue'))essentials.unshift(instruction);
-          const reviewed=reviewedMovementCoaching(p,demos).map(({title,rows})=>{
-            const guidance=teachingRows(rows);
-            return guidance.length?'<div><h4>'+esc(title)+'</h4>'+renderRows(guidance)+'</div>':'';
-          }).join('');
+          const reviewed=reviewedMovementCoaching(p,demos).map(({title,rows})=>
+            '<div><h4>'+esc(title)+'</h4>'+renderRows(rows)+'</div>'
+          ).join('');
           return '<div class="presentation-movement">'+(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase?'<h4>'+esc(phase)+'</h4>':'')+
             '<h3>'+esc(ex.title||p.exerciseCode)+'</h3>'+(prescriptionLine(p)?'<p class="dose">'+esc(prescriptionLine(p))+'</p>':'')+
-            renderRows(essentials)+reviewed+demoButtons(demos)+'</div>';
+            renderRows(rows)+reviewed+demoButtons(demos)+'</div>';
         }).join('')+'</section>';
     }
     function copyText(){
       const s=session();
-      const lines=['DU AIRLINES ELITE ACADEMY','TRAINING WORKOUT',cohortLabel(),dayLabel(s,day)+(s.title?' | '+s.title:''),s.duration?'Duration: '+s.duration:'',purpose(s)?'Purpose: '+purpose(s):'',...sessionNotes(s),''];
+      const lines=['DU AIRLINES ELITE ACADEMY',cohortLabel(),dayLabel(s,day)+(s.title?' · '+s.title:'')+(optional(s)?' · Optional':'')];
+      if(s.duration)lines.push('Duration: '+s.duration);
+      if(purpose(s))lines.push('Purpose: '+purpose(s));
+      sessionNotes(s).forEach(note=>lines.push('Coach instructions: '+note));
+      lines.push('');
       sections(s).forEach(([title,ps],sectionIndex)=>{
-        lines.push(String(sectionIndex+1).padStart(2,'0')+' | '+title.toUpperCase(),'');
+        lines.push(String(sectionIndex+1).padStart(2,'0')+' — '+title.toUpperCase(),'');
         ps.forEach((p,index)=>{
           const phase=delivery.sessionCoaching(p.cues).phase,ex=exercises.get(p.exerciseCode)||{},demos=matchingDemos(p);
           if(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase)lines.push(phase);
@@ -196,7 +223,7 @@
           lines.push('');
         });
       });
-      return lines.join('\\n').replace(/\\n{3,}/g,'\\n\\n').trim();
+      return lines.join('\n').trimEnd();
     }
     function render(){
       const s=session(),active=roster?.filter(a=>a.access_status==='active').length;
@@ -212,7 +239,7 @@
       if(view==='overview'){
         body='<div class="week-head"><h2>This week’s sessions</h2>'+weekPrint+'</div>'+weekCards()+
           (sessions.length?'<div class="panel"><h2>'+esc(s.title||'Session being prepared')+'</h2><p class="muted">'+esc([s.duration,dayLabel(s,day)].filter(Boolean).join(' · '))+'</p><button class="button" data-action="workout">Open full workout →</button></div>':'<p class="muted">No published sessions available yet.</p>')+
-          (programme.weeklyObjective?'<details class="panel"><summary>Weekly focus</summary><p>'+esc(programme.weeklyObjective)+'</p></details>':'')+
+          (programme.weeklyObjective?'<div class="panel"><h3>Weekly focus</h3><p>'+esc(programme.weeklyObjective)+'</p></div>':'')+
           '<div class="panel"><h3>Your squad'+(roster?' · '+active+'/'+roster.length+' active':'')+'</h3>'+
           (roster?'<div class="roster">'+roster.map((a,i)=>'<button data-athlete="'+i+'">'+esc(a.display_name||a.full_name||'Athlete')+'<br><span class="muted">'+esc(a.access_status==='active'?'Active':'Inactive')+'</span></button>').join('')+'</div>':'<p class="muted">Athletes have not been connected to this coach view yet.</p>')+'</div>'+
           '<div class="actions"><a class="button secondary" href="#/hub/coach-feedback">Weekly coach feedback →</a><a class="button secondary" href="#/hub/library">Exercise library →</a></div>';
@@ -231,7 +258,12 @@
       }
       root.innerHTML=header+'<main>'+body+'</main>';
     }
-    function closeVideo(){root.querySelectorAll('.video').forEach(node=>node.remove());}
+    let videoTrigger;
+    function closeVideo(){
+      root.querySelectorAll('.video').forEach(node=>node.remove());
+      videoTrigger?.focus();
+      videoTrigger=null;
+    }
     root.addEventListener('click',async e=>{
       const b=e.target.closest('button');if(!b)return;
       if(b.dataset.day!==undefined){
@@ -244,6 +276,7 @@
         const url=safeVideo(b.dataset.video);
         if(!url)return;
         closeVideo();
+        videoTrigger=b;
         const overlay=document.createElement('div');overlay.className='video';
         overlay.innerHTML='<div class="actions"><button class="button secondary" data-action="close-video">Close video ✕</button></div><iframe src="'+esc(url)+'" title="Exercise demonstration" loading="lazy" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
         root.append(overlay);overlay.querySelector('button')?.focus();return;
@@ -266,9 +299,19 @@
       if(b.dataset.action==='exit-present')root.querySelector?.('[data-action="present"]')?.focus();
     });
     root.addEventListener('keydown',event=>{
-      if(event.key!=='Escape')return;
-      if(root.querySelector('.video')){closeVideo();return;}
-      if(view==='present'){view='workout';render();root.querySelector('[data-action="present"]')?.focus();}
+      if(view!=='present'&&event.key!=='Escape')return;
+      if(root.querySelector?.('.video')){
+        if(event.key==='Escape'){event.preventDefault();closeVideo();}
+        return;
+      }
+      if(view!=='present'||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
+      if(event.key==='Escape'){
+        event.preventDefault();view='workout';render();root.querySelector('[data-action="present"]')?.focus();
+      }else if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
+        event.preventDefault();
+        const next=Math.max(0,Math.min(sections(session()).length-1,block+(event.key==='ArrowRight'?1:-1)));
+        if(next!==block){block=next;render();}
+      }
     });
     render();return {destroy(){host.replaceChildren();}};
   }
