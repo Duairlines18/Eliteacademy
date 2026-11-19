@@ -258,7 +258,7 @@ body:has(.ducc .presentation){overflow:hidden}
           '<button type="button" class="button primary" data-present-video="'+esc(demo.url)+'" data-demo-title="'+esc(demo.title)+'">Watch Demo'+
           (demos.length>1?' · '+esc(demo.title):'')+'</button>').join('')+'</div>':
           '<p class="presentation-purpose">No video for this exercise.</p>')+'</div>'+
-        '<div class="presentation-guidance">'+(cue?'<p><strong>Coach says</strong>'+esc(cue)+'</p>':'')+
+        '<div class="presentation-guidance">'+(cue?'<p><strong>Key cue</strong>'+esc(cue)+'</p>':'')+
         (warnings.length?'<p><strong>Watch for</strong>'+esc(warnings.join('\n'))+'</p>':'')+'</div></div>'+
         (details?'<details class="presentation-details"'+(detailsOpen?' open':'')+'><summary>Coach Details</summary>'+details+'</details>':'')+
         '</div></section>';
