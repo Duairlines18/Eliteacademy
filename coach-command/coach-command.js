@@ -225,7 +225,10 @@ body:has(.ducc .presentation){overflow:hidden}
       const notes=sessionNotes(s);
       const important=/\b(?:stop|pain|injur\w*|safety|unsafe|never|avoid|only if|hours between|do not|don.t|must not)\b/i;
       const reviewedRows=reviewed.length===1?new Map(reviewed[0].rows):null;
-      const cues=[saved.cue,library.cue,reviewedRows?.get('Coach cue')].filter(Boolean);
+      const ankleRockRangeNote=row.exerciseCode==='WU01'&&saved.cue==='Comfortable controlled range.';
+      const cues=(ankleRockRangeNote
+        ?[library.cue,reviewedRows?.get('Coach cue'),saved.cue]
+        :[saved.cue,library.cue,reviewedRows?.get('Coach cue')]).filter(Boolean);
       const cue=cues.find(value=>!important.test(value));
       const warnings=[...new Set([
         saved.avoid, library.avoid, reviewedRows?.get('Watch for'), ...cues.filter(value=>important.test(value)),
