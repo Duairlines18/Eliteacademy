@@ -45,10 +45,13 @@ jobs:
         run: node --test link-previews/links.test.cjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Include responsive session cards in deployed HTML
+      - name: Prepare deployed Hub HTML
         run: |
           python3 - <<'PY'
+          from hashlib import sha256
           from pathlib import Path
+          import re
+
           path = Path("index.html")
           html = path.read_text(encoding="utf-8")
           marker = '<link rel="stylesheet" href="/parent-qa/session-card-polish.css">'
@@ -77,6 +80,14 @@ jobs:
           assert needle in html, 'Hub status handler missing'
           if replacement not in html:
               html = html.replace(needle, replacement, 1)
+          coach_script = Path("coach-command/coach-command.js")
+          coach_version = sha256(coach_script.read_bytes()).hexdigest()[:12]
+          html, rewritten = re.subn(
+              r'(<script src="/coach-command/coach-command\.js)(?:\?[^"]*)?">',
+              r'\g<1>?v=' + coach_version + '">',
+              html,
+          )
+          assert rewritten == 1, 'Expected exactly one Coach Command script'
           path.write_text(html, encoding="utf-8")
           PY
       - name: Upload artifact
