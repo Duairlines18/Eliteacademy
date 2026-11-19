@@ -13,7 +13,9 @@ const {chromium}=require('playwright');
  const evidence=process.env.DU_COACHING_EVIDENCE;
  if(evidence)await fs.mkdir(evidence,{recursive:true});
  async function verifyPrintPages(page,name,expected){
+  await page.emulateMedia({media:'print'});
   const pdf=await page.pdf({path:evidence?path.join(evidence,name+'.pdf'):undefined,format:'A4',preferCSSPageSize:true});
+  await page.emulateMedia({media:'screen'});
   // Chromium emits the page dictionaries outside its compressed content streams.
   assert.equal((pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length,expected,name+' pagination');
   checks++;
@@ -40,10 +42,10 @@ const {chromium}=require('playwright');
     assert.ok(await page.locator('.ducc').innerText().then(t=>t.includes('Capacity and control')),'requested day opens');checks++;
     await page.evaluate(()=>{Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>window.__copied=t}})});
     await page.locator('.ducc [data-action="copy"]').first().click();
-    assert.ok(await page.evaluate(()=>['Day 2','A-March','2 × 8','30 seconds','Move smoothly.','3 × 3','60 seconds','Stay balanced.','4lQsMyKRRn8'].every(t=>window.__copied.includes(t))),'complete workout export');checks++;
     const copied=await page.evaluate(()=>window.__copied);
-    assert.match(copied,/01 — WARM-UP\n\n1\. A-March\n {3}Prescription: 2 × 8\n {3}Rest: 30 seconds/);checks++;
-    assert.match(copied,/Video \(Snap Down\): https:\/\/www\.youtube\.com\/shorts\/Dv6blgFNo28/);checks++;
+    assert.match(copied,/WARM-UP\n1\. A-March — 2 × 8 · Rest: 30 seconds/);checks++;
+    assert.match(copied,/Snap Down — 3 × 3 · Rest: 60 seconds/);checks++;
+    assert.doesNotMatch(copied,/How to do it|Watch for|Move smoothly|Stay balanced|https:/);checks++;
     const section=page.locator('.ducc details.section').last();
     assert.equal(await section.evaluate(el=>el.open),false,'workout block starts compact');checks++;
     await section.locator(':scope > summary').click();
@@ -64,11 +66,13 @@ const {chromium}=require('playwright');
     await page.locator('.ducc [data-action="print"]').click();
     assert.equal(await page.locator('.print-day').count(),1);checks++;
     assert.ok((await page.locator('.print-day').textContent()).includes('Capacity and control'));checks++;
-    assert.equal(await page.locator('.print-day a').last().getAttribute('href'),'https://www.youtube.com/shorts/Dv6blgFNo28');checks++;
+    const printDay=await page.locator('.print-day').textContent();
+    assert.match(printDay,/A-March — 2 × 8 · Rest: 30 seconds.*Snap Down — 3 × 3 · Rest: 60 seconds/);checks++;
+    assert.doesNotMatch(printDay,/How to do it|Watch for|Move smoothly|Stay balanced|Demo:/);checks++;
     if(route==='staff'&&width===1440)await verifyPrintPages(page,'Print-Day',1);
     await page.locator('.ducc [data-action="print-week"]').click();
     assert.equal(await page.locator('.print-day').count(),3);checks++;
-    if(route==='staff'&&width===1440)await verifyPrintPages(page,'Print-Week',2);
+    if(route==='staff'&&width===1440)await verifyPrintPages(page,'Print-Week',1);
     await page.emulateMedia({media:'print'});
     assert.equal(await page.locator('.ducc .print-sheet').isVisible(),true);
     assert.equal(await page.locator('.ducc main').isVisible(),false);
@@ -123,6 +127,30 @@ const {chromium}=require('playwright');
    assert.equal(await page.locator('.ducc').count(),0,'athlete route keeps its own view');checks++;
    if(evidence&&width===390)
     await page.locator('.hub-main').screenshot({path:path.join(evidence,'athlete-workout-390.png')});
+   if(width===1440){
+    await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');
+    await page.locator('.ducc').waitFor();
+    await page.waitForTimeout(200);
+    // Exercise counts match the three published Saints days. Use synthetic doses and names.
+    await page.evaluate(()=>{
+     const exercises=Array.from({length:17},(_,i)=>({code:'test-'+i,title:'Single-leg jump and balance variation '+(i+1)}));
+     const sessions=[17,17,11].map((count,i)=>({day:'Day '+(i+1),title:'Plyometrics and Stability',requirement:i===2?'Optional':'',prescriptions:exercises.slice(0,count).map((exercise,j)=>({
+      exerciseCode:exercise.code,sectionTitle:['Warm-up','Jump technique','Stability'][Math.floor(j/6)],sectionOrder:Math.floor(j/6),
+      dosage:'3 × 6 each side at 75%',rest:'60 seconds between sets',
+     }))}));
+     window.DuCoachCommand.mount(document.getElementById('du-coach-command-root'),{
+      role:'staff',cohort:{name:'Synthetic school cohort',currentWeek:1},programme:{sessions},exercises,
+     });
+     window.print=()=>{};
+    });
+    await page.locator('.ducc [data-day="1"]').click();
+    await page.locator('.ducc [data-action="print"]').click();
+    assert.equal(await page.locator('.print-day li').count(),17);checks++;
+    await verifyPrintPages(page,'Print-Day-17-rows',1);
+    await page.locator('.ducc [data-action="print-week"]').click();
+    assert.equal(await page.locator('.print-day li').count(),45);checks++;
+    await verifyPrintPages(page,'Print-Week-45-rows',1);
+   }
    assert.deepEqual(errors,[]);checks++;
    await page.close();
   }

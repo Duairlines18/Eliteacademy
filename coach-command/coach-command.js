@@ -26,21 +26,23 @@
 .ducc .presentation-movement p{font-size:clamp(16px,2.1vw,29px)}.ducc .presentation-movement .dose{color:#f1ce89;font-weight:750}
 .ducc .presentation-movement .demo-links button{font-size:1rem}
 .ducc .print-sheet{display:none}
-.ducc .print-sheet .print-day{break-before:auto;page-break-inside:auto}.ducc .print-sheet li{break-inside:avoid;page-break-inside:avoid;margin:0 0 9px}.ducc .print-sheet h2,.ducc .print-sheet h3,.ducc .print-sheet h4{break-after:avoid;page-break-after:avoid}.ducc .print-sheet li p{margin:2px 0}.ducc .print-sheet ul{padding-left:22px}
 @media(max-width:540px){.ducc .days{grid-template-columns:1fr}.ducc .day{min-height:54px}.ducc .day strong,.ducc .day span{display:inline}.ducc .day span{margin:0 0 0 7px}}
 @media print{
- @page{margin:12mm}
+ @page{margin:10mm}
  body:has(.ducc .print-sheet){background:#fff!important;color:#000!important}
  body:has(.ducc .print-sheet) :is(.hub-shell > :not(.hub-main),.hub-wrap > :not(#du-coach-command-root)){display:none!important}
  body:has(.ducc .print-sheet) :is(#hub-root,.hub-shell,.hub-main,.hub-wrap,#du-coach-command-root,.ducc){min-height:0!important;background:#fff!important;color:#000!important;border:0!important;box-shadow:none!important;margin:0!important;padding:0!important;overflow:visible!important}
+ body:has(.ducc .print-sheet) .hub-wrap{width:100%!important;max-width:none!important}
  .ducc:has(.print-sheet)>:not(.print-sheet){display:none!important}
- .ducc .print-sheet{display:block;color:#000;background:#fff;font:10pt/1.35 system-ui,sans-serif}
- .ducc .print-brand{font-weight:750;letter-spacing:.08em}.ducc .print-sheet a{color:#000;text-decoration:underline}
- .ducc .print-sheet h1{font-size:17pt;margin:3px 0 5px}.ducc .print-sheet h2{font-size:13pt;margin-top:12px}.ducc .print-sheet h3{font-size:11pt;margin:6px 0 2px}
- .ducc .print-sheet h4{font-size:10pt;margin:4px 0}.ducc .print-sheet p{margin:2px 0;white-space:pre-line}
- .ducc .print-sheet :is(h1,h2,h3,h4){color:#000!important;break-after:avoid}
- .ducc .print-sheet li{break-inside:avoid;margin:0 0 4px}.ducc .print-sheet ul{margin:0;padding-left:18px}
- .ducc .print-day+.print-day{border-top:1px solid #777;margin-top:10px}
+ .ducc .print-sheet{display:block;color:#000;background:#fff;font:9pt/1.15 Arial,sans-serif}
+ .ducc .print-brand{font-weight:750}
+ .ducc .print-week{column-count:2;column-gap:5mm}
+ .ducc .print-sheet h1{font-size:14pt;margin:1px 0 2px}.ducc .print-sheet h2{font-size:11pt;margin:5px 0 2px}
+ .ducc .print-sheet h3{font-size:10pt;margin:3px 0 1px}.ducc .print-sheet p{margin:0}
+ .ducc .print-sheet :is(h1,h2,h3){color:#000!important;break-after:avoid;break-inside:avoid}
+ .ducc .print-sheet ul{margin:0;padding-left:15px}
+ .ducc .print-sheet li{break-inside:avoid;margin:0 0 1px;overflow-wrap:anywhere;white-space:pre-line}
+ .ducc .print-day+.print-day{border-top:1px solid #aaa;margin-top:5px}
 }
 `;
   function safeVideo(value){
@@ -69,7 +71,11 @@
     const dayLabel=(s,index)=>txt(s.day)||'Day '+(index+1);
     const cohortLabel=()=>[data.cohort.name,'Week '+(data.cohort.currentWeek||programme.week||'—')].join(' · ');
     const prescriptionLine=p=>[p.dosage,p.rest?'Rest: '+p.rest:''].filter(Boolean).join(' · ');
-    const sessionNotes=(s,includeStaff=false)=>[...new Set([s.watch,s.athleteNote,includeStaff&&!/george/i.test(data.cohort.name||'')?s.staffNote:''].map(txt).filter(Boolean))];
+    const sessionNotes=(s,includeStaff=false)=>[...new Set([
+      s.watch,s.athleteNote,includeStaff&&!/george/i.test(data.cohort.name||'')?s.staffNote:'',
+    ].map(note=>txt(note).split(/\r?\n/)
+      .filter(line=>!/^Coach-approved readiness required before plyometric additions\.?$/i.test(line.trim()))
+      .join('\n').trim()).filter(Boolean))];
     const purpose=s=>txt(s.why)||txt(s.objective);
     const isWarmup=title=>/warm[\s-]?up|preparation|activation/i.test(title);
     function sections(s){
@@ -162,27 +168,19 @@
     }
     function showPrint(week){
       const selected=week?sessions.map((s,index)=>({s,index})):[{s:session(),index:day}];
-      const printable=selected.filter(({s})=>!s.locked&&sections(s).length);
+      const printable=selected.filter(({s})=>!s.locked).map(({s,index})=>({s,index,blocks:sections(s)})).filter(({blocks})=>blocks.length);
       if(!printable.length)return;
       const sheet=document.createElement('article');
       sheet.className='print-sheet';
-      sheet.innerHTML='<p class="print-brand">DU AIRLINES ELITE ACADEMY</p><h1>'+esc(week?'Training week':'Training session')+'</h1><p>'+esc(cohortLabel())+'</p>'+printable.map(({s,index})=>
-        '<section class="print-day"><h2>'+esc(dayLabel(s,index))+' · '+esc(s.title||'Workout')+(optional(s)?' · Optional extra':'')+'</h2>'+
-        [s.duration,purpose(s),...sessionNotes(s)].filter(Boolean).map(value=>'<p>'+esc(value)+'</p>').join('')+
-        sections(s).map(([title,ps])=>'<h3>'+esc(title)+'</h3><ul>'+ps.map((p,index)=>{
-          const ex=exercises.get(p.exerciseCode)||{};
-          const {phase,cue}=delivery.sessionCoaching(p.cues);
-          const details=movementCoaching(p,ex);
-          const hasDistinctSessionCue=cue&&details.some(([label,value])=>label==='For this session'&&value.startsWith(cue));
-          const printDetails=details.filter(([label])=>!hasDistinctSessionCue||label!=='Coach cue');
-          const dose=prescriptionLine(p);
-          const demos=matchingDemos(p);
-          const reviewed=reviewedMovementCoaching(p,demos);
-          const references=demos.map(demo=>'<a href="'+esc(demo.url)+'">'+esc(demo.title)+'</a>');
-          return '<li>'+(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase?'<h4>'+esc(phase)+'</h4>':'')+
-            '<b>'+esc((index+1)+'. '+(ex.title||p.exerciseCode))+'</b>'+(dose?'<p><strong>'+esc(dose)+'</strong></p>':'')+
-            renderRows(printDetails)+reviewed.map(({title,rows})=>'<p><b>'+esc(title)+'</b></p>'+renderRows(rows)).join('')+(references.length?'<p><strong>Demo:</strong> '+references.join(' · ')+'</p>':'')+'</li>';
-        }).join('')+'</ul>').join('')+'</section>').join('');
+      sheet.innerHTML='<p class="print-brand">DU AIRLINES ELITE ACADEMY</p><h1>'+esc(week?'Training week':'Training session')+'</h1><p>'+esc(cohortLabel())+'</p>'+
+        '<div'+(week?' class="print-week"':'')+'>'+printable.map(({s,index,blocks})=>
+          '<section class="print-day"><h2>'+esc(dayLabel(s,index)+' · '+(s.title||'Workout')+(optional(s)?' · Optional':''))+'</h2>'+
+          blocks.map(([title,rows])=>'<h3>'+esc(title)+'</h3><ul>'+rows.map(row=>{
+            const name=exercises.get(row.exerciseCode)?.title||row.exerciseCode;
+            const dose=prescriptionLine(row);
+            return '<li>'+esc(name)+(dose?' — <strong>'+esc(dose)+'</strong>':'')+'</li>';
+          }).join('')+'</ul>').join('')+'</section>'
+        ).join('')+'</div>';
       root.querySelectorAll('.print-sheet').forEach(node=>node.remove());
       root.append(sheet);
       window.print();
@@ -206,25 +204,12 @@
     function copyText(){
       const s=session();
       const lines=['DU AIRLINES ELITE ACADEMY',cohortLabel(),dayLabel(s,day)+(s.title?' · '+s.title:'')+(optional(s)?' · Optional':'')];
-      if(s.duration)lines.push('Duration: '+s.duration);
-      if(purpose(s))lines.push('Purpose: '+purpose(s));
-      sessionNotes(s).forEach(note=>lines.push('Coach instructions: '+note));
-      lines.push('');
-      sections(s).forEach(([title,ps],sectionIndex)=>{
-        lines.push(String(sectionIndex+1).padStart(2,'0')+' — '+title.toUpperCase(),'');
-        ps.forEach((p,index)=>{
-          const phase=delivery.sessionCoaching(p.cues).phase,ex=exercises.get(p.exerciseCode)||{},demos=matchingDemos(p);
-          if(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase)lines.push(phase);
-          lines.push((index+1)+'. '+(ex.title||p.exerciseCode));
-          if(p.dosage)lines.push('   Prescription: '+p.dosage);
-          if(p.rest)lines.push('   Rest: '+p.rest);
-          movementCoaching(p,ex).forEach(([label,value])=>lines.push('   '+label+': '+value));
-          reviewedMovementCoaching(p,demos).forEach(({title,rows})=>{
-            lines.push('   '+title);
-            rows.forEach(([label,value])=>lines.push('     '+label+': '+value));
-          });
-          demos.forEach(d=>lines.push('   Video ('+d.title+'): '+d.url));
-          lines.push('');
+      sections(s).forEach(([title,rows])=>{
+        lines.push('',title.toUpperCase());
+        rows.forEach((row,index)=>{
+          const name=exercises.get(row.exerciseCode)?.title||row.exerciseCode;
+          const dose=prescriptionLine(row);
+          lines.push((index+1)+'. '+name+(dose?' — '+dose:''));
         });
       });
       return lines.join('\n').trimEnd();
