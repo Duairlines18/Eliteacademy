@@ -32,15 +32,16 @@
  body:has(.ducc .print-sheet){background:#fff!important;color:#000!important}
  body:has(.ducc .print-sheet) :is(.hub-shell > :not(.hub-main),.hub-wrap > :not(#du-coach-command-root)){display:none!important}
  body:has(.ducc .print-sheet) :is(#hub-root,.hub-shell,.hub-main,.hub-wrap,#du-coach-command-root,.ducc){min-height:0!important;background:#fff!important;color:#000!important;border:0!important;box-shadow:none!important;margin:0!important;padding:0!important;overflow:visible!important}
+ body:has(.ducc .print-sheet) .hub-wrap{width:100%!important;max-width:none!important}
  .ducc:has(.print-sheet)>:not(.print-sheet){display:none!important}
- .ducc .print-sheet{display:block;color:#000;background:#fff;font:9.5pt/1.22 system-ui,sans-serif}
+ .ducc .print-sheet{display:block;color:#000;background:#fff;font:9pt/1.15 Arial,sans-serif}
  .ducc .print-brand{font-weight:750}
- .ducc .print-week{column-count:2;column-gap:7mm}
- .ducc .print-sheet h1{font-size:14pt;margin:1px 0 2px}.ducc .print-sheet h2{font-size:11pt;margin:6px 0 2px}
- .ducc .print-sheet h3{font-size:10pt;margin:4px 0 1px}.ducc .print-sheet p{margin:0}
+ .ducc .print-week{column-count:2;column-gap:5mm}
+ .ducc .print-sheet h1{font-size:14pt;margin:1px 0 2px}.ducc .print-sheet h2{font-size:11pt;margin:5px 0 2px}
+ .ducc .print-sheet h3{font-size:10pt;margin:3px 0 1px}.ducc .print-sheet p{margin:0}
  .ducc .print-sheet :is(h1,h2,h3){color:#000!important;break-after:avoid;break-inside:avoid}
  .ducc .print-sheet ul{margin:0;padding-left:15px}
- .ducc .print-sheet li{break-inside:avoid;margin:0 0 2px;overflow-wrap:anywhere;white-space:pre-line}
+ .ducc .print-sheet li{break-inside:avoid;margin:0 0 1px;overflow-wrap:anywhere;white-space:pre-line}
  .ducc .print-day+.print-day{border-top:1px solid #aaa;margin-top:5px}
 }
 `;
