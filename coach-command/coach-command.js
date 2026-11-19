@@ -20,11 +20,40 @@
 .ducc .present-button{background:#e7c78b;color:#24190a}.ducc summary{cursor:pointer;min-height:38px;padding:7px 0}
 .ducc .section>summary{font-weight:750;color:var(--gold)}.ducc .movement-detail>summary{font-size:.86rem;color:var(--gold)}
 .ducc .session-note{border-left:2px solid var(--gold);padding-left:8px;margin:6px 0;white-space:pre-line}
-.ducc .presentation{position:fixed;inset:0;z-index:9990;overflow:auto;background:#14281e;color:#fff8e9;padding:clamp(20px,5vw,68px)}
-.ducc .presentation .actions{justify-content:space-between;margin-bottom:16px}.ducc .presentation h2{font-size:clamp(26px,5vw,64px);margin-bottom:16px}
-.ducc .presentation-movement{border-top:1px solid #6b8978;padding:12px 0}.ducc .presentation-movement h3{font-size:clamp(20px,3vw,42px);margin:0}
-.ducc .presentation-movement p{font-size:clamp(16px,2.1vw,29px)}.ducc .presentation-movement .dose{color:#f1ce89;font-weight:750}
-.ducc .presentation-movement .demo-links button{font-size:1rem}
+body:has(.ducc .presentation){overflow:hidden}
+.ducc .presentation{position:fixed;inset:0;z-index:9990;overflow:auto;overscroll-behavior:contain;background:#10251e;color:#fff8e9;font:clamp(16px,1.6vw,25px)/1.4 system-ui,Arial,sans-serif;overflow-wrap:anywhere}
+.ducc .presentation-toolbar{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px clamp(14px,4vw,58px);border-bottom:1px solid #51695c;background:#10251e}
+.ducc .presentation-toolbar .actions{flex-wrap:nowrap}
+.ducc .presentation .button,.ducc .presentation-video .button{min-height:44px;border:1px solid #73867b;background:#1b382d;color:#fff8e9;font-weight:720;font-size:clamp(15px,1.25vw,20px)}
+.ducc .presentation .button:disabled{opacity:.53;cursor:default}
+.ducc .presentation .primary{background:#ecd095;border-color:#ecd095;color:#192820}
+.ducc .presentation-progress{font-variant-numeric:tabular-nums;font-weight:750;color:#f1d9a7}
+.ducc .presentation-inner{max-width:1400px;margin:auto;padding:clamp(14px,3vw,44px) clamp(14px,4vw,58px)}
+.ducc .presentation h2{margin:0;color:#fff8e9;font-size:clamp(18px,2.25vw,33px);line-height:1.2}
+.ducc .presentation-purpose{color:#d9e5dc;max-width:75ch}
+.ducc .presentation-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:clamp(15px,3vw,48px);align-items:start;padding-top:clamp(15px,3vw,42px)}
+.ducc .presentation-card{min-width:0;border-left:4px solid #e6c580;padding-left:clamp(12px,2vw,25px)}
+.ducc .presentation-block{color:#f1d9a7;font-weight:700;font-size:clamp(14px,1.2vw,19px)}
+.ducc .presentation h3{margin:3px 0 5px;color:#fff8e9;font-size:clamp(26px,5vw,74px);line-height:1.08}
+.ducc .presentation h3.long-title{font-size:clamp(24px,3.55vw,54px)}
+.ducc .presentation h3.legacy-instruction{font-size:clamp(22px,3vw,46px);white-space:pre-line}
+.ducc .presentation .dose{color:#ffde9e;font-size:clamp(20px,3vw,44px);font-weight:780;line-height:1.21;white-space:pre-line}
+.ducc .presentation .dose.long-dose{font-size:clamp(19px,2.1vw,34px)}
+.ducc .presentation-demo{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.ducc .presentation-guidance{display:grid;gap:9px}
+.ducc .presentation-guidance p,.ducc .presentation-details p{white-space:pre-line}
+.ducc .presentation-guidance p{margin:0;padding:9px 12px;background:#1b382d;border-radius:8px}
+.ducc .presentation-guidance strong{display:block;color:#f1d9a7;font-size:.8em}
+.ducc .presentation-details{margin-top:14px;border-top:1px solid #62786b;padding-top:5px;color:#fff8e9}
+.ducc .presentation-details summary{width:max-content;min-height:44px;color:#ffdfa4;font-weight:720}
+.ducc .presentation-video{width:min(95vw,960px);max-height:92dvh;overflow:auto;background:#152e24;color:#fff8e9;border:1px solid #829487;border-radius:12px;padding:clamp(10px,2vw,22px);margin:auto}
+.ducc .presentation-video::backdrop{background:#07140edb}
+.ducc .presentation-video h2{overflow-wrap:anywhere;margin:0;font-size:clamp(18px,2.2vw,30px)}
+.ducc .presentation-video-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.ducc .presentation-video iframe{display:block;width:min(100%,100vh);aspect-ratio:16/9;border:0;background:#07140e;margin:auto}
+.ducc .presentation-video.portrait iframe{width:min(100%,31vh);aspect-ratio:9/16}
+.ducc .presentation-video a{color:#ffdfa4;text-decoration:underline}
+@media(max-width:740px){.ducc .presentation-layout{grid-template-columns:minmax(0,1fr);gap:12px}.ducc .presentation-toolbar{gap:5px}.ducc .presentation-toolbar .button{padding:8px 10px}}
 .ducc .print-sheet{display:none}
 @media(max-width:540px){.ducc .days{grid-template-columns:1fr}.ducc .day{min-height:54px}.ducc .day strong,.ducc .day span{display:inline}.ducc .day span{margin:0 0 0 7px}}
 @media print{
@@ -62,7 +91,7 @@
     const exercises=new Map((Array.isArray(data.exercises)?data.exercises:[]).map(e=>[e.code,e]));
     const roster=opts.rosterVerified===true&&Array.isArray(opts.roster)&&opts.roster.every(a=>a&&a.cohort_id===data.cohort.id)?opts.roster:null;
     const initialDay=opts.initialSessionId?sessions.findIndex(s=>String(s.id)===String(opts.initialSessionId)):-1;
-    let day=initialDay>=0?initialDay:0,view=initialDay>=0?'workout':'overview',showVideos=true,athlete=null,block=0;
+    let day=initialDay>=0?initialDay:0,view=initialDay>=0?'workout':'overview',showVideos=true,athlete=null,slide=0,sequence=[],detailsOpen=false;
     const style=document.createElement('style');style.textContent=styles;host.replaceChildren(style);
     const root=document.createElement('div');root.className='ducc';host.append(root);
     const session=()=>sessions[day]||{};
@@ -186,20 +215,76 @@
       window.print();
     }
     function presentation(s){
-      const blocks=sections(s),[title,ps]=blocks[block];
-      return '<section class="presentation" tabindex="-1" aria-label="Workout presentation"><div class="actions"><button class="button secondary" data-action="exit-present">Exit presentation</button><div class="actions"><button class="button secondary" data-action="prev-block"'+(block?'':' disabled')+'>Previous block</button><button class="button secondary" data-action="next-block"'+(block+1<blocks.length?'':' disabled')+'>Next block</button></div></div>'+
-        '<p class="session-kicker">'+esc(dayLabel(s,day))+' · '+esc(s.title||'Workout')+' · '+(block+1)+' / '+blocks.length+'</p><h2>'+esc(title)+'</h2>'+
-        [purpose(s),...sessionNotes(s)].filter(Boolean).map(value=>'<p class="session-note">'+esc(value)+'</p>').join('')+
-        ps.map((p,index)=>{
-          const ex=exercises.get(p.exerciseCode)||{},phase=delivery.sessionCoaching(p.cues).phase;
-          const rows=movementCoaching(p,ex),demos=matchingDemos(p);
-          const reviewed=reviewedMovementCoaching(p,demos).map(({title,rows})=>
-            '<div><h4>'+esc(title)+'</h4>'+renderRows(rows)+'</div>'
-          ).join('');
-          return '<div class="presentation-movement">'+(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase?'<h4>'+esc(phase)+'</h4>':'')+
-            '<h3>'+esc(ex.title||p.exerciseCode)+'</h3>'+(prescriptionLine(p)?'<p class="dose">'+esc(prescriptionLine(p))+'</p>':'')+
-            renderRows(rows)+reviewed+demoButtons(demos)+'</div>';
-        }).join('')+'</section>';
+      const {title, row}=sequence[slide];
+      const ex=exercises.get(row.exerciseCode)||{};
+      const saved=delivery.sessionCoaching(row.cues);
+      const library=delivery.coachingParts(ex.coachingCues||ex.coachingNote);
+      const rows=movementCoaching(row,ex);
+      const demos=matchingDemos(row).filter(demo=>safeVideo(demo.url));
+      const reviewed=reviewedMovementCoaching(row,demos);
+      const notes=sessionNotes(s);
+      const important=/\b(?:stop|pain|injur\w*|safety|unsafe|never|avoid|only if|hours between|do not|don.t|must not)\b/i;
+      const reviewedRows=reviewed.length===1?new Map(reviewed[0].rows):null;
+      const cues=[saved.cue,library.cue,reviewedRows?.get('Coach cue')].filter(Boolean);
+      const cue=cues.find(value=>!important.test(value));
+      const warnings=[...new Set([
+        saved.avoid, library.avoid, reviewedRows?.get('Watch for'), ...cues.filter(value=>important.test(value)),
+        ...notes.flatMap(note=>note.split(/\n/).filter(line=>important.test(line))),
+      ].filter(Boolean))];
+      const exerciseName=ex.title||row.exerciseCode;
+      const nameClass=exercises.has(row.exerciseCode)?(exerciseName.length>54?'long-title':''):'legacy-instruction';
+      const dose=prescriptionLine(row);
+      const alternative=exercises.get(row.alternativeExerciseCode)?.title;
+      const context=[
+        ['Session focus',txt(s.focus)!==purpose(s)?s.focus:''],
+        ['Equipment',row.equipment],
+        ['Prescribed alternative',alternative],
+      ].filter(([,value])=>txt(value));
+      const details=renderRows([...rows,...context])+reviewed.map(({title,rows})=>'<div><h4>'+esc(title)+'</h4>'+renderRows(rows)+'</div>').join('')+
+        notes.map(note=>'<p>'+esc(note)+'</p>').join('');
+      return '<section class="presentation" tabindex="-1" aria-label="Workout presentation">'+
+        '<div class="presentation-toolbar"><div class="actions" aria-label="Exercise navigation">'+
+        '<button type="button" class="button" data-action="prev-slide"'+(slide?'':' disabled')+'>Previous</button>'+
+        '<button type="button" class="button primary" data-action="next-slide"'+(slide+1<sequence.length?'':' disabled')+'>Next</button></div>'+
+        '<span class="presentation-progress" aria-live="polite">'+esc((slide+1)+' of '+sequence.length)+'</span>'+
+        '<button type="button" class="button" data-action="exit-present">Exit</button></div>'+
+        '<div class="presentation-inner"><h2>'+esc(dayLabel(s,day)+' · '+(s.title||'Workout'))+'</h2>'+
+        (purpose(s)?'<p class="presentation-purpose">'+esc(purpose(s))+'</p>':'')+
+        '<div class="presentation-layout"><div class="presentation-card">'+
+        '<p class="presentation-block">'+esc([title,saved.phase].filter(Boolean).join(' · '))+'</p>'+
+        '<h3'+(nameClass?' class="'+nameClass+'"':'')+'>'+esc(exerciseName)+'</h3>'+
+        (dose?'<p class="dose'+(dose.length>72?' long-dose':'')+'">'+esc(dose)+'</p>':'')+
+        (demos.length?'<div class="presentation-demo">'+demos.map(demo=>
+          '<button type="button" class="button primary" data-present-video="'+esc(demo.url)+'" data-demo-title="'+esc(demo.title)+'">Watch Demo'+
+          (demos.length>1?' · '+esc(demo.title):'')+'</button>').join('')+'</div>':
+          '<p class="presentation-purpose">No video for this exercise.</p>')+'</div>'+
+        '<div class="presentation-guidance">'+(cue?'<p><strong>Coach says</strong>'+esc(cue)+'</p>':'')+
+        (warnings.length?'<p><strong>Watch for</strong>'+esc(warnings.join('\n'))+'</p>':'')+'</div></div>'+
+        (details?'<details class="presentation-details"'+(detailsOpen?' open':'')+'><summary>Coach Details</summary>'+details+'</details>':'')+
+        '</div></section>';
+    }
+    function moveSlide(next){
+      if(next<0||next>=sequence.length)return;
+      detailsOpen=root.querySelector?.('.presentation-details')?.open??detailsOpen;
+      slide=next;
+      render();
+    }
+    function openPresentationVideo(button){
+      const link=button.dataset.presentVideo,url=safeVideo(link);
+      if(!url)return;
+      closeVideo();
+      videoTrigger=button;
+      const dialog=document.createElement('dialog');
+      dialog.className='presentation-video'+(new URL(link).pathname.startsWith('/shorts/')?' portrait':'');
+      dialog.setAttribute('aria-label','Exercise demonstration');
+      dialog.innerHTML='<div class="presentation-video-head"><h2>'+esc(button.dataset.demoTitle)+'</h2>'+
+        '<button type="button" class="button" data-action="close-video">Close</button></div>'+
+        '<iframe src="'+esc(url)+'" title="'+esc(button.dataset.demoTitle)+' demonstration" allow="encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'+
+        '<p>If the video won’t play, <a href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">open it on YouTube</a> or close it and use the on-screen guidance.</p>';
+      dialog.addEventListener('cancel',event=>{event.preventDefault();closeVideo();});
+      root.append(dialog);
+      dialog.showModal();
+      dialog.querySelector('button')?.focus();
     }
     function copyText(){
       const s=session();
@@ -249,7 +334,7 @@
     }
     let videoTrigger;
     function closeVideo(){
-      root.querySelectorAll('.video').forEach(node=>node.remove());
+      root.querySelectorAll('.video,.presentation-video').forEach(node=>node.remove());
       videoTrigger?.focus();
       videoTrigger=null;
     }
@@ -261,6 +346,7 @@
         day=next;view='workout';
       }
       if(b.dataset.athlete!==undefined){athlete=Number(b.dataset.athlete);view='athlete';}
+      if(b.dataset.presentVideo){openPresentationVideo(b);return;}
       if(b.dataset.video){
         const url=safeVideo(b.dataset.video);
         if(!url)return;
@@ -274,10 +360,14 @@
         case 'back':view='overview';break;
         case 'workout':if(!sessions.length)return;view='workout';break;
         case 'videos':showVideos=!showVideos;break;
-        case 'present':if(session().locked||!sections(session()).length)return;view='present';block=0;break;
+        case 'present':
+          if(session().locked)return;
+          sequence=sections(session()).flatMap(([title,rows])=>rows.map(row=>({title,row})));
+          if(!sequence.length)return;
+          view='present';slide=0;detailsOpen=false;break;
         case 'exit-present':view='workout';break;
-        case 'prev-block':block=Math.max(0,block-1);break;
-        case 'next-block':block=Math.min(sections(session()).length-1,block+1);break;
+        case 'prev-slide':moveSlide(slide-1);return;
+        case 'next-slide':moveSlide(slide+1);return;
         case 'close-video':closeVideo();return;
         case 'copy':if(session().locked)return;try{await navigator.clipboard.writeText(copyText());}catch(err){alert('Copy unavailable. Select the workout text to copy.');}return;
         case 'print':showPrint(false);return;
@@ -289,7 +379,7 @@
     });
     root.addEventListener('keydown',event=>{
       if(view!=='present'&&event.key!=='Escape')return;
-      if(root.querySelector?.('.video')){
+      if(root.querySelector?.('.video,.presentation-video')){
         if(event.key==='Escape'){event.preventDefault();closeVideo();}
         return;
       }
@@ -298,8 +388,7 @@
         event.preventDefault();view='workout';render();root.querySelector('[data-action="present"]')?.focus();
       }else if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
         event.preventDefault();
-        const next=Math.max(0,Math.min(sections(session()).length-1,block+(event.key==='ArrowRight'?1:-1)));
-        if(next!==block){block=next;render();}
+        moveSlide(slide+(event.key==='ArrowRight'?1:-1));
       }
     });
     render();return {destroy(){host.replaceChildren();}};

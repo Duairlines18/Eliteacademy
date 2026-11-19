@@ -82,18 +82,33 @@ const {chromium}=require('playwright');
     await page.locator('.ducc [data-action="present"]').click();
     await page.getByRole('region',{name:'Workout presentation'}).waitFor();
     assert.equal(await page.locator('.ducc .roster').count(),0);checks++;
+    const presenter=page.getByRole('region',{name:'Workout presentation'});
+    assert.equal(await presenter.locator('.presentation-progress').textContent(),'1 of 2');checks++;
+    assert.ok(await presenter.getByRole('button',{name:'Previous',exact:true}).isDisabled());checks++;
     await page.keyboard.press('ArrowRight');
-    const projection=await page.locator('.ducc .presentation').innerText();
+    assert.equal(await presenter.locator('.presentation-progress').textContent(),'2 of 2');checks++;
+    const projection=await presenter.innerText();
     for(const value of ['3 × 3','60 seconds','Stay balanced.','Stop if pain increases.'])assert.ok(projection.includes(value),value);
     assert.ok(await page.locator('.ducc .presentation').evaluate(el=>el.scrollWidth<=el.clientWidth));checks+=5;
     if(evidence&&route==='staff'&&[768,1440].includes(width))
      await page.screenshot({path:path.join(evidence,'projector-'+width+'.png')});
-    await page.locator('.presentation [data-video]').click();
-    assert.match(await page.locator('.ducc iframe').getAttribute('src'),/Dv6blgFNo28$/);checks++;
+    assert.ok(!projection.includes('Drop quickly into a shallow landing.'));checks++;
+    const detailToggle=presenter.getByText('Coach Details',{exact:true});
+    await detailToggle.click();
+    assert.ok(await presenter.getByText('Drop quickly into a shallow landing.',{exact:false}).isVisible());checks++;
+    await detailToggle.click();
+    await presenter.getByRole('button',{name:'Watch Demo',exact:true}).click();
+    const video=page.getByRole('dialog',{name:'Exercise demonstration',exact:true});
+    assert.match(await video.locator('iframe').getAttribute('src'),/Dv6blgFNo28$/);checks++;
+    assert.ok(await video.locator('iframe').evaluate(e=>e.getBoundingClientRect().height>e.getBoundingClientRect().width));checks++;
+    assert.match(await video.getByRole('link',{name:'open it on YouTube'}).getAttribute('href'),/shorts\/Dv6blgFNo28$/);checks++;
+    assert.doesNotMatch(await video.locator('iframe').getAttribute('allow'),/autoplay/);checks++;
     await page.keyboard.press('Escape');
-    assert.equal(await page.locator('.ducc .video').count(),0);checks++;
+    await video.waitFor({state:'detached'});checks++;
+    assert.equal(await presenter.locator('.presentation-progress').textContent(),'2 of 2');checks++;
+    assert.ok(await presenter.getByRole('button',{name:'Watch Demo',exact:true}).evaluate(e=>document.activeElement===e));checks++;
     await page.keyboard.press('ArrowLeft');
-    assert.ok(await page.locator('.presentation').getByRole('heading',{name:'Warm-up'}).isVisible());checks++;
+    assert.ok(await presenter.getByRole('heading',{name:'A-March',exact:true}).isVisible());checks++;
     await page.keyboard.press('Escape');
     await page.getByRole('heading',{name:'Full Workout',exact:true}).waitFor();
     assert.ok((await page.locator('.ducc .workout-head').innerText()).includes('Capacity and control'));checks++;
@@ -108,10 +123,11 @@ const {chromium}=require('playwright');
       ['Mobility',['Ankle Rock','1 × 8 per side']],
       ['Recovery',['Walk easily for 2 minutes.']],
      ]){
-      await page.locator('.presentation').getByRole('heading',{name:heading,exact:true}).waitFor();
+      await page.locator('.presentation-block').getByText(heading,{exact:true}).waitFor();
       const slide=await page.locator('.presentation').innerText();
       for(const token of tokens){assert.ok(slide.includes(token),token);checks++;}
-      const next=page.locator('.presentation [data-action="next-block"]');
+      if(heading==='Recovery'){assert.ok(slide.includes('No video for this exercise.'));checks++;}
+      const next=page.locator('.presentation [data-action="next-slide"]');
       if(await next.isEnabled())await next.click();
      }
      await page.locator('.ducc [data-action="exit-present"]').click();
@@ -150,6 +166,28 @@ const {chromium}=require('playwright');
     await page.locator('.ducc [data-action="print-week"]').click();
     assert.equal(await page.locator('.print-day li').count(),45);checks++;
     await verifyPrintPages(page,'Print-Week-45-rows',1);
+    await page.setViewportSize({width:1440,height:810});
+    await page.evaluate(()=>{
+     const exercise={code:'long-jump',title:'Single-Leg Broad Jump and Stick with Controlled Two-Foot Landing',videoUrl:'https://www.youtube.com/watch?v=Dv6blgFNo28'};
+     const dosage='3 rounds of 6 repetitions at 75% effort with a deliberate three-second pause on each landing';
+     window.DuCoachCommand.mount(document.getElementById('du-coach-command-root'),{
+      role:'staff',cohort:{id:'wide-test',name:'Long-content fixture'},exercises:[exercise],
+      programme:{sessions:[{id:'wide-test',title:'Projector layout test',prescriptions:[
+       {exerciseCode:'long-jump',dosage,rest:'90 seconds between rounds',sectionTitle:'Main session',cues:'Hold each landing.'},
+      ]}]},
+     },{initialSessionId:'wide-test'});
+    });
+    await page.getByRole('button',{name:'Present workout'}).click();
+    const widePresenter=page.getByRole('region',{name:'Workout presentation'});
+    assert.equal(await widePresenter.locator('.presentation-progress').textContent(),'1 of 1');checks++;
+    assert.ok(await widePresenter.getByRole('button',{name:'Next',exact:true}).isDisabled());checks++;
+    const wideBounds=await widePresenter.evaluate(e=>({width:e.clientWidth,scrollWidth:e.scrollWidth,height:e.clientHeight,scrollHeight:e.scrollHeight,layout:e.querySelector('.presentation-layout').getBoundingClientRect().height}));
+    assert.ok(wideBounds.scrollWidth<=wideBounds.width&&wideBounds.scrollHeight<=wideBounds.height,JSON.stringify(wideBounds));checks++;
+    await widePresenter.getByRole('button',{name:'Watch Demo'}).click();
+    const widePlayer=page.getByRole('dialog',{name:'Exercise demonstration'});
+    assert.ok(await widePlayer.locator('iframe').evaluate(e=>e.clientWidth>e.clientHeight));checks++;
+    await widePlayer.getByRole('button',{name:'Close',exact:true}).click();
+    assert.equal(await widePresenter.locator('.presentation-progress').textContent(),'1 of 1');checks++;
    }
    assert.deepEqual(errors,[]);checks++;
    await page.close();

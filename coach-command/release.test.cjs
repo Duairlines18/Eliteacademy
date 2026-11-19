@@ -33,20 +33,22 @@ test('day and week print preserve prescriptions and exclude coaching material, l
  assert.doesNotMatch(h.printed(),/Private athlete|Unreleased workout|Secret dose|Coach-approved|How to do it|Quiet feet|Stop for pain|Forcing the range|https:|iframe/);
  assert.equal(h.root.children.filter(x=>x.className==='print-sheet').length,1);
 });
-test('presenter shows one block and returns to the selected day',async()=>{
+test('presenter shows one exercise and returns to the selected day',async()=>{
  const h=setup();await h.click({day:'0'});
  assert.match(h.root.innerHTML,/Stop for pain\./);
  assert.doesNotMatch(h.root.innerHTML,/Coach-approved readiness/);
  assert.match(h.root.innerHTML,/Coach cue.*Keep your heel down.*Watch for.*Forcing the range.*For this session.*Quiet feet.*<details class="movement-detail"/);
  await h.click('present');
- assert.match(h.root.innerHTML,/Workout presentation.*Warm-up.*Quiet feet/);
+ assert.match(h.root.innerHTML,/Workout presentation.*1 of 3.*Warm-up.*Ankle Rock.*2 × 8.*30 seconds.*Watch Demo.*Coach says.*Quiet feet/);
  assert.match(h.root.innerHTML,/Stop for pain\./);
  assert.doesNotMatch(h.root.innerHTML,/Coach-approved readiness/);
- assert.match(h.root.innerHTML,/2 × 8.*30 seconds.*Coach cue.*Keep your heel down.*Watch for.*Forcing the range/);
+ assert.match(h.root.innerHTML,/Watch for.*Forcing the range[\s\S]*<details class="presentation-details"><summary>Coach Details<\/summary>.*Move your knee forward/);
  assert.doesNotMatch(h.root.innerHTML,/Private athlete|6 × 100 m/);
- await h.click('next-block');
- assert.match(h.root.innerHTML,/Running.*Use the prescribed space first.*6 × 100 m.*1 minute/);
+ await h.click('next-slide');
+ assert.match(h.root.innerHTML,/2 of 3.*Running.*Use the prescribed space first/);
  assert.doesNotMatch(h.root.innerHTML,/Ankle Rock/);
+ await h.click('next-slide');
+ assert.match(h.root.innerHTML,/3 of 3.*6 × 100 m at 75%.*1 minute/);
  await h.click('exit-present');
  assert.match(h.root.innerHTML,/Full Workout.*Foundations/);
 });
