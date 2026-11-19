@@ -60,7 +60,8 @@ const copied=api.athleteCopyText({day:'Day 1',title:'Acceleration',duration:'60m
 assert.match(copied,/Training group: Form 2/);
 assert.match(copied,/2 × 6/);
 assert.doesNotMatch(copied,/3 × 8|3 × 12/);
-assert.ok(copied.includes('\nMain Strength\n'));
+assert.match(copied,/\n\nMAIN STRENGTH\n1\. \[Form 2\] Calf Raise — 2 × 10\n   Demo: https:\/\/www\.youtube\.com\/shorts\/abcdefghijk/);
+assert.doesNotMatch(copied,/Stop when quality falls|javascript:/);
 selected='Form 3';
 const other=api.visibleNormalizedSections({sections});
 assert.equal(other[1].items.length,1);
