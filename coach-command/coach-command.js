@@ -177,20 +177,25 @@
     }
     function copyText(){
       const s=session();
-      return [s.day||'Day '+(day+1),s.title||'',s.duration||'',purpose(s),...sessionNotes(s),...sections(s).flatMap(([title,ps])=>[
-        '',title,...ps.flatMap((p,index)=>{
+      const lines=['DU AIRLINES ELITE ACADEMY','TRAINING WORKOUT',cohortLabel(),dayLabel(s,day)+(s.title?' | '+s.title:''),s.duration?'Duration: '+s.duration:'',purpose(s)?'Purpose: '+purpose(s):'',...sessionNotes(s),''];
+      sections(s).forEach(([title,ps],sectionIndex)=>{
+        lines.push(String(sectionIndex+1).padStart(2,'0')+' | '+title.toUpperCase(),'');
+        ps.forEach((p,index)=>{
           const phase=delivery.sessionCoaching(p.cues).phase,ex=exercises.get(p.exerciseCode)||{},demos=matchingDemos(p);
-          return [
-            ...(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase?[phase]:[]),
-            [ex.title||p.exerciseCode,p.dosage,p.rest?'Rest: '+p.rest:''].filter(Boolean).join(' — '),
-            ...movementCoaching(p,ex).map(([label,value])=>'  '+label+': '+value),
-            ...reviewedMovementCoaching(p,demos).flatMap(({title,rows})=>[
-              '  '+title,...rows.map(([label,value])=>'    '+label+': '+value),
-            ]),
-            ...demos.map(d=>'  Demo — '+d.title+': '+d.url),
-          ];
-        }),
-      ])].join('\n');
+          if(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase)lines.push(phase);
+          lines.push((index+1)+'. '+(ex.title||p.exerciseCode));
+          if(p.dosage)lines.push('   Prescription: '+p.dosage);
+          if(p.rest)lines.push('   Rest: '+p.rest);
+          movementCoaching(p,ex).forEach(([label,value])=>lines.push('   '+label+': '+value));
+          reviewedMovementCoaching(p,demos).forEach(({title,rows})=>{
+            lines.push('   '+title);
+            rows.forEach(([label,value])=>lines.push('     '+label+': '+value));
+          });
+          demos.forEach(d=>lines.push('   Video ('+d.title+'): '+d.url));
+          lines.push('');
+        });
+      });
+      return lines.join('\\n').replace(/\\n{3,}/g,'\\n\\n').trim();
     }
     function render(){
       const s=session(),active=roster?.filter(a=>a.access_status==='active').length;
