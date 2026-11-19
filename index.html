@@ -4214,7 +4214,7 @@ document.addEventListener('click',function(e){
 .hub-school-themed .ducc :is(h1,h2){color:var(--school-paper)}
 /* SCHOOL_THEME_END */
 </style>
-<script src="/coach-command/coach-command.js?v=20261118-compact"></script>
+<script src="/coach-command/coach-command.js?v=20261118-coach-cues"></script>
 <link rel="stylesheet" href="/hub-delivery/school.css">
 <script src="/hub-delivery/school-attendance.js?v=20261104-compact"></script>
 <script id="performance-hub-app">
@@ -4618,7 +4618,7 @@ document.addEventListener('click',function(e){
           const detail=rows.filter(row=>!essential(row)).map(line).join('')+demos;
           guidance=notes.join('')+safety.join('')+(detail?'<details class="hub-school-technique"><summary>'+(demos?'Technique &amp; demo':'Technique')+'</summary>'+detail+'</details>':'');
         }
-        return phaseHeading+'<div class="hub-athlete-movement"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+(displayDose?'<strong>'+escapeHtml(displayDose)+'</strong>':'')+'</div>'+(!compact&&doseHelp?'<p class="hub-dose-help">'+escapeHtml(doseHelp)+'</p>':'')+(rest?'<small>Rest: '+escapeHtml(rest)+'</small>':'')+guidance+(help.length?'<p class="hub-term-help">'+help.map(escapeHtml).join(' ')+'</p>':'')+'</div>';
+        return phaseHeading+'<div class="hub-athlete-movement"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+(displayDose?'<strong>'+escapeHtml(displayDose)+'</strong>':'')+'</div>'+(doseHelp?'<p class="hub-dose-help">'+escapeHtml(doseHelp)+'</p>':'')+(rest?'<small>Rest: '+escapeHtml(rest)+'</small>':'')+guidance+(help.length?'<p class="hub-term-help">'+help.map(escapeHtml).join(' ')+'</p>':'')+'</div>';
       }).join('');
       const heading='<span>'+escapeHtml(section.title)+'</span><small>'+items.length+' movements</small>';
       return (typeof isSchoolReferenceViewer!=='function'||!isSchoolReferenceViewer())? (warmup?'<details class="hub-athlete-phase hub-athlete-warmup"'+(((typeof location!=='undefined'&&location.hash.startsWith('#/hub/routines/'))||(typeof isIdentifiedSchoolAthlete==='function'&&isIdentifiedSchoolAthlete()))?' open':'')+'><summary class="hub-athlete-phase-heading">'+heading+'</summary><p class="hub-athlete-warmup-hint">Complete before the main session · tap to expand</p><div class="hub-athlete-phase-list">'+rows+'</div></details>':'<section class="hub-athlete-phase"><div class="hub-athlete-phase-heading"><h3>'+escapeHtml(section.title)+'</h3><span>'+items.length+' movements</span></div><div class="hub-athlete-phase-list">'+rows+'</div></section>') : warmup?'<details class="hub-athlete-phase hub-athlete-warmup"'+(((typeof location!=='undefined'&&location.hash.startsWith('#/hub/routines/'))||(typeof isIdentifiedSchoolAthlete==='function'&&isIdentifiedSchoolAthlete()))?' open':'')+'><summary class="hub-athlete-phase-heading">'+heading+'</summary><p class="hub-athlete-warmup-hint">Complete before the main session · tap to expand</p><div class="hub-athlete-phase-list">'+rows+'</div></details>':'<details class="hub-athlete-phase hub-school-collapsible"'+(sectionIndex===0||/horizontal jumps|plyometric skills/i.test(section.title)?' open':'')+'><summary class="hub-athlete-phase-heading"><span>'+escapeHtml(section.title)+'</span><small>'+items.length+' movements</small></summary><div class="hub-athlete-phase-list">'+rows+'</div></details>';

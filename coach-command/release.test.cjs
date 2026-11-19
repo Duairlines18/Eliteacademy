@@ -11,7 +11,7 @@ function setup(){
    {day:'Day 1',title:'Foundations',watch:'Stop for pain.',prescriptions:[warmup,{sectionTitle:'Running',exerciseCode:'6 × 100 m at 75%',dosage:'6 × 100 m',rest:'1 minute'}]},
    {day:'Day 2',title:'Landing',prescriptions:[{...warmup,dosage:'1 × 5'}]},
    {day:'Day 3',title:'Unreleased workout',locked:true,prescriptions:[{...warmup,dosage:'Secret dose'}]},
- ]},exercises:[{code:'WU01',title:'Ankle Rock',videoId:'6Dlac5mxD6k',description:'Keep your heel down.'}]},{rosterVerified:true,roster:[{cohort_id:'test',display_name:'Private athlete'}]});
+ ]},exercises:[{code:'WU01',title:'Ankle Rock',videoId:'6Dlac5mxD6k',description:'Move your knee forward.',coachingCues:'Keep your heel down. Avoid: Forcing the range.'}]},{rosterVerified:true,roster:[{cohort_id:'test',display_name:'Private athlete'}]});
  const root=host.children[1];
  const click=dataset=>root.click({target:{closest:()=>({dataset:typeof dataset==='string'?{action:dataset}:dataset})}});
  return {root,click,copied:()=>copied,printed:()=>printed};
@@ -31,8 +31,11 @@ test('day and week print use a dedicated sheet and exclude locked and roster con
  assert.equal(h.root.children.filter(x=>x.className==='print-sheet').length,1);
 });
 test('presenter shows one block and returns to the selected day',async()=>{
- const h=setup();await h.click({day:'0'});await h.click('present');
+ const h=setup();await h.click({day:'0'});
+ assert.match(h.root.innerHTML,/Coach cue.*Keep your heel down.*Watch for.*Forcing the range.*For this session.*Quiet feet.*<details class="movement-detail"/);
+ await h.click('present');
  assert.match(h.root.innerHTML,/Workout presentation.*Warm-up.*Quiet feet/);
+ assert.match(h.root.innerHTML,/2 × 8.*30 seconds.*Coach cue.*Keep your heel down.*Watch for.*Forcing the range/);
  assert.doesNotMatch(h.root.innerHTML,/Private athlete|6 × 100 m/);
  await h.click('next-block');
  assert.match(h.root.innerHTML,/Running.*6 × 100 m.*1 minute/);

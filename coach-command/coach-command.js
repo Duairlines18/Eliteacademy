@@ -111,6 +111,9 @@
     function renderRows(rows){
       return rows.map(([label,value])=>'<p><strong>'+esc(label)+'</strong> '+esc(value)+'</p>').join('');
     }
+    function teachingRows(rows){
+      return rows.filter(([label,value])=>label==='Coach cue'||label==='For this session'||label==='Coach alternative'||label==='Watch for'||(label==='How to do it'&&/confirm the movement sequence/i.test(value)));
+    }
     function demoButtons(demos){
       return showVideos&&demos.length?'<div class="demo-links">'+demos.map(d=>'<button type="button" class="button secondary" data-video="'+esc(d.url)+'" aria-label="Watch '+esc(d.title)+' demonstration">▶ '+esc(d.title)+'</button>').join('')+'</div>':'';
     }
@@ -119,7 +122,7 @@
       const heading=phase&&phase!==delivery.sessionCoaching(previous?.cues).phase?'<h4>'+esc(phase)+'</h4>':'';
       const ex=exercises.get(p.exerciseCode)||{},demos=matchingDemos(p);
       const rows=movementCoaching(p,ex);
-      const immediate=rows.filter(([label])=>label==='For this session'||label==='Coach alternative');
+      const immediate=teachingRows(rows);
       const detail=renderRows(rows.filter(row=>!immediate.includes(row)))+reviewedMovementCoaching(p,demos).map(({title,rows})=>
         '<div class="coach-cue"><b>'+esc(title)+'</b>'+renderRows(rows)+'</div>').join('')+demoButtons(demos);
       const dosage=prescriptionLine(p);
@@ -159,11 +162,17 @@
         [purpose(s),...sessionNotes(s)].filter(Boolean).map(value=>'<p class="session-note">'+esc(value)+'</p>').join('')+
         ps.map((p,index)=>{
           const ex=exercises.get(p.exerciseCode)||{},phase=delivery.sessionCoaching(p.cues).phase;
-          const rows=movementCoaching(p,ex),cue=rows.find(([label])=>label==='Coach cue');
-          const essentials=rows.filter(([label,value])=>label==='For this session'||label==='Coach alternative'||label==='Watch for'||(label==='How to do it'&&/confirm the movement sequence/i.test(value)));
+          const rows=movementCoaching(p,ex),demos=matchingDemos(p);
+          const essentials=teachingRows(rows);
+          const instruction=rows.find(([label])=>label==='How to do it');
+          if(instruction&&!essentials.includes(instruction)&&!essentials.some(([label])=>label==='Coach cue'))essentials.unshift(instruction);
+          const reviewed=reviewedMovementCoaching(p,demos).map(({title,rows})=>{
+            const guidance=teachingRows(rows);
+            return guidance.length?'<div><h4>'+esc(title)+'</h4>'+renderRows(guidance)+'</div>':'';
+          }).join('');
           return '<div class="presentation-movement">'+(phase&&phase!==delivery.sessionCoaching(ps[index-1]?.cues).phase?'<h4>'+esc(phase)+'</h4>':'')+
             '<h3>'+esc(ex.title||p.exerciseCode)+'</h3>'+(prescriptionLine(p)?'<p class="dose">'+esc(prescriptionLine(p))+'</p>':'')+
-            (cue?'<p>'+esc(cue[1])+'</p>':'')+renderRows(essentials)+demoButtons(matchingDemos(p))+'</div>';
+            renderRows(essentials)+reviewed+demoButtons(demos)+'</div>';
         }).join('')+'</section>';
     }
     function copyText(){
