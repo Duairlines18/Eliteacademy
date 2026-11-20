@@ -2,7 +2,7 @@
 // Real Chromium rendering against synthetic local records. No production writes.
 const assert=require('node:assert/strict'),{spawn}=require('node:child_process'),{chromium}=require('playwright');
 (async()=>{
- const server=spawn(process.execPath,['supabase/qa/school-browser-fixture.mjs'],{stdio:['ignore','pipe','inherit']});
+ const server=spawn(process.execPath,['supabase/qa/school-browser-fixture.mjs','--extended-athlete-workout'],{stdio:['ignore','pipe','inherit']});
  await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.once('exit',code=>reject(Error('Fixture exited '+code)));});
  const browser=await chromium.launch({headless:true});let checks=0;
  const ok=(value,message)=>{assert.ok(value,message);checks++;};
