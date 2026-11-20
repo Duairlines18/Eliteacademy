@@ -91,6 +91,7 @@ const withoutAirZimPresentation=source=>source
  .replace(/  function normalizedTextItem\([\s\S]*?(?=  function normalizeWorkoutSession\()/,'  WORKOUT_TEXT_DELIVERY\n')
  .replace(/  function athleteCopyText\([\s\S]*?(?=  function schoolAthleteDelivery\()/,'  WORKOUT_COPY_DELIVERY\n')
  .replace(/  function normalizeWorkoutSession\([\s\S]*?(?=  function visibleNormalizedSections\()/,'  WORKOUT_NORMALIZER\n')
+ .replace(/    const hubYoutubeLink=[^\n]+/,line=>line.replace(',.hub-athlete-movement', '').replace('h3,h4,strong','h3,strong').replace('[▶↗]','↗'))
  .replace(/  function schoolAthleteDelivery\([\s\S]*?(?=  function renderWorkoutExperience\()/,'  ATHLETE_DELIVERY\n')
  .replace(/  function renderWarmup\([^\n]+\n/,'  WARM_UP_LIBRARY\n');
 const currentProduction=execFileSync('git',['show','ee633b7:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
@@ -117,7 +118,7 @@ const withoutCompactVideo=source=>source
  .replace("    modal.classList.remove('loading','expanded');","    modal.classList.remove('loading');");
 // Existing Pages additions are now tracked in source; exact parity is tested in qa/release-assets.test.cjs.
 const withoutDeploymentAdditions=source=>source.replace(/<link rel="stylesheet" href="\/parent-qa\/session-card-polish\.css">\r?\n?<script defer src="\/parent-qa\/session-card-polish\.js"><\/script>\r?\n?<script defer src="\/performance\/coachdu-hub-bridge\.js"><\/script>\r?\n?/,'').replace(/  function renderAccountStatus\(audience,error\)\{\r?\n    if\(audience==='professional' && error\?\.code==='NO_ASSIGNMENT'\)\{[\s\S]*?\r?\n    \}\r?\n\r?\n/,'  function renderAccountStatus(audience,error){\r\n');
-const withoutHubAssets=source=>source.replace(/\/\* SCHOOL_THEME_START:[\s\S]*?\/\* SCHOOL_THEME_END \*\/\r?\n/,'').replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\r?\n?<script src="\/parent-setup\/setup\.js"><\/script>\r?\n?/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=(?:20261019|20261109-guided|20261109-unified|20261118-coaching)"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=(?:20261019|20261118-coaching|20261118-compact)">\r?\n/,'');
+const withoutHubAssets=source=>source.replace(/\/\* SCHOOL_THEME_START:[\s\S]*?\/\* SCHOOL_THEME_END \*\/\r?\n/,'').replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\r?\n?<script src="\/parent-setup\/setup\.js"><\/script>\r?\n?/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=(?:20261019|20261109-guided|20261109-unified|20261118-coaching)"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=(?:20261019|20261118-coaching|20261118-compact|20261119-athlete-sheet)">\r?\n/,'');
 const actualHomepage=withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart))))));
 const expectedHomepage=currentProduction.slice(0,currentProduction.indexOf(routeStart)).replace(oldShareMetadata,approvedShareMetadata);
 if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')){
