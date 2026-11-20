@@ -1,0 +1,41 @@
+# Exercise/demo synchronization — staged runtime repair
+
+Reviewed block demos now refresh from the current authorized exercise library even if the movement name was already loaded. Name-bound rows refresh all active exact-name candidates; ambiguity hides the demo rather than selecting the first. Explicit reviewed exerciseCode references resolve by exact code, including after a library rename, without falling back to another movement with the same name. Missing/inactive selections cannot reuse stale loaded definitions. Stored JSON URLs remain non-authoritative.
+
+The patch changes bundle loading/shaping only. It does not rewrite dosage, rest, cues, instruction text, assignments or live database records. A failed refresh surfaces an error rather than silently serving an obsolete demo. This trades availability during a library lookup failure for avoiding a misleading demonstration. Existing clients must reload/revalidate their bundle to receive library changes; this is not a live push to already-open video players.
+
+Nine targeted tests cover current URL replacement, missing/inactive lookup, ambiguous names, exact-code selection with no wrong-name fallback, unrelated movement preservation, code-bound rename and lookup failure. Existing regression suite remains required. Real footage semantics, playback on iPhone, authenticated parent/private/school/admin delivery and production dependency parity remain rollout gates.
+
+Still open: database-generated legacy maps remain name-bound unless explicitly migrated; legacy rename requires a reviewed remap, never a fuzzy runtime substitution. Existing stored video_links URLs are not backfilled, so admin publication preflight may correctly require resaving an old block after library edits. Semantic review of all library videos and automatic database/library history synchronization are not claimed complete. Do not redeploy every Edge Function blindly: retain each live endpoint's existing dependencies/JWT settings and verify its bundle before deployment.
+
+Independent review found that account adjustments could discard renamed code references. Full parent/private adjustment-path and personal-swap regressions reproduced this and now pass. Explicit demo codes are updated with the approved replacement so the original movement cannot remain selected behind a new name.
+
+## Shared publication preflight
+
+The website offline delivery QA and Control Room publication validator now use the same checked-in implementation. Reviewed `exerciseCode` references select one active library entry without name fallback. Name-only legacy references must match exactly one active entry. Saved demo URLs are compared by YouTube video identity, so equivalent watch/Shorts links pass while a different video blocks publication. Preflight only reports issues; it never rewrites stored URLs, prescriptions or library records.
+
+Eleven contract regressions cover duplicate names, invalid explicit codes, equivalent URL formats, wrong video IDs, ambiguous legacy references, input preservation duplicate query parameters duplicate-name library ordering encoded query parameters and ID-only canonical demos. These are synthetic source-level checks; authenticated role views, actual footage review, mobile playback and deployment remain separate gates.
+
+## Durable database mappings — staged November 7, 2026
+
+A read-only production inventory found 1,455 saved demo links across 329 blocks, all lacking `exerciseCode`. This is a storage weakness, not evidence that all those demos are wrong. The live save trigger rebuilds mappings from names and assumes positional alignment for structured prescriptions. A local reproduction showed reviewed codes being discarded and an instruction row receiving a different row's structured demo.
+
+`supabase/rollout/durable-exercise-video-links.sql` stages a replacement of that existing function. It creates no tables, policies, grants or new API. There is no bulk UPDATE or backfill. On future saves, selected demos carry stable codes and current canonical metadata. Explicit reviewed codes cannot fall back to names. Positional structured mappings require `videoLinksAlignWithPrescriptions: true` with equal row counts. Existing aliases and compound movement rows remain supported; ambiguous normalized names require explicit selection.
+
+Since generated output also carries codes, unchanged metadata cannot prove renewed review after text edits. Updates which change an instruction but retain its previous code at the same index reject atomically. Callers must clear or explicitly remap affected rows, preview their demos and then save. Library rename/URL refresh with unchanged workout text remains supported. All fields outside `video_links` remain exact.
+
+Eighteen disposable PostgreSQL cases cover generation, rename and URL refresh, invalid/inactive/missing selections, mixed row order, aligned rows/conflicts, ambiguity/aliases, compound rows, edits, nonexistent rows, literal content preservation and rollback. The full 18-case publish/RLS suite also runs with the replacement installed from setup, alongside staged audit history. These remain local claim simulations, not hosted authentication.
+
+Rollout gates: integrate explicit remap/review into the Control Room text editor first (it currently carries previous link metadata), then test authenticated parent/private/school/admin views and iPhone playback. Capture the exact live `pg_get_functiondef` immediately before applying the replacement; restore that captured definition to roll back. A synthetic test confirms restoring the original function does not modify saved blocks. Rollback does not undo links written during rollout: review those separately through history. Re-run `qa/video-identity-audit.sql` before planning any reviewed legacy migration. Existing name-only links are unchanged by installing this function.
+
+## Exact instruction review and Control Room editor
+
+The linked Control Room change adds deliberate multiple-demo selection and preview to the legacy text-row editor. Any changed or reordered row requires fresh confirmation; a later edit or selection change invalidates that confirmation. Running/rest/notes can explicitly have no demo, subject to existing delivery preflight. The payload binds each selected code to the literal `reviewed_item` text.
+
+The staged save function accepts a fresh same-code dose edit only with the exact new text binding and rejects stale bindings, including on inserts. Generated links retain the binding. Runtime shaping hides a binding that no longer matches its instruction. Approved personal swaps update valid bindings with their rewritten instruction; they cannot repair an already-stale binding. No live records have been migrated.
+
+November 7 read-only follow-up: all 1,455 stored links resolve to one active exact-name exercise with the identical stored URL (zero missing/ambiguous names or different URL strings). All 18 active athlete records have one published matching current week, including six Saints athletes and QA records. This is database evidence only. Two active library movements lack URLs: ACC05 (no structured block references), SPR06 (one reference in Andria's completed Week 4). No replacement video was guessed or training content changed.
+
+Hosted verification remains incomplete: the available browser opens the Hub login screen with no authenticated session; credentials are not available. The sampled ACT02 YouTube page loads the correct title and poster, but the media element remains at currentTime=0, readyState=0 after play. This does not verify decoded playback, the full footage library, or an iPhone. The local Chromium runner cannot launch under this workspace's Unix socket policy; real mobile/desktop editor checks therefore run in GitHub CI, alongside existing browser regression jobs.
+
+Independent final review reproduced stale-binding refresh on untouched rows, compound-row swap loss and database regeneration after an explicit no-demo choice. Fixes require renewed confirmation for stale original bindings, rebind every valid demo in a rewritten compound row, and persist an exact-text-bound `no_demo` marker respected by inference. Preflight does not let this exclusion satisfy a required demonstration.
