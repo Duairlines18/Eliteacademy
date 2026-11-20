@@ -21,10 +21,11 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    await page.getByRole('navigation',{name:'Choose training day'}).getByRole('link',{name:/^Day 1\b/}).click();
    await page.getByRole('heading',{name:'Day 1 · Movement foundations',exact:true}).waitFor();
    const march=page.locator('.hub-athlete-movement').filter({has:page.getByText('A-March',{exact:true})});
-   await march.waitFor({state:'visible'});
+   await march.waitFor({state:'attached'});
    ok(await page.locator('.hub-athlete-session-group').count()===0,'Saints day omits Form selector');
    ok(!await page.locator('.hub-main').innerText().then(t=>t.includes('Choose your Form')),'Saints day has no Form prompt');
-   const warmup=page.locator('.hub-athlete-warmup');if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator('summary').click();
+   const warmup=page.locator('.hub-athlete-warmup');if(await warmup.count()&&!await warmup.evaluate(e=>e.open))await warmup.locator(':scope > summary').click();
+   await march.waitFor({state:'visible'});
    ok(await page.locator('[data-completion-toggle]').count()===0,'school athlete never has completion controls');
    ok(await march.getByText('1 × 20 m',{exact:true}).isVisible(),'A-March prescription is exact and visible');
    ok(await march.getByText('Rest: Walk-back recovery',{exact:true}).isVisible(),'A-March recovery is exact and visible');
@@ -67,7 +68,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   ok(await sheet.getByText('Landing readiness and skill check',{exact:true}).count()===0,'readiness checklist has no standalone athlete card');
   const recovery=sheet.locator('.hub-athlete-training-block').filter({has:page.getByText('Recovery',{exact:true})});
   ok(await recovery.getByText(/Walk easily/).isVisible()&&await recovery.getByRole('link',{name:/Watch/}).count()===0,'no fake video action on recovery instructions');
-  await warmup.locator('summary').click();
+  await warmup.locator(':scope > summary').click();
   ok(await warmup.locator('.hub-athlete-movement:visible').count()===9,'warm-up expands in the same workout screen');
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'expanded long training sheet fits viewport');
   await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
