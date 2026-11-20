@@ -16,8 +16,16 @@ const staff={id:'fixture-coach',display_name:'Coach Dube',access_status:'active'
 const exercise={id:'fixture-march',code:'SPR01',name:'A-March',description:'March forward and lift one knee at a time.',categories:['warm-up','sprint-mechanics'],video_id:'4lQsMyKRRn8',video_url:'https://www.youtube.com/shorts/4lQsMyKRRn8',active:true};
 const bundle={cohort,programme:{id:cohort.programme_id,name:'LOCAL TEST — Four-week Plyometric Skills Pilot',duration_weeks:4,sport:'School Performance'},week:{week_number:1,status:'live',verification_status:'verified',published_at:'2026-10-24T00:00:00Z',weekly_objective:'Synthetic browser test only.'},trainingDays:[{id:'fixture-day-1',day_key:'Day 1',title:'Movement foundations',duration:'60 minutes',objective:'Build controlled rhythm before faster work.',sort_order:1},{id:'fixture-day-2',day_key:'Day 2',title:'Capacity and control',duration:'60 minutes',objective:'Practise balanced landings.',sort_order:2},{id:'fixture-day-3',day_key:'Day 3',title:'Optional technique and recovery',duration:'20 minutes',objective:'Rehearse simple movements at an easy effort.',sort_order:3},{id:'fixture-routine',day_key:'Warm-Up Routine',title:'ASIM Warm-Up',sort_order:2}],blocks:[{training_day_id:'fixture-day-1',title:'Movement',sort_order:1,content:{prescriptions:[{exerciseCode:'SPR01',dosage:'1 × 20 m',rest:'Walk-back recovery',cues:'Stay tall; controlled rhythm.'}]}},{training_day_id:'fixture-routine',title:'ASIM Warm-Up',sort_order:1,content:{prescriptions:[{exerciseCode:'SPR01',dosage:'1 × 20 m',rest:'Walk-back recovery',cues:'Stay tall; controlled rhythm.'}]}}],exercises:[exercise]};
 // Additional synthetic Day 2 coverage for collapsed warm-up print/export.
-bundle.blocks.push({training_day_id:'fixture-day-2',title:'Warm-up',sort_order:0,content:{prescriptions:[{exerciseCode:'SPR01',dosage:'2 × 8',rest:'30 seconds',cues:'Move smoothly.'}]}},
- {training_day_id:'fixture-day-2',title:'Plyometric skills',sort_order:1,content:{prescriptions:[{exerciseCode:'PLY01',dosage:'3 × 3',rest:'60 seconds',cues:'Stay balanced.'}]}});
+bundle.blocks.push({training_day_id:'fixture-day-2',title:'Warm-up',sort_order:0,content:{prescriptions:Array.from({length:9},(_,index)=>({exerciseCode:index===0?'SPR01':'WU01',dosage:'2 × 8',rest:'30 seconds',cues:'Move smoothly.'}))}},
+ {training_day_id:'fixture-day-2',title:'Plyometric skills',sort_order:1,content:{prescriptions:[
+   {exerciseCode:'PLY01',dosage:'3 × 3',rest:'60 seconds',cues:'Stay balanced.'},
+   {exerciseCode:'PLY02',dosage:'2 × 8 each leg; regress to 1 set if needed',rest:'45–75 seconds'},
+ ]}},
+ {training_day_id:'fixture-day-2',title:'Landing readiness and skill check',sort_order:2,content:{
+   items:['Quiet controlled landings and level hips','Stop or reduce contacts if posture or control deteriorates'],video_links:[],
+ }},
+ {training_day_id:'fixture-day-2',title:'Recovery',sort_order:3,content:{items:['Walk easily for 2 minutes.'],video_links:[]}},
+);
 // Apply only to the in-memory fixture. URLs use reviewed exercise IDs from the existing catalog.
 for(const [code,name,video_id,description,coaching_cues] of [
  ['PLY01','Snap Down','Dv6blgFNo28','Drop quickly into a shallow landing.','Cue: Land quietly. Avoid: Stop if pain increases.'],

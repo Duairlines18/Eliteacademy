@@ -16,3 +16,100 @@
 .hub-school-technique summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:7px;color:var(--hub-gold,#c7a25a);font-size:.9rem;font-weight:650}
 .hub-school-technique summary::before{content:'›';font-size:1.1em}
 .hub-school-technique[open] summary::before{transform:rotate(90deg)}
+
+.hub-athlete-workout-sheet {
+  display: grid;
+  gap: .75rem;
+}
+.hub-shell .hub-main .hub-athlete-workout-sheet .hub-athlete-phase.hub-athlete-training-block {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border-color: rgba(199,162,90,.28);
+  border-radius: 14px;
+  background: #121614;
+}
+.hub-shell .hub-main .hub-athlete-workout-sheet .hub-athlete-training-block > summary {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: center;
+  gap: .55rem;
+  min-height: 52px;
+  margin: 0;
+  padding: .65rem .8rem;
+  cursor: pointer;
+  list-style: none;
+  color: #f5f1e8;
+  background: linear-gradient(110deg,#20362b,#161a16);
+}
+.hub-athlete-training-block > summary::-webkit-details-marker { display: none; }
+.hub-athlete-training-block > summary::before {
+  content: '›';
+  color: #e6c68c;
+  font-size: 1.25rem;
+}
+.hub-athlete-training-block[open] > summary::before { transform: rotate(90deg); }
+.hub-athlete-training-block > summary small {
+  color: #d2cabb;
+  font-size: .73rem;
+  white-space: nowrap;
+}
+.hub-shell .hub-main .hub-athlete-workout-sheet .hub-athlete-phase-list { margin: 0; padding: 0 .8rem; }
+.hub-shell .hub-main .hub-athlete-workout-sheet .hub-athlete-movement {
+  display: grid;
+  gap: .28rem .7rem;
+  padding: .78rem 0;
+  overflow-wrap: anywhere;
+}
+.hub-athlete-movement-name {
+  margin: 0;
+  color: #f5f1e8;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+.hub-athlete-rx {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .2rem .7rem;
+  color: #cbc4bb;
+  font-size: .83rem;
+}
+.hub-athlete-rx strong { color: #f5f1e8; }
+.hub-athlete-cue,.hub-athlete-safety {
+  margin: 0;
+  color: #ded6c8;
+  font-size: .85rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.hub-athlete-training-block > .hub-athlete-safety { padding: .55rem .8rem 0; }
+.hub-athlete-demo-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+.hub-shell .hub-main .hub-athlete-workout-sheet .hub-athlete-movement .hub-athlete-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-height: 44px;
+  margin: 0;
+  padding: .25rem .65rem;
+  border: 1px solid rgba(230,198,140,.55);
+  border-radius: 9px;
+  background: #262419;
+  color: #f1d39b;
+  font-size: .82rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+.hub-athlete-workout-sheet .hub-school-technique { margin: 0; }
+.hub-athlete-workout-sheet .hub-demo-and-technique:not(:has(.hub-school-technique[open])) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: .2rem .8rem;
+}
+.hub-athlete-workout-sheet .hub-school-technique summary { width: fit-content; font-size: .82rem; }
+.hub-athlete-workout-sheet :is(a,summary):focus-visible { outline: 2px solid #f1d39b; outline-offset: -2px; }
+.hub-demo-and-technique:has(.hub-school-technique[open]) > .hub-athlete-demo-links { margin-bottom: .2rem; }

@@ -20,9 +20,12 @@ const {chromium}=require('playwright');
   const text=await sheet.innerText();
   ok(text.indexOf('4 × 20m')<text.indexOf('Split Squat'),`${audience}/${width}: running comes first`);
   ok(text.indexOf('Record any pain')>text.indexOf('Split Squat'),`${audience}/${width}: final instruction stays last`);
-  ok(await sheet.locator('.hub-visible-coach-note').filter({hasText:'Only if pain-free'}).isVisible(),`${audience}/${width}: condition visible`);
-  ok(text.includes('8 repetitions on each leg')&&text.includes('2 times'),`${audience}/${width}: clear dose`);
-  ok(text.includes('2 minutes')&&text.includes('percentage shows effort'),`${audience}/${width}: rest and effort clear`);
+  ok(await sheet.locator('.hub-athlete-cue').filter({hasText:'Only if pain-free'}).isVisible(),`${audience}/${width}: condition visible`);
+  ok(text.includes('2 × 8/leg')&&!text.includes('8 repetitions on each leg'),`${audience}/${width}: exact dose shown once in quick view`);
+  ok(text.includes('2 minutes'),`${audience}/${width}: rest visible`);
+  const running=sheet.locator('.hub-athlete-movement').filter({hasText:'4 × 20m'});
+  await running.locator('summary').click();
+  ok((await running.innerText()).includes('percentage shows effort'),`${audience}/${width}: effort explained in Technique`);
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${audience}/${width}: no horizontal overflow`);
   ok(await sheet.locator('a[href="https://www.youtube.com/shorts/fq72qz8JHtU"]').count()===1,`${audience}/${width}: exact demo retained`);
   if(audience==='parent'){
