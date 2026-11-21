@@ -24,6 +24,7 @@ const {chromium}=require('playwright');
   ok(text.includes('8 repetitions on each leg')&&text.includes('2 times'),`${audience}/${width}: clear dose`);
   ok(text.includes('2 minutes')&&text.includes('percentage shows effort'),`${audience}/${width}: rest and effort clear`);
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${audience}/${width}: no horizontal overflow`);
+  if(audience==='private-athlete')await page.getByRole('button',{name:'Watch demos',exact:true}).click();
   ok(await sheet.locator('a[href="https://www.youtube.com/shorts/fq72qz8JHtU"]').count()===1,`${audience}/${width}: exact demo retained`);
   if(audience==='parent'){
    await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();

@@ -1788,6 +1788,38 @@ footer,
   .hub-video img{width:100%;height:100%;object-fit:cover;opacity:.82}
   .hub-video button{position:absolute;inset:0;width:100%;border:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.42));color:#fff;cursor:pointer;font:inherit}
   .hub-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:rgba(110,23,38,.92);border:1px solid rgba(255,255,255,.28);font-size:1.2rem;padding-left:.2rem}
+  .hub-private-workout .hub-workout-toolbar{display:grid;gap:.75rem}
+  .hub-private-workout .hub-workout-progress{width:100%}
+  .hub-private-view-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.55rem}
+  .hub-private-view-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.25rem;padding:.25rem;border:1px solid var(--hub-line);border-radius:12px;background:#0d0d0d;flex:1;max-width:34rem;min-width:min(100%,17rem)}
+  .hub-private-view-options button{min-height:44px;padding:.25rem .35rem;color:#f5eddf;background:transparent;border:1px solid transparent;border-radius:8px;font:inherit;font-size:.86rem;font-weight:700;line-height:1.15;cursor:pointer}
+  .hub-private-view-controls [aria-pressed="true"]{background:#e7c787!important;color:#18130b!important;border-color:#e7c787!important}
+  .hub-private-view-controls [data-workout-mode="guided"]{min-height:44px}
+  .hub-private-view-controls button:focus-visible,.hub-private-demo-details summary:focus-visible,.hub-private-presentation :is(button,a):focus-visible{outline:2px solid #e7c787;outline-offset:2px}
+  .hub-private-demo-details summary{display:list-item;min-height:44px;align-content:center;color:#e7c787;cursor:pointer;font-size:.88rem;font-weight:650}
+  .hub-private-demo-content{display:grid;gap:.35rem;padding:0 0 .5rem}
+  .hub-private-demo-content .hub-button{justify-self:start;min-height:44px}
+  .hub-private-sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  body:has(.hub-private-presentation[open]){overflow:hidden}
+  .hub-private-presentation{width:100%;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#10100f;color:#f5eddf;overflow:auto}
+  .hub-private-presentation::backdrop{background:#10100f}
+  .hub-private-presentation :is(header,footer){display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.8rem clamp(.8rem,4vw,3rem);border-bottom:1px solid #3c3427;background:#10100f;position:sticky;z-index:1;top:0}
+  .hub-private-presentation footer{top:auto;bottom:0;border-top:1px solid #3c3427;border-bottom:0}
+  .hub-private-presentation :is(h2,h3,p){margin:0}
+  .hub-private-presentation header p{color:#e7c787}
+  .hub-private-presentation :is(button,a){min-height:44px}
+  .hub-private-presentation button:disabled{opacity:.45;cursor:default}
+  .hub-private-presentation-body{display:grid;gap:1rem;align-items:start;max-width:90rem;margin:auto;padding:clamp(.8rem,4vw,3rem);overflow-wrap:anywhere}
+  .hub-private-presentation-body h3{font-size:clamp(1.6rem,4vw,3rem);color:#fff}
+  .hub-private-presentation-body .hub-private-dose{color:#e7c787;margin:.45rem 0 1rem;font-size:clamp(1rem,2.5vw,1.5rem);font-weight:700}
+  .hub-private-video-stage{display:grid;place-items:center;position:relative;aspect-ratio:16/9;min-width:0;border:1px solid #77623c;border-radius:13px;overflow:hidden;background:#080808}
+  .hub-private-video-stage.vertical:has(iframe){aspect-ratio:auto;height:min(62dvh,42rem)}
+  .hub-private-video-stage :is(img,iframe){position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:contain}
+  .hub-private-video-stage button{position:relative;z-index:1}
+  .hub-private-video-fallback,.hub-private-presentation-empty{color:#e7c787;padding:.8rem}
+  .hub-private-video-fallback{display:inline-flex;align-items:center;justify-self:start;grid-row:2;grid-column:1;text-decoration:underline;text-underline-offset:.18em}
+  @media(min-width:760px){.hub-private-presentation-body{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}}
+  @media(max-width:540px){.hub-private-view-options{max-width:none;flex-basis:100%}}
   .hub-youtube-direct{display:block;cursor:pointer;text-decoration:none}
   .hub-youtube-direct:focus-visible{outline:2px solid var(--hub-gold);outline-offset:3px}
   .hub-youtube-direct:hover .hub-play{transform:translate(-50%,-50%) scale(1.06)}
@@ -4239,6 +4271,7 @@ document.addEventListener('click',function(e){
   let WORKOUT_COMPLETIONS=new Map();
   const GUIDED_CURSOR={};
   let WORKOUT_MODE='quick';
+  let PRIVATE_WORKOUT_VIEW={id:null,mode:'quick'};
   const EXERCISE_CATEGORY_MAP={wu:['warm-up','mobility-recovery'],act:['activation-control','strength'],ank:['ankle-lower-leg'],core:['core'],iso:['strength'],mob:['mobility-recovery'],ply:['plyometric-foundation'],post:['sprint-mechanics','warm-up'],run:['acceleration','warm-up'],spr:['sprint-mechanics','warm-up'],str:['strength'],acc:['acceleration']};
   function normalizeExerciseCategories(raw,existing=[]){const out=[];(Array.isArray(raw)&&raw.length?[]:Array.isArray(existing)?existing:[]).forEach(x=>{if(x&&!out.includes(x))out.push(x);});(Array.isArray(raw)?raw:[]).forEach(code=>(EXERCISE_CATEGORY_MAP[code]||[code]).forEach(x=>{if(x&&!out.includes(x))out.push(x);}));return out;}
   let EXERCISES = [
@@ -4302,7 +4335,7 @@ document.addEventListener('click',function(e){
   let HUB_LAST_LOADED_AT=0;
   let HUB_REVALIDATING=false;
   function sessionStamp(){return HUB_REQUEST_EPOCH+'|'+JSON.stringify(session());}
-  function resetHubState(){HUB_REQUEST_EPOCH++;WORKOUT_COMPLETIONS=new Map();Object.keys(GUIDED_CURSOR).forEach(key=>delete GUIDED_CURSOR[key]);WORKOUT_MODE='quick';HUB_STATE={programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};}
+  function resetHubState(){HUB_REQUEST_EPOCH++;WORKOUT_COMPLETIONS=new Map();Object.keys(GUIDED_CURSOR).forEach(key=>delete GUIDED_CURSOR[key]);WORKOUT_MODE='quick';PRIVATE_WORKOUT_VIEW={id:null,mode:'quick'};HUB_STATE={programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};}
   const CHECKIN_UI=DuWeeklyCheckins.create({root,getSession:session,getIdentity:sessionStamp,post:body=>authEdgePost(HUB_CONFIG.accountFunctions[session()?.audience],body),clearTraining:()=>{HUB_STATE.programme=null;WORKOUT_COMPLETIONS=new Map();},onReady:()=>scheduleHubRender(),onLogout:()=>logout()});
   function logout(){
     CHECKIN_UI.forget();
@@ -4587,7 +4620,94 @@ document.addEventListener('click',function(e){
     const scoped={...sessionData,items:group?(sessionData.items||[]).filter(raw=>{const item=parsedGroup(raw);return !item.group||item.group.toLowerCase()===group.toLowerCase();}):sessionData.items};
     return DuHubDelivery.copyWorkout({athleteName:name,week:p.week,session:scoped,sections:deliverySections(sections),group});
   }
-  function schoolAthleteDelivery(sections,sessionData){
+  function privateWorkoutDemos(item){
+    const links=Array.isArray(item.demos)?item.demos:[{title:item.title,url:item.videoUrl,id:item.videoId}];
+    return links.flatMap(link=>{
+      const url=DuHubDelivery.safeVideo(link.url,link.id);
+      const video=url&&hubYoutubeEmbed(url);
+      return video?[{title:link.title||item.title,...video}]:[];
+    });
+  }
+
+  function privateWorkoutControls(mode){
+    return '<div class="hub-private-view-controls"><div class="hub-private-view-options" role="group" aria-label="Workout views">'+
+      [['quick','Workout'],['learn','Watch demos']].map(([view,label])=>
+        '<button type="button" data-workout-mode="'+view+'" aria-pressed="'+(mode===view)+'">'+label+'</button>').join('')+
+      '<button type="button" data-private-present aria-haspopup="dialog">Full-screen demos</button></div>'+
+      '<button type="button" class="hub-button secondary" data-workout-mode="guided" aria-pressed="'+(mode==='guided')+'">Guided Workout</button></div>';
+  }
+
+  function openPrivateWorkoutDemos(trigger){
+    if(HUB_STATE.audience!=='private-athlete'||session()?.role!=='athlete')return;
+    const day=programme()?.sessions?.find(item=>item.id===currentWorkoutSessionId());
+    if(!day)return;
+    const workout=normalizeWorkoutSession(day,EXERCISES,{...programme(),separateWarmups:true});
+    const sections=deliverySections(visibleNormalizedSections(workout))
+      .filter(section=>!/Additional movement references/i.test(section.title));
+    const items=flattenedWorkoutItems(sections).flatMap(item=>privateWorkoutDemos(item).map(video=>({item,video})));
+    const dialog=document.createElement('dialog');
+    dialog.className='hub-private-presentation';
+    dialog.setAttribute('aria-labelledby','hubPrivatePresentationTitle');
+    let index=0;
+    function render(){
+      const entry=items[index];
+      dialog.innerHTML='<header><div><h2 id="hubPrivatePresentationTitle">Exercise demos</h2>'+
+        (entry?'<p aria-live="polite">'+(index+1)+' of '+items.length+'</p>':'')+
+        '</div><button type="button" class="hub-button secondary" data-presentation-close autofocus>Close</button></header>'+
+        (entry?'<div class="hub-private-presentation-body"><div class="hub-private-video-stage'+(entry.video.vertical?' vertical':'')+'">'+
+          '<img alt="" referrerpolicy="no-referrer" src="https://i.ytimg.com/vi/'+
+          escapeHtml(new URL(entry.video.embed).pathname.split('/').pop())+'/hqdefault.jpg">'+
+          '<button type="button" class="hub-button" data-presentation-play>Play demo</button></div>'+
+          '<div><h3>'+escapeHtml(entry.item.title)+'</h3>'+
+          (entry.video.title!==entry.item.title?'<p>'+escapeHtml(entry.video.title)+'</p>':'')+
+          '<p class="hub-private-dose">'+[entry.item.dosage,entry.item.rest?'Rest: '+entry.item.rest:''].filter(Boolean).map(escapeHtml).join(' · ')+'</p>'+
+          workoutCoaching(entry.item)+'</div></div>'+
+          '<footer><button type="button" class="hub-button secondary" data-presentation-step="-1"'+(!index?' disabled':'')+'>Previous</button>'+
+          '<button type="button" class="hub-button" data-presentation-step="1"'+(index+1===items.length?' disabled':'')+'>Next</button></footer>':
+          '<p class="hub-private-presentation-empty">No videos are linked to this workout yet.</p>');
+    }
+    dialog.addEventListener('click',event=>{
+      const button=event.target.closest('button');
+      if(!button)return;
+      if(button.hasAttribute('data-presentation-close')){dialog.close();return;}
+      if(button.hasAttribute('data-presentation-play')){
+        const {video}=items[index],stage=button.parentElement;
+        const frame=document.createElement('iframe');
+        frame.src=video.embed;
+        frame.title=video.title+' demo';
+        frame.allow='autoplay; encrypted-media; picture-in-picture';
+        frame.allowFullscreen=true;
+        frame.referrerPolicy='strict-origin-when-cross-origin';
+        stage.replaceChildren(frame);
+        const link=document.createElement('a');
+        link.className='hub-private-video-fallback';
+        link.setAttribute('data-hub-video-external','');
+        link.href=video.original;
+        link.target='_blank';
+        link.rel='noopener noreferrer';
+        link.textContent='Open on YouTube';
+        stage.after(link);
+        frame.focus();
+        return;
+      }
+      if(!button.hasAttribute('data-presentation-step'))return;
+      const step=Number(button.dataset.presentationStep),next=index+step;
+      if(next<0||next>=items.length)return;
+      index=next;
+      render();
+      (dialog.querySelector('[data-presentation-step="'+step+'"]:enabled')||dialog.querySelector('[data-presentation-play]')).focus();
+    });
+    dialog.addEventListener('close',()=>{
+      dialog.remove();
+      if(trigger.isConnected)trigger.focus({preventScroll:true});
+    },{once:true});
+    dialog.addEventListener('error',event=>{if(event.target.tagName==='IMG')event.target.hidden=true;},true);
+    render();
+    trigger.closest('.hub-private-workout').append(dialog);
+    dialog.showModal();
+  }
+
+  function schoolAthleteDelivery(sections,sessionData,privateMode=''){
     // Show only the selected school Form. Keep the original order and dosages.
     const compact=typeof isSchoolReferenceViewer==='function'&&isSchoolReferenceViewer();
     const source=deliverySections(sections);
@@ -4609,6 +4729,19 @@ document.addEventListener('click',function(e){
         const help=typeof DuHubDelivery!=='undefined'&&typeof DuHubDelivery.trainingHelp==='function'?DuHubDelivery.trainingHelp([item.title,item.dosage,item.cue].join(' ')):[];
         const demos=(Array.isArray(item.demos)?item.demos.filter(demo=>DuHubDelivery.safeVideo(demo.url)).map(demo=>'<a class="hub-athlete-demo" href="'+escapeHtml(demo.url)+'" target="_blank" rel="noopener noreferrer">▶ Watch '+escapeHtml(demo.title)+' demo</a>').join(''):safeDemo?'<a class="hub-athlete-demo" href="'+escapeHtml(video)+'" target="_blank" rel="noopener noreferrer">▶ Watch demo</a>':'');
         let guidance=workoutCoaching(item)+demos;
+        if(privateMode){
+          const rows=DuHubDelivery.coachingRows(item);
+          const line=([label,value])=>'<p class="hub-visible-coach-note"><strong>'+escapeHtml(label)+'</strong> '+escapeHtml(value)+'</p>';
+          const restriction=/\b(?:stop|pain|injur\w*|safety|unsafe|never|only if|hours between|do not|don['’]t|should not|must not|no running|no sprint(?:ing)?|before progressing)\b/i;
+          const essential=rows.filter(([label,value])=>label==='For this session'||label==='Coach alternative'||restriction.test(value));
+          guidance=essential.map(line).join('');
+          if(privateMode==='learn'){
+            const videos=privateWorkoutDemos(item);
+            const media=videos.map(video=>'<a class="hub-button secondary" href="'+escapeHtml(video.original)+'" target="_blank" rel="noopener noreferrer">Watch '+escapeHtml(video.title)+'</a>').join('');
+            guidance+='<details class="hub-private-demo-details"><summary>Video &amp; tips <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary>'+
+              '<div class="hub-private-demo-content">'+(media||'<p>No demo linked.</p>')+rows.filter(row=>!essential.includes(row)).map(line).join('')+'</div></details>';
+          }
+        }
         if(compact){
           const rows=DuHubDelivery.coachingRows(item);
           const essential=([label,value])=>label==='For this session'||label==='Coach alternative'||(label==='How to do it'&&/confirm the movement sequence/i.test(value));
@@ -4621,6 +4754,7 @@ document.addEventListener('click',function(e){
         return phaseHeading+'<div class="hub-athlete-movement"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+(displayDose?'<strong>'+escapeHtml(displayDose)+'</strong>':'')+'</div>'+(doseHelp?'<p class="hub-dose-help">'+escapeHtml(doseHelp)+'</p>':'')+(rest?'<small>Rest: '+escapeHtml(rest)+'</small>':'')+guidance+(help.length?'<p class="hub-term-help">'+help.map(escapeHtml).join(' ')+'</p>':'')+'</div>';
       }).join('');
       const heading='<span>'+escapeHtml(section.title)+'</span><small>'+items.length+' movements</small>';
+      if(privateMode)return '<section class="hub-athlete-phase"><div class="hub-athlete-phase-heading"><h3>'+escapeHtml(section.title)+'</h3></div><div class="hub-athlete-phase-list">'+rows+'</div></section>';
       return (typeof isSchoolReferenceViewer!=='function'||!isSchoolReferenceViewer())? (warmup?'<details class="hub-athlete-phase hub-athlete-warmup"'+(((typeof location!=='undefined'&&location.hash.startsWith('#/hub/routines/'))||(typeof isIdentifiedSchoolAthlete==='function'&&isIdentifiedSchoolAthlete()))?' open':'')+'><summary class="hub-athlete-phase-heading">'+heading+'</summary><p class="hub-athlete-warmup-hint">Complete before the main session · tap to expand</p><div class="hub-athlete-phase-list">'+rows+'</div></details>':'<section class="hub-athlete-phase"><div class="hub-athlete-phase-heading"><h3>'+escapeHtml(section.title)+'</h3><span>'+items.length+' movements</span></div><div class="hub-athlete-phase-list">'+rows+'</div></section>') : warmup?'<details class="hub-athlete-phase hub-athlete-warmup"'+(((typeof location!=='undefined'&&location.hash.startsWith('#/hub/routines/'))||(typeof isIdentifiedSchoolAthlete==='function'&&isIdentifiedSchoolAthlete()))?' open':'')+'><summary class="hub-athlete-phase-heading">'+heading+'</summary><p class="hub-athlete-warmup-hint">Complete before the main session · tap to expand</p><div class="hub-athlete-phase-list">'+rows+'</div></details>':'<details class="hub-athlete-phase hub-school-collapsible"'+(sectionIndex===0||/horizontal jumps|plyometric skills/i.test(section.title)?' open':'')+'><summary class="hub-athlete-phase-heading"><span>'+escapeHtml(section.title)+'</span><small>'+items.length+' movements</small></summary><div class="hub-athlete-phase-list">'+rows+'</div></details>';
     }).join('');
     const library=reference.length?'<details class="hub-athlete-references"><summary>Optional movement references</summary>'+reference.map(section=>hubPhaseRows(section.items||[])).join('')+'</details>':'';
@@ -4630,15 +4764,18 @@ document.addEventListener('click',function(e){
   function renderWorkoutExperience(sessionData){if(session()?.role==='staff'&&isSchoolReferenceViewer())return staffAllGroupsExperience(sessionData);const workout=normalizeWorkoutSession(sessionData,EXERCISES,{...programme(),separateWarmups:true});if(requiresGroupSelection(workout))return groupPicker()+'<div class="hub-empty-state"><strong>Choose your training group first.</strong><br>Your group controls the dosage shown in this workout.</div>';const sections=visibleNormalizedSections(workout),items=flattenedWorkoutItems(sections),readOnly=session()?.role==='staff';if(!items.length)return groupPicker()+'<div class="hub-empty-state">This session is being prepared.</div>';if((HUB_STATE.audience==='parent'||privateSelfServeViewer())&&session()?.role!=='staff'){
       const completed=items.filter(item=>isWorkoutComplete(workout.id,item.key)).length;
       const percent=Math.round(100*completed/items.length);
-      const mode=WORKOUT_MODE==='guided'?'guided':'quick';
-      const toggle='<div class="hub-workout-toolbar"><div class="hub-workout-progress"><strong>'+completed+'/'+items.length+' complete</strong><div class="hub-progress-track"><div class="hub-progress-fill" style="width:'+percent+'%"></div></div></div><div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="quick" class="'+(mode==='quick'?'active':'')+'">Quick View</button><button type="button" data-workout-mode="guided" class="'+(mode==='guided'?'active':'')+'">Guided Workout</button></div></div>';
-      if(mode==='quick')return '<div class="hub-parent-workout-experience">'+toggle+(completed===items.length?'<div class="hub-workout-complete"><strong>✓ Workout Complete</strong><a href="#/hub/feedback">Send feedback →</a></div>':'')+schoolAthleteDelivery(sections,sessionData)+'</div>';
+      const privateDay=HUB_STATE.audience==='private-athlete'&&session()?.role==='athlete'&&!assignedRoutines().includes(sessionData);
+      if(privateDay&&PRIVATE_WORKOUT_VIEW.id!==workout.id)PRIVATE_WORKOUT_VIEW={id:workout.id,mode:'quick'};
+      const mode=privateDay?PRIVATE_WORKOUT_VIEW.mode:WORKOUT_MODE==='guided'?'guided':'quick';
+      const toggle='<div class="hub-workout-toolbar"><div class="hub-workout-progress"><strong>'+completed+'/'+items.length+' complete</strong><div class="hub-progress-track"><div class="hub-progress-fill" style="width:'+percent+'%"></div></div></div>'+(privateDay?privateWorkoutControls(mode):'<div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="quick" class="'+(mode==='quick'?'active':'')+'">Quick View</button><button type="button" data-workout-mode="guided" class="'+(mode==='guided'?'active':'')+'">Guided Workout</button></div>')+'</div>';
+      const wrapper='<div class="hub-parent-workout-experience'+(privateDay?' hub-private-workout':'')+'">';
+      if(mode!=='guided')return wrapper+toggle+(completed===items.length?'<div class="hub-workout-complete"><strong>✓ Workout Complete</strong><a href="#/hub/feedback">Send feedback →</a></div>':'')+schoolAthleteDelivery(sections,sessionData,privateDay?mode:'')+'</div>';
       let cursor=Number.isInteger(GUIDED_CURSOR[workout.id])?GUIDED_CURSOR[workout.id]:items.findIndex(item=>!isWorkoutComplete(workout.id,item.key));
       if(cursor<0)cursor=items.length-1;
       cursor=Math.max(0,Math.min(items.length-1,cursor));
       GUIDED_CURSOR[workout.id]=cursor;
       const finished=completed===items.length?'<div class="hub-workout-complete"><strong>✓ Workout Complete</strong><span>All movements marked complete.</span><a class="hub-button secondary" href="#/hub/feedback">Send feedback →</a></div>':'';
-      return '<div class="hub-parent-workout-experience">'+toggle+finished+'<div class="hub-workout-experience guided"><div class="hub-guided-layout"><div>'+guidedCard(items[cursor],items[cursor].sectionTitle,cursor,items.length,workout.id)+'</div></div></div></div>';
+      return wrapper+toggle+finished+'<div class="hub-workout-experience guided"><div class="hub-guided-layout"><div>'+guidedCard(items[cursor],items[cursor].sectionTitle,cursor,items.length,workout.id)+'</div></div></div></div>';
     }
     if(isIdentifiedSchoolAthlete())return schoolAthleteDelivery(sections,sessionData);if(isSchoolReferenceViewer()||privateSelfServeViewer())return schoolAthleteDelivery(sections,sessionData);const completed=items.filter(item=>isWorkoutComplete(workout.id,item.key)).length,percent=Math.round((completed/items.length)*100),allDone=completed===items.length;let cursor=Number.isInteger(GUIDED_CURSOR[workout.id])?GUIDED_CURSOR[workout.id]:items.findIndex(item=>!isWorkoutComplete(workout.id,item.key));if(cursor<0)cursor=items.length-1;cursor=Math.max(0,Math.min(items.length-1,cursor));GUIDED_CURSOR[workout.id]=cursor;const mode=readOnly?'quick':WORKOUT_MODE,toolbar='<div class="hub-workout-toolbar"><div class="hub-workout-progress"><strong>'+completed+'/'+items.length+'</strong><div class="hub-progress-track"><div class="hub-progress-fill" style="width:'+percent+'%"></div></div><span class="hub-progress-count">'+percent+'%</span></div>'+(!readOnly?'<div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="guided" class="'+(mode==='guided'?'active':'')+'">Guided</button><button type="button" data-workout-mode="quick" class="'+(mode==='quick'?'active':'')+'">Quick View</button></div>':'')+'</div>';const complete=allDone?'<div class="hub-workout-complete"><strong>✓ Workout Complete</strong><span>Strong work. Your session is saved.</span></div>':'';if(mode==='quick')return groupPicker()+'<div class="hub-workout-experience quick">'+toolbar+complete+quickView(workout.id,sections,readOnly,false,sessionData)+'</div>';const active=items[cursor];return groupPicker()+'<div class="hub-workout-experience guided">'+toolbar+complete+'<div class="hub-guided-layout"><div>'+guidedCard(active,active.sectionTitle,cursor,items.length,workout.id)+'</div><aside class="hub-guided-rail" aria-label="Workout overview">'+quickView(workout.id,sections,readOnly,true,sessionData)+'</aside></div></div>';}
 
@@ -5375,7 +5512,7 @@ document.addEventListener('click',function(e){
     }
     const videoClose=event.target.closest('[data-hub-video-close]');if(videoClose){event.preventDefault();closeHubVideo();return;}
     const videoModal=event.target.closest('#hubVideoModal');if(videoModal&&event.target===videoModal){event.preventDefault();closeHubVideo();return;}
-    const hubYoutubeLink=event.target.closest('#hub-root a[href]');if(hubYoutubeLink&&hubYoutubeEmbed(hubYoutubeLink.href)){event.preventDefault();const card=hubYoutubeLink.closest('.hub-guided-card,.hub-school-demo-item,.hub-exercise-card-v3,.hub-workout-block,.hub-media-actions'),heading=card?.querySelector('h3,strong')?.textContent?.trim(),linkLabel=hubYoutubeLink.textContent.replace(/↗/g,'').trim(),generic=/^watch(?:\s+(?:demo|exercise))?$/i.test(linkLabel),label=generic?(heading||'Exercise Demo'):(linkLabel||heading||'Exercise Demo');if(openHubVideo(hubYoutubeLink.href,label,hubYoutubeLink))return;}
+    const hubYoutubeLink=event.target.closest('#hub-root a[href]:not([data-hub-video-external])');if(hubYoutubeLink&&hubYoutubeEmbed(hubYoutubeLink.href)){event.preventDefault();const card=hubYoutubeLink.closest('.hub-guided-card,.hub-school-demo-item,.hub-exercise-card-v3,.hub-workout-block,.hub-media-actions'),heading=card?.querySelector('h3,strong')?.textContent?.trim(),linkLabel=hubYoutubeLink.textContent.replace(/↗/g,'').trim(),generic=/^watch(?:\s+(?:demo|exercise))?$/i.test(linkLabel),label=generic?(heading||'Exercise Demo'):(linkLabel||heading||'Exercise Demo');if(openHubVideo(hubYoutubeLink.href,label,hubYoutubeLink))return;}
     const role=event.target.closest('[data-login-role]');if(role){location.hash='#/hub/login/'+role.dataset.loginRole;return;}
     const accountRole=event.target.closest('[data-account-role]');if(accountRole){location.hash='#/hub/login/'+accountRole.dataset.accountRole;return;}
     if(event.target.closest('[data-role-back]')){location.hash='#/hub/login';return;}
@@ -5396,7 +5533,19 @@ document.addEventListener('click',function(e){
     const menu=event.target.closest('.hub-menu-button');if(menu){const navEl=document.getElementById('hubNav');const open=navEl.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));return;}
     if(event.target.closest('.hub-logout')){logout();return;}
     if(handleRoutineCardAction(event))return;
-    const modeButton=event.target.closest('[data-workout-mode]');if(modeButton){WORKOUT_MODE=modeButton.dataset.workoutMode==='quick'?'quick':'guided';const route=location.hash.replace('#/hub','')||'/';if(route.startsWith('/session/'))renderSession(route.split('/')[2].split('?')[0]);return;}
+    const presentButton=event.target.closest('.hub-private-workout [data-private-present]');if(presentButton){openPrivateWorkoutDemos(presentButton);return;}
+    const modeButton=event.target.closest('[data-workout-mode]');
+    if(modeButton){
+      const mode=modeButton.dataset.workoutMode,route=location.hash.replace('#/hub','')||'/';
+      const privateDay=modeButton.closest('.hub-private-workout');
+      if(privateDay)PRIVATE_WORKOUT_VIEW.mode=mode;
+      else WORKOUT_MODE=mode==='quick'?'quick':'guided';
+      if(route.startsWith('/session/')){
+        renderSession(route.split('/')[2].split('?')[0]);
+        if(privateDay)root.querySelector('.hub-private-workout [aria-pressed="true"]')?.focus({preventScroll:true});
+      }
+      return;
+    }
     const guidedPrev=event.target.closest('[data-guided-prev]');if(guidedPrev){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout));GUIDED_CURSOR[s.id]=Math.max(0,(GUIDED_CURSOR[s.id]||0)-1);renderSession(s.id);}return;}
     const guidedNext=event.target.closest('[data-guided-next]');if(guidedNext){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout));GUIDED_CURSOR[s.id]=Math.min(Math.max(0,items.length-1),(GUIDED_CURSOR[s.id]||0)+1);renderSession(s.id);}return;}
     const quickOpen=event.target.closest('[data-quick-open]');if(quickOpen){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===quickOpen.dataset.quickOpen);if(index>=0){GUIDED_CURSOR[s.id]=index;WORKOUT_MODE='guided';renderSession(s.id);}}return;}
