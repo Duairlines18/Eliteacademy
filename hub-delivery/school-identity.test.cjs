@@ -14,7 +14,7 @@ test('identified-school form choice is per athlete and assigned form cannot be o
 });
 test('school workout UI does not read or write completions',()=>{
  assert.match(html,/function completionPost\(body\)\{[^\n]*isSchoolReferenceViewer\(\)\)return null/);
- assert.match(html,/if\(isIdentifiedSchoolAthlete\(\)\)return schoolAthleteDelivery\(sections,sessionData\)/);
+ assert.match(html,/function loadWorkoutCompletions\(\)\{[^\n]*isSchoolReferenceViewer\(\)\)return/);
  assert.match(html,/action:'logout'/);assert.match(html,/WORKOUT_COMPLETIONS=new Map\(\);Object.keys\(GUIDED_CURSOR\)/);
  assert.match(html,/data-completion-toggle/);
 });
