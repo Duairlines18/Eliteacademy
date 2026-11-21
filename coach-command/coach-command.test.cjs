@@ -9,7 +9,7 @@ const ctx={window:{DuHubDelivery:require("../hub-delivery/delivery.js")},documen
 vm.runInNewContext(source,ctx,{filename:'coach-command.js'});
 const mount=ctx.window.DuCoachCommand.mount;
 const fixture={role:'staff',cohort:{id:'school-1',name:"Saints <College>",currentWeek:4},programme:{title:'Jumps',sessions:[
-{id:'d1',title:'Acceleration',day:'Day 1',duration:'45 min',requirement:'Mandatory',prescriptions:[{sectionTitle:'Warm-up',exerciseCode:'WU01',dosage:'2 x 10',cues:'[Activation] Stay tall'}]},
+{id:'d1',title:'Acceleration',day:'Day 1',duration:'45 min',requirement:'Mandatory',why:'Duplicate purpose',watch:'Duplicate session note',itemSections:[{title:'Landing readiness and skill check',items:['Legacy readiness text']}],prescriptions:[{sectionTitle:'Warm-up',exerciseCode:'WU01',dosage:'2 x 10',cues:'[Activation] Stay tall'}]},
 {id:'d2',title:'Landing',day:'Day 2',requirement:'Mandatory',prescriptions:[]},
 {id:'d3',title:'Mobility',day:'Day 3',requirement:'Optional',prescriptions:[]},
 {id:'d4',title:'Extra published session',day:'Day 4',requirement:'Optional',prescriptions:[]}
@@ -34,7 +34,7 @@ assert.match(root.innerHTML,/Pogos/);
 assert.match(root.innerHTML,/2 x 10/);
 assert.match(root.innerHTML,/aria-current="true">Workout<.*data-action="present">Present Workout</);
 assert.doesNotMatch(root.innerHTML,/data-action="learn"|<iframe/);
-assert.match(root.innerHTML,/<summary>Session instructions<\/summary>.*Stay tall/);
+assert.doesNotMatch(root.innerHTML,/Session instructions|Duplicate purpose|Duplicate session note|Landing readiness|Legacy readiness text/);
 assert.match(root.innerHTML,/<h4>Activation<\/h4>/);
 assert.doesNotMatch(root.innerHTML,/\[Activation\]/);
 assert.match(root.innerHTML,/<details class="learn-card".*Play Pogos demonstration.*How to do it.*Keep each bounce low/);

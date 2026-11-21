@@ -35,7 +35,13 @@ const {chromium}=require('playwright');
    return route.abort();
   });
   await page.goto(base+'/#/hub/'+(role==='staff'?'staff':'athlete'));
-  const shortcut=page.locator('.hub-premium-routines a');await shortcut.waitFor();await shortcut.click();
+  const shortcut=page.locator('.hub-premium-routines a');await shortcut.waitFor();
+  const brand=await page.locator('#hub-root').evaluate(el=>{
+   const styles=getComputedStyle(el);
+   return {background:styles.backgroundColor,body:styles.fontFamily};
+  });
+  ok(brand.background==='rgb(15, 39, 28)'&&brand.body.includes('Inter'),`${audience}/${role}: inherits academy green and Inter`);
+  await shortcut.click();
   await page.locator('.hub-main h1').filter({hasText:'Your Routines'}).waitFor();
   ok(await page.locator('.hub-main .hub-card').count()===3,`${audience}/${role}: two standalone and one day-specific assigned routine`);
   ok(!await page.locator('.hub-main').innerText().then(t=>t.includes('Scheduled Strength')),`${audience}/${role}: no scheduled training in routines list`);

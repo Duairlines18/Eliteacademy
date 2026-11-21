@@ -35,11 +35,6 @@
 .ducc .coaching-views .button{min-height:44px;padding:5px;color:#e9e0cf;background:transparent}
 .ducc .coaching-views [aria-current="true"]{display:grid;place-items:center;background:#e7c78b;color:#24190a;cursor:default}
 .ducc .coaching-views .button:disabled{opacity:.55;cursor:default}
-.ducc .session-context,.ducc .workout-section{min-width:0;overflow-wrap:anywhere}
-.ducc .session-context .session-instructions,.ducc .row-instructions{white-space:pre-line}
-.ducc .session-context summary,.ducc .workout-row summary{min-height:44px;cursor:pointer}
-.ducc .session-context summary{align-content:center;color:#ebca8b}
-.ducc .session-context .session-restriction{border-left:2px solid #ebca8b;padding-left:10px;white-space:pre-line}
 .ducc .workout-section{background:#151515;border:1px solid #373025;border-radius:13px;padding:clamp(11px,2vw,18px)}
 .ducc .workout-section h3{color:#f5f1e8;font-size:1.08rem;margin:0 0 5px}
 .ducc .workout-section h4{font-size:.9rem;color:#ebca8b;margin:12px 0 4px}
@@ -77,7 +72,6 @@
  .ducc .workout-head{gap:8px}
  .ducc .workout-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
  .ducc .workout-actions .button{padding:6px 4px;min-width:0;font-size:.82rem;line-height:1.2;white-space:normal}
- .ducc .session-context{line-height:1.35}
  .ducc .workout-navigation{gap:6px;flex-wrap:nowrap}
  .ducc .workout-navigation > .button{padding-inline:9px}
  .ducc .days.workout-days{grid-template-columns:repeat(auto-fit,minmax(49px,1fr));gap:4px}
@@ -255,7 +249,7 @@ body:has(.ducc .presentation){overflow:hidden}
       ['Equipment',row.equipment],
       ['Prescribed alternative',exercises.get(row.alternativeExerciseCode)?.title||row.alternativeExerciseCode],
     ].filter(([,value])=>txt(value));
-    function sections(s){
+    function sections(s, workoutView=false){
       const map=new Map();
       function add(title,order,row){
         const key=order+'|'+title;
@@ -272,7 +266,9 @@ body:has(.ducc .presentation){overflow:hidden}
           add(txt(block.title)||'Session instructions',block.order??0,{exerciseCode:item,sourceOrder:block.sourceOrders?.[index],savedDemos});
         });
       }
-      return [...map.values()].sort((a,b)=>a.order-b.order).map(({title,rows})=>{
+      return [...map.values()]
+        .filter(({title})=>!workoutView||!/^landing readiness(?: and skill check)?$/i.test(title))
+        .sort((a,b)=>a.order-b.order).map(({title,rows})=>{
         if(rows.every(row=>Number.isInteger(row.sourceOrder)))rows.sort((a,b)=>a.sourceOrder-b.sourceOrder);
         return [title,rows];
       });
@@ -323,22 +319,6 @@ body:has(.ducc .presentation){overflow:hidden}
     }
     function renderRows(rows){
       return rows.map(([label,value])=>'<p><strong>'+esc(label)+'</strong> '+esc(value)+'</p>').join('');
-    }
-    function workoutContext(s,blocks){
-      const notes=[...new Set([...sessionNotes(s,true),s.focus]
-        .flatMap(note=>txt(note).split(/\r?\n/).map(txt))
-        .filter(note=>note&&note!==purpose(s)))];
-      const safety=notes.filter(note=>restriction.test(note));
-      const other=notes.filter(note=>!restriction.test(note));
-      const movementNotes=blocks.flatMap(([,rows])=>rows.flatMap(row=>{
-        const {cue}=delivery.sessionCoaching(row.cues);
-        return cue&&!restriction.test(cue)?[[nameOf(row),cue]]:[];
-      }));
-      return '<div class="session-context">'+
-        (purpose(s)?'<p><strong>Purpose</strong> '+esc(purpose(s))+'</p>':'')+
-        safety.map(note=>'<p class="session-restriction">'+esc(note)+'</p>').join('')+
-        (other.length||movementNotes.length?'<details class="session-instructions"><summary>Session instructions</summary>'+
-          other.map(note=>'<p>'+esc(note)+'</p>').join('')+renderRows(movementNotes)+'</details>':'')+'</div>';
     }
     function prescriptionNotes(row,saved){
       const cautions=[
@@ -479,9 +459,6 @@ body:has(.ducc .presentation){overflow:hidden}
       const details=renderRows([...movementCoaching(row,ex),...context])+
         reviewed.map(({title,rows})=>'<div><h4>'+esc(title)+'</h4>'+renderRows(rows)+'</div>').join('')+
         (sessionDetails?'<h4>Session guidance</h4>'+sessionDetails:'');
-      const categories=(Array.isArray(ex.category)?ex.category:[ex.category]).map(txt).filter(Boolean);
-      const categoryLabels=[title,saved.phase,...categories.map(category=>category==='warm-up'?category:category.replace(/-/g,' '))]
-        .filter(Boolean).filter((label,index,labels)=>labels.findIndex(value=>value?.toLowerCase()===label.toLowerCase())===index);
       return '<section class="presentation" tabindex="-1" aria-label="Workout presentation">'+
         '<div class="presentation-toolbar"><span class="presentation-kicker">Present Workout</span>'+
         '<h2>'+esc(dayLabel(s,day)+' · '+(s.title||'Workout'))+'</h2>'+
@@ -491,7 +468,7 @@ body:has(.ducc .presentation){overflow:hidden}
         '<button type="button" class="button" data-action="exit-present" aria-label="Exit presentation">Exit</button></div></div>'+
         '<div class="presentation-layout"><div class="presentation-media">'+demoPlayer(demos)+
         '</div><div class="presentation-card"><div class="presentation-heading">'+
-        '<p class="presentation-block">'+esc(categoryLabels.join(' · '))+'</p>'+
+        '<p class="presentation-block">'+esc(saved.phase||title)+'</p>'+
         '<h3'+(nameClass?' class="'+nameClass+'"':'')+'>'+esc(exerciseName)+'</h3></div>'+
         (dose?'<p class="dose'+(dose.length>72?' long-dose':'')+'">'+esc(dose)+'</p>':'')+
         (guidance.length?'<div class="presentation-guidance">'+guidance.map(([label,value])=>
@@ -546,12 +523,12 @@ body:has(.ducc .presentation){overflow:hidden}
         const a=roster?.[athlete];
         body='<div class="actions"><button class="button secondary" data-action="back">← Team</button></div><div class="panel"><h2>'+esc(a?.display_name||a?.full_name||'Athlete')+'</h2><p>Programme access: '+esc(a?.access_status||'Unknown')+'</p><button class="button" data-action="workout">View team workout →</button></div>';
       }else{
-        const blocks=s.locked?[]:sections(s);
+        const blocks=s.locked?[]:sections(s,true);
         body='<div class="week-head workout-navigation"><button class="button secondary" data-action="back">← Team</button>'+weekCards(true)+'</div>'+
           '<div class="workout-head"><div><small class="session-kicker">'+esc(dayLabel(s,day))+' · '+(optional(s)?'OPTIONAL EXTRA':'TRAINING')+'</small><h2>'+esc(s.title||'Session being prepared')+'</h2><p class="muted">'+esc(s.duration||'')+'</p></div>'+
           '<div class="actions workout-actions">'+(blocks.length?exportButtons(canPrintWeek):weekPrint)+'</div></div>'+
           viewSelector(blocks.length)+
-          (blocks.length?workoutContext(s,blocks)+blocks.map(([title,rows],sectionIndex)=>
+          (blocks.length?blocks.map(([title,rows],sectionIndex)=>
             '<section class="workout-section"><h3>'+esc(title)+'</h3><ol>'+
             rows.map((row,index)=>workoutRow(row,rows[index-1],sectionIndex,index)).join('')+'</ol></section>'
           ).join(''):'<div class="panel">This session is being prepared.</div>');
@@ -584,7 +561,7 @@ body:has(.ducc .presentation){overflow:hidden}
         case 'workout':if(!sessions.length)return;openWorkout();break;
         case 'present':
           if(session().locked)return;
-          sequence=sections(session()).flatMap(([title,rows])=>rows.map(row=>({title,row})));
+          sequence=sections(session(),true).flatMap(([title,rows])=>rows.map(row=>({title,row})));
           if(!sequence.length)return;
           openLearnRows=new Set(Array.from(root.querySelectorAll?.('.learn-card[open]')||[],card=>card.dataset.learnRow));
           view='present';slide=0;detailsOpen=false;break;

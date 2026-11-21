@@ -160,6 +160,7 @@ const withoutHubRepair=source=>source
  .replace(/  async function loadAccountHubData\([\s\S]*?(?=  async function loadHubData\()/,'  ACCOUNT_BOOTSTRAP\n')
  .replace(/  function mergeExercises\([^\n]+\n/,'  LIBRARY_MERGE\n')
  .replace(/  function copyWorkoutAllowed\([\s\S]*?(?=  function athleteCopyText\()/,'')
+ .replace(/  function schoolWorkoutSections\([\s\S]*?(?=  function staffAllGroupsExperience\()/,'')
  .replace(/  function staffAllGroupsExperience\([\s\S]*?(?=  function privateSelfServeViewer\()/,'  STAFF_DELIVERY\n')
  .replace(/  function renderSession\([^\n]+\n/,'  SESSION_DELIVERY\n')
  .replace(/  function renderSchoolAthleteCompact\([\s\S]*?(?=  function renderPrivateAthleteCompact\()/,'  SCHOOL_ATHLETE_DASHBOARD\n')
@@ -198,7 +199,7 @@ const withoutSchoolIdentity=source=>source
  // Coach route parity is covered by the authenticated coach browser suite.
  .replace(/  function renderStaffDashboard\([\s\S]*?(?=  function renderCurrentWeek\()/,'  COACH_DASHBOARD\n')
  .replace(/  function renderCurrentWeek\([^\n]+\n/,'  COACH_CURRENT_WEEK\n')
- .replace(/coach-command\.js\?v=(?:20261028-coach-parity|20261104-saints-ui|20261118-coaching|20261118-compact|20261118-coach-cues|20261121-coach-workout)/g,'coach-command.js')
+ .replace(/coach-command\.js\?v=(?:20261028-coach-parity|20261104-saints-ui|20261118-coaching|20261118-compact|20261118-coach-cues|20261121-coach-workout|20261121-school-polish)/g,'coach-command.js')
  .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'\)return renderDirectorOverview\(\);\r?\n/,'')
  .replace(/    if\(HUB_STATE.staff\?\.accessProfile==='sports_director'&&!\[[^\n]+\n/,'')
  .replace(/ && HUB_STATE.staff\?\.accessProfile!=='sports_director'/g,'')

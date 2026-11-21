@@ -44,7 +44,7 @@ test('day and week print preserve prescriptions and exclude coaching material, l
 });
 test('presenter shows one exercise and returns to the selected day',async()=>{
  const h=setup();await h.click({day:'0'});
- assert.match(h.root.innerHTML,/Stop for pain\./);
+ assert.doesNotMatch(h.root.innerHTML,/Stop for pain\.|Session instructions/);
  assert.doesNotMatch(h.root.innerHTML,/Coach-approved readiness/);
  assert.match(h.root.innerHTML,/aria-current="true">Workout<.*data-action="present">Present Workout</);
  assert.match(h.root.innerHTML,/Support(?:ed Ankle Rock).*Use support if balance is limited/);

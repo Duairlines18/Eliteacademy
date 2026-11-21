@@ -4212,9 +4212,55 @@ document.addEventListener('click',function(e){
 @media(max-width:360px){.saints-roadmap{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .hub-school-themed .ducc :is(a,button):focus-visible{outline:2px solid var(--school-soft);outline-offset:3px}
 .hub-school-themed .ducc :is(h1,h2){color:var(--school-paper)}
+/* The academy palette is shared by every Performance Hub account. */
+#hub-root{
+  --hub-bg:var(--green);
+  --hub-panel:var(--green-2);
+  --hub-panel-2:var(--green-3);
+  --hub-text:var(--cream);
+  --hub-muted:#b4c2b7;
+  --hub-line:rgba(199,162,90,.3);
+  background:var(--hub-bg);
+}
+#hub-root .hub-shell{background:var(--green)}
+#hub-root .hub-topbar{background:var(--ink)}
+#hub-root :is(.hub-athlete-session-title h1,.hub-athlete-compact-intro h1,.ducc header h1,.ducc .workout-head h2){
+  font-family:var(--serif);
+  font-weight:600;
+}
+#hub-root :is(.hub-athlete-session-title,.hub-parent-session-card,.hub-school-day-picker .hub-athlete-day-choice,.ducc [data-day],.ducc .workout-section,.hub-athlete-phase,.hub-athlete-movement){
+  background:var(--green-2);
+  border-color:var(--hub-line);
+  color:var(--cream);
+}
+#hub-root :is(.hub-school-day-picker .hub-athlete-day-choice,.ducc [data-day]){
+  background:linear-gradient(135deg,var(--green-3),var(--green-2));
+}
+#hub-root :is(.hub-athlete-day-choice.selected,.ducc [data-day][aria-pressed="true"]){border-color:var(--gold)}
+#hub-root :is(.hub-school-day-picker .hub-athlete-day-choice small,.hub-parent-session-card small){color:var(--hub-muted)}
+#hub-root .ducc{font-family:var(--sans)}
+#hub-root .ducc header{background:linear-gradient(135deg,var(--green-3),var(--green-2))}
+#hub-root :is(.hub-button:not(.secondary):not(.ghost),.ducc .button:not(.secondary),.hub-week-tabs button.active){
+  background:var(--gold);
+  border-color:var(--gold);
+  color:var(--ink);
+}
+#hub-root :is(.hub-button.secondary,.ducc .button.secondary){
+  background:var(--green-2);
+  border-color:var(--hub-line);
+  color:var(--cream);
+}
+#hub-root :is(.hub-button:not(.secondary):not(.ghost),.ducc .button:not(.secondary)):hover{background:var(--gold-soft)}
+#hub-root .ducc .coaching-views button{background:transparent;color:var(--cream)}
+#hub-root .ducc .presentation .button:not(.primary){background:var(--green-2);border-color:var(--present-line);color:var(--cream)}
+#hub-root .hub-private-presentation,
+#hub-root .hub-private-presentation :is(header,footer),
+#hub-root .hub-private-presentation::backdrop{background:var(--green)}
+#hub-root .hub-private-video-stage{background:var(--ink);border-color:var(--gold)}
+#hub-root .hub-private-view-options{background:var(--ink)}
 /* SCHOOL_THEME_END */
 </style>
-<script src="/coach-command/coach-command.js?v=20261121-coach-workout"></script>
+<script src="/coach-command/coach-command.js?v=20261121-school-polish"></script>
 <link rel="stylesheet" href="/hub-delivery/school.css">
 <script src="/hub-delivery/school-attendance.js?v=20261104-compact"></script>
 <script id="performance-hub-app">
@@ -4542,8 +4588,11 @@ document.addEventListener('click',function(e){
       return {...section,title:'Additional movement references (not a prescribed dose)',items:unique};
     }).filter(section=>(section.items||[]).length);
   }
+  function schoolWorkoutSections(sections){
+    return sections.filter(section=>!/^landing readiness(?: and skill check)?$/i.test(String(section.title||'').trim()));
+  }
   function staffAllGroupsExperience(sessionData){
-    const workout=normalizeWorkoutSession(sessionData,EXERCISES,programme()),sections=deliverySections(workout.sections);
+    const workout=normalizeWorkoutSession(sessionData,EXERCISES,programme()),sections=deliverySections(schoolWorkoutSections(workout.sections));
     const groups=[...new Set(sections.flatMap(section=>(section.items||[]).map(item=>item.group).filter(Boolean)))];
     const norm=v=>String(v||'').trim().toLowerCase().replace(/\\s+/g,' ');
     const isReference=section=>/Additional movement references/i.test(String(section.title||''));
@@ -4615,7 +4664,8 @@ document.addEventListener('click',function(e){
     if(!parentDay&&HUB_STATE.audience!=='private-athlete'&&!isSchoolReferenceViewer())return;
     const workout=normalizeWorkoutSession(day,EXERCISES,{...programme(),separateWarmups:true});
     if(!routine&&requiresGroupSelection(workout))return;
-    const sections=visibleNormalizedSections(workout);
+    const visible=visibleNormalizedSections(workout);
+    const sections=isSchoolReferenceViewer()?schoolWorkoutSections(visible):visible;
     const items=parentDay
       ? (routine?routineCardItems(routine.card):flattenedWorkoutItems(sections).map(item=>({...item,sessionKey:workout.id})))
         .map(item=>({item,videos:athleteWorkoutDemos(item)}))
@@ -4736,7 +4786,7 @@ document.addEventListener('click',function(e){
   function schoolAthleteDelivery(sections,sessionData,workoutMode=''){
     // Show only the selected school Form. Keep the original order and dosages.
     const compact=typeof isSchoolReferenceViewer==='function'&&isSchoolReferenceViewer();
-    const source=deliverySections(sections);
+    const source=deliverySections(compact?schoolWorkoutSections(sections):sections);
     const reference=source.filter(section=>/Additional movement references/i.test(String(section.title||'')));
     const prescribed=source.filter(section=>!/Additional movement references/i.test(String(section.title||'')));
     const phases=prescribed.map((section,sectionIndex)=>{
@@ -5168,7 +5218,7 @@ document.addEventListener('click',function(e){
   }
 
   function renderCurrentWeek(){if(renderCoachCommand())return;const p=programme();root.innerHTML=shell('<div class="hub-field-day-header"><a href="#/hub/staff">← Coach home</a><h1>Current Week</h1></div>'+weekBlock(p)+(p.coachGuidance?'<details class="hub-field-optional"><summary>Coach guidance</summary><p>'+escapeHtml(p.coachGuidance)+'</p></details>':''),'week');}
-  function renderSession(id){id=String(id).split('?')[0];const p=programme(),s=p.sessions.find(x=>x.id===id);if(!s){renderNotFound();return;}if(assignedRoutines(p).includes(s)){renderRoutine(s);return;}if(renderCoachCommand(s.id))return;const back=session()?.role==='staff'?'#/hub/current-week':'#/hub/athlete';const savedNotes=[s.watch,s.athleteNote].filter(Boolean);const schoolDay=isSchoolReferenceViewer();const saintsAthleteView=schoolDay&&session()?.role==='athlete'&&schoolTheme()===SCHOOL_THEMES['st georges college'];const important=!saintsAthleteView&&savedNotes.length?'<div class="hub-objective"><strong>'+(schoolDay?'Coach notes':'Coach instructions')+'</strong><span>'+savedNotes.map(escapeHtml).join('<br>')+'</span></div>':'';const schoolIntro=schoolDay?(saintsAthleteView?'<div class="hub-school-day-intro"><strong>You are on '+escapeHtml(weekLabel(p))+' · '+escapeHtml(s.day||'Training day')+'</strong><p>'+(/day 2/i.test(s.day||'')?'Today you will take your landing control into small forward jumps. Move with rhythm, stay balanced, and use the demos and tips whenever you need them.':/optional|day 3/i.test(s.day||'')?'Today is your optional mobility and recovery day. Move comfortably and prepare for your next coached jump session.':'Today you will build your jumping foundations: elastic ankles, quiet contacts and strong, balanced landings. Follow each exercise in order and focus on quality.')+'</p></div>':(s.why||s.objective)?'<div class="hub-school-day-intro"><strong>Purpose</strong><p>'+escapeHtml(s.why||s.objective)+'</p></div>':''):'';const sessionHelp=isSchoolReferenceViewer()?'Read the prescription first. Open an exact demo only when you need technique guidance.':'Scan the full prescription in Quick View or switch to Guided Mode for step-by-step help.';const schoolAthlete=isSchoolReferenceViewer()&&session()?.role!=='staff';const privateAthlete=privateSelfServeViewer();const parentAthlete=HUB_STATE.audience==='parent'&&session()?.role!=='staff';const simpleAthlete=schoolAthlete||privateAthlete||parentAthlete;const athleteNav=simpleAthlete?'<div class="hub-athlete-session-nav"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(weekLabel(p))+'</span></div>'+(schoolAthlete&&!saintsAthleteView?'<details class="hub-field-cohort hub-athlete-session-group"><summary>'+escapeHtml(schoolGroup()||'Choose your Form')+' <span>Change</span></summary>'+groupPicker()+'</details>':''):'';const athleteHead=simpleAthlete?'<div class="hub-athlete-session-title"><h1>'+escapeHtml(parentAthlete?(parentSessionLabel(s,Math.max(0,p.sessions.indexOf(s)))+' — '+parentSessionHeading(s,Math.max(0,p.sessions.indexOf(s)))):((s.day||'Day')+' · '+s.title))+'</h1><p>'+escapeHtml(s.duration||'')+'</p></div>':'';const body=simpleAthlete?athleteNav+athleteHead+'<section class="hub-section hub-field-session">'+schoolIntro+important+preparationNavigation(s)+renderWorkoutExperience(s)+'</section>':(session()?.role==='staff'&&isSchoolReferenceViewer()?'<div class="hub-field-day-header"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(s.day||'')+'</span><h1>'+escapeHtml(s.title)+'</h1><p>'+escapeHtml(s.focus||'')+'</p><small>'+escapeHtml(s.duration||'')+'</small></div>':pageHead(s.day,s.title,s.focus,back))+ '<section class="hub-section hub-field-session">'+schoolIntro+important+'<div class="hub-section-head"><div><h2>Training Sheet</h2></div></div>'+renderWorkoutExperience(s)+'</section>';root.innerHTML=shell(body+(simpleAthlete?'':airZimTool(p)),'week');}
+  function renderSession(id){id=String(id).split('?')[0];const p=programme(),s=p.sessions.find(x=>x.id===id);if(!s){renderNotFound();return;}if(assignedRoutines(p).includes(s)){renderRoutine(s);return;}if(renderCoachCommand(s.id))return;const back=session()?.role==='staff'?'#/hub/current-week':'#/hub/athlete';const savedNotes=[s.watch,s.athleteNote].filter(Boolean);const schoolDay=isSchoolReferenceViewer();const saintsAthleteView=schoolDay&&session()?.role==='athlete'&&schoolTheme()===SCHOOL_THEMES['st georges college'];const important=!saintsAthleteView&&savedNotes.length?'<div class="hub-objective"><strong>'+(schoolDay?'Coach notes':'Coach instructions')+'</strong><span>'+savedNotes.map(escapeHtml).join('<br>')+'</span></div>':'';const sessionHelp=isSchoolReferenceViewer()?'Read the prescription first. Open an exact demo only when you need technique guidance.':'Scan the full prescription in Quick View or switch to Guided Mode for step-by-step help.';const schoolAthlete=isSchoolReferenceViewer()&&session()?.role!=='staff';const privateAthlete=privateSelfServeViewer();const parentAthlete=HUB_STATE.audience==='parent'&&session()?.role!=='staff';const simpleAthlete=schoolAthlete||privateAthlete||parentAthlete;const athleteNav=simpleAthlete?'<div class="hub-athlete-session-nav"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(weekLabel(p))+'</span></div>'+(schoolAthlete&&!saintsAthleteView?'<details class="hub-field-cohort hub-athlete-session-group"><summary>'+escapeHtml(schoolGroup()||'Choose your Form')+' <span>Change</span></summary>'+groupPicker()+'</details>':''):'';const athleteHead=simpleAthlete?'<div class="hub-athlete-session-title"><h1>'+escapeHtml(parentAthlete?(parentSessionLabel(s,Math.max(0,p.sessions.indexOf(s)))+' — '+parentSessionHeading(s,Math.max(0,p.sessions.indexOf(s)))):((s.day||'Day')+' · '+s.title))+'</h1><p>'+escapeHtml(s.duration||'')+'</p></div>':'';const body=simpleAthlete?athleteNav+athleteHead+'<section class="hub-section hub-field-session">'+important+preparationNavigation(s)+renderWorkoutExperience(s)+'</section>':(session()?.role==='staff'&&isSchoolReferenceViewer()?'<div class="hub-field-day-header"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(s.day||'')+'</span><h1>'+escapeHtml(s.title)+'</h1><p>'+escapeHtml(s.focus||'')+'</p><small>'+escapeHtml(s.duration||'')+'</small></div>':pageHead(s.day,s.title,s.focus,back))+ '<section class="hub-section hub-field-session">'+important+'<div class="hub-section-head"><div><h2>Training Sheet</h2></div></div>'+renderWorkoutExperience(s)+'</section>';root.innerHTML=shell(body+(simpleAthlete?'':airZimTool(p)),'week');}
 
 
   function athleteCard(a){return '<article class="hub-profile-card"><h3>'+escapeHtml(a.name)+'</h3><p>'+escapeHtml(a.event)+'</p><div class="hub-meta-row"><span class="hub-chip">'+escapeHtml(a.phase)+'</span><span class="hub-status'+(a.status!=='No Current Flag'?' flag':'')+'">'+escapeHtml(a.status)+'</span></div><p>Next review: '+escapeHtml(a.nextReview)+'</p><a class="hub-action-arrow" href="#/hub/athlete-profile/'+encodeURIComponent(a.id)+'">View Profile →</a></article>';}
