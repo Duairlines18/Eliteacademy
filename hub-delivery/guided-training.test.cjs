@@ -38,7 +38,7 @@ test('private athletes reach the same guided renderer as parents, with own sessi
  assert.match(ctx.render({id:'anos-own-day'}),/Guided anos-own-day p:1:0:MOB04/);
  assert.match(ctx.render({id:'new-day'}),/Controls quick.*Sheet quick/);
  ctx.ATHLETE_WORKOUT_VIEW.mode='learn';
- assert.match(ctx.render({id:'new-day'}),/Controls learn.*Sheet learn/);
+ assert.match(ctx.render({id:'new-day'}),/Controls quick.*Sheet quick/);
  ctx.HUB_STATE.audience='parent';
  assert.match(ctx.render({id:'parent-day'}),/Quick View.*Guided Workout.*Guided parent-day/);
 });

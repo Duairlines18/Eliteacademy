@@ -2093,7 +2093,7 @@ footer,
 <!-- DU STORY NAV START --><style>#home-view .du-story-entry{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:1.5rem 0 0;color:var(--cream)}#home-view .du-story-entry>span{display:flex;flex-direction:column;gap:.35rem}#home-view .du-story-entry small{font-size:.6rem;letter-spacing:.16em;color:var(--gold-soft)}#home-view .du-story-entry strong{font:500 1.55rem var(--serif);color:var(--gold-soft)}#home-view .du-story-entry span span{font-size:.8rem;color:var(--sage);max-width:55ch}#home-view .du-story-entry>b{font-size:1.5rem;color:var(--gold-soft);min-width:44px;text-align:center}#home-view .du-story-entry:focus-visible{outline:2px solid var(--gold-soft);outline-offset:6px}#home-view .du-story-entry:hover strong{text-decoration:underline;text-underline-offset:4px}</style><!-- DU STORY NAV END --><script src="/hub-delivery/delivery.js?v=20261118-coaching"></script>
 <link rel="stylesheet" href="/hub-delivery/weekly-checkins.css?v=20261112-dark"><script src="/hub-delivery/weekly-checkins.js?v=20261115-navigation"></script>
 <script src="/hub-delivery/premium-v2.js?v=20261020"></script>
-<link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261121-school-workout">
+<link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261121-private-workout">
 <link rel="stylesheet" href="/parent-qa/session-card-polish.css">
 <script defer src="/parent-qa/session-card-polish.js"></script>
 <script defer src="/performance/coachdu-hub-bridge.js"></script>
@@ -4598,10 +4598,8 @@ document.addEventListener('click',function(e){
   }
 
   function athleteWorkoutControls(mode, showGuided=true){
-    const views=showGuided?[['quick','Workout'],['learn','Watch demos']]:[['quick','Workout']];
     return '<div class="hub-private-view-controls"><div class="hub-private-view-options" role="group" aria-label="Workout views">'+
-      views.map(([view,label])=>
-        '<button type="button" data-workout-mode="'+view+'" aria-pressed="'+(mode===view)+'">'+label+'</button>').join('')+
+      '<button type="button" data-workout-mode="quick" aria-pressed="'+(mode==='quick')+'">Workout</button>'+
       '<button type="button" data-private-present aria-haspopup="dialog">Full-screen demos</button></div>'+
       (showGuided?'<button type="button" class="hub-button secondary" data-workout-mode="guided" aria-pressed="'+(mode==='guided')+'">Guided Workout</button>':'')+'</div>';
   }
@@ -4705,11 +4703,10 @@ document.addEventListener('click',function(e){
           const restriction=/\b(?:stop|pain|injur\w*|safety|unsafe|never|only if|hours between|do not|don['’]t|should not|must not|no running|no sprint(?:ing)?|before progressing)\b/i;
           const essential=rows.filter(([label,value])=>label==='For this session'||label==='Coach alternative'||restriction.test(value)||(compact&&label==='How to do it'&&/confirm the movement sequence/i.test(value)));
           guidance=essential.map(line).join('');
-          if(workoutMode==='learn'){
-            const videos=athleteWorkoutDemos(item);
-            const media=videos.map(video=>'<a class="hub-button secondary" href="'+escapeHtml(video.original)+'" target="_blank" rel="noopener noreferrer">Watch '+escapeHtml(video.title)+'</a>').join('');
-            guidance+='<details class="hub-private-demo-details"><summary>Video &amp; tips <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary>'+
-              '<div class="hub-private-demo-content">'+(media||'<p>No demo linked.</p>')+rows.filter(row=>!essential.includes(row)).map(line).join('')+'</div></details>';
+          if(!compact&&!athleteWorkoutDemos(item).length){
+            const tips=rows.filter(row=>!essential.includes(row)).map(line).join('');
+            if(tips)guidance+='<details class="hub-private-demo-details"><summary>Technique tips <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary>'+
+              '<div class="hub-private-demo-content">'+tips+'</div></details>';
           }
         }else if(compact){
           const rows=DuHubDelivery.coachingRows(item);
@@ -4735,7 +4732,7 @@ document.addEventListener('click',function(e){
       const percent=Math.round(100*completed/items.length);
       const privateDay=HUB_STATE.audience==='private-athlete'&&session()?.role==='athlete'&&!assignedRoutines().includes(sessionData);
       if(privateDay&&ATHLETE_WORKOUT_VIEW.id!==workout.id)ATHLETE_WORKOUT_VIEW={id:workout.id,mode:'quick'};
-      const mode=privateDay?ATHLETE_WORKOUT_VIEW.mode:WORKOUT_MODE==='guided'?'guided':'quick';
+      const mode=(privateDay?ATHLETE_WORKOUT_VIEW.mode:WORKOUT_MODE)==='guided'?'guided':'quick';
       const toggle='<div class="hub-workout-toolbar"><div class="hub-workout-progress"><strong>'+completed+'/'+items.length+' complete</strong><div class="hub-progress-track"><div class="hub-progress-fill" style="width:'+percent+'%"></div></div></div>'+(privateDay?athleteWorkoutControls(mode):'<div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="quick" class="'+(mode==='quick'?'active':'')+'">Quick View</button><button type="button" data-workout-mode="guided" class="'+(mode==='guided'?'active':'')+'">Guided Workout</button></div>')+'</div>';
       const wrapper='<div class="hub-parent-workout-experience'+(privateDay?' hub-private-workout':'')+'">';
       if(mode!=='guided')return wrapper+toggle+(completed===items.length?'<div class="hub-workout-complete"><strong>✓ Workout Complete</strong><a href="#/hub/feedback">Send feedback →</a></div>':'')+schoolAthleteDelivery(sections,sessionData,privateDay?mode:'')+'</div>';
