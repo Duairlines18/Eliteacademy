@@ -208,6 +208,28 @@ const {chromium}=require('playwright');
     await page.getByRole('heading',{name:'Full Workout',exact:true}).waitFor();
     assert.equal(await widePlayer.count(),0);checks++;
 
+    await page.evaluate(()=>{
+     const exercises=[{code:'ankle',title:'Ankle Rock'},{code:'step',title:'Step-Up',description:'Use a stable box.'}];
+     window.DuCoachCommand.mount(document.getElementById('du-coach-command-root'),{
+      role:'staff',cohort:{id:'mapped',name:'Reviewed demonstrations fixture'},exercises,
+      programme:{sessions:[{id:'mapped',title:'Legacy instruction rows',itemSections:[{
+       title:'Mobility and strength',items:['Ankle Rock, then Step-Up.','Walk easily for 2 minutes.'],
+       videoLinks:[{itemIndex:0,title:'Ankle Rock',url:'https://www.youtube.com/shorts/6Dlac5mxD6k'},
+        {itemIndex:0,title:'Step-Up',url:'https://www.youtube.com/shorts/Tdn9-s7-YPc'}],
+      }]}]},
+     },{initialSessionId:'mapped'});
+    });
+    await page.getByRole('button',{name:'Present workout'}).click();
+    assert.match(await widePresenter.locator('.presentation-stage img').getAttribute('src'),/6Dlac5mxD6k/);checks++;
+    assert.equal(await widePresenter.locator('.presentation-guidance').count(),0);checks++;
+    await widePresenter.getByRole('button',{name:'Step-Up',exact:true}).click();
+    assert.equal(await widePresenter.getByRole('button',{name:'Step-Up',exact:true}).getAttribute('aria-pressed'),'true');checks++;
+    await widePresenter.getByRole('button',{name:'Play Step-Up demonstration'}).click();
+    assert.match(await widePlayer.getAttribute('src'),/Tdn9-s7-YPc/);checks++;
+    await widePresenter.getByRole('button',{name:'Next',exact:true}).click();
+    assert.ok(await widePresenter.getByText('No video for this exercise.').isVisible());checks++;
+    assert.equal(await widePlayer.count(),0);checks++;
+
    }
    assert.deepEqual(errors,[]);checks++;
    await page.close();

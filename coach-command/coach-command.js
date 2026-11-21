@@ -315,7 +315,7 @@ body:has(.ducc .presentation){overflow:hidden}
       const library=delivery.coachingParts(ex.coachingCues||ex.coachingNote);
       const demos=matchingDemos(row).filter(demo=>safeVideo(demo.url));
       const reviewed=reviewedMovementCoaching(row,demos);
-      const reviewedRows=reviewed.length===1?new Map(reviewed[0].rows):null;
+      const reviewedRows=demos.length===1&&reviewed.length===1?new Map(reviewed[0].rows):null;
       const ankleRockRangeNote=row.exerciseCode==='WU01'&&saved.cue==='Comfortable controlled range.';
       const cues=(ankleRockRangeNote
         ?[library.cue,reviewedRows?.get('Coach cue'),saved.cue]
