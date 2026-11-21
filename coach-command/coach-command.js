@@ -21,39 +21,107 @@
 .ducc .section>summary{font-weight:750;color:var(--gold)}.ducc .movement-detail>summary{font-size:.86rem;color:var(--gold)}
 .ducc .session-note{border-left:2px solid var(--gold);padding-left:8px;margin:6px 0;white-space:pre-line}
 body:has(.ducc .presentation){overflow:hidden}
-.ducc .presentation{position:fixed;inset:0;z-index:9990;overflow:auto;overscroll-behavior:contain;background:#10251e;color:#fff8e9;font:clamp(16px,1.6vw,25px)/1.4 system-ui,Arial,sans-serif;overflow-wrap:anywhere}
-.ducc .presentation-toolbar{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px clamp(14px,4vw,58px);border-bottom:1px solid #51695c;background:#10251e}
-.ducc .presentation-toolbar .actions{flex-wrap:nowrap}
-.ducc .presentation .button,.ducc .presentation-video .button{min-height:44px;border:1px solid #73867b;background:#1b382d;color:#fff8e9;font-weight:720;font-size:clamp(15px,1.25vw,20px)}
-.ducc .presentation .button:disabled{opacity:.53;cursor:default}
-.ducc .presentation .primary{background:#ecd095;border-color:#ecd095;color:#192820}
-.ducc .presentation-progress{font-variant-numeric:tabular-nums;font-weight:750;color:#f1d9a7}
-.ducc .presentation-inner{max-width:1400px;margin:auto;padding:clamp(14px,3vw,44px) clamp(14px,4vw,58px)}
-.ducc .presentation h2{margin:0;color:#fff8e9;font-size:clamp(18px,2.25vw,33px);line-height:1.2}
-.ducc .presentation-purpose{color:#d9e5dc;max-width:75ch}
-.ducc .presentation-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:clamp(15px,3vw,48px);align-items:start;padding-top:clamp(15px,3vw,42px)}
-.ducc .presentation-card{min-width:0;border-left:4px solid #e6c580;padding-left:clamp(12px,2vw,25px)}
-.ducc .presentation-block{color:#f1d9a7;font-weight:700;font-size:clamp(14px,1.2vw,19px)}
-.ducc .presentation h3{margin:3px 0 5px;color:#fff8e9;font-size:clamp(26px,5vw,74px);line-height:1.08}
-.ducc .presentation h3.long-title{font-size:clamp(24px,3.55vw,54px)}
-.ducc .presentation h3.legacy-instruction{font-size:clamp(22px,3vw,46px);white-space:pre-line}
-.ducc .presentation .dose{color:#ffde9e;font-size:clamp(20px,3vw,44px);font-weight:780;line-height:1.21;white-space:pre-line}
-.ducc .presentation .dose.long-dose{font-size:clamp(19px,2.1vw,34px)}
-.ducc .presentation-demo{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.ducc .presentation-guidance{display:grid;gap:9px}
-.ducc .presentation-guidance p,.ducc .presentation-details p{white-space:pre-line}
-.ducc .presentation-guidance p{margin:0;padding:9px 12px;background:#1b382d;border-radius:8px}
-.ducc .presentation-guidance strong{display:block;color:#f1d9a7;font-size:.8em}
-.ducc .presentation-details{margin-top:14px;border-top:1px solid #62786b;padding-top:5px;color:#fff8e9}
-.ducc .presentation-details summary{width:max-content;min-height:44px;color:#ffdfa4;font-weight:720}
-.ducc .presentation-video{width:min(95vw,960px);max-height:92dvh;overflow:auto;background:#152e24;color:#fff8e9;border:1px solid #829487;border-radius:12px;padding:clamp(10px,2vw,22px);margin:auto}
-.ducc .presentation-video::backdrop{background:#07140edb}
-.ducc .presentation-video h2{overflow-wrap:anywhere;margin:0;font-size:clamp(18px,2.2vw,30px)}
-.ducc .presentation-video-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
-.ducc .presentation-video iframe{display:block;width:min(100%,100vh);aspect-ratio:16/9;border:0;background:#07140e;margin:auto}
-.ducc .presentation-video.portrait iframe{width:min(100%,31vh);aspect-ratio:9/16}
-.ducc .presentation-video a{color:#ffdfa4;text-decoration:underline}
-@media(max-width:740px){.ducc .presentation-layout{grid-template-columns:minmax(0,1fr);gap:12px}.ducc .presentation-toolbar{gap:5px}.ducc .presentation-toolbar .button{padding:8px 10px}}
+.ducc .presentation{
+ --present-green:#092219;--present-cream:#fff8e9;--present-gold:#f6d681;--present-line:#4c6857;
+ --present-gutter:clamp(12px,2.4vw,36px);
+ position:fixed;inset:0;z-index:9990;display:flex;flex-direction:column;overflow:auto;
+ overscroll-behavior:contain;background:var(--present-green);color:var(--present-cream);
+ font:clamp(16px,1.45vw,24px)/1.35 system-ui,Arial,sans-serif;overflow-wrap:anywhere;
+}
+.ducc .presentation-toolbar,.ducc .presentation-footer{
+ position:sticky;z-index:2;display:flex;gap:clamp(8px,1.45vw,22px);align-items:center;
+ padding:10px var(--present-gutter);background:var(--present-green);
+}
+.ducc .presentation-toolbar{top:0;border-bottom:1px solid var(--present-line)}
+.ducc .presentation-kicker,.ducc .presentation-block{
+ color:var(--present-gold);font-size:clamp(13px,1.2vw,19px);font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+}
+.ducc .presentation-toolbar h2{
+ flex:1;min-width:0;margin:0;padding-left:clamp(8px,1.6vw,24px);border-left:1px solid var(--present-line);
+ color:var(--present-cream);font-size:clamp(16px,2vw,30px);line-height:1.18;
+}
+.ducc .presentation-progress{
+ white-space:nowrap;border:1px solid var(--present-gold);border-radius:999px;padding:5px 11px;
+ color:var(--present-gold);font-size:clamp(14px,1.4vw,21px);font-weight:750;font-variant-numeric:tabular-nums;
+}
+.ducc .presentation .button{
+ min-height:44px;border:1px solid #698574;border-radius:12px;background:#153629;color:var(--present-cream);
+ font-size:clamp(15px,1.3vw,21px);font-weight:750;
+}
+.ducc .presentation .button:disabled{opacity:.5;cursor:default}
+.ducc .presentation .primary{background:var(--present-gold);color:#14261c;border-color:var(--present-gold)}
+.ducc .presentation :is(button,summary,a):focus-visible{outline:3px solid var(--present-gold);outline-offset:3px}
+.ducc .presentation-layout{
+ display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:start;align-content:center;flex:1 0 auto;
+ width:100%;max-width:1720px;margin:0 auto;padding:clamp(14px,2vw,30px) var(--present-gutter);gap:clamp(16px,2.6vw,40px);
+}
+.ducc .presentation-media,.ducc .presentation-card{min-width:0}
+.ducc .presentation-stage{
+ position:relative;display:grid;place-items:center;aspect-ratio:3/2;overflow:hidden;
+ border:1px solid var(--present-gold);border-radius:clamp(12px,1.65vw,24px);background:#071a13;
+}
+.ducc .presentation-stage.empty{border-color:var(--present-line);padding:16px;text-align:center}
+.ducc .presentation-stage img,.ducc .presentation-stage iframe{
+ position:absolute;inset:0;display:block;width:100%;height:100%;border:0;object-fit:contain;
+}
+.ducc .presentation-stage:has(iframe){min-height:200px}
+.ducc .presentation-stage.portrait iframe{width:auto;min-width:200px;height:100%;aspect-ratio:9/16;margin:auto}
+.ducc .presentation-stage img[hidden]{display:none}
+.ducc .presentation-play{
+ position:absolute;inset:0;width:100%;display:grid;place-items:center;padding:0;background:transparent;border:0;color:var(--present-cream);
+}
+.ducc .presentation-play:focus-visible{outline-offset:-5px}
+.ducc .presentation-play span{
+ display:grid;place-items:center;width:clamp(54px,7vw,105px);aspect-ratio:1;border:3px solid var(--present-gold);
+ border-radius:50%;background:#071611e8;
+}
+.ducc .presentation-play span::before{
+ content:'';width:40%;aspect-ratio:1;background:currentColor;clip-path:polygon(12% 0,100% 50%,12% 100%);transform:translateX(9%);
+}
+.ducc .presentation-video-help{font-size:.78em}
+.ducc .presentation-video-help a{color:var(--present-gold);display:inline-block;padding-block:10px}
+.ducc .presentation-demo-options{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ducc .presentation-heading{border-left:4px solid var(--present-gold);padding-left:clamp(10px,1.25vw,20px)}
+.ducc .presentation h3{margin:4px 0 0;font-size:clamp(28px,4.45vw,72px);line-height:1.06}
+.ducc .presentation h3.long-title,.ducc .presentation h3.legacy-instruction{font-size:clamp(23px,3vw,48px);white-space:pre-wrap}
+.ducc .presentation .dose{
+ width:fit-content;max-width:100%;border-radius:16px;margin:12px 0 0;padding:6px 15px;
+ background:var(--present-gold);color:#14261c;font-size:clamp(19px,2.2vw,34px);font-weight:800;line-height:1.18;white-space:pre-wrap;
+}
+.ducc .presentation .dose.long-dose{font-size:clamp(17px,1.6vw,25px)}
+.ducc .presentation-guidance{display:grid;gap:clamp(8px,1vw,16px);margin-top:clamp(12px,1.5vw,22px)}
+.ducc .presentation-guidance p,.ducc .presentation-details p{white-space:pre-wrap}
+.ducc .presentation-guidance p{margin:0;padding-left:12px;border-left:1px solid var(--present-line)}
+.ducc .presentation-guidance strong{display:block;color:var(--present-gold);font-size:.9em}
+.ducc .presentation-details{margin-top:clamp(12px,1.5vw,22px);font-size:.86em}
+.ducc .presentation-details summary{
+ min-height:44px;padding:10px 13px;border:1px solid #698574;border-radius:12px;color:var(--present-gold);font-weight:750;
+}
+.ducc .presentation-details[open]>div{padding:8px 13px}
+.ducc .presentation-details h4{margin:12px 0 4px;color:var(--present-gold)}
+.ducc .presentation-footer{bottom:0;justify-content:space-between;border-top:1px solid var(--present-line)}
+.ducc .presentation-footer .button{min-width:clamp(88px,12vw,190px)}
+.ducc .presentation-demo-options [aria-pressed="true"]{border-color:var(--present-gold);color:var(--present-gold)}
+.ducc .presentation-footer progress{
+ appearance:none;width:clamp(36px,22vw,320px);height:8px;border:0;border-radius:999px;overflow:hidden;background:#385a49;
+}
+.ducc .presentation-footer progress::-webkit-progress-bar{background:#385a49}
+.ducc .presentation-footer progress::-webkit-progress-value{background:#f6d681}
+.ducc .presentation-footer progress::-moz-progress-bar{background:#f6d681}
+@media(max-width:850px){
+ .ducc .presentation-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto auto}
+ .ducc .presentation-toolbar h2{grid-row:2;grid-column:1/-1;padding:0;border:0}
+}
+@media(max-width:900px) and (orientation:portrait),(max-width:700px){
+ .ducc .presentation-layout{grid-template-columns:minmax(0,1fr);align-content:start}
+ .ducc .presentation-stage{aspect-ratio:16/9}
+ .ducc .presentation-stage.portrait:has(iframe){min-height:clamp(300px,75vw,355px)}
+}
+@media(max-height:490px){
+ .ducc .presentation-toolbar{position:static}
+ .ducc .presentation-layout{align-content:start}
+ .ducc .presentation-stage{aspect-ratio:16/9}
+}
 .ducc .print-sheet{display:none}
 @media(max-width:540px){.ducc .days{grid-template-columns:1fr}.ducc .day{min-height:54px}.ducc .day strong,.ducc .day span{display:inline}.ducc .day span{margin:0 0 0 7px}}
 @media print{
@@ -214,80 +282,103 @@ body:has(.ducc .presentation){overflow:hidden}
       root.append(sheet);
       window.print();
     }
+    function presentMedia(demo){
+      const embed=safeVideo(demo.url);
+      const id=embed.split('/').pop();
+      const portrait=new URL(demo.url).pathname.startsWith('/shorts/');
+      return '<div class="presentation-stage'+(portrait?' portrait':'')+'">'+
+        '<img src="https://i.ytimg.com/vi/'+id+'/hqdefault.jpg" alt="" referrerpolicy="no-referrer">'+
+        '<button type="button" class="presentation-play" data-play-demo="'+esc(demo.url)+'" data-demo-title="'+esc(demo.title)+
+        '" aria-label="Play '+esc(demo.title)+' demonstration"><span aria-hidden="true"></span></button></div>';
+    }
+    function playPresentationVideo(button){
+      const link=button.dataset.playDemo, embed=safeVideo(link);
+      if(!embed)return;
+      const stage=button.closest('.presentation-stage');
+      const frame=document.createElement('iframe');
+      frame.title=button.dataset.demoTitle+' demonstration';
+      frame.allow='autoplay; encrypted-media; picture-in-picture';
+      frame.allowFullscreen=true;
+      frame.referrerPolicy='strict-origin-when-cross-origin';
+      frame.src=embed+'?autoplay=1&playsinline=1';
+      stage.replaceChildren(frame);
+      const help=document.createElement('p');
+      help.className='presentation-video-help';
+      help.innerHTML='If the video won’t play, <a href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">open it on YouTube</a>.';
+      stage.after(help);
+      frame.focus();
+    }
     function presentation(s){
       const {title, row}=sequence[slide];
       const ex=exercises.get(row.exerciseCode)||{};
       const saved=delivery.sessionCoaching(row.cues);
       const library=delivery.coachingParts(ex.coachingCues||ex.coachingNote);
-      const rows=movementCoaching(row,ex);
       const demos=matchingDemos(row).filter(demo=>safeVideo(demo.url));
       const reviewed=reviewedMovementCoaching(row,demos);
-      const notes=sessionNotes(s);
-      const important=/\b(?:stop|pain|injur\w*|safety|unsafe|never|avoid|only if|hours between|do not|don.t|must not)\b/i;
-      const reviewedRows=reviewed.length===1?new Map(reviewed[0].rows):null;
+      const reviewedRows=demos.length===1&&reviewed.length===1?new Map(reviewed[0].rows):null;
       const ankleRockRangeNote=row.exerciseCode==='WU01'&&saved.cue==='Comfortable controlled range.';
       const cues=(ankleRockRangeNote
         ?[library.cue,reviewedRows?.get('Coach cue'),saved.cue]
         :[saved.cue,library.cue,reviewedRows?.get('Coach cue')]).filter(Boolean);
+      const important=/\b(?:stop|pain|injur\w*|safety|unsafe|never|avoid|only if|hours between|do not|don.t|must not)\b/i;
       const cue=cues.find(value=>!important.test(value));
-      const warnings=[...new Set([
-        saved.avoid, library.avoid, reviewedRows?.get('Watch for'), ...cues.filter(value=>important.test(value)),
-        ...notes.flatMap(note=>note.split(/\n/).filter(line=>important.test(line))),
-      ].filter(Boolean))];
+      const correction=library.avoid||reviewedRows?.get('Watch for')||saved.avoid;
+      const description=ex.description||reviewedRows?.get('How to do it');
+      const brief=value=>{
+        const copy=txt(value);
+        if(copy.length<=155)return copy;
+        return copy.match(/^.+?(?:[.!?](?=\s)|(?=\r?\n))/)?.[0]||copy;
+      };
+      const guidance=[
+        ['How to do it',brief(description)],
+        ['Coaching cue',brief(cue)],
+        ['Watch for',brief(correction)],
+      ].filter(([,value])=>value);
       const exerciseName=ex.title||row.exerciseCode;
       const nameClass=exercises.has(row.exerciseCode)?(exerciseName.length>54?'long-title':''):'legacy-instruction';
       const dose=prescriptionLine(row);
       const alternative=exercises.get(row.alternativeExerciseCode)?.title;
       const context=[
-        ['Session focus',txt(s.focus)!==purpose(s)?s.focus:''],
         ['Equipment',row.equipment],
         ['Prescribed alternative',alternative],
       ].filter(([,value])=>txt(value));
-      const details=renderRows([...rows,...context])+reviewed.map(({title,rows})=>'<div><h4>'+esc(title)+'</h4>'+renderRows(rows)+'</div>').join('')+
-        notes.map(note=>'<p>'+esc(note)+'</p>').join('');
+      const sessionDetails=renderRows([
+        ['Purpose',purpose(s)],['Focus',txt(s.focus)!==purpose(s)?s.focus:''],
+      ].filter(([,value])=>txt(value)))+sessionNotes(s).map(note=>'<p>'+esc(note)+'</p>').join('');
+      const details=renderRows([...movementCoaching(row,ex),...context])+
+        reviewed.map(({title,rows})=>'<div><h4>'+esc(title)+'</h4>'+renderRows(rows)+'</div>').join('')+
+        (sessionDetails?'<h4>Session guidance</h4>'+sessionDetails:'');
+      const categories=(Array.isArray(ex.category)?ex.category:[ex.category]).map(txt).filter(Boolean);
+      const categoryLabels=[title,saved.phase,...categories.map(category=>category==='warm-up'?category:category.replace(/-/g,' '))]
+        .filter(Boolean).filter((label,index,labels)=>labels.findIndex(value=>value?.toLowerCase()===label.toLowerCase())===index);
+      const demoOptions=demos.length>1?'<div class="presentation-demo-options" aria-label="Exercise demonstrations">'+
+        demos.map((demo,index)=>'<button type="button" class="button" data-demo-url="'+esc(demo.url)+'" data-demo-title="'+esc(demo.title)+
+          '" aria-pressed="'+(index===0)+'">'+esc(demo.title)+'</button>').join('')+'</div>':'';
       return '<section class="presentation" tabindex="-1" aria-label="Workout presentation">'+
-        '<div class="presentation-toolbar"><div class="actions" aria-label="Exercise navigation">'+
-        '<button type="button" class="button" data-action="prev-slide"'+(slide?'':' disabled')+'>Previous</button>'+
-        '<button type="button" class="button primary" data-action="next-slide"'+(slide+1<sequence.length?'':' disabled')+'>Next</button></div>'+
-        '<span class="presentation-progress" aria-live="polite">'+esc((slide+1)+' of '+sequence.length)+'</span>'+
-        '<button type="button" class="button" data-action="exit-present">Exit</button></div>'+
-        '<div class="presentation-inner"><h2>'+esc(dayLabel(s,day)+' · '+(s.title||'Workout'))+'</h2>'+
-        (purpose(s)?'<p class="presentation-purpose">'+esc(purpose(s))+'</p>':'')+
-        '<div class="presentation-layout"><div class="presentation-card">'+
-        '<p class="presentation-block">'+esc([title,saved.phase].filter(Boolean).join(' · '))+'</p>'+
-        '<h3'+(nameClass?' class="'+nameClass+'"':'')+'>'+esc(exerciseName)+'</h3>'+
+        '<div class="presentation-toolbar"><span class="presentation-kicker">Present Workout</span>'+
+        '<h2>'+esc(dayLabel(s,day)+' · '+(s.title||'Workout'))+'</h2>'+
+        '<span class="presentation-progress" aria-live="polite">'+(slide+1)+' of '+sequence.length+'</span>'+
+        '<button type="button" class="button" data-action="exit-present" aria-label="Exit presentation">Exit</button></div>'+
+        '<div class="presentation-layout"><div class="presentation-media"><div class="presentation-player">'+
+        (demos.length?presentMedia(demos[0]):'<div class="presentation-stage empty"><p>No video for this exercise.</p></div>')+
+        '</div>'+demoOptions+'</div><div class="presentation-card"><div class="presentation-heading">'+
+        '<p class="presentation-block">'+esc(categoryLabels.join(' · '))+'</p>'+
+        '<h3'+(nameClass?' class="'+nameClass+'"':'')+'>'+esc(exerciseName)+'</h3></div>'+
         (dose?'<p class="dose'+(dose.length>72?' long-dose':'')+'">'+esc(dose)+'</p>':'')+
-        (demos.length?'<div class="presentation-demo">'+demos.map(demo=>
-          '<button type="button" class="button primary" data-present-video="'+esc(demo.url)+'" data-demo-title="'+esc(demo.title)+'">Watch Demo'+
-          (demos.length>1?' · '+esc(demo.title):'')+'</button>').join('')+'</div>':
-          '<p class="presentation-purpose">No video for this exercise.</p>')+'</div>'+
-        '<div class="presentation-guidance">'+(cue?'<p><strong>Key cue</strong>'+esc(cue)+'</p>':'')+
-        (warnings.length?'<p><strong>Watch for</strong>'+esc(warnings.join('\n'))+'</p>':'')+'</div></div>'+
-        (details?'<details class="presentation-details"'+(detailsOpen?' open':'')+'><summary>Coach Details</summary>'+details+'</details>':'')+
-        '</div></section>';
+        (guidance.length?'<div class="presentation-guidance">'+guidance.map(([label,value])=>
+          '<p><strong>'+label+'</strong>'+esc(value)+'</p>').join('')+'</div>':'')+
+        (details?'<details class="presentation-details"'+(detailsOpen?' open':'')+'><summary>Coach Details</summary><div>'+
+          details+'</div></details>':'')+'</div></div>'+
+        '<nav class="presentation-footer" aria-label="Exercise navigation">'+
+        '<button type="button" class="button" data-action="prev-slide"'+(slide?'':' disabled')+'>Previous</button>'+
+        '<progress max="'+sequence.length+'" value="'+(slide+1)+'" aria-label="Workout progress"></progress>'+
+        '<button type="button" class="button primary" data-action="next-slide"'+(slide+1<sequence.length?'':' disabled')+'>Next</button></nav></section>';
     }
     function moveSlide(next){
       if(next<0||next>=sequence.length)return;
       detailsOpen=root.querySelector?.('.presentation-details')?.open??detailsOpen;
       slide=next;
       render();
-    }
-    function openPresentationVideo(button){
-      const link=button.dataset.presentVideo,url=safeVideo(link);
-      if(!url)return;
-      closeVideo();
-      videoTrigger=button;
-      const dialog=document.createElement('dialog');
-      dialog.className='presentation-video'+(new URL(link).pathname.startsWith('/shorts/')?' portrait':'');
-      dialog.setAttribute('aria-label','Exercise demonstration');
-      dialog.innerHTML='<div class="presentation-video-head"><h2>'+esc(button.dataset.demoTitle)+'</h2>'+
-        '<button type="button" class="button" data-action="close-video">Close</button></div>'+
-        '<iframe src="'+esc(url)+'" title="'+esc(button.dataset.demoTitle)+' demonstration" allow="encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'+
-        '<p>If the video won’t play, <a href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">open it on YouTube</a> or close it and use the on-screen guidance.</p>';
-      dialog.addEventListener('cancel',event=>{event.preventDefault();closeVideo();});
-      root.append(dialog);
-      dialog.showModal();
-      dialog.querySelector('button')?.focus();
     }
     function copyText(){
       const s=session();
@@ -337,7 +428,7 @@ body:has(.ducc .presentation){overflow:hidden}
     }
     let videoTrigger;
     function closeVideo(){
-      root.querySelectorAll('.video,.presentation-video').forEach(node=>node.remove());
+      root.querySelectorAll('.video').forEach(node=>node.remove());
       videoTrigger?.focus();
       videoTrigger=null;
     }
@@ -349,7 +440,13 @@ body:has(.ducc .presentation){overflow:hidden}
         day=next;view='workout';
       }
       if(b.dataset.athlete!==undefined){athlete=Number(b.dataset.athlete);view='athlete';}
-      if(b.dataset.presentVideo){openPresentationVideo(b);return;}
+      if(b.dataset.playDemo){playPresentationVideo(b);return;}
+      if(b.dataset.demoUrl){
+        root.querySelector('.presentation-player').innerHTML=presentMedia({url:b.dataset.demoUrl,title:b.dataset.demoTitle});
+        root.querySelectorAll('[data-demo-url]').forEach(option=>option.setAttribute('aria-pressed',String(option===b)));
+        root.querySelector('.presentation-play').focus();
+        return;
+      }
       if(b.dataset.video){
         const url=safeVideo(b.dataset.video);
         if(!url)return;
@@ -380,9 +477,12 @@ body:has(.ducc .presentation){overflow:hidden}
       if(b.dataset.day!==undefined)root.querySelector?.('[data-day="'+day+'"]')?.focus();
       if(b.dataset.action==='exit-present')root.querySelector?.('[data-action="present"]')?.focus();
     });
+    root.addEventListener('error',event=>{
+      if(event.target.matches?.('.presentation-stage img'))event.target.hidden=true;
+    },true);
     root.addEventListener('keydown',event=>{
       if(view!=='present'&&event.key!=='Escape')return;
-      if(root.querySelector?.('.video,.presentation-video')){
+      if(root.querySelector?.('.video')){
         if(event.key==='Escape'){event.preventDefault();closeVideo();}
         return;
       }
