@@ -45,14 +45,14 @@ const {chromium}=require('playwright');
   ok(await page.locator('.hub-main').innerText().then(t=>t.includes('2 x 8')),`${audience}/${role}: assigned dose preserved`);
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${audience}/${role}/${width}: fits viewport`);
   if(audience==='parent'){
-   await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-workout-experience.guided').waitFor();
-   ok(await page.locator('[aria-label="Choose training day"]').count()===0,'Guided toggle stays inside routine');
-   const demo=page.locator('.hub-main a[href*="abcdefghijk"]').first();await demo.click();
-   await page.locator('#hubVideoModal').waitFor({state:'visible'});
-   ok(await page.locator('#hubVideoModal').evaluate(e=>!e.classList.contains('expanded')),'routine demo opens compact');
-   await page.locator('[data-hub-video-close]').first().click();
-   await page.locator('[data-completion-toggle]').first().click();
-   await page.waitForFunction(()=>document.querySelector('[data-completion-toggle]')?.dataset.completed==='true');
+   ok(await page.getByRole('button',{name:'Guided Workout',exact:true}).count()===0,'standalone parent warm-up offers full-screen demos');
+   await page.getByRole('button',{name:'Full-screen demos',exact:true}).click();
+   const demo=page.getByRole('dialog',{name:'Exercise demos'});
+   await demo.getByRole('heading',{name:'Test March',exact:true}).waitFor();
+   await demo.getByRole('button',{name:'Mark Complete',exact:true}).click();
+   await demo.getByRole('button',{name:'Undo complete',exact:true}).waitFor();
+   await demo.getByRole('button',{name:'Close',exact:true}).click();
+   await page.getByText('1/1 complete',{exact:true}).waitFor();
    ok(completionWrites===1,'routine completion uses existing persistence');
    ok(await page.locator('[aria-label="Choose training day"]').count()===0,'completion keeps routine navigation');
   }
@@ -70,6 +70,20 @@ const {chromium}=require('playwright');
     ok((await page.locator('.hub-main').innerText()).includes('1 x 3'),'school routine keeps the assigned dose');
     ok(!(await page.locator('.hub-main').innerText()).includes('4 x 5'),'school warm-up excludes the main workout');
     ok(completionWrites===0,'school routine does not write completion');
+   }else if(audience==='parent'){
+    const launch=page.getByRole('button',{name:'Full-screen demos',exact:true});
+    await launch.click();
+    const demo=page.getByRole('dialog',{name:'Exercise demos'});
+    await demo.getByText('1 of 1',{exact:true}).waitFor();
+    ok((await demo.locator('.hub-private-dose').innerText()).includes('1 x 3'),'exact assigned Air Zim dose');
+    ok(!(await demo.innerText()).includes('4 x 5'),'main workout stays separate');
+    await demo.getByRole('button',{name:'Mark Complete',exact:true}).click();
+    await demo.getByRole('button',{name:'Undo complete',exact:true}).waitFor();
+    ok(saved.get('d2|p:0:0:TST01')?.completed===true,'Air Zim retains original completion identity');
+    await page.reload();
+    await launch.click();
+    await demo.getByRole('button',{name:'Undo complete',exact:true}).waitFor();
+    await demo.getByRole('button',{name:'Close',exact:true}).click();
    }else{
     await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();
     ok(await page.locator('.hub-guided-step').innerText()==='1 of 1','Air Zim contains only its assigned movement');
