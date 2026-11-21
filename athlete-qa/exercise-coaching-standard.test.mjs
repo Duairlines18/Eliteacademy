@@ -9,7 +9,7 @@ const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const extract=(a,b)=>html.slice(html.indexOf(a),html.indexOf(b,html.indexOf(a)+a.length));
 const delivery=createRequire(import.meta.url)('../hub-delivery/delivery.js');
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const ctx={DuHubDelivery:delivery,programme:()=>({week:1}),HUB_STATE:{audience:'parent'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSchoolReferenceViewer:()=>false,isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml,encodeURIComponent,isWorkoutComplete:()=>false};
+const ctx={DuHubDelivery:delivery,programme:()=>({week:1}),HUB_STATE:{audience:'parent'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSchoolReferenceViewer:()=>false,isIdentifiedSchoolAthlete:()=>false,location:{hash:''},isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml,encodeURIComponent,isWorkoutComplete:()=>false};
 vm.createContext(ctx);
 vm.runInContext(extract('  function simpleText(','  function visibleNormalizedSections(')+extract('  function guidedCard(','  function quickView(')+extract('  function deliverySections(','  function staffAllGroupsExperience(')+extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')+extract('  function exerciseCard(','  function airZimTool(')+';this.api={coachingParts,normalizeWorkoutSession,guidedCard,schoolAthleteDelivery,athleteCopyText,exerciseCard};',ctx);
 test('all 85 entries have coaching guidance or a review warning, purpose, parsed cues and donts',()=>{
@@ -32,7 +32,7 @@ test('exercise coaching stays visible in the portal while copy keeps the assigne
   const copy=ctx.api.athleteCopyText({},[{title:'Test',items:[item]}]);
   assert.ok(copy.includes('1. '+item.title+' — '+dose),row.code+': copied prescription missing');
   assert.ok(!copy.includes(item.avoid),row.code+': portal-only Avoid guidance appeared in copy');
-  const sheet=ctx.api.schoolAthleteDelivery([{title:'Test',items:[item]}],{id:'test-day'});assert.ok(sheet.includes(escapeHtml(item.avoid)),row.code+': school sheet avoid missing');
+  const sheet=ctx.api.schoolAthleteDelivery([{title:'Test',items:[item]}],{id:'test-day'});for(const sentence of item.avoid.match(/[^.!?]+[.!?]?/g)||[])assert.ok(sheet.includes(escapeHtml(sentence.trim())),row.code+': school sheet avoid missing');
   if(row.video_url){
    assert.equal(item.videoUrl,row.video_url,row.code+': video changed');
    const demo=delivery.safeVideo(item.videoUrl,item.videoId);
@@ -62,5 +62,29 @@ test('empty, phase-only and Avoid-only workout notes fall back independently',()
  for(const [cues,cue,avoid] of cases){
   const row=ctx.api.normalizeWorkoutSession({prescriptions:[{exerciseCode:'STR01',cues,dosage:'2 × 8',rest:'60 seconds'}]},[ex]).sections[0].items[0];
   assert.equal(row.cue,cue,cues);assert.equal(row.avoid,avoid,cues);
+ }
+});
+test('Snap Down shows a firm landing in both views and preserves assigned restrictions',()=>{
+ const exercise={code:'PLY01',title:'Snap Down',coachingNote:'Cue: Quiet feet, then freeze. Avoid: Landing with stiff knees.'};
+ const prescription={exerciseCode:exercise.code,sectionTitle:'Landing',dosage:'3 × 3',rest:'60 seconds'};
+ for(const cues of ['Quiet feet, then freeze.','Cue: Use your shallow stance. Avoid: Extra contacts.']){
+  const session={id:'test-day',prescriptions:[{...prescription,cues}]};
+  const sections=ctx.api.normalizeWorkoutSession(session,[exercise]).sections;
+  const item=sections[0].items[0];
+  const guided=ctx.api.guidedCard(item,'Landing',0,1,session.id);
+  const quick=ctx.api.schoolAthleteDelivery(sections,session);
+  for(const view of [guided,quick]){
+   assert.match(view,/Land firm\. Stick it\./);
+   assert.match(view,/Landing with stiff knees\./);
+   assert.doesNotMatch(view,/Quiet feet/i);
+   if(cues.startsWith('Cue:')){
+    assert.match(view,/Use your shallow stance\./);
+    assert.match(view,/Extra contacts\./);
+   }
+  }
+  assert.equal(item.libraryCue,'Quiet feet, then freeze.');
+  const copy=ctx.api.athleteCopyText(session,sections);
+  assert.match(copy,/1\. Snap Down — 3 × 3 · Rest: 60 seconds/);
+  assert.doesNotMatch(copy,/Stick it|shallow stance|Extra contacts/);
  }
 });

@@ -9,7 +9,7 @@ import {SupabaseHubRepository} from '../supabase/functions/_shared/supabase-repo
 
 const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const extract=(a,b)=>html.slice(html.indexOf(a),html.indexOf(b,html.indexOf(a)+a.length));
-const ctx={DuHubDelivery:delivery,programme:()=>({week:6}),HUB_STATE:{audience:'private-athlete'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSchoolReferenceViewer:()=>false,isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),encodeURIComponent};
+const ctx={DuHubDelivery:delivery,programme:()=>({week:6}),HUB_STATE:{audience:'private-athlete'},session:()=>({role:'athlete'}),schoolGroup:()=>'',isSchoolReferenceViewer:()=>false,isIdentifiedSchoolAthlete:()=>false,location:{hash:''},isSharedSchoolViewer:()=>false,isSchoolWarmupSection:s=>/warm[- ]?up/i.test(s.title),hubPhaseRows:()=>'',escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),encodeURIComponent};
 vm.createContext(ctx);
 ctx.isWorkoutComplete=()=>false;
 vm.runInContext(extract('  function simpleText(','  function visibleNormalizedSections(')+extract('  function guidedCard(','  function quickView(')+extract('  function deliverySections(','  function staffAllGroupsExperience(')+extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')+';globalThis.api={normalizeWorkoutSession,schoolAthleteDelivery,athleteCopyText,guidedCard};',ctx);
@@ -25,7 +25,7 @@ test('safety and positioning conditions are visible without opening technique ti
  const w=ctx.api.normalizeWorkoutSession({prescriptions:[{sectionTitle:'Core',sectionOrder:1,exerciseCode:'CORE02',dosage:'2 × 6/side',cues:'Only if pain-free. Keep legs supported.'}]},clientLibrary);
  const output=ctx.api.schoolAthleteDelivery(w.sections,{});
  assert.match(output,/Only if pain-free/);
- const visible=output.replace(/<details\b[\s\S]*?<\/details>/g,'');
+ const visible=output.replace(/<details class="hub-school-technique">[\s\S]*?<\/details>/g,'');
  assert.match(visible,/Only if pain-free/);assert.match(visible,/Keep legs supported/);
 });
 test('workout sheet explains a dose without changing its prescribed numbers or inventing rest',()=>{
