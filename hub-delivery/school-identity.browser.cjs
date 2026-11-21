@@ -108,11 +108,13 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   ok(await page.evaluate(()=>['A-March','1 × 20 m','Walk-back recovery'].every(t=>window.__copied.includes(t))&&!/Stay tall; controlled rhythm|https:/.test(window.__copied)),'coach copy contains the assigned dose and rest');
   await page.locator('.ducc [data-action="back"]').click();
   await page.locator('.ducc [data-day="1"]').click();
-  ok(await page.locator('.ducc .warmup').count()===1,'Day 2 includes warm-up before skills');
+  const workoutBlocks=page.locator('.ducc .workout-section > h3');
+  ok((await workoutBlocks.allTextContents()).join('|')==='Warm-up|Plyometric skills','Day 2 includes warm-up before skills');
   await page.evaluate(()=>{window.__printSnapshot=null;window.print=()=>{const root=document.querySelector('.ducc');window.__printSnapshot=root.querySelector('.print-sheet').textContent;};});
   await page.locator('.ducc [data-action="print"]').click();
   ok(await page.evaluate(()=>['2 × 8','30 seconds','3 × 3','60 seconds'].every(t=>window.__printSnapshot.includes(t))&&!/Move smoothly|Stay balanced|Demo:/.test(window.__printSnapshot)),'print includes warm-up, skills, dose and rest');
-  ok(await page.locator('.ducc .warmup').evaluate(e=>!e.open),'print leaves warm-up collapsed');
+  ok(await page.locator('.ducc [data-action="prescription"]').getAttribute('aria-pressed')==='true','print leaves Prescription selected');
+  ok(await workoutBlocks.first().isVisible(),'print leaves the warm-up visible');
   await page.emulateMedia({media:'print'});
   ok(await page.locator('.hub-topbar').evaluate(e=>getComputedStyle(e).display==='none'),'print hides navigation');
   ok(await page.locator('#schoolAttendanceRoot').evaluate(e=>getComputedStyle(e).display==='none'),'print excludes register');
