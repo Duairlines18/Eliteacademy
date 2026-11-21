@@ -28,7 +28,7 @@ test('the Ankle Rock briefing uses the movement cue and retains the assigned ran
  await h.click({day:'0'});
  await h.click('present');
  const [briefing,details]=h.root.innerHTML.split('<details class="presentation-details">');
- assert.match(briefing,/<strong>Key cue<\/strong>Move the knee, keep the heel down\./);
+ assert.match(briefing,/<strong>Coaching cue<\/strong>Move the knee, keep the heel down\./);
  assert.doesNotMatch(briefing,/Comfortable controlled range/);
  assert.match(details,/<strong>For this session<\/strong> Comfortable controlled range\./);
 });
@@ -48,16 +48,31 @@ test('presenter shows one exercise and returns to the selected day',async()=>{
  assert.doesNotMatch(h.root.innerHTML,/Coach-approved readiness/);
  assert.match(h.root.innerHTML,/Coach cue.*Keep your heel down.*Watch for.*Forcing the range.*For this session.*Quiet feet.*<details class="movement-detail"/);
  await h.click('present');
- assert.match(h.root.innerHTML,/Workout presentation.*1 of 3.*Warm-up.*Ankle Rock.*2 × 8.*30 seconds.*Watch Demo.*Key cue.*Quiet feet/);
+ const [briefing,details]=h.root.innerHTML.split('<details class="presentation-details">');
+ assert.match(briefing,/Present Workout.*1 of 3.*i\.ytimg\.com\/vi\/6Dlac5mxD6k\/hqdefault\.jpg.*Play Ankle Rock demonstration.*Warm-up.*Ankle Rock.*2 × 8.*30 seconds/);
+ assert.match(briefing,/How to do it.*Move your knee forward.*Coaching cue.*Quiet feet.*Watch for.*Forcing the range/);
+ assert.doesNotMatch(briefing,/Stop for pain|Coach-approved readiness|<iframe/);
+ assert.match(details,/<h4>Session guidance<\/h4><p>Stop for pain\.<\/p>/);
+ assert.match(details,/<progress max="3" value="1"/);
  assert.match(h.root.innerHTML,/Stop for pain\./);
  assert.doesNotMatch(h.root.innerHTML,/Coach-approved readiness/);
- assert.match(h.root.innerHTML,/Watch for.*Forcing the range[\s\S]*<details class="presentation-details"><summary>Coach Details<\/summary>.*Move your knee forward/);
  assert.doesNotMatch(h.root.innerHTML,/Private athlete|6 × 100 m/);
  await h.click('next-slide');
  assert.match(h.root.innerHTML,/2 of 3.*Running.*Use the prescribed space first/);
- assert.doesNotMatch(h.root.innerHTML,/Ankle Rock/);
+ assert.doesNotMatch(h.root.innerHTML,/Ankle Rock|6Dlac5mxD6k|Coaching cue/);
+ assert.match(h.root.innerHTML,/No video for this exercise/);
  await h.click('next-slide');
  assert.match(h.root.innerHTML,/3 of 3.*6 × 100 m at 75%.*1 minute/);
  await h.click('exit-present');
  assert.match(h.root.innerHTML,/Full Workout.*Foundations/);
+});
+
+test('long exercise guidance shows the existing first instruction and retains the full wording in Coach Details',async()=>{
+ const h=setup({warmupCue:'',libraryCue:'Keep your heel down. '+('Use a smooth tempo through each repetition. '.repeat(5))});
+ await h.click({day:'0'});
+ await h.click('present');
+ const [briefing,details]=h.root.innerHTML.split('<details class="presentation-details">');
+ assert.match(briefing,/<strong>Coaching cue<\/strong>Keep your heel down\.<\/p>/);
+ assert.doesNotMatch(briefing,/Use a smooth tempo/);
+ assert.match(details,/Keep your heel down\. Use a smooth tempo/);
 });
