@@ -4606,15 +4606,19 @@ document.addEventListener('click',function(e){
 
   function openAthleteWorkoutDemos(trigger){
     if(session()?.role!=='athlete')return;
-    const day=programme()?.sessions?.find(item=>item.id===currentWorkoutSessionId());
+    const parent=HUB_STATE.audience==='parent';
+    const routine=parent?routineCardSelection():null;
+    const day=routine?.day||programme()?.sessions?.find(item=>item.id===currentWorkoutSessionId());
     if(!day)return;
-    const parentDay=HUB_STATE.audience==='parent'&&!assignedRoutines().includes(day);
+    const standalone=assignedRoutines().includes(day);
+    const parentDay=parent&&(routine?isWarmUpCard(routine.card):!standalone||isWarmUpSession(day));
     if(!parentDay&&HUB_STATE.audience!=='private-athlete'&&!isSchoolReferenceViewer())return;
     const workout=normalizeWorkoutSession(day,EXERCISES,{...programme(),separateWarmups:true});
-    if(requiresGroupSelection(workout))return;
+    if(!routine&&requiresGroupSelection(workout))return;
     const sections=visibleNormalizedSections(workout);
     const items=parentDay
-      ? flattenedWorkoutItems(sections).map(item=>({item,videos:athleteWorkoutDemos(item)}))
+      ? (routine?routineCardItems(routine.card):flattenedWorkoutItems(sections).map(item=>({...item,sessionKey:workout.id})))
+        .map(item=>({item,videos:athleteWorkoutDemos(item)}))
       : flattenedWorkoutItems(deliverySections(sections).filter(section=>!/Additional movement references/i.test(section.title)))
         .flatMap(item=>athleteWorkoutDemos(item).map(video=>({item,videos:[video]})));
     const dialog=document.createElement('dialog');
@@ -4622,8 +4626,8 @@ document.addEventListener('click',function(e){
     dialog.setAttribute('aria-labelledby','hubPrivatePresentationTitle');
     const route=location.hash;
     if(parentDay)dialog.dataset.workoutRoute=route;
-    const sessionNotes=parentDay?[day.watch,day.athleteNote].filter(Boolean):[];
-    const complete=entry=>isWorkoutComplete(workout.id,entry.item.key);
+    const sessionNotes=parentDay?(routine?routineCardNotes(routine.card,day):[day.watch,day.athleteNote].filter(Boolean)):[];
+    const complete=entry=>isWorkoutComplete(entry.item.sessionKey,entry.item.key);
     const nextIncomplete=parentDay?items.findIndex(entry=>!complete(entry)):0;
     let index=nextIncomplete<0?Math.max(0,items.length-1):nextIncomplete,videoIndex=0,saving=false,changed=false;
     function render(){
@@ -4664,7 +4668,7 @@ document.addEventListener('click',function(e){
         saving=true;
         button.disabled=true;
         button.textContent='Saving…';
-        saveWorkoutCompletion(workout.id,entry.item.key,next).then(row=>{
+        saveWorkoutCompletion(entry.item.sessionKey,entry.item.key,next).then(row=>{
           if(!row||location.hash!==route)return;
           changed=true;
           if(dialog.open){
@@ -4673,7 +4677,7 @@ document.addEventListener('click',function(e){
             render();
             dialog.querySelector('[data-presentation-complete]').focus();
           }
-          maybeOpenWorkoutEndCheckin();
+          if(!routine&&!standalone)maybeOpenWorkoutEndCheckin();
         }).catch(()=>{
           if(dialog.open&&location.hash===route){button.disabled=false;button.textContent='Try again';}
         }).finally(()=>{saving=false;});
@@ -4718,7 +4722,8 @@ document.addEventListener('click',function(e){
       dialog.remove();
       if(location.hash!==route)return;
       if(changed&&trigger.isConnected){
-        renderSession(day.id);
+        if(routine)renderRoutineCard();
+        else renderSession(day.id);
         root.querySelector('.hub-parent-day [data-private-present]')?.focus({preventScroll:true});
       }else if(trigger.isConnected)trigger.focus({preventScroll:true});
     },{once:true});
@@ -4785,7 +4790,7 @@ document.addEventListener('click',function(e){
       const percent=Math.round(100*completed/items.length);
       const privateDay=HUB_STATE.audience==='private-athlete'&&session()?.role==='athlete'&&!assignedRoutines().includes(sessionData);
       if(privateDay&&ATHLETE_WORKOUT_VIEW.id!==workout.id)ATHLETE_WORKOUT_VIEW={id:workout.id,mode:'quick'};
-      const parentDay=HUB_STATE.audience==='parent'&&!assignedRoutines().includes(sessionData);
+      const parentDay=HUB_STATE.audience==='parent'&&(!assignedRoutines().includes(sessionData)||isWarmUpSession(sessionData));
       const mode=!parentDay&&(privateDay?ATHLETE_WORKOUT_VIEW.mode:WORKOUT_MODE)==='guided'?'guided':'quick';
       const toggle='<div class="hub-workout-toolbar"><div class="hub-workout-progress"><strong>'+completed+'/'+items.length+' complete</strong><div class="hub-progress-track"><div class="hub-progress-fill" style="width:'+percent+'%"></div></div></div>'+(parentDay?athleteWorkoutControls('quick',false,'Quick View'):privateDay?athleteWorkoutControls(mode):'<div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="quick" class="'+(mode==='quick'?'active':'')+'">Quick View</button><button type="button" data-workout-mode="guided" class="'+(mode==='guided'?'active':'')+'">Guided Workout</button></div>')+'</div>';
       const wrapper='<div class="hub-parent-workout-experience'+(parentDay?' hub-parent-day':privateDay?' hub-private-workout':'')+'">';
@@ -5209,11 +5214,20 @@ document.addEventListener('click',function(e){
     });
   }
   function routineCardItems(card){return routineCardSections(card).flatMap(({source,sections})=>flattenedWorkoutItems(sections).map(item=>({...item,sessionKey:source.id})));}
+  function isWarmUpSession(sessionData){
+    return sessionData.routineKind==='warm-up'||/\bwarm[ -]?up\b/i.test([sessionData.day,sessionData.title].join(' '));
+  }
+  function isWarmUpCard(card){
+    return card.kind==='combined'||card.kind==='inline'||card.sessions.some(isWarmUpSession);
+  }
+  function routineCardNotes(card,day){
+    return [...new Set([day.watch,day.athleteNote,...card.sessions.flatMap(s=>[s.watch,s.athleteNote])].filter(Boolean))];
+  }
   function renderRoutineCard(){
     const selected=routineCardSelection();if(!selected){renderNotFound();return;}
     const {card,day,route}=selected,items=routineCardItems(card);
     if(isSchoolReferenceViewer()&&session()?.role==='athlete'){
-      const notes=[...new Set([day.watch,day.athleteNote,...card.sessions.flatMap(s=>[s.watch,s.athleteNote])].filter(Boolean))];
+      const notes=routineCardNotes(card,day);
       const guidance=notes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+notes.map(escapeHtml).join('<br>')+'</span></div>':'';
       const content=routineCardSections(card).map(({source,sections})=>schoolAthleteDelivery(sections,source)).join('');
       root.innerHTML=shell('<div class="hub-athlete-session-nav"><a href="#/hub/routines">← Your Routines</a></div><div class="hub-athlete-session-title"><h1>'+escapeHtml(card.title)+'</h1></div>'+guidance+'<a class="hub-button secondary" href="#/hub/session/'+encodeURIComponent(day.id)+'">Return to Today’s Workout →</a><section class="hub-section hub-field-session">'+content+'</section>','routines');
@@ -5221,20 +5235,28 @@ document.addEventListener('click',function(e){
     }
     const complete=item=>isWorkoutComplete(item.sessionKey,item.key);
     const completed=items.filter(complete).length;
+    const parentWarmUp=session()?.role==='athlete'&&HUB_STATE.audience==='parent'&&isWarmUpCard(card);
     let cursor=Number.isInteger(GUIDED_CURSOR[route])?GUIDED_CURSOR[route]:items.findIndex(item=>!complete(item));
     cursor=Math.max(0,Math.min(items.length-1,cursor<0?items.length-1:cursor));GUIDED_CURSOR[route]=cursor;
-    const toolbar='<div class="hub-workout-toolbar"><strong>'+completed+'/'+items.length+' complete</strong><div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="quick">Quick View</button><button type="button" data-workout-mode="guided">Guided Workout</button></div></div>';
-    const content=!items.length?'<p>This routine is being prepared.</p>':WORKOUT_MODE==='guided'?guidedCard(items[cursor],items[cursor].sectionTitle,cursor,items.length,items[cursor].sessionKey):routineCardSections(card).map(({source,sections})=>quickView(source.id,sections,session()?.role==='staff',false,source)).join('');
-    const notes=[...new Set([day.watch,day.athleteNote,...card.sessions.flatMap(s=>[s.watch,s.athleteNote])].filter(Boolean))];
+    const guided=!parentWarmUp&&WORKOUT_MODE==='guided';
+    const controls=parentWarmUp
+      ? (items.length?athleteWorkoutControls('quick',false,'Quick View'):'')
+      : '<div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="quick">Quick View</button><button type="button" data-workout-mode="guided">Guided Workout</button></div>';
+    const toolbar='<div class="hub-workout-toolbar"><strong>'+completed+'/'+items.length+' complete</strong>'+controls+'</div>';
+    const content=!items.length?'<p>This routine is being prepared.</p>':guided?guidedCard(items[cursor],items[cursor].sectionTitle,cursor,items.length,items[cursor].sessionKey):routineCardSections(card).map(({source,sections})=>quickView(source.id,sections,session()?.role==='staff',false,source)).join('');
+    const notes=routineCardNotes(card,day);
     const heading='<div class="hub-athlete-session-nav"><a href="#/hub/routines">← Your Routines</a></div><div class="hub-athlete-session-title"><h1>'+escapeHtml(card.title)+'</h1></div>';
     const guidance=notes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+notes.map(escapeHtml).join('<br>')+'</span></div>':'';
-    root.innerHTML=shell(heading+guidance+'<a class="hub-button secondary" href="#/hub/session/'+encodeURIComponent(day.id)+'">Return to Today’s Workout →</a><section class="hub-section hub-field-session">'+toolbar+'<div class="hub-workout-experience '+(WORKOUT_MODE==='guided'?'guided':'quick')+'">'+content+'</div></section>','routines');
+    root.innerHTML=shell(heading+guidance+'<a class="hub-button secondary" href="#/hub/session/'+encodeURIComponent(day.id)+'">Return to Today’s Workout →</a><section class="hub-section hub-field-session'+(parentWarmUp?' hub-parent-day':'')+'">'+toolbar+'<div class="hub-workout-experience '+(guided?'guided':'quick')+'">'+content+'</div></section>','routines');
   }
   function handleRoutineCardAction(event){
     const selected=routineCardSelection();if(!selected)return false;
     const button=event.target.closest('[data-workout-mode],[data-guided-prev],[data-guided-next],[data-completion-toggle]');if(!button)return false;
     const {card,route}=selected,items=routineCardItems(card);
-    if(button.hasAttribute('data-workout-mode'))WORKOUT_MODE=button.dataset.workoutMode==='guided'?'guided':'quick';
+    if(button.hasAttribute('data-workout-mode')){
+      if(button.closest('.hub-parent-day'))return true;
+      WORKOUT_MODE=button.dataset.workoutMode==='guided'?'guided':'quick';
+    }
     else if(button.hasAttribute('data-guided-prev'))GUIDED_CURSOR[route]=Math.max(0,(GUIDED_CURSOR[route]||0)-1);
     else if(button.hasAttribute('data-guided-next'))GUIDED_CURSOR[route]=Math.min(items.length-1,(GUIDED_CURSOR[route]||0)+1);
     else {
