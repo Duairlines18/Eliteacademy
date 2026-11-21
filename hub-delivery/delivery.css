@@ -69,8 +69,39 @@ body:has(.hub-private-presentation[open]){overflow:hidden}
 
 .hub-parent-day .hub-workout-toolbar{display:grid;gap:.75rem}
 .hub-parent-day .hub-workout-progress{width:100%}
-.hub-parent-presentation .hub-private-presentation-body.no-video{grid-template-columns:minmax(0,1fr)}
-.hub-parent-presentation .hub-parent-presentation-notes{margin:.75rem 0}
+.hub-parent-presentation[open]{overflow:hidden}
+.hub-parent-presentation .hub-private-presentation-body{
+  display:flex;
+  flex-direction:column;
+  gap:.85rem;
+  overscroll-behavior:contain;
+}
+.hub-parent-presentation .hub-private-presentation-body > *{flex:none;width:100%;min-width:0}
+.hub-parent-demo-heading .hub-private-dose{margin:.35rem 0 0}
+.hub-parent-demo-player .hub-private-video-stage{margin:0}
+.hub-parent-demo-player .hub-private-video-fallback{padding:.35rem 0}
+.hub-parent-demo-details{display:grid;gap:.6rem}
+.hub-parent-demo-details .hub-parent-presentation-notes{margin:0}
+.hub-parent-demo-details .hub-visible-coach-note{
+  padding:.7rem .85rem;
+  border-left:2px solid rgba(199,162,90,.35);
+  background:rgba(255,255,255,.035);
+}
+.hub-parent-demo-details .hub-visible-coach-note strong{
+  display:block;
+  margin:0 0 .25rem;
+  font-size:.72rem;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+@media(min-width:760px){
+  .hub-parent-presentation .hub-private-presentation-body:not(.no-video){
+    display:grid;
+    grid-template-columns:minmax(0,3fr) minmax(0,2fr);
+    grid-auto-rows:max-content;
+  }
+  .hub-parent-demo-heading{grid-column:1 / -1}
+}
 .hub-parent-presentation .hub-parent-demo-options{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}
 .hub-parent-presentation .hub-parent-demo-options [aria-pressed="true"]{border-color:#e7c787;color:#e7c787}
 .hub-parent-presentation footer button{padding-inline:clamp(.4rem,2vw,1rem);min-width:0}

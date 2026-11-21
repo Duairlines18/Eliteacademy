@@ -5,6 +5,8 @@ on:
       - 'index.html'
       - 'parent-qa/**'
       - 'parent-setup/**'
+      - 'hub-delivery/delivery.css'
+      - 'hub-delivery/guided-training.browser.cjs'
       - 'supabase/functions/_shared/parent-*.ts'
       - 'supabase/functions/_shared/supabase-repository.ts'
       - 'supabase/migrations/*parent_athlete_setup.sql'
@@ -31,3 +33,8 @@ jobs:
         env:
           NODE_PATH: /tmp/du-parent-qa/node_modules
           RUN_WEBKIT: '1'
+      - name: Verify parent demos in WebKit at phone widths
+        run: node hub-delivery/guided-training.browser.cjs
+        env:
+          NODE_PATH: /tmp/du-parent-qa/node_modules
+          PARENT_DEMO_WEBKIT: '1'
