@@ -22,8 +22,8 @@ const {chromium}=require('playwright');
  }
  try{
   browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE,args:JSON.parse(process.env.CHROMIUM_ARGS||'[]')});
-  for(const width of [390,768,1440]){
-   const page=await browser.newPage({viewport:{width,height:900}}),errors=[];
+  for(const [width,height] of [[320,740],[390,844],[768,1024],[1440,810]]){
+   const page=await browser.newPage({viewport:{width,height}}),errors=[];
    page.on('pageerror',e=>errors.push(e.message));
    await page.route('**/*',r=>{
     const url=new URL(r.request().url());
@@ -52,22 +52,47 @@ const {chromium}=require('playwright');
     assert.match(copied,/WARM-UP\n1\. A-March — 2 × 8 · Rest: 30 seconds/);checks++;
     assert.match(copied,/Snap Down — 3 × 3 · Rest: 60 seconds/);checks++;
     assert.doesNotMatch(copied,/How to do it|Watch for|Move smoothly|Stay balanced|https:/);checks++;
-    const section=page.locator('.ducc details.section').last();
-    assert.equal(await section.evaluate(el=>el.open),false,'workout block starts compact');checks++;
-    await section.locator(':scope > summary').click();
-    const detail=section.locator('.movement-detail').last();
-    assert.equal(await detail.evaluate(el=>el.open),false,'technique starts collapsed');checks++;
-    assert.ok((await section.innerText()).includes('Stay balanced.'),'assigned session cue remains visible');checks++;
-    assert.ok((await section.innerText()).includes('Drop quickly into a shallow landing.'));checks++;
-    if(evidence&&route==='staff'&&[390,1440].includes(width)){
-     await page.locator('.ducc .warmup > summary').click();
-     await page.locator('.ducc').screenshot({path:path.join(evidence,'coaching-workout-'+width+'.png')});
+    const selector=page.getByRole('group',{name:'Coaching view'});
+    const learnButton=selector.getByRole('button',{name:'Learn'});
+    const prescription=selector.getByRole('button',{name:'Prescription'});
+    const sections=page.locator('.ducc .workout-section');
+    assert.equal(await prescription.getAttribute('aria-pressed'),'true');checks++;
+    const rows=sections.locator('.row-heading');
+    const rowText=await rows.allTextContents();
+    assert.equal(rowText.length,2);
+    assert.match(rowText[0],/A-March.*2 × 8.*30 seconds/);
+    assert.match(rowText[1],/Snap Down.*3 × 3.*60 seconds/);
+    assert.equal(await page.locator('.ducc .learn-card, .ducc iframe').count(),0);
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));checks+=5;
+    if(evidence&&route==='staff'){
+     await page.locator('.ducc').screenshot({path:path.join(evidence,'prescription-'+width+'.png')});
      if(width===1440)await fs.writeFile(path.join(evidence,'Copy-Workout.txt'),copied+'\n');
     }
+    await learnButton.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await learnButton.getAttribute('aria-pressed'),'true');checks++;
+    assert.equal(await learnButton.evaluate(el=>el===document.activeElement),true);checks++;
+    assert.deepEqual(await rows.allTextContents(),rowText);checks++;
+    const cards=sections.locator('.learn-card');
+    const detail=cards.last(),firstCard=cards.first();
+    assert.equal(await cards.evaluateAll(nodes=>nodes.every(el=>!el.open)),true);checks++;
+    assert.equal(await detail.locator('.learn-guidance').isVisible(),false);checks++;
     await detail.locator('summary').click();
-    await detail.locator('[data-video]').last().click();
-    assert.ok((await page.locator('.ducc iframe').getAttribute('src')).includes('Dv6blgFNo28'));checks++;
-    await page.locator('.ducc [data-action="close-video"]').click();
+    assert.equal(await firstCard.evaluate(el=>el.open),false);checks++;
+    assert.match(await detail.locator('.learn-guidance').innerText(),/Stay balanced\./);
+    assert.match(await detail.locator('.learn-guidance').innerText(),/Drop quickly into a shallow landing\./);checks+=2;
+    const playDemo=detail.getByRole('button',{name:'Play Snap Down demonstration'});
+    assert.ok(await playDemo.evaluate(el=>el.compareDocumentPosition(el.closest('.learn-body').querySelector('.learn-guidance'))&Node.DOCUMENT_POSITION_FOLLOWING));checks++;
+    if(evidence&&route==='staff')await page.locator('.ducc').screenshot({path:path.join(evidence,'learn-'+width+'.png')});
+    await playDemo.click();
+    assert.match(await detail.locator('iframe').getAttribute('src'),/Dv6blgFNo28/);checks++;
+    await firstCard.locator('summary').click();
+    assert.equal(await detail.evaluate(el=>el.open),true);checks++;
+    await detail.locator('summary').click();
+    await detail.locator('iframe').waitFor({state:'detached'});checks++;
+    assert.equal(await firstCard.evaluate(el=>el.open),true);checks++;
+    await page.locator('.ducc [data-action="copy"]').click();
+    assert.equal(await page.evaluate(()=>window.__copied),copied);checks++;
     await page.evaluate(()=>{window.print=()=>{};});
     await page.locator('.ducc [data-action="print"]').click();
     assert.equal(await page.locator('.print-day').count(),1);checks++;
@@ -91,6 +116,14 @@ const {chromium}=require('playwright');
     const presenter=page.getByRole('region',{name:'Workout presentation'});
     assert.equal(await presenter.locator('.presentation-progress').textContent(),'1 of 2');checks++;
     assert.ok(await presenter.getByRole('button',{name:'Previous',exact:true}).isDisabled());checks++;
+    await presenter.getByText('Export',{exact:true}).click();
+    await presenter.getByRole('button',{name:'Copy complete workout',exact:true}).click();
+    assert.equal(await page.evaluate(()=>window.__copied),copied);checks++;
+    await presenter.getByRole('button',{name:'Print this day',exact:true}).click();
+    assert.equal(await page.locator('.print-day').textContent(),printDay);checks++;
+    await presenter.getByRole('button',{name:'Print week',exact:true}).click();
+    assert.equal(await page.locator('.print-day').count(),3);checks++;
+    await presenter.getByText('Export',{exact:true}).click();
     await page.keyboard.press('ArrowRight');
     assert.equal(await presenter.locator('.presentation-progress').textContent(),'2 of 2');checks++;
     const projection=await presenter.innerText();
@@ -123,9 +156,18 @@ const {chromium}=require('playwright');
     await page.keyboard.press('Escape');
     await page.getByRole('heading',{name:'Full Workout',exact:true}).waitFor();
     assert.ok((await page.locator('.ducc .workout-head').innerText()).includes('Capacity and control'));checks++;
+    assert.equal(await learnButton.getAttribute('aria-pressed'),'true');checks++;
+    assert.equal(await firstCard.evaluate(el=>el.open),true);checks++;
+    assert.equal(await selector.getByRole('button',{name:'Present',exact:true}).evaluate(el=>el===document.activeElement),true);checks++;
     if(route==='staff'){
      await page.locator('.ducc [data-day="2"]').click();
      assert.ok((await page.locator('.ducc .workout-head').innerText()).includes('OPTIONAL EXTRA'));checks++;
+     assert.equal(await prescription.getAttribute('aria-pressed'),'true');checks++;
+     await learnButton.click();
+     const recovery=cards.last();
+     await recovery.locator('summary').click();
+     assert.ok(await recovery.getByText('No video for this exercise.').isVisible());checks++;
+     assert.match(await recovery.locator('summary').innerText(),/Walk easily for 2 minutes/);checks++;
      await page.locator('.ducc [data-action="present"]').click();
      for(const [heading,tokens] of [
       ['Sprint technique',['3 × 40 m at 75%','Walk back.']],
@@ -188,7 +230,7 @@ const {chromium}=require('playwright');
       ]}]},
      },{initialSessionId:'wide-test'});
     });
-    await page.getByRole('button',{name:'Present workout'}).click();
+    await page.getByRole('button',{name:'Present',exact:true}).click();
     const widePresenter=page.getByRole('region',{name:'Workout presentation'});
     assert.equal(await widePresenter.locator('.presentation-progress').textContent(),'1 of 1');checks++;
     assert.ok(await widePresenter.getByRole('button',{name:'Next',exact:true}).isDisabled());checks++;
@@ -219,7 +261,13 @@ const {chromium}=require('playwright');
       }]}]},
      },{initialSessionId:'mapped'});
     });
-    await page.getByRole('button',{name:'Present workout'}).click();
+    await page.getByRole('button',{name:'Learn',exact:true}).click();
+    const mappedCard=page.locator('.learn-card').first();
+    await mappedCard.locator('summary').click();
+    await mappedCard.getByRole('button',{name:'Step-Up',exact:true}).click();
+    await mappedCard.getByRole('button',{name:'Play Step-Up demonstration'}).click();
+    assert.match(await mappedCard.locator('iframe').getAttribute('src'),/Tdn9-s7-YPc/);checks++;
+    await page.getByRole('button',{name:'Present',exact:true}).click();
     assert.match(await widePresenter.locator('.presentation-stage img').getAttribute('src'),/6Dlac5mxD6k/);checks++;
     assert.equal(await widePresenter.locator('.presentation-guidance').count(),0);checks++;
     await widePresenter.getByRole('button',{name:'Step-Up',exact:true}).click();
