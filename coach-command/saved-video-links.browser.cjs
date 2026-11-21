@@ -18,29 +18,36 @@ const {chromium}=require('playwright');
    // Day buttons are available on the team overview.
    if(await page.locator('[data-action="back"]').count())await page.locator('[data-action="back"]').click();
    await page.locator('[data-day="'+day+'"]').click();
-   const section=page.locator('details.section').filter({has:page.locator('summary').filter({hasText:title})});
-   await section.locator(':scope > summary').click();
-   const rows=section.locator('.exercise');assert.equal(await rows.count(),3);checks++;
-   for(let i=0;i<3;i++){
-    assert.equal(await rows.nth(i).locator('[data-video]').count(),expected);checks++;
+   await page.getByRole('button',{name:'Learn',exact:true}).click();
+   const section=page.locator('.workout-section').filter({has:page.getByRole('heading',{name:title,exact:true})});
+   const cards=section.locator('.learn-card');assert.equal(await cards.count(),3);checks++;
+   for(const card of await cards.all()){
+    await card.locator('summary').click();
+    const options=card.locator('[data-demo-url]');assert.equal(await options.count(),expected);checks++;
     if(title==='Main Strength'){
-     assert.equal(await rows.nth(i).getByRole('button',{name:'Watch Single-Leg Glute Bridge demonstration',exact:true}).count(),1);checks++;
-     assert.equal(await rows.nth(i).getByRole('button',{name:'Watch Single-Leg Bridge Hold demonstration',exact:true}).count(),0);checks++;
+     assert.equal(await card.getByRole('button',{name:'Single-Leg Glute Bridge',exact:true}).count(),1);checks++;
+     assert.equal(await card.getByRole('button',{name:'Single-Leg Bridge Hold',exact:true}).count(),0);checks++;
     }
-    await rows.nth(i).locator('.movement-detail > summary').click();
-    for(const button of await rows.nth(i).locator('[data-video]').all()){
-     const target=await button.getAttribute('data-video');
-     await button.click();assert.equal(await page.locator('.video iframe').getAttribute('src'),target);checks++;
-     await page.locator('[data-action="close-video"]').click();
+    for(const option of await options.all()){
+     await option.click();
+     const play=card.locator('[data-play-demo]');
+     assert.equal(await play.getAttribute('data-play-demo'),await option.getAttribute('data-demo-url'));checks++;
+     const chosen=new URL(await option.getAttribute('data-demo-url'));
+     const id=chosen.searchParams.get('v')||chosen.pathname.split('/').at(-1);
+     await play.click();
+     const frame=new URL(await card.locator('iframe').getAttribute('src'));
+     assert.equal(frame.pathname,'/embed/'+id);checks++;
     }
+    await card.locator('summary').click();
+    await card.locator('iframe').waitFor({state:'detached'});
    }
    assert.ok(await section.evaluate(el=>el.scrollWidth<=el.clientWidth+1));checks++;
   }
-  await page.locator('[data-action="videos"]').click();assert.equal(await page.locator('.demo-links').count(),0);checks++;
-  await page.locator('[data-action="videos"]').click();assert.ok(await page.locator('.demo-links').count()>0);checks++;
+  await page.getByRole('button',{name:'Prescription',exact:true}).click();
+  assert.equal(await page.locator('[data-play-demo]').count(),0);checks++;
   assert.deepEqual(errors,[]);checks++;
   if(process.env.VIDEO_QA_SCREENSHOTS)await page.screenshot({path:process.env.VIDEO_QA_SCREENSHOTS+'/saved-videos-'+width+'.png',fullPage:true});
   await browser.close();browser=null;
- }console.log(checks+' browser checks passed: live-source school rows, exact video clicks, mobile/desktop, toggle and overflow.');
+ }console.log(checks+' browser checks passed: live-source school rows, exact video clicks, mobile/desktop, Learn disclosures and overflow.');
  }finally{if(browser)await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});
