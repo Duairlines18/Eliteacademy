@@ -86,8 +86,10 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   await page.goto('http://127.0.0.1:4173/qa/staff#/hub/staff');await page.getByRole('heading',{name:'Team Command',exact:true}).waitFor();checks++;
   ok(await page.locator('.ducc [data-athlete]').count()===6,'coach sees exactly six assigned athletes');
   ok(await page.locator('.ducc [data-day]').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('linear-gradient')),'coach day cards render gradient');
-  ok(await page.locator('.ducc [data-day]:not(.selected)').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('114, 27, 44')||getComputedStyle(el).backgroundImage.includes('114,27,44')),'Saints unselected coach day card uses crimson');
-  ok(await page.locator('.ducc [data-day].selected').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('145, 35, 60')||getComputedStyle(el).backgroundImage.includes('145,35,60')),'Saints selected coach day card uses brighter crimson');
+  const coachDays=page.locator('.ducc [data-day]');
+  ok(await coachDays.first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('26, 61, 42')),'coach day cards use the academy forest-green gradient');
+  ok(await page.locator('.ducc [data-day].selected').first().evaluate(el=>getComputedStyle(el).borderTopColor==='rgb(199, 162, 90)'),'selected coach day has the website gold outline');
+  ok(await page.getByRole('heading',{name:'Team Command',exact:true}).evaluate(el=>getComputedStyle(el).fontFamily.includes('Playfair Display')),'coach heading uses the website display font');
   await page.locator('[data-att-week]').waitFor();
   await page.locator('[data-att-week]').selectOption('2');
   await page.locator('[data-att-week] option[value="2"][selected]').waitFor({state:'attached'});checks++;
