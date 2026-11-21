@@ -49,6 +49,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    const presenter=page.getByRole('dialog',{name:'Exercise demos'});
    ok(await presenter.getByRole('heading',{name:'A-March',exact:true}).isVisible(),'presenter starts at the first assigned demo');
    ok(await presenter.getByText('1 × 20 m · Rest: Walk-back recovery',{exact:true}).isVisible(),'presenter preserves dosage and rest');
+   ok(await presenter.locator('footer').evaluate(footer=>footer.getBoundingClientRect().bottom<=innerHeight+1),'navigation is reachable before playback');
    await presenter.getByRole('button',{name:'Play demo'}).click();
    ok((await presenter.locator('iframe').getAttribute('src')).includes('/embed/4lQsMyKRRn8'),'presenter uses the same assigned demo');
    ok(await presenter.getByRole('link',{name:'Open on YouTube'}).getAttribute('href')==='https://www.youtube.com/shorts/4lQsMyKRRn8','presenter retains the original link');
@@ -140,7 +141,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   await page.evaluate(()=>{window.__printSnapshot=null;window.print=()=>{const root=document.querySelector('.ducc');window.__printSnapshot=root.querySelector('.print-sheet').textContent;};});
   await page.locator('.ducc [data-action="print"]').click();
   ok(await page.evaluate(()=>['2 × 8','30 seconds','3 × 3','60 seconds'].every(t=>window.__printSnapshot.includes(t))&&!/Move smoothly|Stay balanced|Demo:/.test(window.__printSnapshot)),'print includes warm-up, skills, dose and rest');
-  ok(await page.locator('.ducc [data-action="prescription"]').getAttribute('aria-pressed')==='true','print leaves Prescription selected');
+  ok(await page.locator('.ducc .coaching-views [aria-current="true"]').textContent()==='Workout','print leaves Workout selected');
   ok(await workoutBlocks.first().isVisible(),'print leaves the warm-up visible');
   await page.emulateMedia({media:'print'});
   ok(await page.locator('.hub-topbar').evaluate(e=>getComputedStyle(e).display==='none'),'print hides navigation');

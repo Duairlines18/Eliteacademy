@@ -52,17 +52,18 @@ body:has(.hub-private-presentation[open]){overflow:hidden}
 @media(max-width:540px){.hub-private-view-options{max-width:none;flex-basis:100%}}
 
 .hub-school-workout .hub-private-view-options{grid-template-columns:repeat(2,minmax(0,1fr))}
-.hub-school-presentation[open]{display:grid;grid-template-rows:auto 1fr auto}
+.hub-school-presentation[open]{display:grid;grid-template-rows:auto minmax(0,1fr) auto}
 .hub-school-presentation :is(header,footer){
   padding-inline:max(clamp(.75rem,3vw,2rem),env(safe-area-inset-left)) max(clamp(.75rem,3vw,2rem),env(safe-area-inset-right));
 }
 .hub-school-presentation header{padding-top:max(.75rem,env(safe-area-inset-top))}
 .hub-school-presentation footer{padding-bottom:max(.75rem,env(safe-area-inset-bottom))}
-.hub-school-presentation .hub-private-presentation-body{width:100%;box-sizing:border-box;margin:0 auto;padding:clamp(.75rem,2.5vw,2rem)}
+.hub-school-presentation .hub-private-presentation-body{width:100%;box-sizing:border-box;margin:0 auto;padding:clamp(.75rem,2.5vw,2rem);overflow:auto}
 .hub-school-presentation .hub-private-dose{margin:.35rem 0 .75rem}
 .hub-school-presentation .hub-private-video-stage{border-radius:16px}
 .hub-school-presentation .hub-private-video-stage.vertical:has(iframe){height:min(56dvh,38rem)}
 @media(max-width:759px){
   .hub-school-presentation .hub-private-presentation-body{gap:.8rem}
   .hub-school-presentation .hub-private-video-stage{margin-inline:-.35rem}
+  .hub-school-presentation .hub-private-video-fallback{grid-row:auto}
 }

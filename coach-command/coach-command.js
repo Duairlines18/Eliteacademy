@@ -29,11 +29,11 @@
 .ducc .workout-actions{gap:6px}
 .ducc .workout-actions .button{min-height:44px}
 .ducc .coaching-views{
- display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;width:100%;max-width:540px;
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;width:100%;max-width:540px;
  padding:4px;border:1px solid #3f3524;border-radius:12px;background:#101010;
 }
 .ducc .coaching-views .button{min-height:44px;padding:5px;color:#e9e0cf;background:transparent}
-.ducc .coaching-views .button[aria-pressed="true"]{background:#e7c78b;color:#24190a}
+.ducc .coaching-views [aria-current="true"]{display:grid;place-items:center;background:#e7c78b;color:#24190a;cursor:default}
 .ducc .coaching-views .button:disabled{opacity:.55;cursor:default}
 .ducc .session-context,.ducc .workout-section{min-width:0;overflow-wrap:anywhere}
 .ducc .session-context .session-instructions,.ducc .row-instructions{white-space:pre-line}
@@ -67,7 +67,6 @@
 .ducc .learn-body{padding:8px 0 4px}
 .ducc .learn-media{--present-gold:#ebca8b;--present-cream:#fff8e9;max-width:560px;margin-bottom:10px}
 .ducc .learn-media .presentation-stage{aspect-ratio:16/9;max-height:340px;background:#0b0b0b}
-.ducc .learn-media .presentation-stage.empty{aspect-ratio:auto;border-color:#373025;text-align:left;justify-items:start;padding:10px 12px}
 .ducc .learn-media .presentation-stage.portrait:has(iframe){min-height:320px}
 .ducc .learn-media .presentation-stage.portrait iframe{min-width:0}
 .ducc .learn-media .presentation-demo-options .button{min-height:44px}
@@ -235,7 +234,7 @@ body:has(.ducc .presentation){overflow:hidden}
     const exercises=new Map((Array.isArray(data.exercises)?data.exercises:[]).map(e=>[e.code,e]));
     const roster=opts.rosterVerified===true&&Array.isArray(opts.roster)&&opts.roster.every(a=>a&&a.cohort_id===data.cohort.id)?opts.roster:null;
     const initialDay=opts.initialSessionId?sessions.findIndex(s=>String(s.id)===String(opts.initialSessionId)):-1;
-    let day=initialDay>=0?initialDay:0,view=initialDay>=0?'workout':'overview',workoutView='prescription';
+    let day=initialDay>=0?initialDay:0,view=initialDay>=0?'workout':'overview';
     let athlete=null,slide=0,sequence=[],detailsOpen=false,openLearnRows=new Set();
     const style=document.createElement('style');style.textContent=styles;host.replaceChildren(style);
     const root=document.createElement('div');root.className='ducc';host.append(root);
@@ -331,10 +330,10 @@ body:has(.ducc .presentation){overflow:hidden}
         .filter(note=>note&&note!==purpose(s)))];
       const safety=notes.filter(note=>restriction.test(note));
       const other=notes.filter(note=>!restriction.test(note));
-      const movementNotes=workoutView==='prescription'?blocks.flatMap(([,rows])=>rows.flatMap(row=>{
+      const movementNotes=blocks.flatMap(([,rows])=>rows.flatMap(row=>{
         const {cue}=delivery.sessionCoaching(row.cues);
         return cue&&!restriction.test(cue)?[[nameOf(row),cue]]:[];
-      })):[];
+      }));
       return '<div class="session-context">'+
         (purpose(s)?'<p><strong>Purpose</strong> '+esc(purpose(s))+'</p>':'')+
         safety.map(note=>'<p class="session-restriction">'+esc(note)+'</p>').join('')+
@@ -365,24 +364,23 @@ body:has(.ducc .presentation){overflow:hidden}
       const dose=prescriptionLine(row);
       const summary='<span class="row-heading"><span class="row-name">'+esc(nameOf(row))+'</span>'+
         (dose?'<span class="row-dose">'+esc(dose)+'</span>':'')+'</span>';
-      if(workoutView==='prescription'){
-        return '<li class="workout-row">'+heading+summary+prescriptionNotes(row,saved)+'</li>';
-      }
       const ex=exercises.get(row.exerciseCode)||{};
       const demos=matchingDemos(row).filter(demo=>safeVideo(demo.url));
       const guidance=renderRows([...movementCoaching(row,ex),...assignedContext(row)])+
         reviewedMovementCoaching(row,demos).map(({title,rows})=>'<div><h4>'+esc(title)+'</h4>'+renderRows(rows)+'</div>').join('');
+      const cautions=prescriptionNotes(row,saved);
+      if(!demos.length&&!guidance)return '<li class="workout-row">'+heading+summary+cautions+'</li>';
       const key=sectionIndex+'-'+rowIndex;
       return '<li class="workout-row">'+heading+'<details class="learn-card" data-learn-row="'+key+'"'+
         (openLearnRows.has(key)?' open':'')+'><summary>'+summary+'</summary><div class="learn-body">'+
-        '<div class="learn-media">'+demoPlayer(demos,true)+'</div>'+
-        (guidance?'<div class="learn-guidance">'+guidance+'</div>':'')+'</div></details></li>';
+        (demos.length?'<div class="learn-media">'+demoPlayer(demos,true)+'</div>':'')+
+        (guidance?'<div class="learn-guidance">'+guidance+'</div>':'')+'</div></details>'+cautions+'</li>';
     }
     function viewSelector(hasBlocks){
       return '<div class="coaching-views" role="group" aria-label="Coaching view">'+
-        [['prescription','Prescription'],['learn','Learn'],['present','Present']].map(([value,label])=>
-          '<button type="button" class="button" data-action="'+value+'" aria-pressed="'+(workoutView===value)+'"'+
-          (!hasBlocks&&value!=='prescription'?' disabled':'')+'>'+label+'</button>').join('')+'</div>';
+        '<span class="button" aria-current="true">Workout</span>'+
+        '<button type="button" class="button" data-action="present"'+
+        (hasBlocks?'':' disabled')+'>Present Workout</button></div>';
     }
     function exportButtons(includeWeek){
       return '<button type="button" class="button secondary" data-action="print">Print this day</button>'+
@@ -560,20 +558,15 @@ body:has(.ducc .presentation){overflow:hidden}
       }
       root.innerHTML=header+'<main>'+body+'</main>';
     }
-    function rememberLearnRows(){
-      if(workoutView==='learn'){
-        openLearnRows=new Set(Array.from(root.querySelectorAll('.learn-card[open]'),card=>card.dataset.learnRow));
-      }
-    }
-    function openPrescription(){
-      view='workout';workoutView='prescription';openLearnRows.clear();
+    function openWorkout(){
+      view='workout';openLearnRows.clear();
     }
     root.addEventListener('click',async e=>{
       const b=e.target.closest('button');if(!b)return;
       if(b.dataset.day!==undefined){
         const next=Number(b.dataset.day);
         if(!sessions[next])return;
-        day=next;openPrescription();
+        day=next;openWorkout();
       }
       if(b.dataset.athlete!==undefined){athlete=Number(b.dataset.athlete);view='athlete';}
       if(b.dataset.playDemo){playPresentationVideo(b);return;}
@@ -588,17 +581,13 @@ body:has(.ducc .presentation){overflow:hidden}
       }
       switch(b.dataset.action){
         case 'back':view='overview';break;
-        case 'workout':if(!sessions.length)return;openPrescription();break;
-        case 'prescription':
-        case 'learn':
-          if(workoutView===b.dataset.action)return;
-          rememberLearnRows();
-          workoutView=b.dataset.action;break;
+        case 'workout':if(!sessions.length)return;openWorkout();break;
         case 'present':
           if(session().locked)return;
           sequence=sections(session()).flatMap(([title,rows])=>rows.map(row=>({title,row})));
           if(!sequence.length)return;
-          rememberLearnRows();view='present';slide=0;detailsOpen=false;break;
+          openLearnRows=new Set(Array.from(root.querySelectorAll?.('.learn-card[open]')||[],card=>card.dataset.learnRow));
+          view='present';slide=0;detailsOpen=false;break;
         case 'exit-present':view='workout';break;
         case 'prev-slide':moveSlide(slide-1);return;
         case 'next-slide':moveSlide(slide+1);return;
@@ -608,10 +597,7 @@ body:has(.ducc .presentation){overflow:hidden}
       }
       render();
       if(b.dataset.day!==undefined)root.querySelector?.('[data-day="'+day+'"]')?.focus();
-      if(['prescription','learn','exit-present'].includes(b.dataset.action)){
-        const control=b.dataset.action==='exit-present'?'present':workoutView;
-        root.querySelector?.('[data-action="'+control+'"]')?.focus();
-      }
+      if(b.dataset.action==='exit-present')root.querySelector?.('[data-action="present"]')?.focus();
     });
     root.addEventListener('error',event=>{
       if(event.target.matches?.('.presentation-stage img'))event.target.hidden=true;
