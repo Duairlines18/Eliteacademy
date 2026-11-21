@@ -21,14 +21,13 @@
 .hub-private-workout .hub-workout-toolbar{display:grid;gap:.75rem}
 .hub-private-workout .hub-workout-progress{width:100%}
 .hub-private-view-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.55rem}
-.hub-private-view-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.25rem;padding:.25rem;border:1px solid var(--hub-line);border-radius:12px;background:#0d0d0d;flex:1;max-width:34rem;min-width:min(100%,17rem)}
+.hub-private-view-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.25rem;padding:.25rem;border:1px solid var(--hub-line);border-radius:12px;background:#0d0d0d;flex:1;max-width:34rem;min-width:min(100%,17rem)}
 .hub-private-view-options button{min-height:44px;padding:.25rem .35rem;color:#f5eddf;background:transparent;border:1px solid transparent;border-radius:8px;font:inherit;font-size:.86rem;font-weight:700;line-height:1.15;cursor:pointer}
 .hub-private-view-controls [aria-pressed="true"]{background:#e7c787!important;color:#18130b!important;border-color:#e7c787!important}
 .hub-private-view-controls [data-workout-mode="guided"]{min-height:44px}
 .hub-private-view-controls button:focus-visible,.hub-private-demo-details summary:focus-visible,.hub-private-presentation :is(button,a):focus-visible{outline:2px solid #e7c787;outline-offset:2px}
 .hub-private-demo-details summary{display:list-item;min-height:44px;align-content:center;color:#e7c787;cursor:pointer;font-size:.88rem;font-weight:650}
 .hub-private-demo-content{display:grid;gap:.35rem;padding:0 0 .5rem}
-.hub-private-demo-content .hub-button{justify-self:start;min-height:44px}
 .hub-private-sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 body:has(.hub-private-presentation[open]){overflow:hidden}
 .hub-private-presentation{width:100%;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#10100f;color:#f5eddf;overflow:auto}
@@ -51,7 +50,6 @@ body:has(.hub-private-presentation[open]){overflow:hidden}
 @media(min-width:760px){.hub-private-presentation-body{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}}
 @media(max-width:540px){.hub-private-view-options{max-width:none;flex-basis:100%}}
 
-.hub-school-workout .hub-private-view-options{grid-template-columns:repeat(2,minmax(0,1fr))}
 .hub-school-presentation[open]{display:grid;grid-template-rows:auto minmax(0,1fr) auto}
 .hub-school-presentation :is(header,footer){
   padding-inline:max(clamp(.75rem,3vw,2rem),env(safe-area-inset-left)) max(clamp(.75rem,3vw,2rem),env(safe-area-inset-right));

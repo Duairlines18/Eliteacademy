@@ -24,14 +24,13 @@ const {chromium}=require('playwright');
   ok(text.includes('8 repetitions on each leg')&&text.includes('2 times'),`${audience}/${width}: clear dose`);
   ok(text.includes('2 minutes')&&text.includes('percentage shows effort'),`${audience}/${width}: rest and effort clear`);
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${audience}/${width}: no horizontal overflow`);
-  if(audience==='school'){
+  if(audience==='school'||audience==='private-athlete'){
    await page.getByRole('button',{name:'Full-screen demos',exact:true}).click();
    const presenter=page.getByRole('dialog',{name:'Exercise demos'});
    await presenter.getByRole('button',{name:'Play demo'}).click();
    ok((await presenter.locator('iframe').getAttribute('src')).includes('/embed/fq72qz8JHtU'),`${audience}/${width}: exact demo retained`);
    await presenter.getByRole('button',{name:'Close',exact:true}).click();
   }else{
-   if(audience==='private-athlete')await page.getByRole('button',{name:'Watch demos',exact:true}).click();
    ok(await sheet.locator('a[href="https://www.youtube.com/shorts/fq72qz8JHtU"]').count()===1,`${audience}/${width}: exact demo retained`);
   }
   if(audience==='parent'){
