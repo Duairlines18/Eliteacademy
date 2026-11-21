@@ -130,7 +130,7 @@ if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')
 assert.equal(actualHomepage.replace(/\r\n/g,'\n'),expectedHomepage.replace(/\r\n/g,'\n'),'locked homepage remains unchanged apart from isolated Hub asset links (line endings ignored)');
 // Private workout view routing has its own authenticated browser coverage.
 const withoutPrivateWorkoutViews=source=>source
- .replace("  let PRIVATE_WORKOUT_VIEW={id:null,mode:'quick'};\r\n",'')
+ .replace("  let ATHLETE_WORKOUT_VIEW={id:null,mode:'quick'};\r\n",'')
  .replace('a[href]:not([data-hub-video-external])','a[href]')
  .replace(/^    const presentButton=[^\n]+\n/m,'')
  .replace(/^    if\(modeButton\)\{\r?\n(?:      [^\n]+\n|        [^\n]+\n)+    \}\r?\n/m,'');

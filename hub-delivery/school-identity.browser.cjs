@@ -10,6 +10,10 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
  for(const width of [390,375,430,768,1440]){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
+  const athleteCompletionCalls=[];
+  page.on('request',request=>{
+   if(request.url().includes('/workout-completions')&&['list','set'].includes(request.postDataJSON()?.action))athleteCompletionCalls.push(request.url());
+  });
   await page.route('**/*',route=>route.request().url().startsWith('http://127.0.0.1:4173/')?route.continue():route.abort());
   for(let n=1;n<=6;n++){
    const slot=String(n).padStart(2,'0');
@@ -36,19 +40,51 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    const athleteCopy=await page.evaluate(()=>window.__copied);
    ok(/\d+\. A-March — 1 × 20 m · Rest: Walk-back recovery\n   Demo: https:\/\/www\.youtube\.com\/shorts\/4lQsMyKRRn8/.test(athleteCopy),'athlete copy places the correct demo beneath the numbered exact dose and rest');
    ok(!/Stay tall; controlled rhythm|How to do it:|Coach cue:|Watch for:|For this session:|Coach instructions:|Full programme instructions/.test(athleteCopy),'athlete copy excludes portal-only coaching text');
-   const technique=march.locator('.hub-school-technique');
-   ok((await technique.locator('.hub-athlete-demo').getAttribute('href'))==='https://www.youtube.com/shorts/4lQsMyKRRn8','assigned A-March link is exact');
+   const views=page.getByRole('group',{name:'Workout views'});
+   ok(await views.getByRole('button',{name:'Workout',pressed:true,exact:true}).isVisible(),'Workout is selected on entry');
+   ok(await views.getByRole('button').count()===3,'school athletes get exactly three read-only views');
+   ok(await march.locator('summary').count()===0,'Workout keeps exercise technique behind Watch demos');
+   await views.getByRole('button',{name:'Watch demos',exact:true}).click();
+   ok(await views.getByRole('button',{name:'Watch demos',pressed:true}).isVisible(),'Watch demos is selected');
+   const technique=march.locator('.hub-private-demo-details');
+   const demo=technique.getByRole('link',{name:'Watch A-March',exact:true});
    ok(await technique.evaluate(el=>!el.open),'technique starts collapsed');
    await technique.locator('summary').click();
-   await technique.locator('.hub-athlete-demo').first().click();await page.locator('#hubVideoModal').waitFor({state:'visible'});
+   ok(await demo.getAttribute('href')==='https://www.youtube.com/shorts/4lQsMyKRRn8','assigned A-March link is exact');
+   await demo.click();await page.locator('#hubVideoModal').waitFor({state:'visible'});
    ok(await page.locator('#hubVideoModal').evaluate(e=>!e.classList.contains('expanded')),'compact video default');
    ok(await page.locator('#hubVideoModal iframe').getAttribute('src').then(src=>src.includes('4lQsMyKRRn8')),'exact prescribed canonical demo');
    await page.locator('[data-hub-video-expand]').click();ok(await page.locator('#hubVideoModal').evaluate(e=>e.classList.contains('expanded')),'optional expand');
    await page.locator('[data-hub-video-close]').first().click();
+   const fullScreen=views.getByRole('button',{name:'Full-screen demos',exact:true});
+   await fullScreen.click();
+   const presenter=page.getByRole('dialog',{name:'Exercise demos'});
+   ok(await presenter.getByRole('heading',{name:'A-March',exact:true}).isVisible(),'presenter starts at the first assigned demo');
+   ok(await presenter.getByText('1 × 20 m · Rest: Walk-back recovery',{exact:true}).isVisible(),'presenter preserves dosage and rest');
+   await presenter.getByRole('button',{name:'Play demo'}).click();
+   ok((await presenter.locator('iframe').getAttribute('src')).includes('/embed/4lQsMyKRRn8'),'presenter uses the same assigned demo');
+   ok(await presenter.getByRole('link',{name:'Open on YouTube'}).getAttribute('href')==='https://www.youtube.com/shorts/4lQsMyKRRn8','presenter retains the original link');
+   ok(await presenter.evaluate(el=>el.scrollWidth<=el.clientWidth),'presenter fits viewport');
+   await presenter.getByRole('button',{name:'Close',exact:true}).click();
+   ok(await views.getByRole('button',{name:'Watch demos',pressed:true}).isVisible(),'closing presenter returns to Watch demos');
+   await page.locator('[data-athlete-copy]').click();
+   ok(await page.evaluate(()=>window.__copied)===athleteCopy,'copy stays identical in Watch demos');
+   ok(await page.locator('[data-completion-toggle]').count()===0,'Watch demos has no completion controls');
+   await page.getByRole('link',{name:'← Back to Week'}).click();
+   await page.getByRole('navigation',{name:'Choose training day'}).getByRole('link',{name:/^Day 2\b/}).click();
+   await views.getByRole('button',{name:'Workout',pressed:true,exact:true}).waitFor();checks++;
+   ok(await page.getByText('Stay balanced.',{exact:false}).first().isVisible(),'Day 2 keeps assigned coaching cues on Workout');
+   ok(await page.getByText('Stop if pain increases.',{exact:false}).first().isVisible(),'Day 2 keeps safety guidance on Workout');
+   await fullScreen.click();
+   await presenter.getByRole('button',{name:'Next',exact:true}).click();
+   ok(await presenter.getByRole('heading',{name:'Snap Down',exact:true}).isVisible(),'Day 2 presenter follows assigned exercise order');
+   ok(await presenter.getByText('3 × 3 · Rest: 60 seconds',{exact:true}).isVisible(),'Day 2 presenter keeps assigned dose and rest');
+   await presenter.getByRole('button',{name:'Close',exact:true}).click();
    await page.goto('http://127.0.0.1:4173/qa/'+slot+'#/hub/routines');
    await page.locator('.hub-card').filter({hasText:'ASIM Warm-Up'}).waitFor();checks++;
    ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no viewport overflow');
   }
+  ok(athleteCompletionCalls.length===0,'school athlete views neither load nor save completion');
   await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
   await page.getByRole('heading',{name:'Programme Overview',exact:true}).waitFor();checks++;
   await page.locator('.saints-director-attendance summary').click();
