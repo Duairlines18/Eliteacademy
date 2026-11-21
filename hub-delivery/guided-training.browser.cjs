@@ -13,7 +13,7 @@ const {chromium}=require('playwright');
  try{for(const width of [320,390,768,1440])for(const who of ['parent','parent-demo','private','private-demo']){
   const parent=who.startsWith('parent'),audience=parent?'parent':'private-athlete',prefix=who+'-',completions=new Map(),errors=[];
   const rx=(exerciseCode,sectionOrder,dosage='2 × 6')=>({exerciseCode,sectionOrder,sectionTitle:sectionOrder===0?'Established Standard Warm-Up':'Today’s Workout',dosage,rest:'45–60 seconds',cues:'Only if comfortable. Do not push through your feet.'});
-  const day={id:prefix+'day',day:'Monday',title:parent?'Strength and landing':'Core Foundation',watch:parent?'Stop if your hip hurts.':'No jumping, running, loaded calf work, bridges, planks, kneeling or full Air Zim.',prescriptions:parent?[...Array.from({length:8},()=>rx('WU01',0,'1 × 8')),rx('STR02',1,'2 × 8/leg'),rx('PLY01',1,'2 × 4')]:[rx('MOB04',1,'2 × 5 breaths'),rx('CORE01',1,'2 × 6/side'),rx('MOB99',1,'1 × 2')]};
+  const day={id:prefix+'day',day:'Monday',title:parent?'Strength and landing':'Core Foundation',watch:parent?'Stop if your hip hurts.':'No jumping, running, loaded calf work, bridges, planks, kneeling or full Air Zim.',prescriptions:parent?[...Array.from({length:8},()=>rx('WU01',0,'1 × 8')),rx('STR02',1,'2 × 8/leg'),rx('PLY01',1,'2 × 4'),rx('MOB99',1,'1 × 2')]:[rx('MOB04',1,'2 × 5 breaths'),rx('CORE01',1,'2 × 6/side'),rx('MOB99',1,'1 × 2')]};
   const mob={id:prefix+'mob',routineKind:'mobility',day:'Mobility Routine',title:'Mobility',prescriptions:['WU01','WU06','WU07','WU05'].map(code=>({...rx(code,0,'1 × 8'),rest:'30 sec between sets'}))};
   const warm={id:prefix+'warm',routineKind:'warm-up',day:'Standard Warm-Up',title:'Standard Volleyball Warm-Up',prescriptions:[rx('WU03',0,'1 × 6/leg'),rx('SPR01',0,'2 × 15 m'),rx('PLY03',0,'2 × 10')]};
   if(parent)day.preparation={routineIds:[mob.id,warm.id],replacedSectionOrders:[0]};
@@ -21,13 +21,25 @@ const {chromium}=require('playwright');
   const sessions=parent?[day,...otherDays,mob,warm]:[day,...otherDays];
   const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<500,permissions:['clipboard-read','clipboard-write']}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await context.addInitScript(({audience,who})=>{localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify({role:'athlete',mode:'account',audience}));window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:who}}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})}})};},{audience,who});
-  let failSave=true;
+  let failSave=true,openedEndCheckin=false;
+  const finalParentWorkout=who==='parent-demo';
+  if(finalParentWorkout)for(const previous of otherDays)for(const key of ['p:1:8:STR02','p:1:9:PLY01','p:1:10:MOB99']){
+   completions.set(previous.id+'|'+key,{sessionKey:previous.id,itemKey:key,completed:true});
+  }
+  const requirement={id:'test-final-checkin',kind:'end',calendar_weekly:true,week_number:9,period_start:'2026-11-15',due_date:'2026-11-22',revision:0};
   await page.route('**/*',async route=>{
    const req=route.request(),url=req.url();if(url.startsWith(base))return route.continue();
    if(url.startsWith('https://www.youtube-nocookie.com/embed/'))return route.fulfill({contentType:'text/html',body:'<title>Test video</title>'});
    if(!url.includes('/functions/v1/'))return route.abort();
    const body=req.postDataJSON()||{};let data={};
-   if(body.action==='checkin-state')return route.fulfill({json:{checkins:{enabled:false}}});
+   if(body.action==='open-end-checkin'){
+    ok(finalParentWorkout&&req.headers().authorization==='Bearer '+who,'final workout opens check-in as the current parent');
+    openedEndCheckin=true;
+   }
+   if(['checkin-state','open-end-checkin'].includes(body.action)){
+    const due=openedEndCheckin?[requirement]:[];
+    return route.fulfill({json:{checkins:{enabled:finalParentWorkout,held:false,requirements:due,due}}});
+   }
    if(body.action==='profile')data={onboardingComplete:true,onboarding:{sportPathway:'Track',primaryGoals:['Core'],trainingEnvironment:'Home',equipment:['Bodyweight only'],weeklyAvailability:'3 days',scheduleNotes:'Current weekly training schedule: Approved\nCurrent pain / injury / restriction: Follow approved restrictions\nPrevious significant injuries: Coach aware'}};
    if(body.action==='bootstrap')data={contentStatus:'published',audience,viewer:{firstName:'Synthetic'},athlete:{id:prefix+'athlete',displayName:'Synthetic'},programme:{id:prefix+'programme',title:'Assigned programme',week:parent?9:2,totalWeeks:10,sessions},exercises,delivery:{model:'private-athlete',copyWorkout:true}};
    if(body.action==='library')data={exercises};
@@ -48,7 +60,7 @@ const {chromium}=require('playwright');
   const trainingCard=main.locator('.hub-parent-session-card').first();
   await trainingCard.click();
   ok(page.url().endsWith('/session/'+day.id),'training card opens the selected day');
-  await page.locator('[data-workout-mode="guided"]').waitFor();
+  await page.locator(parent?'[data-private-present]':'[data-workout-mode="guided"]').waitFor();
   ok(await page.locator('[aria-label="Choose training day"]').count()===0,'selected workout has no other day cards');
   await page.getByRole('link',{name:'← Back to Week',exact:true}).waitFor();
   if(!parent){
@@ -97,7 +109,7 @@ const {chromium}=require('playwright');
   }
   if(parent){
    ok(await main.getByRole('button',{name:'Quick View',exact:true}).count()===1,'parent still uses their own Quick View');
-   ok(await main.getByRole('button',{name:'Full-screen demos',exact:true}).count()===0,'parent does not receive the private toolbar');
+   ok(await main.getByRole('button',{name:'Guided Workout',exact:true}).count()===0,'parent day has no separate guided view');
    ok(await page.locator('[aria-label="Training stages"] a').count()===1,'one combined warm-up card');
    await page.getByRole('link',{name:'My Warm-Up',exact:true}).click();
    await page.locator('.hub-main h1').filter({hasText:'My Warm-Up'}).waitFor();
@@ -120,16 +132,63 @@ const {chromium}=require('playwright');
    await routineLinks.filter({hasText:'My Warm-Up'}).first().waitFor();
    ok(await routineLinks.filter({hasText:'My Warm-Up'}).count()===1,'Your Routines contains exactly one combined warm-up card');
    ok(await routineLinks.filter({hasText:/^(?!.*My Warm-Up).*(?:Mobility|Standard Volleyball Warm-Up)/i}).count()===0,'Your Routines does not expose duplicate preparation cards');
-   await page.goto(base+'/#/hub/session/'+day.id);await page.locator('[data-workout-mode="guided"]').waitFor();
+   await page.goto(base+'/#/hub/session/'+day.id);
+   const launch=main.getByRole('button',{name:'Full-screen demos',exact:true});
+   await launch.waitFor();
    failSave=true;
+   await launch.click();
+   const dialog=page.getByRole('dialog',{name:'Exercise demos'});
+   const mark=dialog.getByRole('button',{name:'Mark Complete',exact:true});
+   await dialog.getByRole('heading',{name:'Step-Up',exact:true}).waitFor();
+   ok((await dialog.innerText()).includes('Stop if your hip hurts.')&&(await dialog.innerText()).includes('Only if comfortable.'),'parent fullscreen keeps session and exercise restrictions');
+   ok(await dialog.getByText('1 of 3',{exact:true}).isVisible(),'only main exercises are included');
+   await dialog.getByRole('button',{name:'Play demo'}).click();
+   ok((await dialog.locator('iframe').getAttribute('src')).includes('/embed/abcdefghijk'),'parent fullscreen opens the correct demo');
+   await mark.click();
+   const retry=dialog.getByRole('button',{name:'Try again',exact:true});
+   await retry.waitFor();
+   ok(!completions.has(day.id+'|p:1:8:STR02'),'failed save does not complete the exercise');
+   await retry.click();
+   await dialog.getByText('2 of 3',{exact:true}).waitFor();
+   ok(completions.has(day.id+'|p:1:8:STR02'),'full screen uses the original exercise key');
+   await dialog.getByRole('button',{name:'Close',exact:true}).click();
+   await dialog.waitFor({state:'detached'});
+   await main.getByText('1/3 complete',{exact:true}).waitFor();
+   ok(await main.getByText('1/3 complete',{exact:true}).isVisible(),'Quick View reflects new progress');
+   ok(await launch.evaluate(button=>document.activeElement===button),'closing restores focus');
+   await page.reload();
+   await launch.click();
+   await dialog.getByText('2 of 3',{exact:true}).waitFor();
+   await dialog.getByRole('button',{name:'Previous',exact:true}).click();
+   ok(await dialog.getByRole('button',{name:'Undo complete',exact:true}).isVisible(),'saved completion survives reload');
+   await dialog.getByRole('button',{name:'Next',exact:true}).click();
+   await mark.click();
+   await dialog.getByRole('heading',{name:'Unfilmed mobility',exact:true}).waitFor();
+   ok(await dialog.getByText('No demo linked for this step.',{exact:true}).isVisible(),'exercise without a demo still has a step');
+   ok(await dialog.getByText('Keep the movement slow and controlled.',{exact:false}).isVisible(),'exercise without a demo retains instructions');
+   ok(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth),'parent full-screen controls fit viewport');
+   await mark.click();
+   if(finalParentWorkout){
+    await page.locator('#mandatoryCheckinForm').waitFor();
+    ok(openedEndCheckin,'final movement opens the due parent check-in');
+   }else{
+    await dialog.getByRole('button',{name:'Undo complete',exact:true}).waitFor();
+    await dialog.getByRole('button',{name:'Close',exact:true}).click();
+    await main.getByText('Workout Complete',{exact:false}).first().waitFor();
+    ok(await main.getByRole('link',{name:'Send feedback →',exact:true}).isVisible(),'Quick View retains the feedback link');
+   }
+   ok(errors.length===0,errors.join('\n'));
+   await context.close();
+   console.log(`${who} ${width}px: full-screen parent workout, completion, reload and routine regression passed`);
+   continue;
   }
   await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();
-  const firstKey=parent?'p:1:8:STR02':'p:1:0:MOB04';ok(await page.locator('[data-completion-toggle]').getAttribute('data-item-key')===firstKey,'original completion key retained');
+  const firstKey='p:1:0:MOB04';ok(await page.locator('[data-completion-toggle]').getAttribute('data-item-key')===firstKey,'original completion key retained');
   ok(await page.locator('.hub-guided-teach').count()>=2,'instructions and cue visible');ok(await page.locator('[data-guided-next]').isEnabled(),'next available');
   ok((await page.locator('.hub-guided-teach.avoid').innerText()).includes('Rushing transitions.'),'library Avoid remains visible with saved custom cue');
   ok((await page.locator('.hub-guided-teach-grid').innerText()).includes('Only if comfortable.'),'saved custom cue stays visible');
   if(!parent)ok((await page.locator('.hub-objective').innerText()).includes('No jumping'),'injury restrictions visible');
-  const resumeStep=parent?'2 of 2':'2 of 3';
+  const resumeStep='2 of 3';
   await page.locator('[data-completion-toggle]').click();await page.getByRole('button',{name:'Try again',exact:true}).waitFor();ok(!completions.has(day.id+'|'+firstKey),'failed save does not mark complete');await page.locator('[data-completion-toggle]').click();await page.waitForFunction(step=>document.querySelector('.hub-guided-step')?.textContent===step,resumeStep);
   await page.reload();await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();ok((await page.locator('.hub-guided-step').innerText())===resumeStep,'reload resumes unfinished exercise');
   await page.locator('[data-guided-prev]').click();ok(await page.locator('[data-completion-toggle]').getAttribute('data-completed')==='true','saved completion restored');
