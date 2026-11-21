@@ -74,7 +74,11 @@
 .ducc .learn-guidance{max-width:68ch;white-space:pre-line}
 @media(max-width:540px){
  .ducc .row-heading{display:grid;gap:2px}
- .ducc .workout-actions .button{padding:8px 7px;font-size:.82rem}
+ .ducc:has(.workout-header) main{gap:8px}
+ .ducc .workout-head{gap:8px}
+ .ducc .workout-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+ .ducc .workout-actions .button{padding:6px 4px;min-width:0;font-size:.82rem;line-height:1.2;white-space:normal}
+ .ducc .session-context{line-height:1.35}
  .ducc .workout-navigation{gap:6px;flex-wrap:nowrap}
  .ducc .workout-navigation > .button{padding-inline:9px}
  .ducc .days.workout-days{grid-template-columns:repeat(auto-fit,minmax(49px,1fr));gap:4px}
