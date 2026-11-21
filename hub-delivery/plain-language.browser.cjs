@@ -34,11 +34,13 @@ const {chromium}=require('playwright');
    ok(await sheet.locator('a[href="https://www.youtube.com/shorts/fq72qz8JHtU"]').count()===1,`${audience}/${width}: exact demo retained`);
   }
   if(audience==='parent'){
-   await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();
-   await page.locator('[data-guided-next]').click();
-   const card=page.locator('.hub-guided-card');await card.getByRole('heading',{name:'Split Squat'}).waitFor();
-   ok((await card.innerText()).includes('8 repetitions on each leg'),`parent/${width}: guided dose explained`);
-   ok((await card.innerText()).includes('Only if pain-free'),`parent/${width}: guided condition visible`);
+   await page.getByRole('button',{name:'Full-screen demos',exact:true}).click();
+   const presenter=page.getByRole('dialog',{name:'Exercise demos'});
+   await presenter.getByRole('button',{name:'Next',exact:true}).click();
+   await presenter.getByRole('heading',{name:'Split Squat'}).waitFor();
+   ok((await presenter.innerText()).includes('2 × 8/leg'),`parent/${width}: full-screen dose preserved`);
+   ok((await presenter.innerText()).includes('Only if pain-free'),`parent/${width}: full-screen condition visible`);
+   await presenter.getByRole('button',{name:'Close',exact:true}).click();
   }
   ok(errors.length===0,`${audience}/${width}: no browser errors: ${errors}`);
   await context.close();
