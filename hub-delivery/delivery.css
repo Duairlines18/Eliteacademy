@@ -16,3 +16,37 @@
 .hub-school-technique summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:7px;color:var(--hub-gold,#c7a25a);font-size:.9rem;font-weight:650}
 .hub-school-technique summary::before{content:'›';font-size:1.1em}
 .hub-school-technique[open] summary::before{transform:rotate(90deg)}
+
+/* Private athlete workout views */
+.hub-private-workout .hub-workout-toolbar{display:grid;gap:.75rem}
+.hub-private-workout .hub-workout-progress{width:100%}
+.hub-private-view-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.55rem}
+.hub-private-view-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.25rem;padding:.25rem;border:1px solid var(--hub-line);border-radius:12px;background:#0d0d0d;flex:1;max-width:34rem;min-width:min(100%,17rem)}
+.hub-private-view-options button{min-height:44px;padding:.25rem .35rem;color:#f5eddf;background:transparent;border:1px solid transparent;border-radius:8px;font:inherit;font-size:.86rem;font-weight:700;line-height:1.15;cursor:pointer}
+.hub-private-view-controls [aria-pressed="true"]{background:#e7c787!important;color:#18130b!important;border-color:#e7c787!important}
+.hub-private-view-controls [data-workout-mode="guided"]{min-height:44px}
+.hub-private-view-controls button:focus-visible,.hub-private-demo-details summary:focus-visible,.hub-private-presentation :is(button,a):focus-visible{outline:2px solid #e7c787;outline-offset:2px}
+.hub-private-demo-details summary{display:list-item;min-height:44px;align-content:center;color:#e7c787;cursor:pointer;font-size:.88rem;font-weight:650}
+.hub-private-demo-content{display:grid;gap:.35rem;padding:0 0 .5rem}
+.hub-private-demo-content .hub-button{justify-self:start;min-height:44px}
+.hub-private-sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+body:has(.hub-private-presentation[open]){overflow:hidden}
+.hub-private-presentation{width:100%;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#10100f;color:#f5eddf;overflow:auto}
+.hub-private-presentation::backdrop{background:#10100f}
+.hub-private-presentation :is(header,footer){display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.8rem clamp(.8rem,4vw,3rem);border-bottom:1px solid #3c3427;background:#10100f;position:sticky;z-index:1;top:0}
+.hub-private-presentation footer{top:auto;bottom:0;border-top:1px solid #3c3427;border-bottom:0}
+.hub-private-presentation :is(h2,h3,p){margin:0}
+.hub-private-presentation header p{color:#e7c787}
+.hub-private-presentation :is(button,a){min-height:44px}
+.hub-private-presentation button:disabled{opacity:.45;cursor:default}
+.hub-private-presentation-body{display:grid;gap:1rem;align-items:start;max-width:90rem;margin:auto;padding:clamp(.8rem,4vw,3rem);overflow-wrap:anywhere}
+.hub-private-presentation-body h3{font-size:clamp(1.6rem,4vw,3rem);color:#fff}
+.hub-private-presentation-body .hub-private-dose{color:#e7c787;margin:.45rem 0 1rem;font-size:clamp(1rem,2.5vw,1.5rem);font-weight:700}
+.hub-private-video-stage{display:grid;place-items:center;position:relative;aspect-ratio:16/9;min-width:0;border:1px solid #77623c;border-radius:13px;overflow:hidden;background:#080808}
+.hub-private-video-stage.vertical:has(iframe){aspect-ratio:auto;height:min(62dvh,42rem)}
+.hub-private-video-stage :is(img,iframe){position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:contain}
+.hub-private-video-stage button{position:relative;z-index:1}
+.hub-private-video-fallback,.hub-private-presentation-empty{color:#e7c787;padding:.8rem}
+.hub-private-video-fallback{display:inline-flex;align-items:center;justify-self:start;grid-row:2;grid-column:1;text-decoration:underline;text-underline-offset:.18em}
+@media(min-width:760px){.hub-private-presentation-body{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}}
+@media(max-width:540px){.hub-private-view-options{max-width:none;flex-basis:100%}}
