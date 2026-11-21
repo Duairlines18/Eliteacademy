@@ -46,13 +46,11 @@ test('presenter shows one exercise and returns to the selected day',async()=>{
  const h=setup();await h.click({day:'0'});
  assert.match(h.root.innerHTML,/Stop for pain\./);
  assert.doesNotMatch(h.root.innerHTML,/Coach-approved readiness/);
- assert.match(h.root.innerHTML,/data-action="prescription" aria-pressed="true"/);
+ assert.match(h.root.innerHTML,/aria-current="true">Workout<.*data-action="present">Present Workout</);
  assert.match(h.root.innerHTML,/Support(?:ed Ankle Rock).*Use support if balance is limited/);
- assert.doesNotMatch(h.root.innerHTML,/Keep your heel down|Play Ankle Rock demonstration/);
- await h.click('learn');
- assert.match(h.root.innerHTML,/data-action="learn" aria-pressed="true"/);
+ assert.doesNotMatch(h.root.innerHTML,/data-action="learn"|<iframe/);
  assert.match(h.root.innerHTML,/<details class="learn-card" data-learn-row="0-0"><summary>.*Ankle Rock.*2 × 8 · Rest: 30 seconds.*Play Ankle Rock demonstration.*How to do it.*Keep your heel down.*Quiet feet/);
- assert.match(h.root.innerHTML,/Use the prescribed space first.*No video for this exercise.*6 × 100 m at 75%.*Rest: 1 minute/);
+ assert.match(h.root.innerHTML,/Use the prescribed space first.*6 × 100 m at 75%.*Rest: 1 minute/);
  await h.click('present');
  const [briefing,details]=h.root.innerHTML.split('<details class="presentation-details">');
  assert.match(briefing,/Present Workout.*1 of 3.*i\.ytimg\.com\/vi\/6Dlac5mxD6k\/hqdefault\.jpg.*Play Ankle Rock demonstration.*Warm-up.*Ankle Rock.*2 × 8.*30 seconds/);
@@ -71,7 +69,7 @@ test('presenter shows one exercise and returns to the selected day',async()=>{
  assert.match(h.root.innerHTML,/3 of 3.*6 × 100 m at 75%.*1 minute/);
  await h.click('exit-present');
  assert.match(h.root.innerHTML,/Full Workout.*Foundations/);
- assert.match(h.root.innerHTML,/data-action="learn" aria-pressed="true"/);
+ assert.match(h.root.innerHTML,/aria-current="true">Workout</);
 });
 
 test('long exercise guidance shows the existing first instruction and retains the full wording in Coach Details',async()=>{
@@ -85,7 +83,7 @@ test('long exercise guidance shows the existing first instruction and retains th
 });
 
 
-test('copy, day print and week print match across all three coaching views',async()=>{
+test('copy, day print and week print match across Workout and Present Workout',async()=>{
  const h=setup({warmupCue:'Do not force the range. Avoid: Painful positions.'});
  await h.click('workout');
  assert.match(h.root.innerHTML,/For this session.*Do not force the range.*Watch for.*Painful positions/);
@@ -96,8 +94,6 @@ test('copy, day print and week print match across all three coaching views',asyn
   return {copy:h.copied(),day,week:h.printed()};
  }
  const expected=await exportWorkout();
- await h.click('learn');
- assert.deepEqual(await exportWorkout(),expected);
  await h.click('present');
  await h.click('next-slide');
  assert.deepEqual(await exportWorkout(),expected);

@@ -18,7 +18,6 @@ const {chromium}=require('playwright');
    // Day buttons are available on the team overview.
    if(await page.locator('[data-action="back"]').count())await page.locator('[data-action="back"]').click();
    await page.locator('[data-day="'+day+'"]').click();
-   await page.getByRole('button',{name:'Learn',exact:true}).click();
    const section=page.locator('.workout-section').filter({has:page.getByRole('heading',{name:title,exact:true})});
    const cards=section.locator('.learn-card');assert.equal(await cards.count(),3);checks++;
    for(const card of await cards.all()){
@@ -43,11 +42,10 @@ const {chromium}=require('playwright');
    }
    assert.ok(await section.evaluate(el=>el.scrollWidth<=el.clientWidth+1));checks++;
   }
-  await page.getByRole('button',{name:'Prescription',exact:true}).click();
-  assert.equal(await page.locator('[data-play-demo]').count(),0);checks++;
+  assert.equal(await page.locator('.learn-card[open], .ducc iframe').count(),0);checks++;
   assert.deepEqual(errors,[]);checks++;
   if(process.env.VIDEO_QA_SCREENSHOTS)await page.screenshot({path:process.env.VIDEO_QA_SCREENSHOTS+'/saved-videos-'+width+'.png',fullPage:true});
   await browser.close();browser=null;
- }console.log(checks+' browser checks passed: live-source school rows, exact video clicks, mobile/desktop, Learn disclosures and overflow.');
+ }console.log(checks+' browser checks passed: live-source school rows, exact video clicks, mobile/desktop, workout disclosures and overflow.');
  }finally{if(browser)await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});

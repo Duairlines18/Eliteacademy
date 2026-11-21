@@ -2093,7 +2093,7 @@ footer,
 <!-- DU STORY NAV START --><style>#home-view .du-story-entry{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:1.5rem 0 0;color:var(--cream)}#home-view .du-story-entry>span{display:flex;flex-direction:column;gap:.35rem}#home-view .du-story-entry small{font-size:.6rem;letter-spacing:.16em;color:var(--gold-soft)}#home-view .du-story-entry strong{font:500 1.55rem var(--serif);color:var(--gold-soft)}#home-view .du-story-entry span span{font-size:.8rem;color:var(--sage);max-width:55ch}#home-view .du-story-entry>b{font-size:1.5rem;color:var(--gold-soft);min-width:44px;text-align:center}#home-view .du-story-entry:focus-visible{outline:2px solid var(--gold-soft);outline-offset:6px}#home-view .du-story-entry:hover strong{text-decoration:underline;text-underline-offset:4px}</style><!-- DU STORY NAV END --><script src="/hub-delivery/delivery.js?v=20261118-coaching"></script>
 <link rel="stylesheet" href="/hub-delivery/weekly-checkins.css?v=20261112-dark"><script src="/hub-delivery/weekly-checkins.js?v=20261115-navigation"></script>
 <script src="/hub-delivery/premium-v2.js?v=20261020"></script>
-<link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261121-workout-views">
+<link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261121-school-workout">
 <link rel="stylesheet" href="/parent-qa/session-card-polish.css">
 <script defer src="/parent-qa/session-card-polish.js"></script>
 <script defer src="/performance/coachdu-hub-bridge.js"></script>
@@ -4214,7 +4214,7 @@ document.addEventListener('click',function(e){
 .hub-school-themed .ducc :is(h1,h2){color:var(--school-paper)}
 /* SCHOOL_THEME_END */
 </style>
-<script src="/coach-command/coach-command.js?v=20261118-coach-cues"></script>
+<script src="/coach-command/coach-command.js?v=20261121-coach-workout"></script>
 <link rel="stylesheet" href="/hub-delivery/school.css">
 <script src="/hub-delivery/school-attendance.js?v=20261104-compact"></script>
 <script id="performance-hub-app">
@@ -4598,8 +4598,9 @@ document.addEventListener('click',function(e){
   }
 
   function athleteWorkoutControls(mode, showGuided=true){
+    const views=showGuided?[['quick','Workout'],['learn','Watch demos']]:[['quick','Workout']];
     return '<div class="hub-private-view-controls"><div class="hub-private-view-options" role="group" aria-label="Workout views">'+
-      [['quick','Workout'],['learn','Watch demos']].map(([view,label])=>
+      views.map(([view,label])=>
         '<button type="button" data-workout-mode="'+view+'" aria-pressed="'+(mode===view)+'">'+label+'</button>').join('')+
       '<button type="button" data-private-present aria-haspopup="dialog">Full-screen demos</button></div>'+
       (showGuided?'<button type="button" class="hub-button secondary" data-workout-mode="guided" aria-pressed="'+(mode==='guided')+'">Guided Workout</button>':'')+'</div>';
@@ -4615,7 +4616,7 @@ document.addEventListener('click',function(e){
       .filter(section=>!/Additional movement references/i.test(section.title));
     const items=flattenedWorkoutItems(sections).flatMap(item=>athleteWorkoutDemos(item).map(video=>({item,video})));
     const dialog=document.createElement('dialog');
-    dialog.className='hub-private-presentation';
+    dialog.className='hub-private-presentation'+(isSchoolReferenceViewer()?' hub-school-presentation':'');
     dialog.setAttribute('aria-labelledby','hubPrivatePresentationTitle');
     let index=0;
     function render(){
@@ -4746,10 +4747,8 @@ document.addEventListener('click',function(e){
       return wrapper+toggle+finished+'<div class="hub-workout-experience guided"><div class="hub-guided-layout"><div>'+guidedCard(items[cursor],items[cursor].sectionTitle,cursor,items.length,workout.id)+'</div></div></div></div>';
     }
     if(session()?.role==='athlete'&&isSchoolReferenceViewer()){
-      if(ATHLETE_WORKOUT_VIEW.id!==workout.id)ATHLETE_WORKOUT_VIEW={id:workout.id,mode:'quick'};
-      const mode=ATHLETE_WORKOUT_VIEW.mode==='learn'?'learn':'quick';
-      return '<div class="hub-private-workout"><div class="hub-workout-toolbar">'+athleteWorkoutControls(mode,false)+'</div>'+
-        schoolAthleteDelivery(sections,sessionData,mode)+'</div>';
+      return '<div class="hub-private-workout hub-school-workout"><div class="hub-workout-toolbar">'+athleteWorkoutControls('quick',false)+'</div>'+
+        schoolAthleteDelivery(sections,sessionData,'quick')+'</div>';
     }
     if(isSchoolReferenceViewer()||privateSelfServeViewer())return schoolAthleteDelivery(sections,sessionData);const completed=items.filter(item=>isWorkoutComplete(workout.id,item.key)).length,percent=Math.round((completed/items.length)*100),allDone=completed===items.length;let cursor=Number.isInteger(GUIDED_CURSOR[workout.id])?GUIDED_CURSOR[workout.id]:items.findIndex(item=>!isWorkoutComplete(workout.id,item.key));if(cursor<0)cursor=items.length-1;cursor=Math.max(0,Math.min(items.length-1,cursor));GUIDED_CURSOR[workout.id]=cursor;const mode=readOnly?'quick':WORKOUT_MODE,toolbar='<div class="hub-workout-toolbar"><div class="hub-workout-progress"><strong>'+completed+'/'+items.length+'</strong><div class="hub-progress-track"><div class="hub-progress-fill" style="width:'+percent+'%"></div></div><span class="hub-progress-count">'+percent+'%</span></div>'+(!readOnly?'<div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="guided" class="'+(mode==='guided'?'active':'')+'">Guided</button><button type="button" data-workout-mode="quick" class="'+(mode==='quick'?'active':'')+'">Quick View</button></div>':'')+'</div>';const complete=allDone?'<div class="hub-workout-complete"><strong>✓ Workout Complete</strong><span>Strong work. Your session is saved.</span></div>':'';if(mode==='quick')return groupPicker()+'<div class="hub-workout-experience quick">'+toolbar+complete+quickView(workout.id,sections,readOnly,false,sessionData)+'</div>';const active=items[cursor];return groupPicker()+'<div class="hub-workout-experience guided">'+toolbar+complete+'<div class="hub-guided-layout"><div>'+guidedCard(active,active.sectionTitle,cursor,items.length,workout.id)+'</div><aside class="hub-guided-rail" aria-label="Workout overview">'+quickView(workout.id,sections,readOnly,true,sessionData)+'</aside></div></div>';}
 
@@ -5511,6 +5510,7 @@ document.addEventListener('click',function(e){
     const modeButton=event.target.closest('[data-workout-mode]');
     if(modeButton){
       const mode=modeButton.dataset.workoutMode,route=location.hash.replace('#/hub','')||'/';
+      if(modeButton.closest('.hub-school-workout'))return;
       const athleteWorkout=modeButton.closest('.hub-private-workout');
       if(athleteWorkout)ATHLETE_WORKOUT_VIEW.mode=mode;
       else WORKOUT_MODE=mode==='quick'?'quick':'guided';
