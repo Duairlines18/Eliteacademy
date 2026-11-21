@@ -2093,7 +2093,7 @@ footer,
 <!-- DU STORY NAV START --><style>#home-view .du-story-entry{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:1.5rem 0 0;color:var(--cream)}#home-view .du-story-entry>span{display:flex;flex-direction:column;gap:.35rem}#home-view .du-story-entry small{font-size:.6rem;letter-spacing:.16em;color:var(--gold-soft)}#home-view .du-story-entry strong{font:500 1.55rem var(--serif);color:var(--gold-soft)}#home-view .du-story-entry span span{font-size:.8rem;color:var(--sage);max-width:55ch}#home-view .du-story-entry>b{font-size:1.5rem;color:var(--gold-soft);min-width:44px;text-align:center}#home-view .du-story-entry:focus-visible{outline:2px solid var(--gold-soft);outline-offset:6px}#home-view .du-story-entry:hover strong{text-decoration:underline;text-underline-offset:4px}</style><!-- DU STORY NAV END --><script src="/hub-delivery/delivery.js?v=20261118-coaching"></script>
 <link rel="stylesheet" href="/hub-delivery/weekly-checkins.css?v=20261112-dark"><script src="/hub-delivery/weekly-checkins.js?v=20261115-navigation"></script>
 <script src="/hub-delivery/premium-v2.js?v=20261020"></script>
-<link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261121-parent-workout">
+<link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261121-parent-demo-layout">
 <link rel="stylesheet" href="/parent-qa/session-card-polish.css">
 <script defer src="/parent-qa/session-card-polish.js"></script>
 <script defer src="/performance/coachdu-hub-bridge.js"></script>
@@ -4636,18 +4636,22 @@ document.addEventListener('click',function(e){
         entry.videos.map((clip,i)=>'<button type="button" class="hub-button secondary" data-presentation-clip="'+i+'" aria-pressed="'+(i===videoIndex)+'">'+escapeHtml(clip.title)+'</button>').join('')+'</div>':'';
       const notes=sessionNotes.length?'<div class="hub-objective hub-parent-presentation-notes"><strong>Coach instructions</strong><span>'+sessionNotes.map(escapeHtml).join('<br>')+'</span></div>':'';
       const completed=parentDay&&entry&&complete(entry);
+      const exerciseTitle=entry?'<h3>'+escapeHtml(entry.item.title)+'</h3>':'';
+      const videoTitle=video&&video.title!==entry.item.title?'<p>'+escapeHtml(video.title)+'</p>':'';
+      const dose=entry?'<p class="hub-private-dose">'+[entry.item.dosage,entry.item.rest?'Rest: '+entry.item.rest:''].filter(Boolean).map(escapeHtml).join(' · ')+'</p>':'';
+      const coaching=entry?workoutCoaching(entry.item):'';
+      const content=parentDay
+        ? '<div class="hub-parent-demo-heading">'+exerciseTitle+dose+'</div>'+
+          (video?'<div class="hub-parent-demo-player">'+videoStage+videoTitle+demoOptions+'</div>':'')+
+          '<div class="hub-parent-demo-details">'+(video?'':'<p>No demo linked for this step.</p>')+notes+coaching+'</div>'
+        : videoStage+'<div>'+exerciseTitle+videoTitle+dose+coaching+'</div>';
       dialog.innerHTML='<header><div><h2 id="hubPrivatePresentationTitle">Exercise demos</h2>'+
         (entry?'<p aria-live="polite">'+(index+1)+' of '+items.length+'</p>':'')+
         '</div><button type="button" class="hub-button secondary" data-presentation-close autofocus>Close</button></header>'+
-        (entry?'<div class="hub-private-presentation-body'+(video?'':' no-video')+'">'+videoStage+
-          '<div><h3>'+escapeHtml(entry.item.title)+'</h3>'+
-          (video&&video.title!==entry.item.title?'<p>'+escapeHtml(video.title)+'</p>':'')+demoOptions+
-          '<p class="hub-private-dose">'+[entry.item.dosage,entry.item.rest?'Rest: '+entry.item.rest:''].filter(Boolean).map(escapeHtml).join(' · ')+'</p>'+
-          (parentDay&&!video?'<p>No demo linked for this step.</p>':'')+
-          notes+workoutCoaching(entry.item)+'</div></div>'+
+        (entry?'<div class="hub-private-presentation-body'+(video?'':' no-video')+'">'+content+'</div>'+
           '<footer><button type="button" class="hub-button secondary" data-presentation-step="-1"'+(!index?' disabled':'')+'>Previous</button>'+
           (parentDay?'<button type="button" class="hub-button'+(completed?' secondary':'')+'" data-presentation-complete aria-pressed="'+Boolean(completed)+'">'+(completed?'Undo complete':'Mark Complete')+'</button>':'')+
-          '<button type="button" class="hub-button" data-presentation-step="1"'+(index+1===items.length?' disabled':'')+'>Next</button></footer>':
+          '<button type="button" class="hub-button'+(parentDay?' secondary':'')+'" data-presentation-step="1"'+(index+1===items.length?' disabled':'')+'>Next</button></footer>':
           '<p class="hub-private-presentation-empty">No videos are linked to this workout yet.</p>');
     }
     dialog.addEventListener('click',event=>{

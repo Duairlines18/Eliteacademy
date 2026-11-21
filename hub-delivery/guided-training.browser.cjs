@@ -1,16 +1,17 @@
 'use strict';
 // Synthetic account sessions only. This is not hosted athlete/device sign-off.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
-const {chromium}=require('playwright');
+const {chromium,webkit}=require('playwright');
+const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
 (async()=>{
  const server=http.createServer((req,res)=>{try{let name=decodeURIComponent(req.url.split('?')[0]);if(name.endsWith('/'))name+='index.html';res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html');res.end(fs.readFileSync(path.join(process.cwd(),name)));}catch{res.writeHead(404);res.end();}});
- await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch({headless:true});
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=`http://127.0.0.1:${server.address().port}`,browser=await (parentWebKit?webkit:chromium).launch({headless:true});
  const codes=['WU01','WU06','WU07','WU05','WU03','SPR01','PLY03','STR02','PLY01','MOB04','CORE01'];
  const names=['Ankle Rock','Leg Swing Front / Back','Leg Swing Side / Side','High-Knee Hip Rotation Out','Walking Lunge + Rotation','A-March','Two-Leg Pogos','Step-Up','Snap Down','Diaphragmatic Breathing','Dead Bug'];
- const exercises=codes.map((code,i)=>({code,title:names[i],videoId:code==='CORE01'?'lmnopqrstuv':'abcdefghijk',videoUrl:'https://youtu.be/'+(code==='CORE01'?'lmnopqrstuv':'abcdefghijk'),description:'Use the prescribed comfortable position.',coachingCues:'Cue: Stay controlled. Avoid: Rushing transitions.',active:true}));
+ const exercises=codes.map((code,i)=>({code,title:names[i],videoId:code==='CORE01'?'lmnopqrstuv':'abcdefghijk',videoUrl:code==='STR02'?'https://www.youtube.com/shorts/abcdefghijk':'https://youtu.be/'+(code==='CORE01'?'lmnopqrstuv':'abcdefghijk'),description:'Use the prescribed comfortable position.',coachingCues:'Cue: Stay controlled. Avoid: Rushing transitions.',active:true}));
  exercises.push({code:'MOB99',title:'Unfilmed mobility',description:'Keep the movement slow and controlled.',active:true});
  let checks=0;const ok=(value,label)=>{assert.ok(value,label);checks++;};
- try{for(const width of [320,390,768,1440])for(const who of ['parent','parent-demo','private','private-demo']){
+ try{for(const width of (parentWebKit?[320,390]:[320,390,768,1440]))for(const who of (parentWebKit?['parent','parent-demo']:['parent','parent-demo','private','private-demo'])){
   const parent=who.startsWith('parent'),audience=parent?'parent':'private-athlete',prefix=who+'-',completions=new Map(),errors=[];
   const rx=(exerciseCode,sectionOrder,dosage='2 × 6')=>({exerciseCode,sectionOrder,sectionTitle:sectionOrder===0?'Established Standard Warm-Up':'Today’s Workout',dosage,rest:'45–60 seconds',cues:'Only if comfortable. Do not push through your feet.'});
   const day={id:prefix+'day',day:'Monday',title:parent?'Strength and landing':'Core Foundation',watch:parent?'Stop if your hip hurts.':'No jumping, running, loaded calf work, bridges, planks, kneeling or full Air Zim.',prescriptions:parent?[...Array.from({length:8},()=>rx('WU01',0,'1 × 8')),rx('STR02',1,'2 × 8/leg'),rx('PLY01',1,'2 × 4'),rx('MOB99',1,'1 × 2')]:[rx('MOB04',1,'2 × 5 breaths'),rx('CORE01',1,'2 × 6/side'),rx('MOB99',1,'1 × 2')]};
@@ -19,7 +20,7 @@ const {chromium}=require('playwright');
   if(parent)day.preparation={routineIds:[mob.id,warm.id],replacedSectionOrders:[0]};
   const otherDays=[{...day,id:prefix+'day2',day:'Wednesday',title:'Second assigned workout'},{...day,id:prefix+'day3',day:'Friday',title:'Third assigned workout'}];
   const sessions=parent?[day,...otherDays,mob,warm]:[day,...otherDays];
-  const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<500,permissions:['clipboard-read','clipboard-write']}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+  const context=await browser.newContext({viewport:{width,height:parent&&width<500?570:900},hasTouch:width<500,permissions:parent?[]:['clipboard-read','clipboard-write']}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await context.addInitScript(({audience,who})=>{localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify({role:'athlete',mode:'account',audience}));window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:who}}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})}})};},{audience,who});
   let failSave=true,openedEndCheckin=false;
   const finalParentWorkout=who==='parent-demo';
@@ -140,10 +141,37 @@ const {chromium}=require('playwright');
    const dialog=page.getByRole('dialog',{name:'Exercise demos'});
    const mark=dialog.getByRole('button',{name:'Mark Complete',exact:true});
    await dialog.getByRole('heading',{name:'Step-Up',exact:true}).waitFor();
+   const layout=()=>dialog.evaluate(el=>{
+    const bounds=selector=>el.querySelector(selector).getBoundingClientRect();
+    const body=el.querySelector('.hub-private-presentation-body');
+    const heading=bounds('.hub-parent-demo-heading'),stage=bounds('.hub-private-video-stage');
+    const coaching=bounds('.hub-parent-demo-details'),footer=bounds('footer'),dialogBounds=el.getBoundingClientRect();
+    return {
+     headingAboveVideo:heading.bottom<=stage.top,
+     videoClearOfCoaching:coaching.top>=stage.bottom||coaching.left>=stage.right,
+     footerInView:footer.top>=bounds('.hub-private-presentation-body').bottom&&footer.bottom<=dialogBounds.bottom+1,
+     bodyScrollable:body.scrollHeight>body.clientHeight,
+    };
+   });
+   const preview=await layout();
+   ok(preview.headingAboveVideo&&preview.videoClearOfCoaching,'exercise name, prescription, video and coaching do not overlap in the preview');
+   ok(preview.footerInView,'completion controls stay in view');
+   if(width<500)ok(preview.bodyScrollable,'instructions can scroll on a short phone viewport');
+   for(const label of ['How to do it','Coach cue','Watch for']){
+    ok(await dialog.locator('.hub-parent-demo-details .hub-visible-coach-note > strong').filter({hasText:label}).isVisible(),'separate '+label+' coaching block is present');
+   }
    ok((await dialog.innerText()).includes('Stop if your hip hurts.')&&(await dialog.innerText()).includes('Only if comfortable.'),'parent fullscreen keeps session and exercise restrictions');
    ok(await dialog.getByText('1 of 3',{exact:true}).isVisible(),'only main exercises are included');
    await dialog.getByRole('button',{name:'Play demo'}).click();
    ok((await dialog.locator('iframe').getAttribute('src')).includes('/embed/abcdefghijk'),'parent fullscreen opens the correct demo');
+   ok(await dialog.locator('.hub-private-video-stage.vertical iframe').count()===1,'the portrait player is exercised');
+   const playback=await layout();
+   ok(playback.headingAboveVideo&&playback.videoClearOfCoaching&&playback.footerInView,'portrait playback keeps the exercise info and controls clear');
+   ok(await dialog.getByRole('link',{name:'Open on YouTube',exact:true}).isVisible(),'video fallback stays available');
+   if(width<500){
+    await dialog.locator('.hub-parent-demo-details .hub-visible-coach-note').last().scrollIntoViewIfNeeded();
+    ok((await layout()).footerInView,'completion controls stay in view after scrolling to the last coaching block');
+   }
    await mark.click();
    const retry=dialog.getByRole('button',{name:'Try again',exact:true});
    await retry.waitFor();
