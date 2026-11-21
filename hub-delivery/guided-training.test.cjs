@@ -31,10 +31,16 @@ test('private athletes reach the same guided renderer as parents, with own sessi
  const start=app.indexOf('  function renderWorkoutExperience('),end=app.indexOf('  function nav(',start);
  const ctx={HUB_STATE:{audience:'private-athlete'},programme:()=>({sessions:[]}),session:()=>({role:'athlete'}),normalizeWorkoutSession:s=>({id:s.id}),EXERCISES:[],requiresGroupSelection:()=>false,
  visibleNormalizedSections:()=>[],flattenedWorkoutItems:()=>[{key:'p:1:0:MOB04',sectionTitle:'Core',title:'Breathing'}],isWorkoutComplete:()=>false,
- WORKOUT_MODE:'guided',GUIDED_CURSOR:{},guidedCard:(item,title,index,total,id)=>`Guided ${id} ${item.key}`,
- groupPicker:()=>'',isIdentifiedSchoolAthlete:()=>false,isSchoolReferenceViewer:()=>false,privateSelfServeViewer:()=>true,schoolAthleteDelivery:()=> 'QUICK ONLY'};
+ WORKOUT_MODE:'guided',PRIVATE_WORKOUT_VIEW:{id:'anos-own-day',mode:'guided'},assignedRoutines:()=>[],
+ privateWorkoutControls:mode=>'Controls '+mode,GUIDED_CURSOR:{},guidedCard:(item,title,index,total,id)=>`Guided ${id} ${item.key}`,
+ groupPicker:()=>'',isIdentifiedSchoolAthlete:()=>false,isSchoolReferenceViewer:()=>false,privateSelfServeViewer:()=>true,schoolAthleteDelivery:(_sections,_session,mode)=>'Sheet '+mode};
  vm.createContext(ctx);vm.runInContext(app.slice(start,end)+';globalThis.render=renderWorkoutExperience;',ctx);
  assert.match(ctx.render({id:'anos-own-day'}),/Guided anos-own-day p:1:0:MOB04/);
+ assert.match(ctx.render({id:'new-day'}),/Controls quick.*Sheet quick/);
+ ctx.PRIVATE_WORKOUT_VIEW.mode='learn';
+ assert.match(ctx.render({id:'new-day'}),/Controls learn.*Sheet learn/);
+ ctx.HUB_STATE.audience='parent';
+ assert.match(ctx.render({id:'parent-day'}),/Quick View.*Guided Workout.*Guided parent-day/);
 });
 test('guided preparation loads its matching delivery helper revision',()=>{
  assert.match(html,/<script src="\/hub-delivery\/delivery\.js\?v=[^" ]+"><\/script>/);
