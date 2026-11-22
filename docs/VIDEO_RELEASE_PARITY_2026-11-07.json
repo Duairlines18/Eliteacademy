@@ -1,0 +1,189 @@
+{
+  "status": "prepared_only_not_deployed",
+  "project": "hiktwkdfvlujszczthdu",
+  "source_commit": "78d8ec9d65baa68980112194eef741a4d7c615c2",
+  "functions": [
+    {
+      "slug": "hub-data",
+      "baseline_version": 12,
+      "verify_jwt": false,
+      "entrypoint": "hub-data/index.ts",
+      "changed_files": [
+        {
+          "file": "_shared/hub-core.ts",
+          "baseline_sha256": "97ab6d09dadb9557364514a222db9d63226466d1b22e49c8fcc3a9b56c389681",
+          "candidate_sha256": "80fba628c5e7db4cc3c14be1aef2b6981b72c8f6f33f5d8e6c8e0f8854f8c44f"
+        },
+        {
+          "file": "_shared/workout-delivery.ts",
+          "baseline_sha256": "c8557dc0361504df2ebeaf10667b3c01f8a946013961f967bf8a136f94e5a8c6",
+          "candidate_sha256": "57b67c594b70d085aed5f663bc1a2d1beece4cb4dc0fe5af35d11e41c7d38d63"
+        }
+      ],
+      "preserved_files": [
+        {
+          "file": "hub-data/index.ts",
+          "sha256": "66abccbf05dfa5b0573b808589c95a990ccd4fd7929e059893120f11d96873ed"
+        },
+        {
+          "file": "_shared/school-attendance.ts",
+          "sha256": "54a2ea0c83512e107d40b32374499a86ebf9df2e4e12ad6c30176ce1c2376c10"
+        },
+        {
+          "file": "_shared/hub-service.ts",
+          "sha256": "21ee6a18215e493496c5b798180644d1f14771e2374f5a5937d10f6147b8c3df"
+        },
+        {
+          "file": "_shared/feedback-service.ts",
+          "sha256": "c3690cd3e9bacfd27d059aae5b2c6e22a42a8e2f6cb46d9e692e2837e97153a7"
+        },
+        {
+          "file": "_shared/school-identity.ts",
+          "sha256": "1b7b6a323070da8b9138814006d5a1fd7498f0d987b49199130f1006df599803"
+        },
+        {
+          "file": "_shared/supabase-repository.ts",
+          "sha256": "7665a6dbdfcf98484e38dfd370107be24965986c00cb77c33a77720f9047736d"
+        },
+        {
+          "file": "_shared/runtime.ts",
+          "sha256": "f8201065f354c1eba981de00e9983d8351a13c37f35889504f3df3f41faab88f"
+        }
+      ],
+      "relative_imports_resolve": true,
+      "auth_prefix_unchanged": true
+    },
+    {
+      "slug": "parent-hub-data",
+      "baseline_version": 8,
+      "verify_jwt": true,
+      "entrypoint": "parent-hub-data/index.ts",
+      "changed_files": [
+        {
+          "file": "_shared/hub-core.ts",
+          "baseline_sha256": "578711d7e9f8c796f75182c1dcad7fbb73ab018745fc86bba44cc83fa898f9ee",
+          "candidate_sha256": "93e225ce7017fa3642072799d854c1bd875d3645971d0d0840b1199d567a3d4c"
+        },
+        {
+          "file": "_shared/account-adjustments.ts",
+          "baseline_sha256": "9b1b84fb2855dbbd5865381cc96eb29d443b501c4e02887f6d4ffad852d24d71",
+          "candidate_sha256": "fe76b02552588aaa9771052beae0f10cf67f759dfeeebdc14fca60b74e8c1c22"
+        },
+        {
+          "file": "_shared/workout-delivery.ts",
+          "baseline_sha256": "c8557dc0361504df2ebeaf10667b3c01f8a946013961f967bf8a136f94e5a8c6",
+          "candidate_sha256": "57b67c594b70d085aed5f663bc1a2d1beece4cb4dc0fe5af35d11e41c7d38d63"
+        }
+      ],
+      "preserved_files": [
+        {
+          "file": "parent-hub-data/index.ts",
+          "sha256": "20f23c1a53eb02e99e5553572587007d849cd1473cfdb47627b2f35b9258e9b6"
+        },
+        {
+          "file": "_shared/parent-handler.ts",
+          "sha256": "c5dc7c92075070cebb4cf35a27089fe2180af4061d4afc8574ad308358dd6109"
+        },
+        {
+          "file": "_shared/parent-service.ts",
+          "sha256": "c57c2c43257cfae73708cd85d41571ac0cfe6b06219870e7fdf7330c22aaadad"
+        },
+        {
+          "file": "_shared/account-assignment.ts",
+          "sha256": "adb24489a09d29f9f312de094bbd86947974407199e3f11116c1b3028387acd0"
+        },
+        {
+          "file": "_shared/parent-core.ts",
+          "sha256": "3f7a6a941927d55f84c8f94bac491db506d7b4c73f9fba54e60f598299c51f82"
+        },
+        {
+          "file": "_shared/account-entitlement.ts",
+          "sha256": "71bc697a66a8f1b3f8f035554bfb2b4ab8f22050a18784578b2324b08dbdc555"
+        },
+        {
+          "file": "_shared/feedback-service.ts",
+          "sha256": "c3690cd3e9bacfd27d059aae5b2c6e22a42a8e2f6cb46d9e692e2837e97153a7"
+        },
+        {
+          "file": "_shared/supabase-repository.ts",
+          "sha256": "645183b7927cfc806f73bf709061f6e4e5b368bd04723b02ad01ad819732050d"
+        },
+        {
+          "file": "_shared/runtime.ts",
+          "sha256": "f8201065f354c1eba981de00e9983d8351a13c37f35889504f3df3f41faab88f"
+        }
+      ],
+      "relative_imports_resolve": true,
+      "auth_prefix_unchanged": true
+    },
+    {
+      "slug": "private-athlete-hub-data",
+      "baseline_version": 12,
+      "verify_jwt": true,
+      "entrypoint": "private-athlete-hub-data/index.ts",
+      "changed_files": [
+        {
+          "file": "_shared/hub-core.ts",
+          "baseline_sha256": "578711d7e9f8c796f75182c1dcad7fbb73ab018745fc86bba44cc83fa898f9ee",
+          "candidate_sha256": "93e225ce7017fa3642072799d854c1bd875d3645971d0d0840b1199d567a3d4c"
+        },
+        {
+          "file": "_shared/account-adjustments.ts",
+          "baseline_sha256": "9b1b84fb2855dbbd5865381cc96eb29d443b501c4e02887f6d4ffad852d24d71",
+          "candidate_sha256": "fe76b02552588aaa9771052beae0f10cf67f759dfeeebdc14fca60b74e8c1c22"
+        },
+        {
+          "file": "_shared/workout-delivery.ts",
+          "baseline_sha256": "c8557dc0361504df2ebeaf10667b3c01f8a946013961f967bf8a136f94e5a8c6",
+          "candidate_sha256": "57b67c594b70d085aed5f663bc1a2d1beece4cb4dc0fe5af35d11e41c7d38d63"
+        }
+      ],
+      "preserved_files": [
+        {
+          "file": "private-athlete-hub-data/index.ts",
+          "sha256": "e062b7599f3423960b2b69f73a649f58c2a49fc75a943aae0ff17635208d497f"
+        },
+        {
+          "file": "_shared/private-athlete-handler.ts",
+          "sha256": "972fb394e30675bc9021961af56515fd8187486dfd48111b8c337c763fff086f"
+        },
+        {
+          "file": "_shared/private-athlete-service.ts",
+          "sha256": "bf07fd6ff5cce9410f18d398081eb7c5be45991a74620bfd22bfa10132da0b6c"
+        },
+        {
+          "file": "_shared/account-assignment.ts",
+          "sha256": "adb24489a09d29f9f312de094bbd86947974407199e3f11116c1b3028387acd0"
+        },
+        {
+          "file": "_shared/private-athlete-core.ts",
+          "sha256": "e7b9f357eb842305e3c700755e64cbad53a48d402c4f7f25453c24eaab9ff39c"
+        },
+        {
+          "file": "_shared/account-entitlement.ts",
+          "sha256": "71bc697a66a8f1b3f8f035554bfb2b4ab8f22050a18784578b2324b08dbdc555"
+        },
+        {
+          "file": "_shared/feedback-service.ts",
+          "sha256": "c3690cd3e9bacfd27d059aae5b2c6e22a42a8e2f6cb46d9e692e2837e97153a7"
+        },
+        {
+          "file": "_shared/supabase-repository.ts",
+          "sha256": "8a1b137c7d6007a72634e8516963e6d1befb3c4ec68343a5e85136f309a6cbec"
+        },
+        {
+          "file": "_shared/runtime.ts",
+          "sha256": "f8201065f354c1eba981de00e9983d8351a13c37f35889504f3df3f41faab88f"
+        }
+      ],
+      "relative_imports_resolve": true,
+      "auth_prefix_unchanged": true
+    }
+  ],
+  "gates": [
+    "authenticated role delivery",
+    "actual video playback",
+    "real iPhone verification",
+    "fresh baseline recapture before deployment"
+  ]
+}
