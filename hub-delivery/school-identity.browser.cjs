@@ -72,6 +72,23 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    ok(await presenter.getByRole('heading',{name:'Snap Down',exact:true}).isVisible(),'Day 2 presenter follows assigned exercise order');
    ok(await presenter.getByText('3 × 3 · Rest: 60 seconds',{exact:true}).isVisible(),'Day 2 presenter keeps assigned dose and rest');
    await presenter.getByRole('button',{name:'Close',exact:true}).click();
+   await page.getByRole('link',{name:'← Back to Week'}).click();
+   await page.getByRole('navigation',{name:'Choose training day'}).getByRole('link',{name:/^Day 3\b/}).click();
+   await fullScreen.click();
+   const schoolWorkout=new URL(page.url()).hash;
+   await presenter.getByRole('heading',{name:'Broad Jump + Stick',exact:true}).waitFor();
+   for(const heading of ['Step-Up','Ankle Rock']){
+    await presenter.getByRole('button',{name:'Play demo'}).click();
+    await presenter.locator('iframe').waitFor();
+    await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
+    await presenter.getByRole('button',{name:'Next',exact:true}).click();
+    await presenter.getByRole('heading',{name:heading,exact:true}).waitFor();
+    ok(new URL(page.url()).hash===schoolWorkout,'video and Next stay on the school workout');
+   }
+   await presenter.getByRole('button',{name:'Previous',exact:true}).click();
+   await presenter.getByRole('heading',{name:'Step-Up',exact:true}).waitFor();
+   await presenter.getByRole('button',{name:'Close',exact:true}).click();
+   ok(new URL(page.url()).hash===schoolWorkout,'closing stays on the school workout');
    await page.goto('http://127.0.0.1:4173/qa/'+slot+'#/hub/routines');
    await page.locator('.hub-card').filter({hasText:'ASIM Warm-Up'}).waitFor();checks++;
    ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no viewport overflow');

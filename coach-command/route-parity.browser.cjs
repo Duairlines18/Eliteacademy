@@ -208,6 +208,11 @@ const {chromium,webkit}=require('playwright');
      assert.match(await recovery.innerText(),/Walk easily for 2 minutes/);checks++;
      assert.equal(await recovery.locator('[data-play-demo]').count(),0);checks++;
      await page.locator('.ducc [data-action="present"]').click();
+     const workoutRoute=new URL(page.url()).hash;
+     await page.evaluate(()=>{
+      const originalNow=Date.now;
+      Date.now=()=>originalNow()+61_000;
+     });
      for(const [heading,tokens] of [
       ['Sprint technique',['3 × 40 m at 75%','Walk back.']],
       ['Jump technique',['Broad Jump + Stick','2 × 3','60 seconds']],
@@ -218,11 +223,29 @@ const {chromium,webkit}=require('playwright');
       assert.equal((await page.locator('.presentation-block').textContent()).split(' · ')[0],heading);checks++;
       const slide=await page.locator('.presentation').innerText();
       for(const token of tokens){assert.ok(slide.includes(token),token);checks++;}
+      if(heading==='Strength'){
+       await presenter.getByRole('button',{name:'Play Step-Up demonstration'}).click();
+       await presenter.locator('iframe').waitFor();
+       await page.evaluate(()=>{
+        window.dispatchEvent(new Event('focus'));
+        document.dispatchEvent(new Event('visibilitychange'));
+       });
+       await page.waitForTimeout(200);
+       assert.equal(await presenter.locator('.presentation-progress').textContent(),'3 of 5');
+       assert.equal(await presenter.locator('iframe').count(),1);
+       checks+=2;
+      }
+      assert.equal(new URL(page.url()).hash,workoutRoute);checks++;
       if(heading==='Recovery'){assert.ok(slide.includes('No video for this exercise.'));checks++;}
       const next=page.locator('.presentation [data-action="next-slide"]');
       if(await next.isEnabled())await next.click();
      }
+     const previous=presenter.getByRole('button',{name:'Previous',exact:true});
+     await previous.click();
+     await previous.click();
+     assert.equal(await presenter.locator('.presentation-progress').textContent(),'3 of 5');checks++;
      await page.locator('.ducc [data-action="exit-present"]').click();
+     assert.ok((await page.locator('.ducc .workout-head').innerText()).includes('Optional technique and recovery'));checks++;
     }
     await page.locator('.ducc [data-day="0"]').click();
     assert.ok((await page.locator('.ducc .workout-head').innerText()).includes('Movement foundations'));checks++;
