@@ -43,7 +43,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    const views=page.getByRole('group',{name:'Workout views'});
    ok(await views.getByRole('button',{name:'Workout',pressed:true,exact:true}).isVisible(),'Workout is selected on entry');
    assert.deepEqual(await views.getByRole('button').allTextContents(),['Workout','Full-screen demos']);checks++;
-   ok(await march.locator('summary').count()===0,'Workout stays focused on the prescription');
+   ok(await march.locator('details').count()>=1,'Workout provides optional expandable demo previews');
    const fullScreen=views.getByRole('button',{name:'Full-screen demos',exact:true});
    await fullScreen.click();
    const presenter=page.getByRole('dialog',{name:'Exercise demos'});
