@@ -76,7 +76,7 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    ok(await options.getByRole('button',{name:'Workout',pressed:true}).count()===1,'Workout is the private default');
    ok(await main.getByText('2 × 5 breaths',{exact:true}).isVisible(),'Workout shows prescription');
    assert.deepEqual(await options.getByRole('button').allTextContents(),['Workout','Full-screen demos']);
-   ok(await main.getByRole('button',{name:'Guided Workout',exact:true}).isVisible(),'Guided Workout is available separately');
+   ok(await main.getByRole('button',{name:'Guided Workout',exact:true}).count()===0,'private athlete has only two workout views');
    await main.getByText('Technique tips for Unfilmed mobility').click();
    ok(await main.getByText('Keep the movement slow and controlled.',{exact:false}).isVisible(),'Workout keeps tips for exercises without a demo');
    ok(await main.getByText('Only if comfortable.',{exact:false}).first().isVisible(),'Workout retains assigned restrictions');
