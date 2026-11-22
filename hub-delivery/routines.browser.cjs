@@ -41,6 +41,13 @@ const {chromium}=require('playwright');
    return {background:styles.backgroundColor,body:styles.fontFamily};
   });
   ok(brand.background==='rgb(15, 39, 28)'&&brand.body.includes('Inter'),`${audience}/${role}: inherits academy green and Inter`);
+  if(audience==='parent'||audience==='private-athlete'){
+   const day=page.getByRole('navigation',{name:'Choose training day'}).locator('a[href="#/hub/session/d1"]');
+   await day.waitFor();
+   ok(await day.evaluate(el=>getComputedStyle(el).backgroundColor==='rgb(20, 50, 34)'),`${audience}: workout card uses the academy panel green`);
+   await day.hover();
+   if(audience==='parent')ok(await day.evaluate(el=>getComputedStyle(el).backgroundColor==='rgb(26, 61, 42)'&&getComputedStyle(el).borderTopColor==='rgb(199, 162, 90)'),'parent workout card uses academy green and gold on hover');
+  }
   await shortcut.click();
   await page.locator('.hub-main h1').filter({hasText:'Your Routines'}).waitFor();
   ok(await page.locator('.hub-main .hub-card').count()===3,`${audience}/${role}: two standalone and one day-specific assigned routine`);
@@ -67,7 +74,14 @@ const {chromium}=require('playwright');
   await page.reload();await page.getByRole('link',{name:'← Your Routines',exact:true}).waitFor();
   await page.goto(base+(role==='staff'?'/#/hub/current-week':'/#/hub/session/d1'));
   if(role==='staff'){await page.locator('.ducc [data-day]').first().waitFor();}
-  else {await page.getByRole('link',{name:'← Back to Week',exact:true}).waitFor();ok(await page.locator('[aria-label="Choose training day"] a').count()===0,'workout has no sibling day cards');}
+  else {
+   await page.getByRole('link',{name:'← Back to Week',exact:true}).waitFor();
+   ok(await page.locator('[aria-label="Choose training day"] a').count()===0,'workout has no sibling day cards');
+   if(audience==='parent'||audience==='private-athlete'){
+    const heading=page.locator('.hub-athlete-session-title h1');
+    ok(await heading.evaluate(el=>getComputedStyle(el).fontFamily.includes('Playfair Display')&&getComputedStyle(el).color==='rgb(220, 195, 140)'),`${audience}: workout title uses the academy display font and gold`);
+   }
+  }
   if(role==='athlete'){
    await page.goto(base+'/#/hub/session/d2');await page.getByRole('link',{name:'Air Zim Warm-Up',exact:true}).click();
    await page.locator('.hub-main h1').filter({hasText:'Air Zim Warm-Up'}).waitFor();

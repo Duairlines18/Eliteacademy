@@ -4161,54 +4161,52 @@ document.addEventListener('click',function(e){
   @media(min-width:720px){.hub-role-grid{grid-template-columns:1fr 1fr}.hub-dashboard-grid,.hub-review-grid{grid-template-columns:1fr 1fr}.hub-dashboard-actions{grid-template-columns:repeat(2,1fr)}.hub-summary-grid{grid-template-columns:repeat(3,1fr)}.hub-athlete-grid{grid-template-columns:1fr 1fr}.hub-choice-grid{grid-template-columns:repeat(3,1fr)}}
   @media(min-width:980px){.hub-dashboard-actions{grid-template-columns:repeat(3,1fr)}.hub-athlete-grid{grid-template-columns:repeat(3,1fr)}.hub-video-grid{grid-template-columns:repeat(3,1fr)!important}}
 
-/* SCHOOL_THEME_START: scoped school palettes; default Hub remains unchanged. */
-.hub-shell:not(.hub-school-themed){--school-accent:#c7a25a;--school-deep:#2e2618;--school-paper:#f6f2ed;--school-line:rgba(199,162,90,.28);--school-soft:#d9bd84;--school-hero:#2e2618}
-.hub-school-themed{--school-accent:#cf2e2e;--school-deep:#651c26;--school-paper:#f6f2ed;--school-line:rgba(207,46,46,.28);--school-soft:#ed8585;--school-hero:#361018}
+/* SCHOOL_THEME_START: shared academy palette and school layouts. */
+.hub-shell{--school-accent:var(--gold);--school-deep:var(--green-2);--school-paper:var(--cream);--school-line:var(--hub-line);--school-soft:var(--gold-soft);--school-hero:var(--green-3)}
 .hub-school-themed .hub-page-head .hub-eyebrow,.hub-school-themed .hub-week-label{color:var(--school-soft)}
 .hub-school-themed .hub-athlete-day-choice strong,.hub-school-themed .hub-school-session-name{color:var(--school-paper)}
-.hub-school-themed .hub-school-day-picker .hub-athlete-day-choice{border-color:var(--school-line);background:linear-gradient(145deg,var(--school-deep),#111)}
+.hub-school-themed .hub-school-day-picker .hub-athlete-day-choice{border-color:var(--school-line);background:linear-gradient(145deg,var(--school-deep),var(--green))}
 .hub-school-themed .hub-school-day-picker .hub-athlete-day-choice:hover,.hub-school-themed .hub-school-day-picker .hub-athlete-day-choice:focus-visible{border-color:var(--school-soft)}
 .hub-school-themed .hub-school-day-picker .hub-athlete-day-choice.selected{border-color:var(--school-soft);background:var(--school-deep)}
-.hub-school-themed .hub-school-day-picker .hub-athlete-day-choice small{color:#c7b6b8}
 .hub-school-themed .hub-athlete-week-focus{border-color:var(--school-line)}
-.hub-school-themed .hub-current-week{border-color:var(--school-line);background:linear-gradient(170deg,rgba(101,28,38,.22),#101010)}
+.hub-school-themed .hub-current-week{border-color:var(--school-line);background:linear-gradient(170deg,var(--green-2),var(--green))}
 .saints-director-view{display:grid;gap:1rem}
 .saints-director-view .hub-page-head{margin-bottom:.3rem}
-.saints-director-hero{border:1px solid var(--school-line);border-radius:16px;padding:clamp(1.2rem,4vw,1.8rem);background:linear-gradient(135deg,var(--school-hero),#191014 72%,#101010)}
-.saints-director-kicker{color:#f0a0a0;font-size:.67rem;font-weight:750;letter-spacing:.14em;margin:0 0 .6rem}
+.saints-director-hero{border:1px solid var(--school-line);border-radius:16px;padding:clamp(1.2rem,4vw,1.8rem);background:linear-gradient(135deg,var(--school-hero),var(--green-2) 72%,var(--green))}
+.saints-director-kicker{color:var(--gold-soft);font-size:.67rem;font-weight:750;letter-spacing:.14em;margin:0 0 .6rem}
 .saints-director-hero h2{font-family:var(--serif);font-size:clamp(1.55rem,5vw,2.4rem);line-height:1.2;margin:0 0 .65rem;color:var(--school-paper)}
-.saints-director-pill{display:inline-block;padding:.3rem .65rem;border:1px solid rgba(255,215,184,.32);border-radius:30px;font-size:.75rem;color:#ffe0c1}
-.saints-director-hero-focus{color:#f4e5e1;line-height:1.55;margin:.9rem 0 .65rem}
-.saints-director-muted{font-size:.78rem;color:#bcb0b1;line-height:1.5;margin:.55rem 0 0}
+.saints-director-pill{display:inline-block;padding:.3rem .65rem;border:1px solid var(--hub-line);border-radius:30px;font-size:.75rem;color:var(--gold-soft)}
+.saints-director-hero-focus{color:var(--cream);line-height:1.55;margin:.9rem 0 .65rem}
+.saints-director-muted{font-size:.78rem;color:var(--hub-muted);line-height:1.5;margin:.55rem 0 0}
 .saints-director-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}
-.saints-director-metrics>div{padding:.85rem .5rem;background:#141414;border:1px solid var(--school-line);border-radius:11px;text-align:center}
-.saints-director-metrics strong{display:block;font-size:1.45rem;color:#f4ede9;font-weight:750}
-.saints-director-metrics span{display:block;font-size:.67rem;color:#c0b2b3;line-height:1.35}
-.saints-director-card{border:1px solid var(--school-line);border-radius:14px;background:#111;padding:1.1rem}
+.saints-director-metrics>div{padding:.85rem .5rem;background:var(--green-2);border:1px solid var(--school-line);border-radius:11px;text-align:center}
+.saints-director-metrics strong{display:block;font-size:1.45rem;color:var(--cream);font-weight:750}
+.saints-director-metrics span{display:block;font-size:.67rem;color:var(--hub-muted);line-height:1.35}
+.saints-director-card{border:1px solid var(--school-line);border-radius:14px;background:var(--green-2);padding:1.1rem}
 .saints-director-section-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.35rem .8rem;margin-bottom:.9rem}
 .saints-director-section-head h2{font-family:var(--serif);font-size:1.3rem;margin:0;color:var(--school-paper)}
-.saints-director-section-head>span{color:#c6aaac;font-size:.72rem}
+.saints-director-section-head>span{color:var(--hub-muted);font-size:.72rem}
 .saints-roadmap{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.4rem;margin:0;padding:0}
-.saints-roadmap li{display:flex;flex-direction:column;min-width:0;padding:.65rem .4rem;border:1px solid #333;border-radius:9px;background:#191919;gap:.3rem}
-.saints-roadmap li.current{background:linear-gradient(160deg,var(--school-deep),#2a1519);border-color:var(--school-accent)}
-.saints-roadmap-num{font-size:.73rem;color:#e99b9b}
-.saints-roadmap strong{font-size:.69rem;color:#f5ece9}
-.saints-roadmap small{font-size:.61rem;line-height:1.35;color:#bdb0b0}
-.saints-roadmap em{font-size:.6rem;font-style:normal;color:#d7acac;margin-top:auto}
+.saints-roadmap li{display:flex;flex-direction:column;min-width:0;padding:.65rem .4rem;border:1px solid var(--hub-line);border-radius:9px;background:var(--green-2);gap:.3rem}
+.saints-roadmap li.current{background:linear-gradient(160deg,var(--school-deep),var(--green-3));border-color:var(--school-accent)}
+.saints-roadmap-num{font-size:.73rem;color:var(--gold-soft)}
+.saints-roadmap strong{font-size:.69rem;color:var(--cream)}
+.saints-roadmap small{font-size:.61rem;line-height:1.35;color:var(--hub-muted)}
+.saints-roadmap em{font-size:.6rem;font-style:normal;color:var(--hub-muted);margin-top:auto}
 .saints-director-sessions{display:grid;gap:.55rem}
-.saints-director-session{display:grid;grid-template-columns:58px minmax(0,1fr);gap:.2rem .7rem;align-items:baseline;border-bottom:1px solid #332528;padding:.5rem 0}
+.saints-director-session{display:grid;grid-template-columns:58px minmax(0,1fr);gap:.2rem .7rem;align-items:baseline;border-bottom:1px solid var(--hub-line);padding:.5rem 0}
 .saints-director-session:last-child{border-bottom:0}
 .saints-director-session>span{font-size:.75rem;color:var(--school-soft);font-weight:750;grid-row:span 2}
-.saints-director-session strong{font-size:.87rem;color:#f4efed;font-weight:650}
-.saints-director-session small{color:#b9abad;font-size:.73rem}
+.saints-director-session strong{font-size:.87rem;color:var(--cream);font-weight:650}
+.saints-director-session small{color:var(--hub-muted);font-size:.73rem}
 .saints-director-attendance>summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;list-style:none}
 .saints-director-attendance>summary::-webkit-details-marker{display:none}
 .saints-director-attendance>summary strong{display:block;font-family:var(--serif);font-size:1.3rem}
-.saints-director-attendance>summary small{display:block;color:#b9abad;font-size:.75rem;margin-top:.2rem}
+.saints-director-attendance>summary small{display:block;color:var(--hub-muted);font-size:.75rem;margin-top:.2rem}
 .saints-director-attendance>summary>span:last-child{font-size:1.3rem;color:var(--school-soft)}
 .saints-director-attendance[open]>summary>span:last-child{transform:rotate(45deg)}
 .saints-director-attendance .du-att{border:0;padding:0;margin:1rem 0 0;background:transparent}
-.saints-director-view :focus-visible{outline:2px solid #ffb0b0;outline-offset:3px}
+.saints-director-view :focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px}
 @media(max-width:360px){.saints-roadmap{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .hub-school-themed .ducc :is(a,button):focus-visible{outline:2px solid var(--school-soft);outline-offset:3px}
 .hub-school-themed .ducc :is(h1,h2){color:var(--school-paper)}
@@ -4219,16 +4217,18 @@ document.addEventListener('click',function(e){
   --hub-panel-2:var(--green-3);
   --hub-text:var(--cream);
   --hub-muted:#b4c2b7;
+  --hub-gold:var(--gold);
   --hub-line:rgba(199,162,90,.3);
   background:var(--hub-bg);
 }
 #hub-root .hub-shell{background:var(--green)}
 #hub-root .hub-topbar{background:var(--ink)}
 #hub-root :is(.hub-athlete-session-title h1,.hub-athlete-compact-intro h1,.ducc header h1,.ducc .workout-head h2){
+  color:var(--gold-soft);
   font-family:var(--serif);
   font-weight:600;
 }
-#hub-root :is(.hub-athlete-session-title,.hub-parent-session-card,.hub-school-day-picker .hub-athlete-day-choice,.ducc [data-day],.ducc .workout-section,.hub-athlete-phase,.hub-athlete-movement){
+#hub-root :is(.hub-athlete-session-title,.hub-athlete-day-choice,.hub-school-day-picker .hub-athlete-day-choice,.ducc [data-day],.ducc .workout-section,.hub-athlete-phase,.hub-athlete-movement){
   background:var(--green-2);
   border-color:var(--hub-line);
   color:var(--cream);
@@ -4237,7 +4237,22 @@ document.addEventListener('click',function(e){
   background:linear-gradient(135deg,var(--green-3),var(--green-2));
 }
 #hub-root :is(.hub-athlete-day-choice.selected,.ducc [data-day][aria-pressed="true"]){border-color:var(--gold)}
-#hub-root :is(.hub-school-day-picker .hub-athlete-day-choice small,.hub-parent-session-card small){color:var(--hub-muted)}
+#hub-root .hub-school-day-picker .hub-athlete-day-choice small{color:var(--hub-muted)}
+@media screen{
+  /* Parent card layouts ship with important declarations in the legacy stylesheets. */
+  #hub-root .hub-parent-session-card{
+    background:var(--green-2)!important;
+    border-color:var(--hub-line)!important;
+    color:var(--cream)!important;
+  }
+  #hub-root .hub-parent-session-card:is(.selected,:hover){
+    background:var(--green-3)!important;
+    border-color:var(--gold)!important;
+  }
+  #hub-root .hub-parent-session-card strong{color:var(--cream)!important}
+  #hub-root .hub-parent-session-card small{color:var(--hub-muted)!important}
+  #hub-root .hub-parent-session-card:focus-visible{outline-color:var(--gold-soft)!important}
+}
 #hub-root .ducc{font-family:var(--sans)}
 #hub-root .ducc header{background:linear-gradient(135deg,var(--green-3),var(--green-2))}
 #hub-root :is(.hub-button:not(.secondary):not(.ghost),.ducc .button:not(.secondary),.hub-week-tabs button.active){
@@ -4252,6 +4267,7 @@ document.addEventListener('click',function(e){
 }
 #hub-root :is(.hub-button:not(.secondary):not(.ghost),.ducc .button:not(.secondary)):hover{background:var(--gold-soft)}
 #hub-root .ducc .coaching-views button{background:transparent;color:var(--cream)}
+#hub-root .ducc .coaching-views [aria-current="true"]{background:var(--gold);color:var(--green)}
 #hub-root .ducc .presentation .button:not(.primary){background:var(--green-2);border-color:var(--present-line);color:var(--cream)}
 #hub-root .hub-private-presentation,
 #hub-root .hub-private-presentation :is(header,footer),
@@ -4866,17 +4882,13 @@ document.addEventListener('click',function(e){
     if(HUB_STATE.audience!=='professional')links.splice(1,0,['journey','#/hub/journey',staff?'Group Journey':'My Journey']);
     return '<header class="hub-topbar"><div class="hub-wrap hub-topbar-row"><a class="hub-brand" href="'+dashboard+'">DU AIRLINES <span>PERFORMANCE HUB</span></a><button class="hub-menu-button" type="button" aria-expanded="false" aria-controls="hubNav">Menu</button><nav class="hub-nav" id="hubNav" aria-label="Performance Hub">'+links.map(x=>'<a href="'+x[1]+'"'+(active===x[0]?' aria-current="page"':'')+'>'+x[2]+'</a>').join('')+'<button class="hub-logout" type="button">Log Out</button></nav></div></header>';
   }
-  // SCHOOL_THEME_LOOKUP_START: add a verified school name and palette here only.
-  const SCHOOL_THEMES={
-    "st georges college":{accent:"#cf2e2e",deep:"#651c26",paper:"#f6f2ed",line:"rgba(207,46,46,.28)",soft:"#ed8585",hero:"#361018"}
-  };
-  function schoolTheme(){
+  // SCHOOL_THEME_LOOKUP_START: recognize verified school identity for school-specific layouts.
+  function isSaintsSchool(){
     const raw=String(HUB_STATE.cohort?.name||HUB_STATE.programme?.school||"");
     const key=raw.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g," ").trim();
-    return SCHOOL_THEMES[key]||SCHOOL_THEMES[Object.keys(SCHOOL_THEMES).find(school=>key.startsWith(school.replace(/ college$/,'')+' '))]||null;
+    return key.startsWith('st georges ');
   }
-  function schoolThemeStyle(theme){return theme?' style="'+Object.entries(theme).map(([k,v])=>'--school-'+k+':'+v).join(';')+'"':'';}
-  function shell(content,active){const theme=schoolTheme();return '<div class="hub-shell'+(theme?' hub-school-themed':'')+'"'+(theme===SCHOOL_THEMES["st georges college"]?' data-school-theme="saints"':'')+schoolThemeStyle(theme)+'>'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
+  function shell(content,active){const schoolAttributes=isSaintsSchool()?' class="hub-shell hub-school-themed" data-school-theme="saints"':' class="hub-shell"';return '<div'+schoolAttributes+'>'+nav(active)+'<main class="hub-main"><div class="hub-wrap">'+content+'</div></main></div>';}
   // SCHOOL_THEME_LOOKUP_END
   let HUB_VIDEO_LAST_FOCUS=null;
   let HUB_VIDEO_BODY_OVERFLOW='';
@@ -5218,7 +5230,7 @@ document.addEventListener('click',function(e){
   }
 
   function renderCurrentWeek(){if(renderCoachCommand())return;const p=programme();root.innerHTML=shell('<div class="hub-field-day-header"><a href="#/hub/staff">← Coach home</a><h1>Current Week</h1></div>'+weekBlock(p)+(p.coachGuidance?'<details class="hub-field-optional"><summary>Coach guidance</summary><p>'+escapeHtml(p.coachGuidance)+'</p></details>':''),'week');}
-  function renderSession(id){id=String(id).split('?')[0];const p=programme(),s=p.sessions.find(x=>x.id===id);if(!s){renderNotFound();return;}if(assignedRoutines(p).includes(s)){renderRoutine(s);return;}if(renderCoachCommand(s.id))return;const back=session()?.role==='staff'?'#/hub/current-week':'#/hub/athlete';const savedNotes=[s.watch,s.athleteNote].filter(Boolean);const schoolDay=isSchoolReferenceViewer();const saintsAthleteView=schoolDay&&session()?.role==='athlete'&&schoolTheme()===SCHOOL_THEMES['st georges college'];const important=!saintsAthleteView&&savedNotes.length?'<div class="hub-objective"><strong>'+(schoolDay?'Coach notes':'Coach instructions')+'</strong><span>'+savedNotes.map(escapeHtml).join('<br>')+'</span></div>':'';const sessionHelp=isSchoolReferenceViewer()?'Read the prescription first. Open an exact demo only when you need technique guidance.':'Scan the full prescription in Quick View or switch to Guided Mode for step-by-step help.';const schoolAthlete=isSchoolReferenceViewer()&&session()?.role!=='staff';const privateAthlete=privateSelfServeViewer();const parentAthlete=HUB_STATE.audience==='parent'&&session()?.role!=='staff';const simpleAthlete=schoolAthlete||privateAthlete||parentAthlete;const athleteNav=simpleAthlete?'<div class="hub-athlete-session-nav"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(weekLabel(p))+'</span></div>'+(schoolAthlete&&!saintsAthleteView?'<details class="hub-field-cohort hub-athlete-session-group"><summary>'+escapeHtml(schoolGroup()||'Choose your Form')+' <span>Change</span></summary>'+groupPicker()+'</details>':''):'';const athleteHead=simpleAthlete?'<div class="hub-athlete-session-title"><h1>'+escapeHtml(parentAthlete?(parentSessionLabel(s,Math.max(0,p.sessions.indexOf(s)))+' — '+parentSessionHeading(s,Math.max(0,p.sessions.indexOf(s)))):((s.day||'Day')+' · '+s.title))+'</h1><p>'+escapeHtml(s.duration||'')+'</p></div>':'';const body=simpleAthlete?athleteNav+athleteHead+'<section class="hub-section hub-field-session">'+important+preparationNavigation(s)+renderWorkoutExperience(s)+'</section>':(session()?.role==='staff'&&isSchoolReferenceViewer()?'<div class="hub-field-day-header"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(s.day||'')+'</span><h1>'+escapeHtml(s.title)+'</h1><p>'+escapeHtml(s.focus||'')+'</p><small>'+escapeHtml(s.duration||'')+'</small></div>':pageHead(s.day,s.title,s.focus,back))+ '<section class="hub-section hub-field-session">'+important+'<div class="hub-section-head"><div><h2>Training Sheet</h2></div></div>'+renderWorkoutExperience(s)+'</section>';root.innerHTML=shell(body+(simpleAthlete?'':airZimTool(p)),'week');}
+  function renderSession(id){id=String(id).split('?')[0];const p=programme(),s=p.sessions.find(x=>x.id===id);if(!s){renderNotFound();return;}if(assignedRoutines(p).includes(s)){renderRoutine(s);return;}if(renderCoachCommand(s.id))return;const back=session()?.role==='staff'?'#/hub/current-week':'#/hub/athlete';const savedNotes=[s.watch,s.athleteNote].filter(Boolean);const schoolDay=isSchoolReferenceViewer();const saintsAthleteView=schoolDay&&session()?.role==='athlete'&&isSaintsSchool();const important=!saintsAthleteView&&savedNotes.length?'<div class="hub-objective"><strong>'+(schoolDay?'Coach notes':'Coach instructions')+'</strong><span>'+savedNotes.map(escapeHtml).join('<br>')+'</span></div>':'';const sessionHelp=isSchoolReferenceViewer()?'Read the prescription first. Open an exact demo only when you need technique guidance.':'Scan the full prescription in Quick View or switch to Guided Mode for step-by-step help.';const schoolAthlete=isSchoolReferenceViewer()&&session()?.role!=='staff';const privateAthlete=privateSelfServeViewer();const parentAthlete=HUB_STATE.audience==='parent'&&session()?.role!=='staff';const simpleAthlete=schoolAthlete||privateAthlete||parentAthlete;const athleteNav=simpleAthlete?'<div class="hub-athlete-session-nav"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(weekLabel(p))+'</span></div>'+(schoolAthlete&&!saintsAthleteView?'<details class="hub-field-cohort hub-athlete-session-group"><summary>'+escapeHtml(schoolGroup()||'Choose your Form')+' <span>Change</span></summary>'+groupPicker()+'</details>':''):'';const athleteHead=simpleAthlete?'<div class="hub-athlete-session-title"><h1>'+escapeHtml(parentAthlete?(parentSessionLabel(s,Math.max(0,p.sessions.indexOf(s)))+' — '+parentSessionHeading(s,Math.max(0,p.sessions.indexOf(s)))):((s.day||'Day')+' · '+s.title))+'</h1><p>'+escapeHtml(s.duration||'')+'</p></div>':'';const body=simpleAthlete?athleteNav+athleteHead+'<section class="hub-section hub-field-session">'+important+preparationNavigation(s)+renderWorkoutExperience(s)+'</section>':(session()?.role==='staff'&&isSchoolReferenceViewer()?'<div class="hub-field-day-header"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(s.day||'')+'</span><h1>'+escapeHtml(s.title)+'</h1><p>'+escapeHtml(s.focus||'')+'</p><small>'+escapeHtml(s.duration||'')+'</small></div>':pageHead(s.day,s.title,s.focus,back))+ '<section class="hub-section hub-field-session">'+important+'<div class="hub-section-head"><div><h2>Training Sheet</h2></div></div>'+renderWorkoutExperience(s)+'</section>';root.innerHTML=shell(body+(simpleAthlete?'':airZimTool(p)),'week');}
 
 
   function athleteCard(a){return '<article class="hub-profile-card"><h3>'+escapeHtml(a.name)+'</h3><p>'+escapeHtml(a.event)+'</p><div class="hub-meta-row"><span class="hub-chip">'+escapeHtml(a.phase)+'</span><span class="hub-status'+(a.status!=='No Current Flag'?' flag':'')+'">'+escapeHtml(a.status)+'</span></div><p>Next review: '+escapeHtml(a.nextReview)+'</p><a class="hub-action-arrow" href="#/hub/athlete-profile/'+encodeURIComponent(a.id)+'">View Profile →</a></article>';}
