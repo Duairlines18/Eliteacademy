@@ -4784,7 +4784,7 @@ document.addEventListener('click',function(e){
           }
           if(!routine&&!standalone)maybeOpenWorkoutEndCheckin();
         }).catch(()=>{
-          if(dialog.open&&location.hash===route){button.disabled=false;button.textContent=button.matches('.hub-compact-complete')?'↻':'Try again';}
+          if(dialog.open&&location.hash===route){button.disabled=false;button.textContent='Try again';}
         }).finally(()=>{saving=false;});
         return;
       }
@@ -5393,7 +5393,7 @@ document.addEventListener('click',function(e){
       const index=items.findIndex(item=>item.sessionKey===button.dataset.sessionKey&&item.key===button.dataset.itemKey);
       if(index<0||session()?.role==='staff'||isSchoolReferenceViewer())return true;
       const item=items[index],next=button.dataset.completed!=='true';button.disabled=true;button.textContent=button.matches('.hub-compact-complete')?'…':'Saving…';
-      saveWorkoutCompletion(item.sessionKey,item.key,next).then(row=>{if(!row||location.hash!==route)return;if(next)GUIDED_CURSOR[route]=Math.min(items.length-1,index+1);renderRoutineCard();}).catch(()=>{if(location.hash===route&&button.isConnected){button.disabled=false;button.textContent='Try again';}});
+      saveWorkoutCompletion(item.sessionKey,item.key,next).then(row=>{if(!row||location.hash!==route)return;if(next)GUIDED_CURSOR[route]=Math.min(items.length-1,index+1);renderRoutineCard();}).catch(()=>{if(location.hash===route&&button.isConnected){button.disabled=false;button.textContent=button.matches('.hub-compact-complete')?'↻':'Try again';}});
       return true;
     }
     renderRoutineCard();return true;
