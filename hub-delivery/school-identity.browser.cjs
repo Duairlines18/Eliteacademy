@@ -66,7 +66,9 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    await page.getByRole('link',{name:'← Back to Week'}).click();
    await page.getByRole('navigation',{name:'Choose training day'}).getByRole('link',{name:/^Day 2\b/}).click();
    await views.getByRole('button',{name:'Workout',pressed:true,exact:true}).waitFor();checks++;
-   ok(await page.getByText('Stay balanced.',{exact:false}).first().isVisible(),'Day 2 keeps assigned coaching cues on Workout');
+   const balanced=page.locator('[data-athlete-inline-demo]').filter({hasText:'Stay balanced.'}).first();
+   await balanced.locator('summary').click();
+   ok(await balanced.getByText('Stay balanced.',{exact:false}).isVisible(),'Day 2 keeps assigned coaching cues in its dropdown');
    ok(await page.getByText('Stop if pain increases.',{exact:false}).first().isVisible(),'Day 2 keeps safety guidance on Workout');
    await fullScreen.click();
    await presenter.getByRole('button',{name:'Next',exact:true}).click();
