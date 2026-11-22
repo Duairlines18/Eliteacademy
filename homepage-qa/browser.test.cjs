@@ -24,6 +24,8 @@ const {chromium}=require('playwright');
  ok(title.y+title.height<=hero.y+hero.height,`${width}: hero heading fits`);
  const roleRows=await page.locator('[data-premium-role]').evaluateAll(items=>items.map(e=>Math.round(e.getBoundingClientRect().top)));
  ok(new Set(roleRows).size===1,`${width}: Hub roles stay in one horizontal row`);
+ ok(await page.getByRole('tab',{name:'School Athlete',exact:true}).count()===1,`${width}: school athlete tab is distinct from private athlete`);
+ ok(await page.getByRole('link',{name:'Access School Athlete Hub',exact:true}).isVisible(),`${width}: school athlete link is clear`);
  ok(await page.locator('.premium-story-avatar').count()===3,`${width}: existing athlete photos reused`);
  ok(await page.locator('.premium-story-avatar').evaluateAll(images=>images.every(e=>(e.getAttribute('src')||'').startsWith('data:image/'))),`${width}: every athlete photo has its original source`);
  const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: credentials expanded`);ok(await page.locator('.premium-more-grid span').count()===7,`${width}: seven additional credentials`);
@@ -47,6 +49,14 @@ const {chromium}=require('playwright');
  ok(!await page.locator('.premium-pathways').isVisible(),`${width}: homepage pathways hidden on Hub`);
  await page.goto(base);
  }
+ await page.goto(base+'/#/hub/login');
+ const roles=page.locator('.hub-role-card');
+ await roles.first().waitFor({state:'visible'});
+ ok((await roles.locator('strong').allTextContents()).join('|')==='School / Team Athlete|Staff / Coach|Parent Access|Private Athlete',`${width}: Hub chooser shows the four public access paths`);
+ await page.goto(base+'/#/hub/login/professional');
+ await page.locator('#hub-root input[type="email"]').waitFor({state:'visible'});
+ ok(await page.getByRole('heading',{name:'Professional Performance',exact:true}).isVisible(),`${width}: saved professional sign-in link still works`);
+ await page.goto(base);
  await page.locator('[data-premium-role="athlete"]').focus();await page.keyboard.press('End');ok(await page.locator('[data-premium-role="private"]').getAttribute('aria-selected')==='true',`${width}: keyboard End selects private athlete`);
  await page.keyboard.press('Home');ok(await page.locator('[data-premium-role="athlete"]').getAttribute('aria-selected')==='true',`${width}: keyboard Home selects athlete`);
  if(width<=899){

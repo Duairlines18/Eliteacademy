@@ -118,7 +118,11 @@ const withoutCompactVideo=source=>source
 // Existing Pages additions are now tracked in source; exact parity is tested in qa/release-assets.test.cjs.
 const withoutDeploymentAdditions=source=>source.replace(/<link rel="stylesheet" href="\/parent-qa\/session-card-polish\.css">\r?\n?<script defer src="\/parent-qa\/session-card-polish\.js"><\/script>\r?\n?<script defer src="\/performance\/coachdu-hub-bridge\.js"><\/script>\r?\n?/,'').replace(/  function renderAccountStatus\(audience,error\)\{\r?\n    if\(audience==='professional' && error\?\.code==='NO_ASSIGNMENT'\)\{[\s\S]*?\r?\n    \}\r?\n\r?\n/,'  function renderAccountStatus(audience,error){\r\n');
 const withoutHubAssets=source=>source.replace(/\/\* SCHOOL_THEME_START:[\s\S]*?\/\* SCHOOL_THEME_END \*\/\r?\n/,'').replace(/<link rel="stylesheet" href="\/parent-setup\/setup\.css">\r?\n?<script src="\/parent-setup\/setup\.js"><\/script>\r?\n?/,'').replace(/<script src="\/hub-delivery\/premium-v2\.js\?v=20261020"><\/script>\r?\n/,'').replace(/<script src="\/hub-delivery\/delivery\.js\?v=(?:20261019|20261109-guided|20261109-unified|20261118-coaching)"><\/script>\r?\n/,'').replace(/<link rel="stylesheet" href="\/hub-delivery\/delivery\.css\?v=(?:20261019|20261118-coaching|20261118-compact|20261121-workout-views|20261121-school-workout|20261121-private-workout|20261121-parent-workout|20261121-parent-demo-layout)">\r?\n/,'');
-const actualHomepage=withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart))))));
+const beforeSchoolAthleteLabels=source=>source
+ .replace('data-premium-role="athlete">School Athlete</button>','data-premium-role="athlete">Athlete</button>')
+ .replace('id="premium-role-eyebrow">SCHOOL ATHLETE ACCESS','id="premium-role-eyebrow">ATHLETE ACCESS')
+ .replace('Access School Athlete Hub <span','Access Athlete Hub <span');
+const actualHomepage=beforeSchoolAthleteLabels(withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart)))))));
 const expectedHomepage=currentProduction.slice(0,currentProduction.indexOf(routeStart)).replace(oldShareMetadata,approvedShareMetadata);
 if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')){
  const actualNormalized=actualHomepage.replace(/\r\n/g,'\n'),expectedNormalized=expectedHomepage.replace(/\r\n/g,'\n');
@@ -222,7 +226,7 @@ const withoutSchoolIdentity=source=>source
 // Story arrival is covered by my-journey/story.test.cjs; exclude only its exact scoped branch.
 const withoutPartnershipPresentation=source=>source.replace(/      if \(activeView === homeView && location.hash === '#stories'\) \{[\s\S]*?      \} else\r?\n/, '').replace(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/,"      window.scrollTo({top:0, behavior:'instant'});").replace(/  const openButton=document.getElementById\('openPartnershipForm'\);[\s\S]*?(?=  const method=document.getElementById\('partner-contact'\);)/,'');
 const actualIntegration=withoutCoachingDisplay(withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPrivateWorkoutViews(withoutCompactVideo(withoutPartnershipPresentation(withoutDeploymentAdditions(html.slice(html.indexOf(routeStart),html.indexOf(homepageController)))))))))));
-const expectedIntegration=withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController)))))));
+const expectedIntegration=withoutSchoolIdentity(withoutJourneyPresentation(withoutAirZimPresentation(withoutHubRepair(withoutPartnershipPresentation(baseline.slice(baseline.indexOf(routeStart),baseline.indexOf(homepageController))))))).replace(/^      \+'<button class="hub-role-card" data-account-role="professional"><strong>Professional Performance<\/strong><span>Account access for your structured Professional Performance programme\.<\/span><\/button>'\n/m,'');
 if(actualIntegration!==expectedIntegration){
  const a=actualIntegration.replace(/\r\n/g,'\n'),b=expectedIntegration.replace(/\r\n/g,'\n');
  let at=0;while(at<a.length&&at<b.length&&a[at]===b[at])at++;
