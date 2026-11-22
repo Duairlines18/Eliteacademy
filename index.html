@@ -4911,9 +4911,11 @@ document.addEventListener('click',function(e){
         const demos=athleteWorkoutDemos(item).map(clip=>'<a class="hub-athlete-demo" href="'+escapeHtml(clip.original)+'" target="_blank" rel="noopener noreferrer">Watch '+escapeHtml(clip.title)+' demo</a>').join('');
         const details=how||demos?'<details class="hub-private-demo-details"><summary>'+(demos?'Demo &amp; technique':'Technique')+' <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary>'+how+(demos?'<div class="hub-media-actions">'+demos+'</div>':'')+'</details>':'';
         const dose=item.dosage?'<strong>'+escapeHtml(item.dosage)+'</strong>':'';
+        const doseHelp=DuHubDelivery.explainDose(item.dosage);
+        const effortHelp=DuHubDelivery.trainingHelp([item.title,item.dosage,item.cue].join(' '));
         const rest=item.rest?'<small>Rest: '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</small>':'';
         const complete='<button type="button" class="hub-quick-toggle" data-completion-toggle data-session-key="'+sessionKey+'" data-item-key="'+key+'" data-completed="'+completed+'" aria-pressed="'+completed+'">'+(completed?'Undo':'Complete')+'</button>';
-        return '<article class="hub-athlete-movement hub-parent-quick-row"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+dose+'</div>'+rest+essential.map(notesLine).join('')+complete+details+'</article>';
+        return '<article class="hub-athlete-movement hub-parent-quick-row"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+dose+'</div>'+(doseHelp?'<p class="hub-dose-help">'+escapeHtml(doseHelp)+'</p>':'')+rest+(effortHelp.length?'<p class="hub-term-help">'+effortHelp.map(escapeHtml).join(' ')+'</p>':'')+essential.map(notesLine).join('')+complete+details+'</article>';
       }).join('');
       let playlist='';
       if(isSchoolWarmupSection(section)){
