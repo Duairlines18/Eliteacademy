@@ -33,14 +33,14 @@ test('private athletes and parent days open in the compact workout view',()=>{
  visibleNormalizedSections:()=>[],flattenedWorkoutItems:()=>[{key:'p:1:0:MOB04',sectionTitle:'Core',title:'Breathing'}],isWorkoutComplete:()=>false,
  WORKOUT_MODE:'guided',ATHLETE_WORKOUT_VIEW:{id:'anos-own-day',mode:'guided'},assignedRoutines:()=>[],
  athleteWorkoutControls:(mode,showGuided=true,label='Workout')=>'Controls '+mode+' '+label+(showGuided?' Guided Workout':''),GUIDED_CURSOR:{},guidedCard:(item,title,index,total,id)=>`Guided ${id} ${item.key}`,
- groupPicker:()=>'',isIdentifiedSchoolAthlete:()=>false,isSchoolReferenceViewer:()=>false,privateSelfServeViewer:()=>true,schoolAthleteDelivery:(_sections,_session,mode)=>'Sheet '+mode};
+ groupPicker:()=>'',isIdentifiedSchoolAthlete:()=>false,isSchoolReferenceViewer:()=>false,privateSelfServeViewer:()=>true,isParentManagedWorkout:()=>ctx.HUB_STATE.audience==='parent',renderParentQuickView:()=> 'Parent sheet',schoolAthleteDelivery:(_sections,_session,mode)=>'Sheet '+mode};
  vm.createContext(ctx);vm.runInContext(app.slice(start,end)+';globalThis.render=renderWorkoutExperience;',ctx);
  assert.match(ctx.render({id:'anos-own-day'}),/Controls quick.*Sheet quick/);
  assert.match(ctx.render({id:'new-day'}),/Controls quick.*Sheet quick/);
  ctx.ATHLETE_WORKOUT_VIEW.mode='learn';
  assert.match(ctx.render({id:'new-day'}),/Controls quick.*Sheet quick/);
  ctx.HUB_STATE.audience='parent';
- assert.match(ctx.render({id:'parent-day'}),/Quick View.*Sheet /);
+ assert.match(ctx.render({id:'parent-day'}),/Quick View.*Parent sheet/);
 });
 test('guided preparation loads its matching delivery helper revision',()=>{
  assert.match(html,/<script src="\/hub-delivery\/delivery\.js\?v=[^" ]+"><\/script>/);

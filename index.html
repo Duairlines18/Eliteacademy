@@ -4895,6 +4895,41 @@ document.addEventListener('click',function(e){
     return '<div class="hub-field-delivery hub-athlete-one-sheet"><div class="hub-athlete-sheet-actions"><strong>Today’s workout</strong>'+ (copyWorkoutAllowed()?'<button type="button" data-athlete-copy>Copy workout</button><span data-athlete-copy-status role="status" aria-live="polite"></span>':'')+'</div>'+phases+(prescribed.some(section=>!isSchoolWarmupSection(section)&&(section.items||[]).some(item=>item.type==='exercise'&&!String(item.rest||'').trim()))?'<p class="hub-rest-help">Rest time not shown? Check with Coach Du. Do not rush to finish.</p>':'')+library+'</div>';
   }
 
+  function renderParentQuickView(sections,sessionData){
+    const phases=deliverySections(sections);
+    const isReference=section=>/Additional movement references/i.test(section.title);
+    const notesLine=([label,value])=>'<p class="hub-visible-coach-note"><strong>'+escapeHtml(label)+'</strong> '+escapeHtml(value)+'</p>';
+    const restriction=/\b(?:stop|pain|hurt\w*|injur\w*|safety|unsafe|never|only if|hours between|do not|don['’]t|should not|must not|no running|no jumping|no sprint(?:ing)?|before progressing)\b/i;
+    const card=section=>{
+      const rows=section.items.map(item=>{
+        const key=escapeHtml(item.key),sessionKey=escapeHtml(sessionData.id);
+        const completed=isWorkoutComplete(sessionData.id,item.key);
+        const coaching=DuHubDelivery.coachingRows(item);
+        const essential=coaching.filter(([label,value])=>label==='For this session'||label==='Coach alternative'||restriction.test(value));
+        const technique=coaching.find(([label])=>label==='How to do it')||coaching.find(([label])=>label==='Coach cue');
+        const how=technique&&!essential.some(([,value])=>simpleText(value)===simpleText(technique[1]))?notesLine(['How to do it',technique[1]]):'';
+        const demos=athleteWorkoutDemos(item).map(clip=>'<a class="hub-athlete-demo" href="'+escapeHtml(clip.original)+'" target="_blank" rel="noopener noreferrer">Watch '+escapeHtml(clip.title)+' demo</a>').join('');
+        const details=how||demos?'<details class="hub-private-demo-details"><summary>'+(demos?'Demo &amp; technique':'Technique')+' <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary>'+how+(demos?'<div class="hub-media-actions">'+demos+'</div>':'')+'</details>':'';
+        const dose=item.dosage?'<strong>'+escapeHtml(item.dosage)+'</strong>':'';
+        const rest=item.rest?'<small>Rest: '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</small>':'';
+        const complete='<button type="button" class="hub-quick-toggle" data-completion-toggle data-session-key="'+sessionKey+'" data-item-key="'+key+'" data-completed="'+completed+'" aria-pressed="'+completed+'">'+(completed?'Undo':'Complete')+'</button>';
+        return '<article class="hub-athlete-movement hub-parent-quick-row"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+dose+'</div>'+rest+essential.map(notesLine).join('')+complete+details+'</article>';
+      }).join('');
+      let playlist='';
+      if(isSchoolWarmupSection(section)){
+        const sources=Array.isArray(sessionData.itemSections)?sessionData.itemSections:[];
+        const index=sources.findIndex(source=>normalizedTitle(source.title)===normalizedTitle(section.title));
+        const [link]=sectionPlaylistLinks(sessionData,sources[index]||{title:section.title},Math.max(0,index));
+        if(link)playlist='<div class="hub-media-actions"><a class="hub-button secondary" href="'+escapeHtml(link.url)+'" target="_blank" rel="noopener noreferrer">Watch Full Warm-Up</a></div>';
+      }
+      return '<section class="hub-athlete-phase"><div class="hub-athlete-phase-heading"><h3>'+escapeHtml(section.title)+'</h3></div><div class="hub-athlete-phase-list">'+rows+'</div>'+playlist+'</section>';
+    };
+    const prescribed=phases.filter(section=>!isReference(section));
+    const optional=phases.filter(isReference);
+    const references=optional.length?'<details class="hub-athlete-references"><summary>Optional movement references</summary>'+optional.map(card).join('')+'</details>':'';
+    return '<div class="hub-field-delivery hub-athlete-one-sheet hub-parent-quick-view">'+prescribed.map(card).join('')+references+'</div>';
+  }
+
   function renderWorkoutExperience(sessionData){if(session()?.role==='staff'&&isSchoolReferenceViewer())return staffAllGroupsExperience(sessionData);const workout=normalizeWorkoutSession(sessionData,EXERCISES,{...programme(),separateWarmups:true});if(requiresGroupSelection(workout))return groupPicker()+'<div class="hub-empty-state"><strong>Choose your training group first.</strong><br>Your group controls the dosage shown in this workout.</div>';const sections=visibleNormalizedSections(workout),items=flattenedWorkoutItems(sections),readOnly=session()?.role==='staff';if(!items.length)return groupPicker()+'<div class="hub-empty-state">This session is being prepared.</div>';if((HUB_STATE.audience==='parent'||privateSelfServeViewer())&&session()?.role!=='staff'){
       const completed=items.filter(item=>isWorkoutComplete(workout.id,item.key)).length;
       const percent=Math.round(100*completed/items.length);
@@ -4904,7 +4939,7 @@ document.addEventListener('click',function(e){
       const mode='quick';
       const toggle='<div class="hub-workout-toolbar"><div class="hub-workout-progress"><strong>'+completed+'/'+items.length+' complete</strong><div class="hub-progress-track"><div class="hub-progress-fill" style="width:'+percent+'%"></div></div></div>'+(parentDay?athleteWorkoutControls('quick',false,'Quick View'):privateDay?athleteWorkoutControls(mode):athleteWorkoutControls('quick',false,'Workout'))+'</div>';
       const wrapper='<div class="hub-parent-workout-experience'+(parentDay?' hub-parent-day':privateDay?' hub-private-workout':'')+'">';
-      if(mode!=='guided')return wrapper+toggle+(completed===items.length?'<div class="hub-workout-complete"><strong>✓ Workout Complete</strong><a href="#/hub/feedback">Send feedback →</a></div>':'')+schoolAthleteDelivery(sections,sessionData,privateDay?mode:'')+'</div>';
+      if(mode!=='guided')return wrapper+toggle+(completed===items.length?'<div class="hub-workout-complete"><strong>✓ Workout Complete</strong><a href="#/hub/feedback">Send feedback →</a></div>':'')+(isParentManagedWorkout()?renderParentQuickView(sections,sessionData):schoolAthleteDelivery(sections,sessionData,privateDay?mode:''))+'</div>';
       let cursor=Number.isInteger(GUIDED_CURSOR[workout.id])?GUIDED_CURSOR[workout.id]:items.findIndex(item=>!isWorkoutComplete(workout.id,item.key));
       if(cursor<0)cursor=items.length-1;
       cursor=Math.max(0,Math.min(items.length-1,cursor));
@@ -5350,7 +5385,7 @@ document.addEventListener('click',function(e){
       ? (items.length?athleteWorkoutControls('quick',false,'Quick View'):'')
       : '<div class="hub-mode-toggle" aria-label="Workout view"><button type="button" data-workout-mode="quick">Quick View</button><button type="button" data-workout-mode="guided">Guided Workout</button></div>';
     const toolbar='<div class="hub-workout-toolbar"><strong>'+completed+'/'+items.length+' complete</strong>'+controls+'</div>';
-    const content=!items.length?'<p>This routine is being prepared.</p>':guided?guidedCard(items[cursor],items[cursor].sectionTitle,cursor,items.length,items[cursor].sessionKey):routineCardSections(card).map(({source,sections})=>quickView(source.id,sections,session()?.role==='staff',false,source)).join('');
+    const content=!items.length?'<p>This routine is being prepared.</p>':guided?guidedCard(items[cursor],items[cursor].sectionTitle,cursor,items.length,items[cursor].sessionKey):routineCardSections(card).map(({source,sections})=>isParentManagedWorkout()?renderParentQuickView(sections,source):quickView(source.id,sections,session()?.role==='staff',false,source)).join('');
     const notes=routineCardNotes(card,day);
     const heading='<div class="hub-athlete-session-nav"><a href="#/hub/routines">← Your Routines</a></div><div class="hub-athlete-session-title"><h1>'+escapeHtml(card.title)+'</h1></div>';
     const guidance=isParentManagedWorkout()?renderParentSessionNotes(notes):notes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+notes.map(escapeHtml).join('<br>')+'</span></div>':'';
