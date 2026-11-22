@@ -1,0 +1,11 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const html = fs.readFileSync(require('node:path').join(__dirname, '..', 'index.html'), 'utf8');
+const cleanup = 'isAndriaCoachInstructionsCleanup()';
+assert.match(html, /function isAndriaCoachInstructionsCleanup\(\)\{return HUB_STATE\.audience==='parent'&&/);
+assert.match(html, /Andria Torres/);
+assert.ok(html.includes("const notes=!"+cleanup+"&&sessionNotes.length?"), 'demo panel must be scoped out');
+assert.ok(html.includes("const important=!"+cleanup+"&&!saintsAthleteView&&savedNotes.length?"), 'day panel must be scoped out');
+assert.equal(html.split("const guidance=!"+cleanup+"&&notes.length?").length-1, 3, 'routine panels must be scoped out');
+for (const label of ['How to do it','Coach cue','Watch for','data-presentation-step']) assert.ok(html.toLowerCase().includes(label.toLowerCase()), label+' preserved');
+console.log('Andria coach instructions rendering guard regression passed');
