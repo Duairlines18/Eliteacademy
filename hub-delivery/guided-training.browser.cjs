@@ -61,7 +61,7 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
   const trainingCard=main.locator('.hub-parent-session-card').first();
   await trainingCard.click();
   ok(page.url().endsWith('/session/'+day.id),'training card opens the selected day');
-  await page.locator(parent?'[data-private-present]':'[data-workout-mode="guided"]').waitFor();
+  await page.locator('[data-private-present]').waitFor();
   ok(await page.locator('[aria-label="Choose training day"]').count()===0,'selected workout has no other day cards');
   await page.getByRole('link',{name:'← Back to Week',exact:true}).waitFor();
   if(!parent){
@@ -76,10 +76,11 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    ok(await options.getByRole('button',{name:'Workout',pressed:true}).count()===1,'Workout is the private default');
    ok(await main.getByText('2 × 5 breaths',{exact:true}).isVisible(),'Workout shows prescription');
    assert.deepEqual(await options.getByRole('button').allTextContents(),['Workout','Full-screen demos']);
-   ok(await main.getByRole('button',{name:'Guided Workout',exact:true}).isVisible(),'Guided Workout is available separately');
+   ok(await main.getByRole('button',{name:'Guided Workout',exact:true}).count()===0,'private athlete has only two workout views');
    await main.getByText('Technique tips for Unfilmed mobility').click();
    ok(await main.getByText('Keep the movement slow and controlled.',{exact:false}).isVisible(),'Workout keeps tips for exercises without a demo');
    ok(await main.getByText('Only if comfortable.',{exact:false}).first().isVisible(),'Workout retains assigned restrictions');
+   const workoutRoute=await page.evaluate(()=>location.hash);
    await options.getByRole('button',{name:'Full-screen demos',exact:true}).click();
    const presentation=page.getByRole('dialog',{name:'Exercise demos'});
    ok(await presentation.getByRole('heading',{name:'Diaphragmatic Breathing'}).isVisible(),'Full screen opens assigned exercise');
@@ -94,9 +95,11 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    await presentation.getByRole('button',{name:'Next'}).click();
    ok(await presentation.locator('iframe').count()===0,'navigating removes the former player');
    ok(await presentation.getByRole('heading',{name:'Dead Bug'}).isVisible(),'next demo follows workout order');
+   ok(await page.evaluate(()=>location.hash)===workoutRoute,'Next demo stays on the selected training day');
    await presentation.getByRole('button',{name:'Play demo'}).click();
    ok((await presentation.locator('iframe').getAttribute('src')).includes('/embed/lmnopqrstuv'),'next exercise opens its own video');
    ok(await presentation.getByRole('button',{name:'Next'}).isDisabled(),'no next clip at the end');
+   ok(await page.evaluate(()=>location.hash)===workoutRoute,'playing another demo does not navigate back to week');
    ok(await presentation.evaluate(el=>el.scrollWidth<=el.clientWidth),'Full screen fits viewport width');
    await presentation.getByRole('button',{name:'Close',exact:true}).click();
    await presentation.waitFor({state:'detached'});
@@ -239,24 +242,13 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    console.log(`${who} ${width}px: full-screen parent workout, completion, reload and routine regression passed`);
    continue;
   }
-  await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();
-  const firstKey='p:1:0:MOB04';ok(await page.locator('[data-completion-toggle]').getAttribute('data-item-key')===firstKey,'original completion key retained');
-  ok(await page.locator('.hub-guided-teach').count()>=2,'instructions and cue visible');ok(await page.locator('[data-guided-next]').isEnabled(),'next available');
-  ok((await page.locator('.hub-guided-teach.avoid').innerText()).includes('Rushing transitions.'),'library Avoid remains visible with saved custom cue');
-  ok((await page.locator('.hub-guided-teach-grid').innerText()).includes('Only if comfortable.'),'saved custom cue stays visible');
-  if(!parent)ok((await page.locator('.hub-objective').innerText()).includes('No jumping'),'injury restrictions visible');
-  const resumeStep='2 of 3';
-  await page.locator('[data-completion-toggle]').click();await page.getByRole('button',{name:'Try again',exact:true}).waitFor();ok(!completions.has(day.id+'|'+firstKey),'failed save does not mark complete');await page.locator('[data-completion-toggle]').click();await page.waitForFunction(step=>document.querySelector('.hub-guided-step')?.textContent===step,resumeStep);
-  await page.reload();await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();ok((await page.locator('.hub-guided-step').innerText())===resumeStep,'reload resumes unfinished exercise');
-  await page.locator('[data-guided-prev]').click();ok(await page.locator('[data-completion-toggle]').getAttribute('data-completed')==='true','saved completion restored');
-  await page.locator('[data-guided-next]').click();await page.locator('[data-completion-toggle]').click();
-  if(!parent){
-   await page.locator('.hub-guided-card').getByRole('heading',{name:'Unfilmed mobility'}).waitFor();
-   await page.locator('[data-completion-toggle]').click();
-  }
-  await page.getByText('Workout Complete',{exact:false}).first().waitFor();ok(await page.getByRole('link',{name:'Send feedback →',exact:true}).count()===1,'completion leads to feedback');
-  await page.locator('[data-workout-mode="quick"]').click();ok(await page.getByRole('link',{name:'Send feedback →',exact:true}).count()===1,'quick view retains completion feedback handoff');
-  ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'fits mobile viewport');ok(errors.length===0,errors.join('\n'));
-  await context.close();console.log(`${who} ${width}px: guided navigation, restrictions, original keys, retry and reload persistence passed`);
+  // Guided mode was retired; verify the two supported private workout controls instead.
+  const privateViews=page.getByRole('group',{name:'Workout views'});
+  ok(await privateViews.getByRole('button',{name:'Workout',exact:true}).count()===1,'private Workout remains available');
+  ok(await privateViews.getByRole('button',{name:'Full-screen demos',exact:true}).count()===1,'private demos remain available');
+  ok(await page.locator('[data-workout-mode="guided"]').count()===0,'retired Guided Workout is absent');
+  ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'private workout fits mobile viewport');
+  ok(errors.length===0,errors.join('\\n'));
+  await context.close();console.log(`${who} ${width}px: private two-view workout and demo regression passed`);
  }console.log(`${checks} guided browser assertions passed`);}finally{await browser.close();server.close();}
 })().catch(error=>{console.error(error);process.exit(1);});

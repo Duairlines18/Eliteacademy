@@ -26,7 +26,7 @@ const {chromium}=require('playwright');
    window.__navigationFlashes=[];
    new MutationObserver(()=>{const text=document.querySelector('#hub-root')?.textContent||'';if(/Checking your weekly check-in|Loading your programme|Validating your Hub session/.test(text))window.__navigationFlashes.push(text)}).observe(document.querySelector('#hub-root'),{childList:true,subtree:true});
   });
-  const workout=page.locator(audience==='parent'?'[data-private-present]':'[data-workout-mode="guided"]');
+  const workout=page.locator('[data-private-present]');
   await dashboard.click();await workout.waitFor();
   await page.getByRole('link',{name:'← Back to Week',exact:true}).click();await dashboard.waitFor();
   await page.goBack();await workout.waitFor();await page.goForward();await dashboard.waitFor();
