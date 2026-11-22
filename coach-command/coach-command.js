@@ -80,7 +80,7 @@
  .ducc .workout-days .day-title{display:none}
  .ducc .workout-days .day-option{display:block;margin:0;font-size:.72rem}
 }
-body:has(.ducc:not(:has(.print-sheet)) .presentation){overflow:hidden}
+body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
 .ducc .presentation{
  --present-green:#092219;--present-cream:#fff8e9;--present-gold:#f6d681;--present-line:#4c6857;
  --present-gutter:clamp(12px,2.4vw,36px);
