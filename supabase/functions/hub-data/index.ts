@@ -1,6 +1,6 @@
 import { AttendanceError, readSchoolAttendance, saveSchoolAttendance } from '../_shared/school-attendance.ts';
 import { PROGRAMME_PENDING_MESSAGE, SESSION_EXPIRED_MESSAGE, corsHeaders } from '../_shared/hub-core.ts';
-import { bootstrapHub, saveSharedHubFeedback, logoutSchoolSession } from '../_shared/hub-service.ts';
+import { bootstrapHub, recordSchoolHubVisit, saveSharedHubFeedback, logoutSchoolSession } from '../_shared/hub-service.ts';
 import { SupabaseHubRepository } from '../_shared/supabase-repository.ts';
 import { adminClient, cryptoPort } from '../_shared/runtime.ts';
 
@@ -19,6 +19,9 @@ Deno.serve(async request => {
     const repository = new SupabaseHubRepository(adminClient());
     let result;
     if (body?.action === 'bootstrap') result = await bootstrapHub({ token: request.headers.get('x-du-session') || '', repository, cryptoPort });
+    else if (body?.action === 'record-visit') {
+      result = await recordSchoolHubVisit({ token: request.headers.get('x-du-session') || '', repository, cryptoPort });
+    }
     else if (body?.action === 'attendance-read') result = await readSchoolAttendance({ token: request.headers.get('x-du-session') || '', repository, cryptoPort, weekNumber:body.weekNumber });
     else if (body?.action === 'attendance-save') result = await saveSchoolAttendance({ token: request.headers.get('x-du-session') || '', repository, cryptoPort, weekNumber:body.weekNumber, entries:body.entries });
     else if (body?.action === 'logout') result = await logoutSchoolSession({ token: request.headers.get('x-du-session') || '', repository, cryptoPort });

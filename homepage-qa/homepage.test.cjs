@@ -44,7 +44,14 @@ const withoutMandatoryCheckins=source=>source
  .replace(/    CHECKIN_UI\.forget\(\);\n/,'')
  .replace(/        if\(CHECKIN_UI\.eligible\(\)\)\{location.hash='#\/hub\/athlete';await render\(\);return;\}\n/,'')
  .replace(/    if\(CHECKIN_UI\.eligible\(\)\)\{\n[\s\S]*?      if\(renderStamp!==sessionStamp\(\)\|\|[^\n]+\n    \}\n/,'');
-const html=restoreTitles(withoutPrivateSetup(withoutDashboardRefresh(withoutMandatoryCheckins(currentHtml)))).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
+// Hub visit tracking has dedicated observer, authorization and browser coverage.
+const withoutHubVisits=source=>source
+ .replace(/<script src="\/hub-delivery\/visits\.js\?v=20261122"><\/script>\r?\n/,'')
+ .replace(/  const observeHubVisit = window\.DuHubVisits\?\.create\(\{[\s\S]*?(?=  function logout\()/,'')
+ .replace('async function authEdgePost(functionName,body,expectedVisitSession)','async function authEdgePost(functionName,body)')
+ .replace(/    if \(expectedVisitSession && expectedVisitSession !== sessionStamp\(\)\) return;\r?\n/,'')
+ .replace(/    if \(renderStamp === sessionStamp\(\)\) observeHubVisit\?\.\(\);\r?\n/,'');
+const html=restoreTitles(withoutPrivateSetup(withoutDashboardRefresh(withoutMandatoryCheckins(withoutHubVisits(currentHtml))))).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
 // These checks catch the duplicated homepage fragments and their stale controllers.
 for(const id of ['sports','performance-hub','credentials','premium-story-grid']){
   assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,`${id} must identify one section`);
@@ -52,7 +59,7 @@ for(const id of ['sports','performance-hub','credentials','premium-story-grid'])
 assert.equal((html.match(/aria-label="Championship credentials"/g)||[]).length,1,'one championship proof band');
 assert.doesNotMatch(html,/data-du-role|data-da-role/,'only the active role controller remains');
 assert.doesNotMatch(html,/id="da-premium-homepage|id="du-premium-homepage/,'remove abandoned homepage CSS and scripts');
-for(const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)){
+for(const match of currentHtml.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)){
   if(!/\btype="module"/.test(match[1])&&match[2].trim())new vm.Script(match[2]);
 }
 console.log('Homepage structure and inline JavaScript syntax passed.');

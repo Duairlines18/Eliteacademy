@@ -226,6 +226,12 @@ export class SupabaseHubRepository {
     );
   }
 
+  async recordHubVisit(kind: string, athleteId: string | null, staffId: string | null, actorId: string | null) {
+    return assertResult(await this.client.rpc('record_hub_visit', {
+      p_kind: kind, p_athlete: athleteId, p_staff: staffId, p_actor: actorId,
+    }), 'Hub visit tracking unavailable') === true;
+  }
+
   async touchSession(id: string, at: string) {
     assertResult(await this.client.from('hub_sessions').update({ last_active_at: at }).eq('id', id), 'Session update failed');
   }
@@ -283,7 +289,7 @@ export class SupabaseHubRepository {
   async findCohort(id: string) {
     return assertResult(
       await this.client.from('cohorts')
-        .select('id,status,organization_id,programme_id,current_week')
+        .select('id,name,status,organization_id,programme_id,current_week')
         .eq('id', id)
         .maybeSingle(),
       'Cohort status lookup failed',

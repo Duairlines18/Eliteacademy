@@ -2092,6 +2092,7 @@ footer,
 </style><link rel="stylesheet" href="/performance-journey/journey.css?v=20261017">
 <!-- DU STORY NAV START --><style>#home-view .du-story-entry{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:1.5rem 0 0;color:var(--cream)}#home-view .du-story-entry>span{display:flex;flex-direction:column;gap:.35rem}#home-view .du-story-entry small{font-size:.6rem;letter-spacing:.16em;color:var(--gold-soft)}#home-view .du-story-entry strong{font:500 1.55rem var(--serif);color:var(--gold-soft)}#home-view .du-story-entry span span{font-size:.8rem;color:var(--sage);max-width:55ch}#home-view .du-story-entry>b{font-size:1.5rem;color:var(--gold-soft);min-width:44px;text-align:center}#home-view .du-story-entry:focus-visible{outline:2px solid var(--gold-soft);outline-offset:6px}#home-view .du-story-entry:hover strong{text-decoration:underline;text-underline-offset:4px}</style><!-- DU STORY NAV END --><script src="/hub-delivery/delivery.js?v=20261118-coaching"></script>
 <link rel="stylesheet" href="/hub-delivery/weekly-checkins.css?v=20261112-dark"><script src="/hub-delivery/weekly-checkins.js?v=20261115-navigation"></script>
+<script src="/hub-delivery/visits.js?v=20261122"></script>
 <script src="/hub-delivery/premium-v2.js?v=20261020"></script>
 <link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261121-parent-demo-layout">
 <link rel="stylesheet" href="/parent-qa/session-card-polish.css">
@@ -4367,6 +4368,32 @@ document.addEventListener('click',function(e){
   function sessionStamp(){return HUB_REQUEST_EPOCH+'|'+JSON.stringify(session());}
   function resetHubState(){HUB_REQUEST_EPOCH++;WORKOUT_COMPLETIONS=new Map();Object.keys(GUIDED_CURSOR).forEach(key=>delete GUIDED_CURSOR[key]);WORKOUT_MODE='quick';ATHLETE_WORKOUT_VIEW={id:null,mode:'quick'};HUB_STATE={programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};}
   const CHECKIN_UI=DuWeeklyCheckins.create({root,getSession:session,getIdentity:sessionStamp,post:body=>authEdgePost(HUB_CONFIG.accountFunctions[session()?.audience],body),clearTraining:()=>{HUB_STATE.programme=null;WORKOUT_COMPLETIONS=new Map();},onReady:()=>scheduleHubRender(),onLogout:()=>logout()});
+  const observeHubVisit = window.DuHubVisits?.create({
+    entry() {
+      const active = session();
+      if (document.hidden || !isHubRoute() || !HUB_STATE.programme
+        || !root.querySelector('.hub-main') || root.querySelector('#mandatoryCheckinForm,#wcIssueForm')
+        || /^#\/hub\/(?:login|setup|checkin|preview)/.test(location.hash)
+        || HUB_STATE.athlete?.testing) return null;
+      if (active?.mode === 'account') {
+        return ['private-athlete', 'parent'].includes(active.audience) ? sessionStamp() : null;
+      }
+      return active?.token && HUB_STATE.accessMode === 'identified-school' ? sessionStamp() : null;
+    },
+    send(stamp) {
+      if (stamp !== sessionStamp()) return;
+      const active = session();
+      const body = { action: 'record-visit' };
+      if (active.mode === 'account') {
+        return authEdgePost(HUB_CONFIG.accountFunctions[active.audience], body, stamp);
+      }
+      return edgePost(HUB_CONFIG.dataFunction, body, { 'x-du-session': active.token });
+    },
+  });
+  document.addEventListener('visibilitychange', () => observeHubVisit?.());
+  window.addEventListener('pageshow', () => observeHubVisit?.());
+  window.addEventListener('focus', () => observeHubVisit?.());
+  window.addEventListener('online', () => observeHubVisit?.({ retry: true }));
   function logout(){
     CHECKIN_UI.forget();
     const active=session();
@@ -4388,11 +4415,12 @@ document.addEventListener('click',function(e){
     if(!response.ok){const err=new Error(payload.error||'The Performance Hub is temporarily unavailable.');err.status=response.status;err.code=payload.code||'';throw err;}
     return payload;
   }
-  async function authEdgePost(functionName,body){
+  async function authEdgePost(functionName,body,expectedVisitSession){
     const client=accountClient();
     if(!client)throw new Error('Secure account login is unavailable. Please refresh and try again.');
     const {data,error}=await client.auth.getSession();
     if(error)throw error;
+    if (expectedVisitSession && expectedVisitSession !== sessionStamp()) return;
     const authSession=data?.session;
     if(!authSession?.access_token){
       const err=new Error('Your session has expired. Please sign in again.');
@@ -5542,6 +5570,7 @@ document.addEventListener('click',function(e){
     else if(route==='/library/air-zim')renderAssignedAirZim();
     else if(route.startsWith('/library/'))renderCategory(route.split('/')[2]);
     else renderNotFound();
+    if (renderStamp === sessionStamp()) observeHubVisit?.();
     // Performance Journey reads its own authorized endpoint; workout/video flows stay independent.
     if(HUB_STATE.audience!=='professional' && HUB_STATE.staff?.accessProfile!=='sports_director' && ['/', '/staff', '/athlete', '/journey'].includes(route)){
       const wrap=root.querySelector('.hub-main > .hub-wrap');

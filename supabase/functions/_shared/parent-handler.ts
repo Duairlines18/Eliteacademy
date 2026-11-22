@@ -30,6 +30,13 @@ export async function handleParentRequest(request: Request, ports: any) {
 
   const services = ports.services || defaultServices;
   try {
+    if (body?.action === 'record-visit') {
+      const athlete = await ports.repository.findParentAthlete(user.id);
+      const recorded = athlete
+        ? await ports.repository.recordHubVisit('parent', athlete.id, null, user.id)
+        : false;
+      return json(origin, 200, { recorded });
+    }
     if(checkinActions.has(body?.action)) return json(origin,200,await handleCheckinAction({user,audience:'parent',body,repository:ports.repository}));
     if(['bootstrap','history','programme-week'].includes(body?.action)) {
       const checkins=await ports.repository.weeklyCheckinState(user.id,'parent');
