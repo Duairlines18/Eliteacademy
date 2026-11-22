@@ -42,3 +42,25 @@ test('foreground observer deduplicates in-flight requests and rolls over at Chic
   await observe();
   assert.equal(calls.length, 3);
 });
+
+test('connectivity returning during a pending failure retries the same visit once', async () => {
+  let rejectVisit;
+  let calls = 0;
+  const observe = create({
+    entry: () => 'synthetic session',
+    send: () => {
+      calls++;
+      if (calls === 1) return new Promise((resolve, reject) => { rejectVisit = reject; });
+      return { recorded: true };
+    },
+  });
+  const pending = observe();
+  await observe({ retry: true });
+  await observe({ retry: true });
+  assert.equal(calls, 1);
+  rejectVisit(new Error('offline'));
+  await pending;
+  assert.equal(calls, 2);
+  await observe({ retry: true });
+  assert.equal(calls, 2);
+});

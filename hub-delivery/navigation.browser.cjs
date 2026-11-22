@@ -27,11 +27,14 @@ const {chromium}=require('playwright');
    if(body.action==='list')data={completions:[]};
    await route.fulfill({json:data});
   });
+  const isVisit = request => request.method()==='POST' && request.postDataJSON()?.action==='record-visit';
+  const failedVisit = page.waitForEvent('requestfailed', {predicate:isVisit});
   await page.goto(base+'/#/hub/athlete');const dashboard=page.locator('a[href="#/hub/session/day-1"]').first();await dashboard.waitFor();
-  await page.waitForLoadState('networkidle');
+  await failedVisit;
   assert.equal(visits,1,'restored session records on opening the programme');
+  const retriedVisit = page.waitForResponse(response=>isVisit(response.request()) && response.ok());
   await page.evaluate(()=>window.dispatchEvent(new Event('online')));
-  await page.waitForLoadState('networkidle');
+  await retriedVisit;
   assert.equal(visits,2,'offline visit is retried when connectivity returns');
   await page.evaluate(()=>{
    window.__navigationFlashes=[];

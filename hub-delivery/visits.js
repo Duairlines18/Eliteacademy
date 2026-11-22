@@ -10,10 +10,15 @@
       if (!identity) return;
       const day = visitDay.format(now());
       if (active?.identity !== identity || active.day !== day) {
-        active = { identity, day, pending: false, done: false, retryAt: 0 };
+        active = { identity, day, pending: false, done: false, retryRequested: false, retryAt: 0 };
       }
       const attempt = active;
-      if (attempt.done || attempt.pending || (!retry && now() < attempt.retryAt)) return;
+      if (attempt.done) return;
+      if (attempt.pending) {
+        if (retry) attempt.retryRequested = true;
+        return;
+      }
+      if (!retry && now() < attempt.retryAt) return;
       attempt.pending = true;
       try {
         const result = await send(identity);
@@ -23,6 +28,11 @@
       } finally {
         attempt.pending = false;
         if (!attempt.done) attempt.retryAt = now() + 60_000;
+        const retryRequested = attempt.retryRequested;
+        attempt.retryRequested = false;
+        if (retryRequested && !attempt.done && active === attempt && entry() === identity) {
+          await observe({ retry: true });
+        }
       }
     };
   }
