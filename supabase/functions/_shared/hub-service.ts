@@ -61,6 +61,14 @@ export async function authorizeSchoolSession({ token, now = new Date(), reposito
   return { session, accessCode, cohort, ...identity };
 }
 
+export async function recordSchoolHubVisit(args: any) {
+  const { athlete, staff, cohort } = await authorizeSchoolSession(args);
+  if (/\bdemo\b|releaseqa|synthetic|\bqa\b|\btest(?:ing)?\b/i.test(cohort.name || '')) return { recorded: false };
+  if (athlete) return { recorded: await args.repository.recordHubVisit('school-athlete', athlete.id, null, null) };
+  if (staff) return { recorded: await args.repository.recordHubVisit('school-staff', null, staff.id, null) };
+  return { recorded: false };
+}
+
 export async function logoutSchoolSession(args: any) {
   const { session } = await authorizeSchoolSession(args);
   await args.repository.revokeSession(session.id, (args.now || new Date()).toISOString());

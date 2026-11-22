@@ -14,6 +14,13 @@ export async function handlePrivateAthleteRequest(request:Request,ports:any){
   let body:any;try{body=await request.json();}catch{return json(origin,400,{code:'INVALID_REQUEST',error:'Invalid request.'});}
   const services=ports.services||defaults;
   try{
+    if (body?.action === 'record-visit') {
+      const athlete = await ports.repository.findPrivateAthlete(user.id);
+      const recorded = athlete
+        ? await ports.repository.recordHubVisit('private-athlete', athlete.id, null, user.id)
+        : false;
+      return json(origin, 200, { recorded });
+    }
     if(checkinActions.has(body?.action)) return json(origin,200,await handleCheckinAction({user,audience:'private-athlete',body,repository:ports.repository}));
     if(['bootstrap','history','programme-week'].includes(body?.action)) {
       const checkins=await ports.repository.weeklyCheckinState(user.id,'private-athlete');

@@ -9,7 +9,7 @@ const {chromium}=require('playwright');
  try{for(const audience of ['parent','private-athlete'])for(const width of [390,1440]){
   const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<500});
   await context.addInitScript(audience=>{localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify({mode:'account',role:'athlete',audience}));window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:'synthetic'}}})}})};},audience);
-  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));let checks=0,bootstraps=0,due=false;
+  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));let checks=0,bootstraps=0,visits=0,due=false;
   await page.route('**/*',async route=>{
    const request=route.request(),url=request.url();if(url.startsWith(base))return route.continue();if(!url.includes('/functions/v1/'))return route.abort();
    const body=request.postDataJSON()||{};let data={};
@@ -18,10 +18,21 @@ const {chromium}=require('playwright');
    }
    if(body.action==='profile')data={onboardingComplete:true,onboarding:{sportPathway:'Track',primaryGoals:['Speed'],trainingEnvironment:'Home',equipment:['Bodyweight only'],weeklyAvailability:'3 days',scheduleNotes:'Current weekly training schedule: Approved\nCurrent pain / injury / restriction: None\nPrevious significant injuries: None'}};
    if(body.action==='bootstrap'){bootstraps++;data={contentStatus:'published',audience,viewer:{firstName:'Synthetic'},athlete:{id:'synthetic',displayName:'Synthetic'},delivery:{model:audience,copyWorkout:true},programme:{id:'synthetic',week:10,totalWeeks:10,title:'Navigation programme',sessions:[{id:'day-1',day:'Monday',title:'Navigation Strength',prescriptions:[{exerciseCode:'STR01',dosage:'2 × 6',rest:'60 sec'}]}]},exercises:[{code:'STR01',title:'Split Squat',description:'Controlled movement.',coachingCues:'Cue: Stay tall. Avoid: Rushing.',active:true}]};}
+   if(body.action==='record-visit'){
+    visits++;
+    assert.equal(request.headers().authorization,'Bearer synthetic');
+    if(visits===1)return route.abort('internetdisconnected');
+    data={recorded:true};
+   }
    if(body.action==='list')data={completions:[]};
    await route.fulfill({json:data});
   });
   await page.goto(base+'/#/hub/athlete');const dashboard=page.locator('a[href="#/hub/session/day-1"]').first();await dashboard.waitFor();
+  await page.waitForLoadState('networkidle');
+  assert.equal(visits,1,'restored session records on opening the programme');
+  await page.evaluate(()=>window.dispatchEvent(new Event('online')));
+  await page.waitForLoadState('networkidle');
+  assert.equal(visits,2,'offline visit is retried when connectivity returns');
   await page.evaluate(()=>{
    window.__navigationFlashes=[];
    new MutationObserver(()=>{const text=document.querySelector('#hub-root')?.textContent||'';if(/Checking your weekly check-in|Loading your programme|Validating your Hub session/.test(text))window.__navigationFlashes.push(text)}).observe(document.querySelector('#hub-root'),{childList:true,subtree:true});
@@ -32,6 +43,7 @@ const {chromium}=require('playwright');
   await page.goBack();await workout.waitFor();await page.goForward();await dashboard.waitFor();
   const before=checks;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
   await page.waitForLoadState('networkidle');assert.ok(checks>before,'focus still verifies check-in state');
+  assert.equal(visits,2,'focus and workout navigation do not send duplicate visits');
   assert.equal(bootstraps,1,'fresh programme is retained on focus');
   assert.deepEqual(await page.evaluate(()=>window.__navigationFlashes),[],'navigation never flashes loading/check-in screens');
   due=true;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await page.locator('#mandatoryCheckinForm').waitFor();
