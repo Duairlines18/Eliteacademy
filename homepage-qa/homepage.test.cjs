@@ -174,6 +174,8 @@ const withoutHubRepair=source=>source
  .replace(/  function copyWorkoutAllowed\([\s\S]*?(?=  function athleteCopyText\()/,'')
  .replace(/  function schoolWorkoutSections\([\s\S]*?(?=  function staffAllGroupsExperience\()/,'')
  .replace(/  function staffAllGroupsExperience\([\s\S]*?(?=  function privateSelfServeViewer\()/,'  STAFF_DELIVERY\n')
+ // Parent workout and warm-up behavior is covered by guided-training.browser.cjs.
+ .replace(/  \/\/ Presentation-only cleanup: retain historical session notes and exercise safety cues\.\r?\n  function isAndriaCoachInstructionsCleanup\(\)\{return HUB_STATE\.audience==='parent'&&session\(\)\?\.role==='athlete'&&programme\(\)\?\.title==='Andria Torres — Volleyball Development';\}\r?\n/,'')
  .replace(/  function renderSession\([^\n]+\n/,'  SESSION_DELIVERY\n')
  .replace(/  function renderSchoolAthleteCompact\([\s\S]*?(?=  function renderPrivateAthleteCompact\()/,'  SCHOOL_ATHLETE_DASHBOARD\n')
  .replace(/  function renderPrivateAthleteCompact\([\s\S]*?(?=  function parentSessionLabel\()/,'  PRIVATE_DASHBOARD\n')

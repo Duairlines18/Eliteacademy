@@ -1,5 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const identity=require('./premium-v2.js').identity,html=fs.readFileSync('index.html','utf8');
+const cleanup = html.match(/^  function isAndriaCoachInstructionsCleanup\(\).*$/m)[0];
 test('full temporary school names remain distinguishable without changing private greetings',()=>{
  for(let n=1;n<=6;n++){const name='St. George’s Athlete 0'+n;assert.equal(identity({accessMode:'identified-school',athlete:{displayName:name,testing:true}}).headline,'Hi, '+name);}
  assert.equal(identity({audience:'private-athlete',athlete:{fullName:'Example Athlete'}}).headline,'Hi, Example');
@@ -44,7 +45,7 @@ test('other schools keep saved restrictions and athlete notes visible',()=>{
  const start=html.indexOf('  function renderSession(id){'),end=html.indexOf('\n  function ',start+1);
  const workout={id:'rehab',day:'Day 3',title:'Modified rehabilitation',watch:'No running or jumping.',athleteNote:'Stop if pain increases <today>.'};
  const ctx={isSaintsSchool:()=>false,programme:()=>({sessions:[workout]}),assignedRoutines:()=>[],renderCoachCommand:()=>false,session:()=>({role:'athlete'}),isSchoolReferenceViewer:()=>true,privateSelfServeViewer:()=>false,HUB_STATE:{audience:'school'},weekLabel:()=> 'Week 1',schoolGroup:()=>'',groupPicker:()=>'',preparationNavigation:()=>'',renderWorkoutExperience:()=>'',shell:s=>s,escapeHtml:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;'),root:{}};
- vm.runInNewContext(html.slice(start,end)+';renderSession("rehab");',ctx);
+ vm.runInNewContext(cleanup+'\n'+html.slice(start,end)+';renderSession("rehab");',ctx);
  assert.ok(ctx.root.innerHTML.includes('No running or jumping.'),'saved restriction must remain visible in school day');
  assert.ok(ctx.root.innerHTML.includes('Stop if pain increases &lt;today&gt;.'),'athlete note must remain visible and escaped');
  assert.ok(!ctx.root.innerHTML.includes('Quiet, controlled landings.'),'non-jump workouts do not inherit landing instructions');
@@ -59,7 +60,7 @@ function renderSchoolDay({saints=true,role='athlete',group='Form 2'}={}){
  HUB_STATE:{audience:'school'},weekLabel:()=> 'Week 1',schoolGroup:()=>group,groupPicker:()=>'<select>Forms</select>',
  preparationNavigation:()=>'',renderWorkoutExperience:()=>'<div>Prescribed workout</div>',shell:s=>s,
  escapeHtml:s=>String(s),root:{},airZimTool:()=>''};
- vm.runInNewContext(html.slice(start,end)+';renderSession("day1");',ctx);
+ vm.runInNewContext(cleanup+'\n'+html.slice(start,end)+';renderSession("day1");',ctx);
  return ctx.root.innerHTML;
 }
 test('Saints athlete day omits coach notes and selected Form control at source',()=>{
