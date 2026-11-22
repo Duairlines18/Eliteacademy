@@ -11,7 +11,9 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
  const exercises=codes.map((code,i)=>({code,title:names[i],videoId:code==='CORE01'?'lmnopqrstuv':'abcdefghijk',videoUrl:code==='STR02'?'https://www.youtube.com/shorts/abcdefghijk':'https://youtu.be/'+(code==='CORE01'?'lmnopqrstuv':'abcdefghijk'),description:'Use the prescribed comfortable position.',coachingCues:'Cue: Stay controlled. Avoid: Rushing transitions.',active:true}));
  exercises.push({code:'MOB99',title:'Unfilmed mobility',description:'Keep the movement slow and controlled.',active:true});
  let checks=0;const ok=(value,label)=>{assert.ok(value,label);checks++;};
- try{for(const width of (parentWebKit?[320,390]:[320,390,768,1440]))for(const who of (parentWebKit?['parent','parent-demo']:['parent','parent-demo','private','private-demo'])){
+ try{for(const width of (parentWebKit?[320,390]:[320,390,768,1440]))for(const who of (parentWebKit?['parent','parent-demo','parent-cleanup']:['parent','parent-demo','private','private-demo','parent-cleanup'])){
+  const cleanup=who==='parent-cleanup';
+  if(cleanup&&width!==390&&width!==1440)continue;
   const parent=who.startsWith('parent'),audience=parent?'parent':'private-athlete',prefix=who+'-',completions=new Map(),errors=[];
   const rx=(exerciseCode,sectionOrder,dosage='2 × 6')=>({exerciseCode,sectionOrder,sectionTitle:sectionOrder===0?'Established Standard Warm-Up':'Today’s Workout',dosage,rest:'45–60 seconds',cues:'Only if comfortable. Do not push through your feet.'});
   const day={id:prefix+'day',day:'Monday',title:parent?'Strength and landing':'Core Foundation',watch:parent?'Stop if your hip hurts.':'No jumping, running, loaded calf work, bridges, planks, kneeling or full Air Zim.',prescriptions:parent?[...Array.from({length:8},()=>rx('WU01',0,'1 × 8')),rx('STR02',1,'2 × 8/leg'),rx('PLY01',1,'2 × 4'),rx('MOB99',1,'1 × 2')]:[rx('MOB04',1,'2 × 5 breaths'),rx('CORE01',1,'2 × 6/side'),rx('MOB99',1,'1 × 2')]};
@@ -43,7 +45,7 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
     return route.fulfill({json:{checkins:{enabled:finalParentWorkout,held:false,requirements:due,due}}});
    }
    if(body.action==='profile')data={onboardingComplete:true,onboarding:{sportPathway:'Track',primaryGoals:['Core'],trainingEnvironment:'Home',equipment:['Bodyweight only'],weeklyAvailability:'3 days',scheduleNotes:'Current weekly training schedule: Approved\nCurrent pain / injury / restriction: Follow approved restrictions\nPrevious significant injuries: Coach aware'}};
-   if(body.action==='bootstrap')data={contentStatus:'published',audience,viewer:{firstName:'Synthetic'},athlete:{id:prefix+'athlete',displayName:'Synthetic'},programme:{id:prefix+'programme',title:'Assigned programme',week:parent?9:2,totalWeeks:10,sessions},exercises,delivery:{model:'private-athlete',copyWorkout:true}};
+   if(body.action==='bootstrap')data={contentStatus:'published',audience,viewer:{firstName:'Synthetic'},athlete:{id:prefix+'athlete',displayName:'Synthetic'},programme:{id:prefix+'programme',title:cleanup?'Andria Torres — Volleyball Development':'Assigned programme',week:cleanup?11:parent?9:2,totalWeeks:cleanup?11:10,sessions},exercises,delivery:{model:'private-athlete',copyWorkout:true}};
    if(body.action==='library')data={exercises};
    if(body.action==='list')data={completions:[...completions.values()]};
    if(body.action==='set'){
@@ -59,7 +61,20 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
   const main=page.locator('.hub-main');
   ok(await main.getByRole('heading',{name:'Choose a training day',exact:true}).isVisible(),'the athlete can choose a day directly');
   ok(!(await main.innerText()).includes('Parent access:'),'training view uses athlete-first language');
-  const trainingCard=main.locator('.hub-parent-session-card').first();
+  const trainingCards=main.locator('.hub-parent-session-card');
+  const coachInstructions=scope=>scope.getByText('Coach instructions',{exact:true});
+  if(cleanup){
+   ok((await main.innerText()).includes('Week 11'),'targeted parent sees Week 11');
+   ok(await trainingCards.count()===3,'targeted parent sees three training days');
+   for(let i=1;i<3;i++){
+    await trainingCards.nth(i).click();
+    ok(new URL(page.url()).hash.endsWith('/session/'+otherDays[i-1].id),'targeted parent can open each assigned day');
+    await main.getByText('2 × 8/leg',{exact:true}).waitFor();
+    ok(await coachInstructions(main).count()===0,'assigned day omits redundant panel');
+    await page.getByRole('link',{name:'← Back to Week',exact:true}).click();
+   }
+  }
+  const trainingCard=trainingCards.first();
   await trainingCard.click();
   ok(page.url().endsWith('/session/'+day.id),'training card opens the selected day');
   await page.locator('[data-private-present]').waitFor();
@@ -130,11 +145,15 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    ok(new URL(page.url()).hash===secondWorkout,'closing stays on the second private workout');
   }
   if(parent){
+   ok(await coachInstructions(main).count()===(cleanup?0:1),'day panel is hidden only for the targeted programme');
+   await main.getByText('2 × 8/leg',{exact:true}).waitFor();
+   ok(await main.getByText('45–60 seconds',{exact:false}).count()>0,'parent Quick View retains prescribed rest');
    ok(await main.getByRole('button',{name:'Quick View',exact:true}).count()===1,'parent still uses their own Quick View');
    ok(await main.getByRole('button',{name:'Guided Workout',exact:true}).count()===0,'parent day has no separate guided view');
    ok(await page.locator('[aria-label="Training stages"] a').count()===1,'one combined warm-up card');
    await page.getByRole('link',{name:'My Warm-Up',exact:true}).click();
    await page.locator('.hub-main h1').filter({hasText:'My Warm-Up'}).waitFor();
+   ok(await coachInstructions(main).count()===(cleanup?0:1),'warm-up card panel is hidden only for the targeted programme');
    const openWarmUp=main.getByRole('button',{name:'Full-screen demos',exact:true});
    const warmUpDemo=page.getByRole('dialog',{name:'Exercise demos'});
    const warmUpMark=warmUpDemo.getByRole('button',{name:'Mark Complete',exact:true});
@@ -146,7 +165,9 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    await warmUpDemo.getByText('1 of 7',{exact:true}).waitFor();
    ok(await warmUpDemo.getByRole('heading',{name:'Ankle Rock',exact:true}).isVisible(),'mobility opens first');
    ok(!(await warmUpDemo.locator('.hub-private-dose').innerText()).includes('Rest:'),'single-set rest hidden');
-   ok((await warmUpDemo.innerText()).includes('Stop if your hip hurts.'),'warm-up preserves assigned safety guidance');
+   ok(await coachInstructions(warmUpDemo).count()===(cleanup?0:1),'warm-up demo panel is hidden only for the targeted programme');
+   ok((await warmUpDemo.innerText()).includes('Only if comfortable.'),'warm-up preserves exercise safety guidance');
+   if(!cleanup)ok((await warmUpDemo.innerText()).includes('Stop if your hip hurts.'),'unrelated parent retains warm-up session restrictions');
    await warmUpDemo.getByRole('button',{name:'Play demo'}).click();
    ok((await warmUpDemo.locator('iframe').getAttribute('src')).includes('/embed/abcdefghijk'),'warm-up links the correct demo');
    await warmUpMark.click();
@@ -223,7 +244,9 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    for(const label of ['How to do it','Coach cue','Watch for']){
     ok(await dialog.locator('.hub-parent-demo-details .hub-visible-coach-note > strong').filter({hasText:label}).isVisible(),'separate '+label+' coaching block is present');
    }
-   ok((await dialog.innerText()).includes('Stop if your hip hurts.')&&(await dialog.innerText()).includes('Only if comfortable.'),'parent fullscreen keeps session and exercise restrictions');
+   ok(await coachInstructions(dialog).count()===(cleanup?0:1),'workout demo panel is hidden only for the targeted programme');
+   ok((await dialog.innerText()).includes('Only if comfortable.'),'parent fullscreen keeps exercise restrictions');
+   if(!cleanup)ok((await dialog.innerText()).includes('Stop if your hip hurts.'),'unrelated parent retains session restrictions');
    ok(await dialog.getByText('1 of 3',{exact:true}).isVisible(),'only main exercises are included');
    await dialog.getByRole('button',{name:'Play demo'}).click();
    ok((await dialog.locator('iframe').getAttribute('src')).includes('/embed/abcdefghijk'),'parent fullscreen opens the correct demo');

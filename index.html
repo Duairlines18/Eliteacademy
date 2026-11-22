@@ -4501,7 +4501,7 @@ document.addEventListener('click',function(e){
   function categoryRoute(cat){return cat.route||'#/hub/library/'+cat.slug;}
   function programme(){return HUB_STATE.programme;}
   // Presentation-only cleanup: retain historical session notes and exercise safety cues.
-  function isAndriaCoachInstructionsCleanup(){return HUB_STATE.audience==='parent'&&/\bAndria Torres\b/i.test(String(programme()?.title||''));}
+  function isAndriaCoachInstructionsCleanup(){return HUB_STATE.audience==='parent'&&session()?.role==='athlete'&&programme()?.title==='Andria Torres — Volleyball Development';}
   function athleteDemo(){const p=programme()||{};const displayName=HUB_STATE.athlete?.displayName||HUB_STATE.viewer?.firstName||'Athlete';return {displayName,school:p.school||HUB_STATE.cohort?.name||'',programme:p.title||'',week:p.week||1,totalWeeks:p.totalWeeks||10,weeklyObjective:p.weeklyObjective||'',coachNotes:p.personalNote||p.athleteEducation||'Follow the current week exactly as prescribed and contact Coach Du if anything needs adjusting.',nextFeedback:Math.min(p.totalWeeks||10,(p.week||1)+1),sessions:Array.isArray(p.sessions)?p.sessions.map(s=>s.id):[]};}
   function makeSubmissionId(){return (window.crypto&&crypto.randomUUID)?crypto.randomUUID():('fb-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,12));}
   function selectedChoice(form,group,multi=false){const box=form.querySelector('[data-choice-group="'+group+'"]');if(!box)return multi?[]:'';const values=Array.from(box.querySelectorAll('.hub-choice.selected')).map(x=>x.textContent.trim());return multi?values:(values[0]||'');}
@@ -5328,7 +5328,7 @@ document.addEventListener('click',function(e){
     const {card,day,route}=selected,items=routineCardItems(card);
     if(isSchoolReferenceViewer()&&session()?.role==='athlete'){
       const notes=routineCardNotes(card,day);
-      const guidance=!isAndriaCoachInstructionsCleanup()&&notes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+notes.map(escapeHtml).join('<br>')+'</span></div>':'';
+      const guidance=notes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+notes.map(escapeHtml).join('<br>')+'</span></div>':'';
       const content=routineCardSections(card).map(({source,sections})=>schoolAthleteDelivery(sections,source)).join('');
       root.innerHTML=shell('<div class="hub-athlete-session-nav"><a href="#/hub/routines">← Your Routines</a></div><div class="hub-athlete-session-title"><h1>'+escapeHtml(card.title)+'</h1></div>'+guidance+'<a class="hub-button secondary" href="#/hub/session/'+encodeURIComponent(day.id)+'">Return to Today’s Workout →</a><section class="hub-section hub-field-session">'+content+'</section>','routines');
       return;
