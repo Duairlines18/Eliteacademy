@@ -97,7 +97,7 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    const unfilmed=main.locator('[data-athlete-inline-demo]').filter({hasText:'Unfilmed mobility'});
    await unfilmed.locator('summary').click();
    ok(await unfilmed.getByText('Keep the movement slow and controlled.',{exact:false}).isVisible(),'Workout keeps tips for exercises without a demo');
-   ok(await unfilmed.getByText('Only if comfortable.',{exact:false}).isVisible(),'Workout retains assigned restrictions');
+   ok(await main.locator('.hub-visible-coach-note').filter({hasText:'Only if comfortable.'}).first().isVisible(),'Workout retains assigned restrictions');
    const workoutRoute=await page.evaluate(()=>location.hash);
    await options.getByRole('button',{name:'Full-screen demos',exact:true}).click();
    const presentation=page.getByRole('dialog',{name:'Exercise demos'});
