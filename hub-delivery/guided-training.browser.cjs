@@ -242,24 +242,13 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    console.log(`${who} ${width}px: full-screen parent workout, completion, reload and routine regression passed`);
    continue;
   }
-  await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();
-  const firstKey='p:1:0:MOB04';ok(await page.locator('[data-completion-toggle]').getAttribute('data-item-key')===firstKey,'original completion key retained');
-  ok(await page.locator('.hub-guided-teach').count()>=2,'instructions and cue visible');ok(await page.locator('[data-guided-next]').isEnabled(),'next available');
-  ok((await page.locator('.hub-guided-teach.avoid').innerText()).includes('Rushing transitions.'),'library Avoid remains visible with saved custom cue');
-  ok((await page.locator('.hub-guided-teach-grid').innerText()).includes('Only if comfortable.'),'saved custom cue stays visible');
-  if(!parent)ok((await page.locator('.hub-objective').innerText()).includes('No jumping'),'injury restrictions visible');
-  const resumeStep='2 of 3';
-  await page.locator('[data-completion-toggle]').click();await page.getByRole('button',{name:'Try again',exact:true}).waitFor();ok(!completions.has(day.id+'|'+firstKey),'failed save does not mark complete');await page.locator('[data-completion-toggle]').click();await page.waitForFunction(step=>document.querySelector('.hub-guided-step')?.textContent===step,resumeStep);
-  await page.reload();await page.locator('[data-workout-mode="guided"]').click();await page.locator('.hub-guided-card').waitFor();ok((await page.locator('.hub-guided-step').innerText())===resumeStep,'reload resumes unfinished exercise');
-  await page.locator('[data-guided-prev]').click();ok(await page.locator('[data-completion-toggle]').getAttribute('data-completed')==='true','saved completion restored');
-  await page.locator('[data-guided-next]').click();await page.locator('[data-completion-toggle]').click();
-  if(!parent){
-   await page.locator('.hub-guided-card').getByRole('heading',{name:'Unfilmed mobility'}).waitFor();
-   await page.locator('[data-completion-toggle]').click();
-  }
-  await page.getByText('Workout Complete',{exact:false}).first().waitFor();ok(await page.getByRole('link',{name:'Send feedback →',exact:true}).count()===1,'completion leads to feedback');
-  await page.locator('[data-workout-mode="quick"]').click();ok(await page.getByRole('link',{name:'Send feedback →',exact:true}).count()===1,'quick view retains completion feedback handoff');
-  ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'fits mobile viewport');ok(errors.length===0,errors.join('\n'));
-  await context.close();console.log(`${who} ${width}px: guided navigation, restrictions, original keys, retry and reload persistence passed`);
+  // Guided mode was retired; verify the two supported private workout controls instead.
+  const privateViews=page.getByRole('group',{name:'Workout views'});
+  ok(await privateViews.getByRole('button',{name:'Workout',exact:true}).count()===1,'private Workout remains available');
+  ok(await privateViews.getByRole('button',{name:'Full-screen demos',exact:true}).count()===1,'private demos remain available');
+  ok(await page.locator('[data-workout-mode="guided"]').count()===0,'retired Guided Workout is absent');
+  ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'private workout fits mobile viewport');
+  ok(errors.length===0,errors.join('\\n'));
+  await context.close();console.log(`${who} ${width}px: private two-view workout and demo regression passed`);
  }console.log(`${checks} guided browser assertions passed`);}finally{await browser.close();server.close();}
 })().catch(error=>{console.error(error);process.exit(1);});
