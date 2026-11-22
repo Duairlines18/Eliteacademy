@@ -15,12 +15,13 @@ const source=extract('  function workoutCoaching(', '  function ')
   +extract('  function visibleNormalizedSections(workout){','  function flattenedWorkoutItems(')
   +extract('  function schoolWorkoutSections(', '  function staffAllGroupsExperience(')
   +extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')
+  +extract('  function hubYoutubeEmbed(', '  function openHubVideo(')
   +';globalThis.testApi={compactAthleteWeek,weeklyFocus,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';
 let selected='Form 2';
 const context={
   DuHubDelivery:require('../hub-delivery/delivery.js'),programme:()=>({week:6}),
   escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
-  encodeURIComponent,
+  encodeURIComponent,URL,URLSearchParams,location:{hash:'#/hub/session/one',href:'https://duairlineseliteacademy.com/#/hub/session/one'},
   HUB_STATE:{audience:'school',contentStatus:'published'},
   session:()=>({role:'athlete'}),
   schoolGroup:()=>selected,
@@ -58,7 +59,7 @@ assert.match(output,/<details class="hub-athlete-phase hub-athlete-warmup">/);
 assert.doesNotMatch(output,/<details class="hub-athlete-phase hub-athlete-warmup" open/);
 assert.match(output,/2 × 6/);
 assert.doesNotMatch(output,/3 × 8|3 × 12/);
-assert.match(output,/▶ Watch demo/);
+assert.match(output,/data-athlete-inline-play/);
 assert.doesNotMatch(output,/javascript:alert/);
 assert.doesNotMatch(output,/<summary>Technique<\/summary>/);
 assert.match(output,/data-athlete-copy/);
@@ -124,13 +125,13 @@ for(const [raw,name,dose,code] of [
  assert.equal(item.title,name);assert.equal(item.dosage,dose);
  assert.equal(item.code,code);assert.match(item.videoUrl,/^https:\/\/www\.youtube\.com\/shorts\//);
  const rendered=api.schoolAthleteDelivery([{title:'Strength',items:[item]}],{title:'Test'});
- assert.match(rendered,/▶ Watch demo/);assert.doesNotMatch(rendered,/\(STR02\)|\(MOB01\)|\(MOB04\)|Dose not specified/);
+ assert.match(rendered,/data-athlete-inline-play/);assert.doesNotMatch(rendered,/\(STR02\)|\(MOB01\)|\(MOB04\)|Dose not specified/);
 }
 const unknown=normalizeContext.normalize('Unknown exercise (BAD99) 2 × 8',0,0,verified);
 assert.equal(unknown.videoUrl,'');
-assert.doesNotMatch(api.schoolAthleteDelivery([{title:'Session',items:[unknown]}],{}),/▶ Watch demo/);
+assert.doesNotMatch(api.schoolAthleteDelivery([{title:'Session',items:[unknown]}],{}),/data-athlete-inline-play/);
 assert.match(app,/total>=week&&total>1/,'invalid week totals must not be shown');
-assert.match(app,/const displayDose=dosage;/,'no invented dose placeholders');
+assert.doesNotMatch(week,/Dose not specified/,'no invented dose placeholders');
 console.log('Private athlete exact-code video and dose regression QA passed.');
 
 assert.match(app,/function renderParentSimpleDashboard\(/,'parent compact dashboard exists');

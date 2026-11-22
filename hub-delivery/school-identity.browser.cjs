@@ -34,8 +34,8 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    ok(await march.getByText('1 × 20 m',{exact:true}).isVisible(),'A-March prescription is exact and visible');
    ok(await march.getByText('Rest: Walk-back recovery',{exact:true}).isVisible(),'A-March recovery is exact and visible');
    ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'workout fits viewport');
-   // Assigned session instructions stay visible while library technique is collapsed.
-   ok(await march.getByText('For this session Stay tall; controlled rhythm.',{exact:true}).isVisible(),'A-March cue is exact and visible without opening tips');
+   await march.locator("[data-athlete-inline-demo] > summary").click();
+   ok(await march.getByText('For this session Stay tall; controlled rhythm.',{exact:true}).isVisible(),'A-March cue is exact in the compact dropdown');
    await page.evaluate(()=>{window.__copied='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>{window.__copied=t}}});});
    await page.locator('[data-athlete-copy]').click();
    const athleteCopy=await page.evaluate(()=>window.__copied);
@@ -66,7 +66,9 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    await page.getByRole('link',{name:'← Back to Week'}).click();
    await page.getByRole('navigation',{name:'Choose training day'}).getByRole('link',{name:/^Day 2\b/}).click();
    await views.getByRole('button',{name:'Workout',pressed:true,exact:true}).waitFor();checks++;
-   ok(await page.getByText('Stay balanced.',{exact:false}).first().isVisible(),'Day 2 keeps assigned coaching cues on Workout');
+   const balanced=page.locator('[data-athlete-inline-demo]').filter({hasText:'Stay balanced.'}).first();
+   await balanced.locator('summary').click();
+   ok(await balanced.getByText('Stay balanced.',{exact:false}).isVisible(),'Day 2 keeps assigned coaching cues in its dropdown');
    ok(await page.getByText('Stop if pain increases.',{exact:false}).first().isVisible(),'Day 2 keeps safety guidance on Workout');
    await fullScreen.click();
    await presenter.getByRole('button',{name:'Next',exact:true}).click();

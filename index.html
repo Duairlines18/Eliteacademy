@@ -2094,7 +2094,7 @@ footer,
 <link rel="stylesheet" href="/hub-delivery/weekly-checkins.css?v=20261112-dark"><script src="/hub-delivery/weekly-checkins.js?v=20261115-navigation"></script>
 <script src="/hub-delivery/visits.js?v=20261122"></script>
 <script src="/hub-delivery/premium-v2.js?v=20261020"></script>
-<link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261121-parent-demo-layout">
+<link rel="stylesheet" href="/hub-delivery/delivery.css?v=20261122-compact-athlete-demo">
 <link rel="stylesheet" href="/parent-qa/session-card-polish.css">
 <script defer src="/parent-qa/session-card-polish.js"></script>
 <script defer src="/performance/coachdu-hub-bridge.js"></script>
@@ -4853,39 +4853,11 @@ document.addEventListener('click',function(e){
       const rows=items.map(item=>{
         const phaseHeading=item.phase&&item.phase!==previousPhase?'<h4 class="hub-air-zim-stage">'+escapeHtml(item.phase)+'</h4>':'';
         previousPhase=item.phase||'';
-        const dosage=String(item.dosage||'').trim(),rest=String(item.rest||'').trim();
-        const displayDose=dosage;
-        const video=item.videoUrl||item.videoId&&('https://www.youtube.com/shorts/'+encodeURIComponent(item.videoId));
-        const safeDemo=typeof DuHubDelivery!=='undefined'&&DuHubDelivery.safeVideo(video);
-        const doseHelp=typeof DuHubDelivery!=='undefined'&&typeof DuHubDelivery.explainDose==='function'?DuHubDelivery.explainDose(dosage):'';
-        const help=typeof DuHubDelivery!=='undefined'&&typeof DuHubDelivery.trainingHelp==='function'?DuHubDelivery.trainingHelp([item.title,item.dosage,item.cue].join(' ')):[];
-        const demos=(Array.isArray(item.demos)?item.demos.filter(demo=>DuHubDelivery.safeVideo(demo.url)).map(demo=>'<a class="hub-athlete-demo" href="'+escapeHtml(demo.url)+'" target="_blank" rel="noopener noreferrer">▶ Watch '+escapeHtml(demo.title)+' demo</a>').join(''):safeDemo?'<a class="hub-athlete-demo" href="'+escapeHtml(video)+'" target="_blank" rel="noopener noreferrer">▶ Watch demo</a>':'');
-        let guidance=workoutCoaching(item)+demos;
-        if(workoutMode){
-          const rows=DuHubDelivery.coachingRows(item);
-          const line=([label,value])=>'<p class="hub-visible-coach-note"><strong>'+escapeHtml(label)+'</strong> '+escapeHtml(value)+'</p>';
-          const restriction=/\b(?:stop|pain|injur\w*|safety|unsafe|never|only if|hours between|do not|don['’]t|should not|must not|no running|no sprint(?:ing)?|before progressing)\b/i;
-          const essential=rows.filter(([label,value])=>label==='For this session'||label==='Coach alternative'||restriction.test(value)||(compact&&label==='How to do it'&&/confirm the movement sequence/i.test(value)));
-          guidance=essential.map(line).join('');
-          const clips=athleteWorkoutDemos(item);
-          if(clips.length){
-            guidance+='<details class="hub-private-demo-details hub-workout-video-preview"><summary>Watch demo <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary><div class="hub-private-demo-content">'+clips.map(clip=>'<p>'+escapeHtml(clip.title)+'</p><iframe loading="lazy" title="'+escapeHtml(clip.title)+' demo" src="'+escapeHtml(clip.embed)+'" allow="encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><p><a href="'+escapeHtml(clip.original)+'" target="_blank" rel="noopener noreferrer">Open video in YouTube</a></p>').join('')+'</div></details>';
-          }
-          if(!compact&&!clips.length){
-            const tips=rows.filter(row=>!essential.includes(row)).map(line).join('');
-            if(tips)guidance+='<details class="hub-private-demo-details"><summary>Technique tips <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary>'+
-              '<div class="hub-private-demo-content">'+tips+'</div></details>';
-          }
-        }else if(compact){
-          const rows=DuHubDelivery.coachingRows(item);
-          const essential=([label,value])=>label==='For this session'||label==='Coach alternative'||(label==='How to do it'&&/confirm the movement sequence/i.test(value));
-          const line=([label,value])=>'<p class="hub-visible-coach-note"><strong>'+escapeHtml(label)+'</strong> '+escapeHtml(value)+'</p>';
-          const notes=rows.filter(essential).map(line);
-          const safety=rows.filter(([label])=>label==='Watch for').flatMap(([,value])=>value.match(/(?:^|(?<=[.!?])\s+)(?:Stop|Do not continue)\b[^.!?]*[.!?]?/gi)||[]).map(value=>line(['Safety',value.trim()]));
-          const detail=rows.filter(row=>!essential(row)).map(line).join('')+demos;
-          guidance=notes.join('')+safety.join('')+(detail?'<details class="hub-school-technique"><summary>'+(demos?'Technique &amp; demo':'Technique')+'</summary>'+detail+'</details>':'');
-        }
-        return phaseHeading+'<div class="hub-athlete-movement"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+(displayDose?'<strong>'+escapeHtml(displayDose)+'</strong>':'')+'</div>'+(doseHelp?'<p class="hub-dose-help">'+escapeHtml(doseHelp)+'</p>':'')+(rest?'<small>Rest: '+escapeHtml(rest)+'</small>':'')+guidance+(help.length?'<p class="hub-term-help">'+help.map(escapeHtml).join(' ')+'</p>':'')+'</div>';
+        const doseHelp=DuHubDelivery.explainDose(item.dosage);
+        const help=DuHubDelivery.trainingHelp([item.title,item.dosage,item.cue].join(' '));
+        return phaseHeading+'<div class="hub-athlete-movement">'+compactAthleteMovement(item,
+          (doseHelp?'<p class="hub-dose-help">'+escapeHtml(doseHelp)+'</p>':'')+
+          (help.length?'<p class="hub-term-help">'+help.map(escapeHtml).join(' ')+'</p>':''))+'</div>';
       }).join('');
       const heading='<span>'+escapeHtml(section.title)+'</span><small>'+items.length+' movements</small>';
       if(workoutMode)return '<section class="hub-athlete-phase"><div class="hub-athlete-phase-heading"><h3>'+escapeHtml(section.title)+'</h3></div><div class="hub-athlete-phase-list">'+rows+'</div></section>';
@@ -4895,6 +4867,30 @@ document.addEventListener('click',function(e){
     return '<div class="hub-field-delivery hub-athlete-one-sheet"><div class="hub-athlete-sheet-actions"><strong>Today’s workout</strong>'+ (copyWorkoutAllowed()?'<button type="button" data-athlete-copy>Copy workout</button><span data-athlete-copy-status role="status" aria-live="polite"></span>':'')+'</div>'+phases+(prescribed.some(section=>!isSchoolWarmupSection(section)&&(section.items||[]).some(item=>item.type==='exercise'&&!String(item.rest||'').trim()))?'<p class="hub-rest-help">Rest time not shown? Check with Coach Du. Do not rush to finish.</p>':'')+library+'</div>';
   }
 
+  function compactAthleteMovement(item,extras,completion=''){
+    const dose=item.dosage?'<strong>'+escapeHtml(item.dosage)+'</strong>':'';
+    const rest=item.rest?'<small>Rest: '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</small>':'';
+    const heading='<span class="hub-compact-movement-heading"><span>'+escapeHtml(item.title)+'</span>'+dose+rest+'</span>';
+    const rows=DuHubDelivery.coachingRows(item);
+    const restriction=/\b(?:stop|pain|injur\w*|safety|unsafe|never|only if|hours between|do not|don['’]t|should not|must not|no running|no sprint(?:ing)?|before progressing)\b/i;
+    const visible=completion?[]:rows.filter(([label,value])=>label==='Coach alternative'||restriction.test(value)||/confirm the movement sequence/i.test(value));
+    const note=([label,value])=>'<p class="hub-visible-coach-note"><strong>'+escapeHtml(label)+'</strong> '+escapeHtml(value)+'</p>';
+    const coaching=rows.filter(row=>!visible.includes(row)).map(note).join('');
+    const clips=athleteWorkoutDemos(item);
+    const videos=clips.map(clip=>{
+      const id=new URL(clip.embed).pathname.split('/').pop();
+      return '<div class="hub-compact-demo-media"><div class="hub-private-video-stage hub-compact-demo-stage">'+
+        (id!=='videoseries'?'<img src="https://i.ytimg.com/vi/'+escapeHtml(id)+'/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer">':'')+
+        '<button type="button" data-athlete-inline-play aria-label="Play '+escapeHtml(clip.title)+' demonstration"><span aria-hidden="true">▶</span></button>'+
+        '<template><iframe title="'+escapeHtml(clip.title)+' demonstration" src="'+escapeHtml(clip.embed)+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></template>'+
+        '</div><a class="hub-compact-demo-fallback hub-athlete-demo" href="'+escapeHtml(clip.original)+'" target="_blank" rel="noopener noreferrer" data-hub-video-external>Open '+escapeHtml(clip.title)+' on YouTube ↗</a></div>';
+    }).join('');
+    const disclosure=videos||coaching?'<details class="hub-compact-movement-details" data-athlete-inline-demo><summary>'+heading+
+      '<span class="hub-private-sr-only">Technique'+(videos?' and demo':'')+' for '+escapeHtml(item.title)+'</span>'+
+      '</summary><div class="hub-compact-movement-body">'+videos+coaching+'</div></details>':heading;
+    return '<div class="hub-compact-movement'+(completion?' has-completion':'')+'">'+disclosure+completion+visible.map(note).join('')+extras+'</div>';
+  }
+
   function renderParentQuickView(sections,sessionData){
     const phases=deliverySections(sections);
     const isReference=section=>/Additional movement references/i.test(section.title);
@@ -4902,24 +4898,10 @@ document.addEventListener('click',function(e){
       const rows=section.items.map(item=>{
         const key=escapeHtml(item.key),sessionKey=escapeHtml(sessionData.id);
         const completed=isWorkoutComplete(sessionData.id,item.key);
-        const notes=DuHubDelivery.coachingRows(item);
-        const cue=notes.find(([label])=>label==='For this session')||
-          notes.find(([label])=>label==='Coach cue')||notes.find(([label])=>label==='How to do it')||
-          notes.find(([label])=>label==='Watch for');
-        const guidance=[cue?.[1],item.substitutionNote].filter(Boolean);
-        const videos=athleteWorkoutDemos(item).map(clip=>{
-          const embed=new URL(clip.embed);
-          embed.searchParams.delete('autoplay');
-          return '<iframe title="'+escapeHtml(clip.title)+' demo" src="'+escapeHtml(embed.href)+'" style="width:100%;height:auto;aspect-ratio:'+(clip.vertical?'9/16;max-height:60svh':'16/9')+';border:0" allow="encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
-        }).join('');
-        const details=guidance.length||videos?'<details class="hub-private-demo-details" data-parent-inline-demo><summary>'+(videos?'Demo &amp; technique':'Technique')+' <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary><div class="hub-private-demo-content">'+
-          (videos?'<div data-parent-demo-players></div><template>'+videos+'</template>':'')+
-          (guidance.length?'<p class="hub-parent-technique-cue">'+guidance.map(escapeHtml).join(' ')+'</p>':'')+'</div></details>':'';
-        const dose=item.dosage?'<strong>'+escapeHtml(item.dosage)+'</strong>':'';
         const effortHelp=DuHubDelivery.trainingHelp([item.title,item.dosage,item.cue].join(' '));
-        const rest=item.rest?'<small>Rest: '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</small>':'';
-        const complete='<button type="button" class="hub-quick-toggle" data-completion-toggle data-session-key="'+sessionKey+'" data-item-key="'+key+'" data-completed="'+completed+'" aria-pressed="'+completed+'">'+(completed?'Undo':'Complete')+'</button>';
-        return '<article class="hub-athlete-movement hub-parent-quick-row"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+dose+'</div>'+rest+(effortHelp.length?'<p class="hub-term-help">'+effortHelp.map(escapeHtml).join(' ')+'</p>':'')+complete+details+'</article>';
+        const complete='<button type="button" class="hub-compact-complete" data-completion-toggle data-session-key="'+sessionKey+'" data-item-key="'+key+'" data-completed="'+completed+'" aria-pressed="'+completed+'" aria-label="Complete '+escapeHtml(item.title)+'">✓</button>';
+        return '<article class="hub-athlete-movement hub-parent-quick-row">'+compactAthleteMovement(item,
+          effortHelp.length?'<p class="hub-term-help">'+effortHelp.map(escapeHtml).join(' ')+'</p>':'',complete)+'</article>';
       }).join('');
       let playlist='';
       if(isSchoolWarmupSection(section)){
@@ -5410,8 +5392,8 @@ document.addEventListener('click',function(e){
     else {
       const index=items.findIndex(item=>item.sessionKey===button.dataset.sessionKey&&item.key===button.dataset.itemKey);
       if(index<0||session()?.role==='staff'||isSchoolReferenceViewer())return true;
-      const item=items[index],next=button.dataset.completed!=='true';button.disabled=true;button.textContent='Saving…';
-      saveWorkoutCompletion(item.sessionKey,item.key,next).then(row=>{if(!row||location.hash!==route)return;if(next)GUIDED_CURSOR[route]=Math.min(items.length-1,index+1);renderRoutineCard();}).catch(()=>{if(location.hash===route&&button.isConnected){button.disabled=false;button.textContent='Try again';}});
+      const item=items[index],next=button.dataset.completed!=='true';button.disabled=true;button.textContent=button.matches('.hub-compact-complete')?'…':'Saving…';
+      saveWorkoutCompletion(item.sessionKey,item.key,next).then(row=>{if(!row||location.hash!==route)return;if(next)GUIDED_CURSOR[route]=Math.min(items.length-1,index+1);renderRoutineCard();}).catch(()=>{if(location.hash===route&&button.isConnected){button.disabled=false;button.textContent=button.matches('.hub-compact-complete')?'↻':'Try again';}});
       return true;
     }
     renderRoutineCard();return true;
@@ -5768,15 +5750,24 @@ document.addEventListener('click',function(e){
     const guidedPrev=event.target.closest('[data-guided-prev]');if(guidedPrev){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout));GUIDED_CURSOR[s.id]=Math.max(0,(GUIDED_CURSOR[s.id]||0)-1);renderSession(s.id);}return;}
     const guidedNext=event.target.closest('[data-guided-next]');if(guidedNext){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout));GUIDED_CURSOR[s.id]=Math.min(Math.max(0,items.length-1),(GUIDED_CURSOR[s.id]||0)+1);renderSession(s.id);}return;}
     const quickOpen=event.target.closest('[data-quick-open]');if(quickOpen){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===quickOpen.dataset.quickOpen);if(index>=0){GUIDED_CURSOR[s.id]=index;WORKOUT_MODE='guided';renderSession(s.id);}}return;}
-    const completionButton=event.target.closest('[data-completion-toggle]');if(completionButton){if(isSchoolReferenceViewer())return;const completionRoute=location.hash;const sessionKey=completionButton.dataset.sessionKey||location.hash.replace('#/hub/session/',''),itemKey=completionButton.dataset.itemKey||'',next=completionButton.dataset.completed!=='true';if(!sessionKey||!itemKey)return;completionButton.disabled=true;const original=completionButton.textContent;completionButton.textContent='Saving…';saveWorkoutCompletion(sessionKey,itemKey,next).then(row=>{if(!row||location.hash!==completionRoute)return;const s=programme()?.sessions?.find(x=>x.id===sessionKey);if(s&&next){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===itemKey);if(index>=0&&index<items.length-1)GUIDED_CURSOR[s.id]=index+1;}renderSession(sessionKey);maybeOpenWorkoutEndCheckin();}).catch(error=>{console.warn('Unable to save completion',error);completionButton.disabled=false;completionButton.textContent='Try again';setTimeout(()=>{if(completionButton.isConnected)completionButton.textContent=original;},1600);});return;}
+    const completionButton=event.target.closest('[data-completion-toggle]');if(completionButton){if(isSchoolReferenceViewer())return;const completionRoute=location.hash;const sessionKey=completionButton.dataset.sessionKey||location.hash.replace('#/hub/session/',''),itemKey=completionButton.dataset.itemKey||'',next=completionButton.dataset.completed!=='true';if(!sessionKey||!itemKey)return;completionButton.disabled=true;const original=completionButton.textContent;completionButton.textContent=completionButton.matches('.hub-compact-complete')?'…':'Saving…';saveWorkoutCompletion(sessionKey,itemKey,next).then(row=>{if(!row||location.hash!==completionRoute)return;const s=programme()?.sessions?.find(x=>x.id===sessionKey);if(s&&next){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===itemKey);if(index>=0&&index<items.length-1)GUIDED_CURSOR[s.id]=index+1;}renderSession(sessionKey);maybeOpenWorkoutEndCheckin();}).catch(error=>{console.warn('Unable to save completion',error);completionButton.disabled=false;completionButton.textContent=completionButton.matches('.hub-compact-complete')?'↻':'Try again';setTimeout(()=>{if(completionButton.isConnected)completionButton.textContent=original;},1600);});return;}
     const schoolGroupButton=event.target.closest('[data-school-group]');if(schoolGroupButton){localStorage.setItem(schoolGroupStorageKey(),schoolGroupButton.dataset.schoolGroup||'');const route=location.hash.replace('#/hub','')||'/';if(route.startsWith('/session/'))renderSession(route.split('/')[2]);else render();return;}
     const choice=event.target.closest('.hub-choice');if(choice){const group=choice.closest('[data-choice-group]');const multi=group?.dataset.multi==='true';if(multi){const label=choice.textContent.trim();if(label==='Nothing noticeable yet'||label==='No noticeable change'){group.querySelectorAll('.hub-choice').forEach(x=>x.classList.remove('selected'));choice.classList.add('selected');}else{group.querySelectorAll('.hub-choice').forEach(x=>{if(['Nothing noticeable yet','No noticeable change'].includes(x.textContent.trim()))x.classList.remove('selected');});choice.classList.toggle('selected');}}else{group.querySelectorAll('.hub-choice').forEach(x=>x.classList.remove('selected'));choice.classList.add('selected');}return;}
   });
+  root.addEventListener('click',event=>{
+    const button=event.target.closest('[data-athlete-inline-play]');
+    if(!button)return;
+    const stage=button.parentElement;
+    const frame=stage.querySelector('template').content.cloneNode(true);
+    button.hidden=true;
+    stage.append(frame);
+    stage.querySelector('iframe').focus();
+  });
   root.addEventListener('toggle',event=>{
     const details=event.target;
-    if(!details.matches('details[data-parent-inline-demo]'))return;
-    const players=details.querySelector('[data-parent-demo-players]');
-    if(players)players.replaceChildren(...(details.open?[details.querySelector('template').content.cloneNode(true)]:[]));
+    if(!details.matches('details[data-athlete-inline-demo]')||details.open)return;
+    details.querySelectorAll('iframe').forEach(frame=>frame.remove());
+    details.querySelectorAll('[data-athlete-inline-play]').forEach(button=>{button.hidden=false;});
   },true);
 
   document.addEventListener('submit',async function(event){
