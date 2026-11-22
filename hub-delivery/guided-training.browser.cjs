@@ -45,7 +45,7 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
     return route.fulfill({json:{checkins:{enabled:finalParentWorkout,held:false,requirements:due,due}}});
    }
    if(body.action==='profile')data={onboardingComplete:true,onboarding:{sportPathway:'Track',primaryGoals:['Core'],trainingEnvironment:'Home',equipment:['Bodyweight only'],weeklyAvailability:'3 days',scheduleNotes:'Current weekly training schedule: Approved\nCurrent pain / injury / restriction: Follow approved restrictions\nPrevious significant injuries: Coach aware'}};
-   if(body.action==='bootstrap')data={contentStatus:'published',audience,viewer:{firstName:'Synthetic'},athlete:{id:prefix+'athlete',displayName:'Synthetic'},programme:{id:prefix+'programme',title:cleanup?'Andria Torres — Volleyball Development':'Assigned programme',week:cleanup?11:parent?9:2,totalWeeks:cleanup?11:10,sessions},exercises,delivery:{model:'private-athlete',copyWorkout:true}};
+   if(body.action==='bootstrap')data={contentStatus:'published',audience,viewer:{firstName:'Synthetic'},athlete:{id:prefix+'athlete',displayName:'Synthetic'},programme:{id:prefix+'programme',title:cleanup?'Andria Torres — Volleyball Development':'Assigned programme',week:cleanup?11:parent?9:2,totalWeeks:cleanup?11:10,weeklyObjective:'Build controlled training rhythm.',sessions},exercises,delivery:{model:'private-athlete',copyWorkout:true}};
    if(body.action==='library')data={exercises};
    if(body.action==='list')data={completions:[...completions.values()]};
    if(body.action==='set'){
@@ -57,8 +57,9 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    return route.fulfill({json:data});
   });
   await page.goto(base+'/#/hub/athlete');
-  await page.getByRole('heading',{name:'My training',exact:true}).waitFor();
+  await page.getByRole('heading',{name:'Hi, Synthetic',exact:true}).waitFor();
   const main=page.locator('.hub-main');
+  assert.deepEqual(await main.locator('h1, .hub-premium-standard, .hub-parent-week-focus, [aria-label="Choose training day"]').evaluateAll(nodes=>nodes.map(node=>node.tagName==='H1'?'greeting':node.classList.contains('hub-premium-standard')?'standard':node.classList.contains('hub-parent-week-focus')?'focus':'days')),['greeting','standard','focus','days']);
   ok(await main.getByRole('heading',{name:'Choose a training day',exact:true}).isVisible(),'the athlete can choose a day directly');
   ok(!(await main.innerText()).includes('Parent access:'),'training view uses athlete-first language');
   const trainingCards=main.locator('.hub-parent-session-card');

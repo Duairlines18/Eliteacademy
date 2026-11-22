@@ -19,6 +19,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    const slot=String(n).padStart(2,'0');
    await page.goto('http://127.0.0.1:4173/qa/'+slot+'#/hub/athlete');
    await page.getByRole('heading',{name:'Hi, St. George’s Athlete '+slot,exact:true}).waitFor();checks++;
+   assert.deepEqual(await page.locator('.hub-main').locator('h1, .hub-premium-standard, .hub-parent-week-focus, .hub-school-day-picker').evaluateAll(nodes=>nodes.map(node=>node.tagName==='H1'?'greeting':node.classList.contains('hub-premium-standard')?'standard':node.classList.contains('hub-parent-week-focus')?'focus':'days')),['greeting','standard','focus','days']);
    ok(await page.locator('.hub-school-day-picker a').count()===3,'two coached days and optional home day');
    ok(await page.locator('.hub-school-day-picker a').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('26, 61, 42')),'school athlete day cards use the academy green gradient');
    ok(await page.locator('.hub-school-day-picker').innerText().then(t=>t.includes('Movement foundations')&&t.includes('Capacity and control')&&t.includes('Optional home day')),'school cards show session purpose');

@@ -4277,7 +4277,7 @@ document.addEventListener('click',function(e){
 #hub-root .hub-private-view-options{background:var(--ink)}
 /* SCHOOL_THEME_END */
 </style>
-<script src="/coach-command/coach-command.js?v=20261122-presentation"></script>
+<script src="/coach-command/coach-command.js?v=20261122-weekly-standard"></script>
 <link rel="stylesheet" href="/hub-delivery/school.css">
 <script src="/hub-delivery/school-attendance.js?v=20261104-compact"></script>
 <script id="performance-hub-app">
@@ -5258,11 +5258,11 @@ document.addEventListener('click',function(e){
   }
   function compactSchoolWeek(p){
     const sessions=trainingSessions(p),school=isSchoolReferenceViewer();
-    return '<nav class="hub-athlete-day-picker'+(school?' hub-school-day-picker':'')+'" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(school?'<span class="hub-school-session-name">'+escapeHtml(item.title||'Training session')+'</span><small>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'Optional home day':'Coached session')+'</small>':(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':''))+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
+    return '<nav class="hub-athlete-day-picker'+(school?' hub-school-day-picker':'')+'" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(school?'<span class="hub-school-session-name">'+escapeHtml(item.title||'Training session')+'</span><small>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'Optional home day':'Coached session')+'</small>':(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':''))+'</a>').join('')+'</nav>';
   }
   function compactAthleteWeek(p,activeId){
     const sessions=trainingSessions(p),school=isSchoolReferenceViewer();
-    return '<nav class="hub-athlete-day-picker'+(school?' hub-school-day-picker':'')+'" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice'+(String(activeId||'')===String(item.id)?' selected':'')+'" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(school?'<span class="hub-school-session-name">'+escapeHtml(item.title||'Training session')+'</span><small>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'Optional home day':'Coached session')+'</small>':(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':''))+'</a>').join('')+'</nav>'+(p.weeklyObjective?'<details class="hub-athlete-week-focus"><summary>Weekly focus</summary><p>'+escapeHtml(p.weeklyObjective)+'</p></details>':'');
+    return '<nav class="hub-athlete-day-picker'+(school?' hub-school-day-picker':'')+'" aria-label="Choose training day">'+sessions.map((item,index)=>'<a class="hub-athlete-day-choice'+(String(activeId||'')===String(item.id)?' selected':'')+'" href="#/hub/session/'+encodeURIComponent(item.id)+'"><strong>'+escapeHtml(item.day||'Day '+(index+1))+'</strong>'+(school?'<span class="hub-school-session-name">'+escapeHtml(item.title||'Training session')+'</span><small>'+(/optional|recovery|prehab/i.test(String(item.title||''))?'Optional home day':'Coached session')+'</small>':(/optional|recovery|prehab/i.test(String(item.title||''))?'<small>Optional</small>':''))+'</a>').join('')+'</nav>';
   }
   function weekBlock(p,athlete=false){
     // One shared week navigation for staff, school athletes, parents and private athletes.
@@ -5295,7 +5295,7 @@ document.addEventListener('click',function(e){
     if(renderCoachCommand())return;
     const p=programme();
     const fallback='<section class="hub-field-home-head"><span class="hub-week-label">COACH FIELD VIEW</span><h1>'+escapeHtml(p.school)+'</h1><p>'+escapeHtml(p.title||'')+'</p></section>'
-      +weekBlock(p)
+      +weeklyStandard()+weeklyFocus(p.weeklyObjective)+weekBlock(p)
       +'<div class="hub-field-footer-links"><a href="#/hub/coach-feedback">Weekly coach feedback →</a><a href="#/hub/library">Movement library →</a></div>';
     root.innerHTML=shell(fallback,'dashboard');
   }
@@ -5309,13 +5309,13 @@ document.addEventListener('click',function(e){
       coachRoot.dataset.workoutRoute=location.hash;
       window.DuCoachCommand.mount(coachRoot,{
         role:'staff',cohort:HUB_STATE.cohort,programme:{...p,sessions:trainingSessions(p)},exercises:EXERCISES
-      },{initialSessionId,rosterVerified:Array.isArray(HUB_STATE.roster),roster:HUB_STATE.roster});
+      },{initialSessionId,weeklyOverview:weeklyStandard()+weeklyFocus(p.weeklyObjective),rosterVerified:Array.isArray(HUB_STATE.roster),roster:HUB_STATE.roster});
       mountSchoolAttendance();
       return true;
     }catch(error){console.error('Coach Command unavailable; using original staff view.',error);return false;}
   }
 
-  function renderCurrentWeek(){if(renderCoachCommand())return;const p=programme();root.innerHTML=shell('<div class="hub-field-day-header"><a href="#/hub/staff">← Coach home</a><h1>Current Week</h1></div>'+weekBlock(p)+(p.coachGuidance?'<details class="hub-field-optional"><summary>Coach guidance</summary><p>'+escapeHtml(p.coachGuidance)+'</p></details>':''),'week');}
+  function renderCurrentWeek(){if(renderCoachCommand())return;const p=programme();root.innerHTML=shell('<div class="hub-field-day-header"><a href="#/hub/staff">← Coach home</a><h1>Current Week</h1></div>'+weeklyStandard()+weeklyFocus(p.weeklyObjective)+weekBlock(p)+(p.coachGuidance?'<details class="hub-field-optional"><summary>Coach guidance</summary><p>'+escapeHtml(p.coachGuidance)+'</p></details>':''),'week');}
   function renderSession(id){id=String(id).split('?')[0];const p=programme(),s=p.sessions.find(x=>x.id===id);if(!s){renderNotFound();return;}if(assignedRoutines(p).includes(s)){renderRoutine(s);return;}if(renderCoachCommand(s.id))return;const back=session()?.role==='staff'?'#/hub/current-week':'#/hub/athlete';const savedNotes=[s.watch,s.athleteNote].filter(Boolean);const schoolDay=isSchoolReferenceViewer();const saintsAthleteView=schoolDay&&session()?.role==='athlete'&&isSaintsSchool();const important=isParentManagedWorkout()?renderParentSessionNotes(savedNotes):!saintsAthleteView&&savedNotes.length?'<div class="hub-objective"><strong>'+(schoolDay?'Coach notes':'Coach instructions')+'</strong><span>'+savedNotes.map(escapeHtml).join('<br>')+'</span></div>':'';const sessionHelp=isSchoolReferenceViewer()?'Read the prescription first. Open an exact demo only when you need technique guidance.':'Scan the full prescription in Quick View or switch to Guided Mode for step-by-step help.';const schoolAthlete=isSchoolReferenceViewer()&&session()?.role!=='staff';const privateAthlete=privateSelfServeViewer();const parentAthlete=HUB_STATE.audience==='parent'&&session()?.role!=='staff';const simpleAthlete=schoolAthlete||privateAthlete||parentAthlete;const athleteNav=simpleAthlete?'<div class="hub-athlete-session-nav"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(weekLabel(p))+'</span></div>'+(schoolAthlete&&!saintsAthleteView?'<details class="hub-field-cohort hub-athlete-session-group"><summary>'+escapeHtml(schoolGroup()||'Choose your Form')+' <span>Change</span></summary>'+groupPicker()+'</details>':''):'';const athleteHead=simpleAthlete?'<div class="hub-athlete-session-title"><h1>'+escapeHtml(parentAthlete?(parentSessionLabel(s,Math.max(0,p.sessions.indexOf(s)))+' — '+parentSessionHeading(s,Math.max(0,p.sessions.indexOf(s)))):((s.day||'Day')+' · '+s.title))+'</h1><p>'+escapeHtml(s.duration||'')+'</p></div>':'';const body=simpleAthlete?athleteNav+athleteHead+'<section class="hub-section hub-field-session">'+important+preparationNavigation(s)+renderWorkoutExperience(s)+'</section>':(session()?.role==='staff'&&isSchoolReferenceViewer()?'<div class="hub-field-day-header"><a href="'+back+'">← Back to Week</a><span>'+escapeHtml(s.day||'')+'</span><h1>'+escapeHtml(s.title)+'</h1><p>'+escapeHtml(s.focus||'')+'</p><small>'+escapeHtml(s.duration||'')+'</small></div>':pageHead(s.day,s.title,s.focus,back))+ '<section class="hub-section hub-field-session">'+important+'<div class="hub-section-head"><div><h2>Training Sheet</h2></div></div>'+renderWorkoutExperience(s)+'</section>';root.innerHTML=shell(body+(simpleAthlete?'':airZimTool(p)),'week');}
 
 
@@ -5458,15 +5458,20 @@ document.addEventListener('click',function(e){
     const guidance=isParentManagedWorkout()?renderParentSessionNotes(notes):notes.length?'<div class="hub-objective"><strong>Coach instructions</strong><span>'+notes.map(escapeHtml).join('<br>')+'</span></div>':'';const routineDose=isSchoolReferenceViewer()&&Array.isArray(s.prescriptions)?'<div class="hub-school-routine-dose"><strong>Today’s assigned dose</strong>'+s.prescriptions.map(item=>'<p>'+escapeHtml(item.dosage||'See exercise')+'</p>').join('')+'</div>':'';
     root.innerHTML=shell(heading+group+guidance+routineTrainingReturn(s)+routineDose+'<section class="hub-section hub-field-session">'+renderWorkoutExperience(s)+'</section>','routines');
   }
+  function weeklyStandard(){
+    return '<section class="hub-premium-standard" aria-label="Du Airlines Weekly Standard"><span class="hub-week-label">DU AIRLINES WEEKLY STANDARD</span><h2>Trust · Composure · Gratitude · Execute</h2><p>Show up with purpose. Focus on what you can control. Keep building.</p></section>';
+  }
+  function weeklyFocus(value){
+    return value?'<div class="hub-parent-week-focus"><strong>This week’s focus</strong><p>'+escapeHtml(value)+'</p></div>':'';
+  }
   function renderSchoolAthleteCompact(){
     const a=athleteDemo(),p=programme();
     const intro='<section class="hub-field-intro hub-athlete-compact-intro"><span class="hub-week-label">MY TRAINING</span><h1>'+escapeHtml((typeof window!=='undefined'?window.DuPremiumV2:null)?.identity({...HUB_STATE,programme:p}).headline||('Hi, '+a.displayName))+'</h1><p>'+escapeHtml(weekLabel(p))+' · '+escapeHtml(a.school||p.school||'School programme')+'</p></section>';
     const group=isSharedSchoolViewer()?'<details class="hub-field-cohort"><summary>Training group: '+escapeHtml(schoolGroup()||'Choose your group')+' <span>Change</span></summary>'+groupPicker()+'</details>':'';
     const note=p.coachGuidance?'<details class="hub-field-note"><summary>Programme coaching guidance</summary><p>'+escapeHtml(p.coachGuidance)+'</p></details>':'';
     const actions='<div class="hub-field-links"><a href="#/hub/library">Movement library →</a><a href="#/hub/feedback">Athlete check-in →</a></div>';
-    const standard='<section class="hub-premium-standard" aria-label="Du Airlines Weekly Standard"><span class="hub-week-label">DU AIRLINES WEEKLY STANDARD</span><h2>Trust · Composure · Gratitude · Execute</h2><p>Show up with purpose. Focus on what you can control. Keep building.</p></section>';
     const training='<section class="hub-premium-training" aria-label="Your training"><h2 class="hub-week-training-heading">Your Training</h2>'+compactAthleteWeek(p)+'</section>';
-    root.innerHTML=shell(intro+group+training+routinesShortcut()+note+actions+standard,'dashboard');
+    root.innerHTML=shell(intro+weeklyStandard()+weeklyFocus(p.weeklyObjective)+group+training+routinesShortcut()+note+actions,'dashboard');
   }
   function renderPrivateAthleteCompact(){return renderSharedWeeklyDashboard();}
   function parentSessionLabel(item,index){
@@ -5498,18 +5503,19 @@ document.addEventListener('click',function(e){
   }
   function renderSharedWeeklyDashboard(){
     const p=programme(),view=DuHubDelivery.overview(p);
-    const intro='<section class="hub-field-intro hub-athlete-compact-intro hub-parent-training-intro"><h1>My training</h1><p>'+escapeHtml(p.sport||p.title||'Your programme')+' · '+escapeHtml(weekLabel(p))+'</p><p class="hub-week-dates">'+escapeHtml(view.dateRange)+'</p></section>';
+    const athleteName=window.DuPremiumV2?.identity(HUB_STATE).athleteName;
+    const greeting=athleteName?'Hi, '+athleteName:'My training';
+    const intro='<section class="hub-field-intro hub-athlete-compact-intro hub-parent-training-intro"><h1>'+escapeHtml(greeting)+'</h1><p>'+escapeHtml(p.sport||p.title||'Your programme')+' · '+escapeHtml(weekLabel(p))+'</p><p class="hub-week-dates">'+escapeHtml(view.dateRange)+'</p></section>';
     const ready=HUB_STATE.contentStatus==='published';
-    const focus=ready&&view.focus?'<div class="hub-parent-week-focus"><strong>This week’s focus</strong><p>'+escapeHtml(view.focus)+'</p></div>':'';
+    const focus=ready?weeklyFocus(view.focus):'';
     const warmups=ready&&view.warmups.length?'<section class="hub-week-warmups"><h2>Standard Warm-Up</h2>'+view.warmups.map(w=>'<a class="hub-button secondary" href="#/hub/session/'+encodeURIComponent(w.id)+'">'+escapeHtml(w.title)+' →</a>').join('')+'</section>':'';
     const training=ready?'<section class="hub-premium-training" aria-label="Training days"><h2 class="hub-week-training-heading">Choose a training day</h2>'+parentTrainingDays(p)+'</section>'+airZimTool(p):'<div class="hub-note-card"><strong>This week is being prepared.</strong><p>Only published workouts appear here.</p></div>';
-    const standard='<section class="hub-premium-standard" aria-label="Du Airlines Weekly Standard"><span class="hub-week-label">DU AIRLINES WEEKLY STANDARD</span><h2>Trust · Composure · Gratitude · Execute</h2><p>Show up with purpose. Focus on what you can control. Keep building.</p></section>';
     const routines=routinesShortcut();
     const journey=ready?'<section class="hub-premium-journey" aria-label="Your athlete journey"><h2>Your Athlete Journey</h2><div id="du-performance-journey"></div></section>':'';
     const coachNote=p.personalNote||p.athleteEducation||'';const note=coachNote?'<details class="hub-field-note"><summary>Coach Du note</summary><p>'+escapeHtml(coachNote)+'</p></details>':'';
     const publishedWeeks=HUB_STATE.audience==='private-athlete'?'<details class="hub-field-note"><summary>Published programme weeks</summary>'+weekBrowser(p)+historyBlock()+'</details>':'';
     const actions='<div class="hub-field-links"><a href="#/hub/library">Movement library →</a><a href="#/hub/feedback">Weekly check-in →</a></div>';
-    root.innerHTML=shell(intro+training+routines+focus+'<div class="hub-note-card hub-technique-shortcut"><strong>Ask Coach Du</strong><p>Send a video for feedback on your movement.</p><a href="/technique-review.html">Send a video →</a></div>'+note+publishedWeeks+actions+journey+standard,'dashboard');
+    root.innerHTML=shell(intro+weeklyStandard()+focus+training+routines+'<div class="hub-note-card hub-technique-shortcut"><strong>Ask Coach Du</strong><p>Send a video for feedback on your movement.</p><a href="/technique-review.html">Send a video →</a></div>'+note+publishedWeeks+actions+journey,'dashboard');
   }
   function renderParentSimpleDashboard(){return renderSharedWeeklyDashboard();}
   function renderAthleteDashboard(){if(HUB_STATE.audience==='parent')return renderParentSimpleDashboard();if((isIdentifiedSchoolAthlete()||isSharedSchoolViewer())&&HUB_STATE.audience!=='parent')return renderSchoolAthleteCompact();if(privateSelfServeViewer())return renderPrivateAthleteCompact();const a=athleteDemo(),p=programme();const sessions=Array.isArray(p.sessions)?p.sessions:[];const parent=HUB_STATE.audience==='parent',privateAthlete=HUB_STATE.audience==='private-athlete',professional=HUB_STATE.audience==='professional';const viewer=HUB_STATE.viewer?.firstName||'';const athleteName=HUB_STATE.athlete?.displayName||a.displayName;const greeting=parent&&viewer?'Hi '+escapeHtml(viewer)+' — '+escapeHtml(athleteName)+'’s Week '+a.week:(viewer?'Hi '+escapeHtml(viewer):'Welcome, '+escapeHtml(a.displayName));const accessLabel=parent?'Parent Access':privateAthlete?'Private Athlete':professional?'Professional Performance':'School / Team Athlete';const feedbackCopy=parent?'Weekly parent check-in before the next programme update.':privateAthlete?'Weekly athlete check-in before Coach Du builds the next week.':professional?'Weekly professional check-in before Coach Du updates your programme.':'Bi-weekly school athlete check-in.';const preparing=HUB_STATE.contentStatus==='preparing'?'<div class="hub-note-card" style="margin-bottom:1rem"><h3>Your next week is not published yet.</h3><p>Coach Du is preparing the next training block. Only published programme content will appear here.</p></div>':'';const feedbackCard='<a class="hub-action-card" href="#/hub/feedback"><h3>Feedback</h3><p>'+escapeHtml(feedbackCopy)+'</p><span class="hub-action-arrow">Open Check-In →</span></a>';const content='<section class="hub-dashboard-head"><p class="hub-eyebrow">MY PERFORMANCE HUB</p><h1>'+greeting+' 👋🏾</h1><div class="hub-meta-row" style="margin:.7rem 0"><span class="hub-chip">'+escapeHtml(accessLabel)+'</span>'+(a.school?'<span class="hub-chip">'+escapeHtml(a.school)+'</span>':'')+'</div><p class="hub-dashboard-sub">'+escapeHtml(a.programme)+' · Week '+a.week+'</p></section>'+preparing+(isSharedSchoolViewer()?groupPicker():'')+(parent?weekBrowser(p):'')+weekBlock({...a,phase:p.phase||'',sessions})+'<div class="hub-note-card" style="margin-top:1rem"><h3>'+(parent?'Parent Guide':privateAthlete?'Coach Du Note':professional?'Training Note':'Coach Note')+'</h3><p>'+escapeHtml(a.coachNotes)+'</p></div>'+historyBlock()+'<div class="hub-dashboard-actions"><a class="hub-action-card" href="#/hub/library"><h3>Exercise Library</h3><p>Learn unfamiliar exercises before training.</p><span class="hub-action-arrow">Open Library →</span></a>'+feedbackCard+'</div>';root.innerHTML=shell(content,'dashboard');}
