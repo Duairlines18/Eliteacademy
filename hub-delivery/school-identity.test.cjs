@@ -25,25 +25,25 @@ test('director oversight explains the four-week skills roadmap without exposing 
  for(const text of ['Land','Spring','Project','Own','February','Weeks 2–4 remain unreleased'])assert.ok(ctx.root.innerHTML.includes(text),text);
 });
 
-test('school palette applies only to matching school identity and leaves other audiences unthemed',()=>{
+test('Saints layouts apply only to the matching verified school identity',()=>{
  const start=html.indexOf('  // SCHOOL_THEME_LOOKUP_START'),end=html.indexOf('  // SCHOOL_THEME_LOOKUP_END',start);
  assert.ok(start>=0&&end>start);
  const ctx={HUB_STATE:{cohort:{name:'St. George’s — LOCAL TEST FIXTURE'},programme:{school:'Other School'}}};
  vm.createContext(ctx);
- vm.runInContext(html.slice(start,end)+';globalThis.theme=schoolTheme;',ctx);
- assert.equal(ctx.theme()?.accent,'#cf2e2e');
+ vm.runInContext(html.slice(start,end)+';globalThis.isSaintsSchool=isSaintsSchool;',ctx);
+ assert.equal(ctx.isSaintsSchool(),true);
  ctx.HUB_STATE.cohort={name:'St George’s College'};
- assert.equal(ctx.theme()?.deep,'#651c26');
+ assert.equal(ctx.isSaintsSchool(),true);
  ctx.HUB_STATE.cohort={name:'Hillcrest College'};
- assert.equal(ctx.theme(),null);
+ assert.equal(ctx.isSaintsSchool(),false);
  ctx.HUB_STATE.cohort=null;ctx.HUB_STATE.programme={school:'Private Athlete'};
- assert.equal(ctx.theme(),null);
+ assert.equal(ctx.isSaintsSchool(),false);
 });
 
 test('other schools keep saved restrictions and athlete notes visible',()=>{
  const start=html.indexOf('  function renderSession(id){'),end=html.indexOf('\n  function ',start+1);
  const workout={id:'rehab',day:'Day 3',title:'Modified rehabilitation',watch:'No running or jumping.',athleteNote:'Stop if pain increases <today>.'};
- const ctx={schoolTheme:()=>null,SCHOOL_THEMES:{'st georges college':{}},programme:()=>({sessions:[workout]}),assignedRoutines:()=>[],renderCoachCommand:()=>false,session:()=>({role:'athlete'}),isSchoolReferenceViewer:()=>true,privateSelfServeViewer:()=>false,HUB_STATE:{audience:'school'},weekLabel:()=> 'Week 1',schoolGroup:()=>'',groupPicker:()=>'',preparationNavigation:()=>'',renderWorkoutExperience:()=>'',shell:s=>s,escapeHtml:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;'),root:{}};
+ const ctx={isSaintsSchool:()=>false,programme:()=>({sessions:[workout]}),assignedRoutines:()=>[],renderCoachCommand:()=>false,session:()=>({role:'athlete'}),isSchoolReferenceViewer:()=>true,privateSelfServeViewer:()=>false,HUB_STATE:{audience:'school'},weekLabel:()=> 'Week 1',schoolGroup:()=>'',groupPicker:()=>'',preparationNavigation:()=>'',renderWorkoutExperience:()=>'',shell:s=>s,escapeHtml:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;'),root:{}};
  vm.runInNewContext(html.slice(start,end)+';renderSession("rehab");',ctx);
  assert.ok(ctx.root.innerHTML.includes('No running or jumping.'),'saved restriction must remain visible in school day');
  assert.ok(ctx.root.innerHTML.includes('Stop if pain increases &lt;today&gt;.'),'athlete note must remain visible and escaped');
@@ -52,8 +52,8 @@ test('other schools keep saved restrictions and athlete notes visible',()=>{
 
 function renderSchoolDay({saints=true,role='athlete',group='Form 2'}={}){
  const start=html.indexOf('  function renderSession(id){'),end=html.indexOf('\n  function ',start+1);
- const theme={},workout={id:'day1',day:'Day 1',title:'Foundations',watch:'Saved instruction'};
- const ctx={SCHOOL_THEMES:{'st georges college':theme},schoolTheme:()=>saints?theme:null,
+ const workout={id:'day1',day:'Day 1',title:'Foundations',watch:'Saved instruction'};
+ const ctx={isSaintsSchool:()=>saints,
  programme:()=>({sessions:[workout]}),assignedRoutines:()=>[],renderCoachCommand:()=>false,
  session:()=>({role}),isSchoolReferenceViewer:()=>true,privateSelfServeViewer:()=>false,
  HUB_STATE:{audience:'school'},weekLabel:()=> 'Week 1',schoolGroup:()=>group,groupPicker:()=>'<select>Forms</select>',

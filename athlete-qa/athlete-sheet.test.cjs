@@ -13,6 +13,7 @@ const source=extract('  function workoutCoaching(', '  function ')
   +extract('  function assignedRoutines(', '  function renderSchoolAthleteCompact(')
   +extract('  function compactAthleteWeek(p,activeId){','  function weekBlock(')
   +extract('  function visibleNormalizedSections(workout){','  function flattenedWorkoutItems(')
+  +extract('  function schoolWorkoutSections(', '  function staffAllGroupsExperience(')
   +extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')
   +';globalThis.testApi={compactAthleteWeek,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';
 let selected='Form 2';
@@ -47,7 +48,11 @@ const sections=[
 const visible=api.visibleNormalizedSections({sections});
 assert.equal(visible[0].items.length,2);
 assert.equal(visible[1].items.length,2);
-const output=api.schoolAthleteDelivery(visible,{title:'Training'});
+const output=api.schoolAthleteDelivery([...visible,{
+ title:'Landing readiness and skill check',
+ items:[{title:'Legacy readiness text'}],
+}],{title:'Training'});
+assert.doesNotMatch(output,/Landing readiness|Legacy readiness text/);
 assert.match(output,/<details class="hub-athlete-phase hub-athlete-warmup">/);
 assert.doesNotMatch(output,/<details class="hub-athlete-phase hub-athlete-warmup" open/);
 assert.match(output,/2 × 6/);
