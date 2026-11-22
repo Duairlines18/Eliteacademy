@@ -27,7 +27,7 @@ test('single-set between-set rests are hidden without erasing recovery prescript
  assert.equal(api.displayRest('2 × 10','30–60 sec between sets'),'30–60 sec between sets');
  assert.equal(api.displayRest('1 × 8','60 seconds before next exercise'),'60 seconds before next exercise');
 });
-test('private athletes keep Guided Workout while parent days open in Quick View',()=>{
+test('private athletes and parent days open in the compact workout view',()=>{
  const start=app.indexOf('  function renderWorkoutExperience('),end=app.indexOf('  function nav(',start);
  const ctx={HUB_STATE:{audience:'private-athlete'},programme:()=>({sessions:[]}),session:()=>({role:'athlete'}),normalizeWorkoutSession:s=>({id:s.id}),EXERCISES:[],requiresGroupSelection:()=>false,
  visibleNormalizedSections:()=>[],flattenedWorkoutItems:()=>[{key:'p:1:0:MOB04',sectionTitle:'Core',title:'Breathing'}],isWorkoutComplete:()=>false,
@@ -35,7 +35,7 @@ test('private athletes keep Guided Workout while parent days open in Quick View'
  athleteWorkoutControls:(mode,showGuided=true,label='Workout')=>'Controls '+mode+' '+label+(showGuided?' Guided Workout':''),GUIDED_CURSOR:{},guidedCard:(item,title,index,total,id)=>`Guided ${id} ${item.key}`,
  groupPicker:()=>'',isIdentifiedSchoolAthlete:()=>false,isSchoolReferenceViewer:()=>false,privateSelfServeViewer:()=>true,schoolAthleteDelivery:(_sections,_session,mode)=>'Sheet '+mode};
  vm.createContext(ctx);vm.runInContext(app.slice(start,end)+';globalThis.render=renderWorkoutExperience;',ctx);
- assert.match(ctx.render({id:'anos-own-day'}),/Guided anos-own-day p:1:0:MOB04/);
+ assert.match(ctx.render({id:'anos-own-day'}),/Controls quick.*Sheet quick/);
  assert.match(ctx.render({id:'new-day'}),/Controls quick.*Sheet quick/);
  ctx.ATHLETE_WORKOUT_VIEW.mode='learn';
  assert.match(ctx.render({id:'new-day'}),/Controls quick.*Sheet quick/);
