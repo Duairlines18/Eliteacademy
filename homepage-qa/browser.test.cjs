@@ -54,7 +54,7 @@ const {chromium}=require('playwright');
  await roles.first().waitFor({state:'visible'});
  ok((await roles.locator('strong').allTextContents()).join('|')==='School / Team Athlete|Staff / Coach|Parent Access|Private Athlete',`${width}: Hub chooser shows the four public access paths`);
  await page.goto(base+'/#/hub/login/professional');
- await page.locator('#hub-root input[type="email"]').waitFor({state:'visible'});
+ await page.locator('#hubAccountLoginForm input[type="email"]').waitFor({state:'visible'});
  ok(await page.getByRole('heading',{name:'Professional Performance',exact:true}).isVisible(),`${width}: saved professional sign-in link still works`);
  await page.goto(base);
  await page.locator('[data-premium-role="athlete"]').focus();await page.keyboard.press('End');ok(await page.locator('[data-premium-role="private"]').getAttribute('aria-selected')==='true',`${width}: keyboard End selects private athlete`);
