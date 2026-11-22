@@ -26,7 +26,7 @@ const {chromium}=require('playwright');
   const warm=page.locator('.hub-athlete-warmup').filter({hasText:'Air Zim Warm-Up'});
   if(fixture.excluded){ok(await warm.count()===0,'school prototype excludes complete recipe');ok(!(await page.locator('#hub-root').innerText()).includes('Air Zim'),'school copy contains no recipe');}
   else{await warm.waitFor();
-  ok(await warm.locator('summary > span').evaluate(x=>parseFloat(getComputedStyle(x).fontSize))>=14,'warm-up title is readable');
+  ok(await warm.locator(':scope > summary > span').evaluate(x=>parseFloat(getComputedStyle(x).fontSize))>=14,'warm-up title is readable');
   ok(await warm.count()===1,`${fixture.name}/${width}: one warm-up`);ok(await warm.getAttribute('open')===null,'collapsed initially');
   await warm.locator('summary').first().click();ok(await warm.getAttribute('open')!==null,'expands by click');
   ok(await warm.locator('.hub-athlete-movement').count()===16,'16 ordered exercise entries');
