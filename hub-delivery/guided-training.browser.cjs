@@ -61,7 +61,7 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
   const trainingCard=main.locator('.hub-parent-session-card').first();
   await trainingCard.click();
   ok(page.url().endsWith('/session/'+day.id),'training card opens the selected day');
-  await page.locator(parent?'[data-private-present]':'[data-workout-mode="guided"]').waitFor();
+  await page.locator('[data-private-present]').waitFor();
   ok(await page.locator('[aria-label="Choose training day"]').count()===0,'selected workout has no other day cards');
   await page.getByRole('link',{name:'← Back to Week',exact:true}).waitFor();
   if(!parent){
