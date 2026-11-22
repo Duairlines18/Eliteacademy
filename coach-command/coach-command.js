@@ -80,7 +80,7 @@
  .ducc .workout-days .day-title{display:none}
  .ducc .workout-days .day-option{display:block;margin:0;font-size:.72rem}
 }
-body:has(.ducc .presentation){overflow:hidden}
+body:has(.ducc:not(:has(.print-sheet)) .presentation){overflow:hidden}
 .ducc .presentation{
  --present-green:#092219;--present-cream:#fff8e9;--present-gold:#f6d681;--present-line:#4c6857;
  --present-gutter:clamp(12px,2.4vw,36px);
@@ -191,7 +191,14 @@ body:has(.ducc .presentation){overflow:hidden}
  .ducc .presentation-layout{align-content:start}
  .ducc .presentation-stage{aspect-ratio:16/9}
 }
-.ducc .print-sheet{display:none}
+@media screen{
+ .ducc:has(.print-sheet)>:not(.print-sheet){display:none}
+ .ducc .print-sheet{background:#fff;color:#141414;padding:clamp(12px,4vw,28px);overflow-wrap:anywhere}
+ .ducc .print-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:.65rem}
+ .ducc .print-actions .button{min-height:44px}
+ .ducc .print-help{color:#484848;margin:0 0 1rem}
+ .ducc .print-brand{font-weight:800;letter-spacing:.08em}
+}
 @media(max-width:540px){.ducc .days{grid-template-columns:1fr}.ducc .day{min-height:54px}.ducc .day strong,.ducc .day span{display:inline}.ducc .day span{margin:0 0 0 7px}}
 @media print{
  @page{margin:10mm}
@@ -201,6 +208,7 @@ body:has(.ducc .presentation){overflow:hidden}
  body:has(.ducc .print-sheet) .hub-wrap{width:100%!important;max-width:none!important}
  .ducc:has(.print-sheet)>:not(.print-sheet){display:none!important}
  .ducc .print-sheet{display:block;color:#000;background:#fff;font:9pt/1.15 Arial,sans-serif}
+ .ducc :is(.print-actions,.print-help){display:none!important}
  .ducc .print-brand{font-weight:750}
  .ducc .print-week{column-count:2;column-gap:5mm}
  .ducc .print-sheet h1{font-size:14pt;margin:1px 0 2px}.ducc .print-sheet h2{font-size:11pt;margin:5px 0 2px}
@@ -376,13 +384,18 @@ body:has(.ducc .presentation){overflow:hidden}
           (extra?'<span class="day-option">Optional</span>':'')+'</button>';
       }).join('')+'</div>';
     }
-    function showPrint(week){
+    let printTrigger=null;
+    function showPrint(week,trigger){
       const selected=week?sessions.map((s,index)=>({s,index})):[{s:session(),index:day}];
       const printable=selected.filter(({s})=>!s.locked).map(({s,index})=>({s,index,blocks:sections(s)})).filter(({blocks})=>blocks.length);
       if(!printable.length)return;
       const sheet=document.createElement('article');
       sheet.className='print-sheet';
-      sheet.innerHTML='<p class="print-brand">DU AIRLINES ELITE ACADEMY</p><h1>'+esc(week?'Training week':'Training session')+'</h1><p>'+esc(cohortLabel())+'</p>'+
+      sheet.innerHTML='<div class="print-actions">'+
+        '<button type="button" class="button" data-action="print-now">Print or save PDF</button>'+
+        '<button type="button" class="button secondary" data-action="close-print">Back to workout</button></div>'+
+        '<p class="print-help">If the print dialog does not open, use Print in your browser menu.</p>'+
+        '<p class="print-brand">DU AIRLINES ELITE ACADEMY</p><h1>'+esc(week?'Training week':'Training session')+'</h1><p>'+esc(cohortLabel())+'</p>'+
         '<div'+(week?' class="print-week"':'')+'>'+printable.map(({s,index,blocks})=>
           '<section class="print-day"><h2>'+esc(dayLabel(s,index)+' · '+(s.title||'Workout')+(optional(s)?' · Optional':''))+'</h2>'+
           blocks.map(([title,rows])=>'<h3>'+esc(title)+'</h3><ul>'+rows.map(row=>{
@@ -393,7 +406,13 @@ body:has(.ducc .presentation){overflow:hidden}
         ).join('')+'</div>';
       root.querySelectorAll('.print-sheet').forEach(node=>node.remove());
       root.append(sheet);
-      window.print();
+      printTrigger=trigger;
+      sheet.querySelector?.('[data-action="print-now"]')?.focus();
+    }
+    function closePrint(){
+      root.querySelectorAll('.print-sheet').forEach(node=>node.remove());
+      printTrigger?.focus?.();
+      printTrigger=null;
     }
     function presentMedia(demo,lazy=false){
       const embed=safeVideo(demo.url);
@@ -568,9 +587,33 @@ body:has(.ducc .presentation){overflow:hidden}
         case 'exit-present':view='workout';break;
         case 'prev-slide':moveSlide(slide-1);return;
         case 'next-slide':moveSlide(slide+1);return;
-        case 'copy':if(session().locked)return;try{await navigator.clipboard.writeText(copyText());}catch(err){alert('Copy unavailable. Select the workout text to copy.');}return;
-        case 'print':showPrint(false);return;
-        case 'print-week':showPrint(true);return;
+        case 'copy':{
+          if(session().locked)return;
+          const text=copyText();
+          const container=b.parentElement;
+          container?.querySelector('.hub-copy-fallback')?.remove();
+          try{
+            await navigator.clipboard.writeText(text);
+          }catch{
+            const field=document.createElement('textarea');
+            field.className='hub-copy-fallback';
+            field.setAttribute('aria-label','Workout text to copy');
+            field.readOnly=true;
+            field.rows=8;
+            field.value=text;
+            container.append(field);
+            field.focus();
+            field.select();
+          }
+          return;
+        }
+        case 'print':showPrint(false,b);return;
+        case 'print-week':showPrint(true,b);return;
+        case 'print-now':
+          if(!root.querySelectorAll('.print-sheet').length)return;
+          window.print?.();
+          return;
+        case 'close-print':closePrint();return;
       }
       render();
       if(b.dataset.day!==undefined)root.querySelector?.('[data-day="'+day+'"]')?.focus();
@@ -589,6 +632,10 @@ body:has(.ducc .presentation){overflow:hidden}
       player.innerHTML=presentMedia({url:demo.url,title:demo.title},true);
     },true);
     root.addEventListener('keydown',event=>{
+      if(root.querySelector('.print-sheet')){
+        if(event.key==='Escape'){event.preventDefault();closePrint();}
+        return;
+      }
       if(view!=='present'||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
       if(event.key==='Escape'){
         event.preventDefault();view='workout';render();root.querySelector('[data-action="present"]')?.focus();

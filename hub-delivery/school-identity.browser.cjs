@@ -144,14 +144,17 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   ok((await workoutBlocks.allTextContents()).join('|')==='Warm-up|Plyometric skills','Day 2 includes warm-up before skills');
   await page.evaluate(()=>{window.__printSnapshot=null;window.print=()=>{const root=document.querySelector('.ducc');window.__printSnapshot=root.querySelector('.print-sheet').textContent;};});
   await page.locator('.ducc [data-action="print"]').click();
+  await page.getByRole('button',{name:'Print or save PDF',exact:true}).click();
   ok(await page.evaluate(()=>['2 × 8','30 seconds','3 × 3','60 seconds'].every(t=>window.__printSnapshot.includes(t))&&!/Move smoothly|Stay balanced|Demo:/.test(window.__printSnapshot)),'print includes warm-up, skills, dose and rest');
   ok(await page.locator('.ducc .coaching-views [aria-current="true"]').textContent()==='Workout','print leaves Workout selected');
-  ok(await workoutBlocks.first().isVisible(),'print leaves the warm-up visible');
+  ok(await page.locator('.print-sheet .print-brand').textContent()==='DU AIRLINES ELITE ACADEMY','print uses the academy name');
   await page.emulateMedia({media:'print'});
   ok(await page.locator('.hub-topbar').evaluate(e=>getComputedStyle(e).display==='none'),'print hides navigation');
   ok(await page.locator('#schoolAttendanceRoot').evaluate(e=>getComputedStyle(e).display==='none'),'print excludes register');
   ok(await page.locator('.hub-premium-routines').evaluate(e=>getComputedStyle(e).display==='none'),'print excludes routine navigation');
   await page.emulateMedia({media:'screen'});
+  await page.getByRole('button',{name:'Back to workout',exact:true}).click();
+  ok(await workoutBlocks.first().isVisible(),'closing print returns to the same warm-up');
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'coach Day 2 fits viewport');
 
   ok(errors.length===0,'no page errors: '+errors.join('; '));
