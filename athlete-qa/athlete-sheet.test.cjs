@@ -15,7 +15,7 @@ const source=extract('  function workoutCoaching(', '  function ')
   +extract('  function visibleNormalizedSections(workout){','  function flattenedWorkoutItems(')
   +extract('  function schoolWorkoutSections(', '  function staffAllGroupsExperience(')
   +extract('  function privateSelfServeViewer(){','  function renderWorkoutExperience(')
-  +';globalThis.testApi={compactAthleteWeek,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';
+  +';globalThis.testApi={compactAthleteWeek,weeklyFocus,visibleNormalizedSections,athleteCopyText,schoolAthleteDelivery,privateSelfServeViewer};';
 let selected='Form 2';
 const context={
   DuHubDelivery:require('../hub-delivery/delivery.js'),programme:()=>({week:6}),
@@ -37,7 +37,8 @@ const week=api.compactAthleteWeek({sessions:[
  {id:'four',day:'Day 4',title:'Optional Recovery'}],weeklyObjective:'Body control'});
 assert.equal((week.match(/hub-athlete-day-choice/g)||[]).length,4);
 assert.match(week,/Optional/);
-assert.match(week,/Weekly focus/);
+assert.match(api.weeklyFocus('Body control'),/This week’s focus[\s\S]*Body control/);
+assert.doesNotMatch(week,/Body control/);
 assert.match(api.compactAthleteWeek({sessions:[{id:'one',day:'Day 1'}]},'one'),/hub-athlete-day-choice selected/);
 assert.match(app,/function compactSchoolWeek\(p\)/);
 assert.doesNotMatch(week,/CURRENT PROGRAMME|60m/);

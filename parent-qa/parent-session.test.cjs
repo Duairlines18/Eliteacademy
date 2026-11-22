@@ -8,7 +8,7 @@ assert.ok(app,'Hub app script found');
 const begin=app.indexOf('  function parentSessionLabel('),end=app.indexOf('  function renderAthleteDashboard(){',begin);
 assert.ok(begin>=0&&end>begin,'parent rendering functions available');
 const code=app.slice(app.indexOf('  function assignedRoutines('),app.indexOf('  function renderSchoolAthleteCompact('))+app.slice(begin,end)+';globalThis.api={parentSessionLabel,parentSessionHeading,parentTrainingDays,renderParentSimpleDashboard};';
-const ctx={DuHubDelivery:require('../hub-delivery/delivery.js'),airZimTool:()=>'',encodeURIComponent,escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),programme:()=>ctx.p,athleteDemo:()=>({displayName:'Andria'}),HUB_STATE:{contentStatus:'published'},weekLabel:()=> 'Week 4 of 6',root:{innerHTML:''},shell:s=>s};
+const ctx={window:{DuPremiumV2:require('../hub-delivery/premium-v2.js')},DuHubDelivery:require('../hub-delivery/delivery.js'),airZimTool:()=>'',encodeURIComponent,escapeHtml:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),programme:()=>ctx.p,athleteDemo:()=>({displayName:'Andria'}),HUB_STATE:{contentStatus:'published',athlete:{displayName:'Andria Torres'}},weekLabel:()=> 'Week 4 of 6',root:{innerHTML:''},shell:s=>s};
 vm.createContext(ctx);vm.runInContext(code,ctx);
 const sessions=[
 {id:'one',day:'Day 1',title:'Day 1 — Recovery Reset',duration:'15–20 min'},
@@ -24,7 +24,8 @@ assert.doesNotMatch(nav,/Day 1 — Day 1/);
 assert.match(ctx.api.parentTrainingDays(ctx.p,'two'),/hub-parent-session-card selected/);
 ctx.api.renderParentSimpleDashboard();
 assert.match(ctx.root.innerHTML,/Week 4 of 6/);
-assert.match(ctx.root.innerHTML,/This week’s focus/);
+assert.match(ctx.root.innerHTML,/<h1>Hi, Andria<\/h1>[\s\S]*Du Airlines Weekly Standard[\s\S]*This week’s focus[\s\S]*Choose training day/);
+assert.equal((ctx.root.innerHTML.match(/aria-label="Du Airlines Weekly Standard"/g)||[]).length,1);
 assert.doesNotMatch(ctx.root.innerHTML,/PREVIOUS WEEKS|Parent Guide/);
 ctx.p={...ctx.p,sessions:[{id:'x',day:'Day 1',title:'Day 1 — Acceleration + Strength',duration:'45 min'}],weeklyObjective:''};
 const changed=ctx.api.parentTrainingDays(ctx.p);

@@ -63,6 +63,7 @@ const {chromium,webkit}=require('playwright');
     if(!route.startsWith('session/')){
      await page.getByRole('heading',{name:'Team Command',exact:true}).waitFor();
      assert.ok(await page.getByText('Synthetic browser test only.',{exact:true}).isVisible());checks++;
+     assert.deepEqual(await page.locator('.ducc h1, .ducc .hub-premium-standard, .ducc .hub-parent-week-focus, .ducc .week-head').evaluateAll(nodes=>nodes.map(node=>node.tagName==='H1'?'heading':node.classList.contains('hub-premium-standard')?'standard':node.classList.contains('hub-parent-week-focus')?'focus':'days')),['heading','standard','focus','days']);
      if(evidence&&route==='staff'&&[390,1440].includes(width))
       await page.locator('.ducc').screenshot({path:path.join(evidence,'school-week-'+width+'.png')});
      await page.locator('.ducc [data-day="1"]').click();

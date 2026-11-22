@@ -532,9 +532,9 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
       const weekPrint=canPrintWeek?'<button class="button secondary" data-action="print-week">Print week</button>':'';
       let body='';
       if(view==='overview'){
-        body='<div class="week-head"><h2>This week’s sessions</h2>'+weekPrint+'</div>'+weekCards()+
+        const overview=opts.weeklyOverview??(programme.weeklyObjective?'<div class="panel"><h3>Weekly focus</h3><p>'+esc(programme.weeklyObjective)+'</p></div>':'');
+        body=overview+'<div class="week-head"><h2>This week’s sessions</h2>'+weekPrint+'</div>'+weekCards()+
           (sessions.length?'<div class="panel"><h2>'+esc(s.title||'Session being prepared')+'</h2><p class="muted">'+esc([s.duration,dayLabel(s,day)].filter(Boolean).join(' · '))+'</p><button class="button" data-action="workout">Open full workout →</button></div>':'<p class="muted">No published sessions available yet.</p>')+
-          (programme.weeklyObjective?'<div class="panel"><h3>Weekly focus</h3><p>'+esc(programme.weeklyObjective)+'</p></div>':'')+
           '<div class="panel"><h3>Your squad'+(roster?' · '+active+'/'+roster.length+' active':'')+'</h3>'+
           (roster?'<div class="roster">'+roster.map((a,i)=>'<button data-athlete="'+i+'">'+esc(a.display_name||a.full_name||'Athlete')+'<br><span class="muted">'+esc(a.access_status==='active'?'Active':'Inactive')+'</span></button>').join('')+'</div>':'<p class="muted">Athletes have not been connected to this coach view yet.</p>')+'</div>'+
           '<div class="actions"><a class="button secondary" href="#/hub/coach-feedback">Weekly coach feedback →</a><a class="button secondary" href="#/hub/library">Exercise library →</a></div>';
