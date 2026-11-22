@@ -4277,7 +4277,7 @@ document.addEventListener('click',function(e){
 #hub-root .hub-private-view-options{background:var(--ink)}
 /* SCHOOL_THEME_END */
 </style>
-<script src="/coach-command/coach-command.js?v=20261121-school-polish"></script>
+<script src="/coach-command/coach-command.js?v=20261122-presentation"></script>
 <link rel="stylesheet" href="/hub-delivery/school.css">
 <script src="/hub-delivery/school-attendance.js?v=20261104-compact"></script>
 <script id="performance-hub-app">
@@ -4719,7 +4719,7 @@ document.addEventListener('click',function(e){
     dialog.className='hub-private-presentation'+(parentDay?' hub-parent-presentation':isSchoolReferenceViewer()?' hub-school-presentation':'');
     dialog.setAttribute('aria-labelledby','hubPrivatePresentationTitle');
     const route=location.hash;
-    if(parentDay)dialog.dataset.workoutRoute=route;
+    dialog.dataset.workoutRoute=route;
     const sessionNotes=parentDay?(routine?routineCardNotes(routine.card,day):[day.watch,day.athleteNote].filter(Boolean)):[];
     const complete=entry=>isWorkoutComplete(entry.item.sessionKey,entry.item.key);
     const nextIncomplete=parentDay?items.findIndex(entry=>!complete(entry)):0;
@@ -5255,7 +5255,9 @@ document.addEventListener('click',function(e){
     if(!(session()?.role==='staff' && window.DuCoachCommand && HUB_STATE.cohort && p) || HUB_STATE.staff?.accessProfile==='sports_director')return false;
     root.innerHTML=shell('<section id="du-coach-command-root" aria-label="Coach Command"></section>'+(HUB_STATE.staff?'<div id="schoolAttendanceRoot"></div>':'')+routinesShortcut(),initialSessionId?'week':'dashboard');
     try{
-      window.DuCoachCommand.mount(root.querySelector('#du-coach-command-root'),{
+      const coachRoot=root.querySelector('#du-coach-command-root');
+      coachRoot.dataset.workoutRoute=location.hash;
+      window.DuCoachCommand.mount(coachRoot,{
         role:'staff',cohort:HUB_STATE.cohort,programme:{...p,sessions:trainingSessions(p)},exercises:EXERCISES
       },{initialSessionId,rosterVerified:Array.isArray(HUB_STATE.roster),roster:HUB_STATE.roster});
       mountSchoolAttendance();
@@ -5503,6 +5505,12 @@ document.addEventListener('click',function(e){
   async function renderPrivateProgrammeWeek(weekNumber,dayIndex){root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><h1>Loading Week '+escapeHtml(weekNumber)+'…</h1></section></div>';try{const data=await loadPrivateProgrammeWeek(Number(weekNumber));mergeExercises(data.exercises);const p=data.programme||{};const sessions=Array.isArray(p.sessions)?p.sessions:[];const base='#/hub/programme-week/'+encodeURIComponent(p.week);const preview=Number(p.week)>Number(programme()?.week||0);const subtitle=preview?'Preview only — follow this programme when Week '+p.week+' begins.':'Published programme week.';let body;if(dayIndex!==undefined){const i=Number(dayIndex);if(!Number.isInteger(i)||i<0||i>=sessions.length)throw Error('Training day not found');const workout=sessions[i];body=pageHead('Week '+p.week+' · Day '+(i+1),workout.title||'Training Session',subtitle,base)+'<div class="hub-athlete-session-nav"><a href="'+base+'">← All days</a><span>Week '+escapeHtml(p.week)+'</span></div><section class="hub-section hub-field-session">'+schoolAthleteDelivery(visibleNormalizedSections(normalizeWorkoutSession(workout,EXERCISES,programme())),workout)+'</section>';}else{const cards=sessions.map((w,i)=>'<a class="hub-preview-day" href="'+base+'/day/'+i+'"><span>DAY '+(i+1)+'</span><i class="hub-preview-day-icon" aria-hidden="true">'+trainingDayIcon(w.title,w.day)+'</i><strong>'+escapeHtml(w.title||w.day||'Training Session')+'</strong><small>'+escapeHtml(w.duration||'')+'</small><b>↗</b></a>').join('');body=pageHead('Programme Week','Week '+p.week+(p.phase?' — '+p.phase:''),subtitle,'#/hub/athlete')+'<div class="hub-objective"><strong>Week Focus</strong><span>'+escapeHtml(p.weeklyObjective||'Published programme week')+'</span></div><div class="hub-preview-grid">'+cards+'</div>';}root.innerHTML=shell(body+airZimTool(),'dashboard');}catch(err){root.innerHTML=shell(pageHead('Programme Week','Week unavailable',err.message||'That week is not available.','#/hub/athlete'),'dashboard');}}
   function renderNotFound(){root.innerHTML=shell(pageHead('Performance Hub','Page not found','Return to your dashboard.',session()?.role==='staff'?'#/hub/staff':'#/hub/athlete'),'');}
 
+  function workoutPresentationOpen(route){
+    const coach=root.querySelector('#du-coach-command-root:has(.presentation)');
+    const athlete=root.querySelector('.hub-private-presentation[open]');
+    return coach?.dataset.workoutRoute===route||athlete?.dataset.workoutRoute===route;
+  }
+
   async function render(){
     if(!isHubRoute()){root.hidden=true;return;} publicViews.forEach(v=>v.hidden=true); root.hidden=false;
     const route=location.hash.replace('#/hub','')||'/'; const s=session(),renderStamp=sessionStamp();
@@ -5528,7 +5536,7 @@ document.addEventListener('click',function(e){
       if(await CHECKIN_UI.guard(route))return;
       if(renderStamp!==sessionStamp()||(location.hash.replace('#/hub','')||'/')!==route)return;
     }
-    if(root.querySelector('.hub-parent-presentation[open]')?.dataset.workoutRoute===location.hash)return;
+    if(workoutPresentationOpen(location.hash))return;
     if(!HUB_STATE.programme){
       root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">PRIVATE PERFORMANCE ACCESS</p><h1 class="hub-login-heading">Loading your programme…</h1><p class="hub-login-sub">Validating your Hub session.</p></section></div>';
       try{
@@ -5793,6 +5801,7 @@ document.addEventListener('click',function(e){
     if(document.hidden||HUB_REVALIDATING)return;
     const checkins=CHECKIN_UI.eligible()&&CHECKIN_UI.enabled&&isHubRoute()&&!route.includes('/login')&&!route.includes('/setup');
     if(checkins&&root.querySelector('form'))return;
+    if(!checkins&&workoutPresentationOpen(route))return;
     const dashboard=['#/hub','#/hub/athlete','#/hub/staff'].includes(route);
     if(!checkins&&!dashboard)return;
     const active=session();
@@ -5805,10 +5814,11 @@ document.addEventListener('click',function(e){
       // Keep the loaded programme while verifying: due reports and holds still
       // clear training through the check-in guard. Never discard it on focus.
       if(checkins){await render();if(!canApply()||!HUB_STATE.programme)return;}
-      if(!dashboard||!stale)return;
-      if(active.mode==='account')await loadAccountHubData(active.audience,canApply);
-      else await loadHubData(active,canApply);
-      if(canApply())await render();
+      const canRefresh=()=>canApply()&&!workoutPresentationOpen(route);
+      if(!dashboard||!stale||!canRefresh())return;
+      if(active.mode==='account')await loadAccountHubData(active.audience,canRefresh);
+      else await loadHubData(active,canRefresh);
+      if(canRefresh())await render();
     }catch(error){
       console.warn('Programme refresh unavailable; keeping the current workout.',error);
     }finally{HUB_REVALIDATING=false;}

@@ -19,6 +19,7 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
   const warm={id:prefix+'warm',routineKind:'warm-up',day:'Standard Warm-Up',title:'Standard Volleyball Warm-Up',prescriptions:[rx('WU03',0,'1 × 6/leg'),rx('SPR01',0,'2 × 15 m'),rx('PLY03',0,'2 × 10')]};
   if(parent)day.preparation={routineIds:[mob.id,warm.id],replacedSectionOrders:[0]};
   const otherDays=[{...day,id:prefix+'day2',day:'Wednesday',title:'Second assigned workout'},{...day,id:prefix+'day3',day:'Friday',title:'Third assigned workout'}];
+  if(!parent)otherDays[0].prescriptions=['MOB04','CORE01','WU01','WU06','WU05'].map(code=>rx(code,1));
   const sessions=parent?[day,...otherDays,mob,warm]:[day,...otherDays];
   const context=await browser.newContext({viewport:{width,height:parent&&width<500?570:900},hasTouch:width<500,permissions:parent?[]:['clipboard-read','clipboard-write']}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await context.addInitScript(({audience,who})=>{localStorage.setItem('duAirlinesHubSessionV3',JSON.stringify({role:'athlete',mode:'account',audience}));window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{access_token:who}}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})}})};},{audience,who});
@@ -110,6 +111,23 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    await page.keyboard.press('Escape');
    await presentation.waitFor({state:'detached'});
    ok(completions.size===0,'viewing demos leaves completion untouched');
+   await page.getByRole('link',{name:'← Back to Week',exact:true}).click();
+   await main.locator('.hub-parent-session-card').filter({hasText:'Second assigned workout'}).click();
+   await options.getByRole('button',{name:'Full-screen demos',exact:true}).click();
+   const secondWorkout=new URL(page.url()).hash;
+   const next=presentation.getByRole('button',{name:'Next',exact:true});
+   for(let index=2;index<=5;index++){
+    await next.click();
+    await presentation.getByText(index+' of 5',{exact:true}).waitFor();
+    ok(new URL(page.url()).hash===secondWorkout,'repeated Next stays on the private workout');
+   }
+   await presentation.getByRole('button',{name:'Play demo'}).click();
+   await presentation.locator('iframe').waitFor();
+   await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
+   await presentation.getByRole('button',{name:'Previous',exact:true}).click();
+   await presentation.getByText('4 of 5',{exact:true}).waitFor();
+   await presentation.getByRole('button',{name:'Close',exact:true}).click();
+   ok(new URL(page.url()).hash===secondWorkout,'closing stays on the second private workout');
   }
   if(parent){
    ok(await main.getByRole('button',{name:'Quick View',exact:true}).count()===1,'parent still uses their own Quick View');
@@ -135,7 +153,20 @@ const parentWebKit=process.env.PARENT_DEMO_WEBKIT==='1';
    await warmUpDemo.getByRole('button',{name:'Try again',exact:true}).click();
    await warmUpDemo.getByText('2 of 7',{exact:true}).waitFor();
    ok(completions.get(mob.id+'|p:0:0:WU01')?.completed,'mobility saves against its original session key');
-   for(let i=0;i<3;i++)await warmUpNext.click();
+   const warmUpRoute=new URL(page.url()).hash;
+   for(let index=3;index<=5;index++){
+    await warmUpNext.click();
+    await warmUpDemo.getByText(index+' of 7',{exact:true}).waitFor();
+    ok(new URL(page.url()).hash===warmUpRoute,'repeated Next stays on the parent warm-up');
+   }
+   await page.evaluate(()=>{
+    window.dispatchEvent(new Event('focus'));
+    document.dispatchEvent(new Event('visibilitychange'));
+   });
+   const warmUpPrevious=warmUpDemo.getByRole('button',{name:'Previous',exact:true});
+   await warmUpPrevious.click();
+   await warmUpDemo.getByText('4 of 7',{exact:true}).waitFor();
+   await warmUpNext.click();
    await warmUpDemo.getByText('5 of 7',{exact:true}).waitFor();
    ok(await warmUpDemo.getByRole('heading',{name:'Walking Lunge + Rotation',exact:true}).isVisible(),'sequence crosses the original routine boundary');
    await warmUpMark.click();

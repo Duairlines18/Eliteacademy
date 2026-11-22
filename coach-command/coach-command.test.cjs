@@ -28,7 +28,7 @@ assert.match(directHost.children[1].innerHTML,/Full Workout/,'saved session link
 assert.match(directHost.children[1].innerHTML,/<h2>Landing<\/h2>/,'saved session links select the requested day');
 const missingHost=makeEl();mount(missingHost,fixture,{initialSessionId:'unpublished'});
 assert.match(missingHost.children[1].innerHTML,/Team Command/,'unknown session cannot open an unassigned workout');
-root.handlers.click({target:{closest:()=>({dataset:{day:'0'}})}});
+root.handlers.click({target:{closest:selector=>selector==='button'?{dataset:{day:'0'}}:null}});
 assert.match(root.innerHTML,/Full Workout/);
 assert.match(root.innerHTML,/Pogos/);
 assert.match(root.innerHTML,/2 x 10/);
@@ -41,9 +41,9 @@ assert.match(root.innerHTML,/<details class="learn-card".*Play Pogos demonstrati
 assert.match(root.innerHTML,/<strong>Coach cue<\/strong> Short contacts/);
 assert.match(root.innerHTML,/<strong>For this session<\/strong> Stay tall/);
 assert.match(root.innerHTML,/<strong>Watch for<\/strong> Heavy landings/);
-root.handlers.click({target:{closest:()=>({dataset:{day:'2'}})}});
+root.handlers.click({target:{closest:selector=>selector==='button'?{dataset:{day:'2'}}:null}});
 assert.match(root.innerHTML,/OPTIONAL EXTRA/);
-root.handlers.click({target:{closest:()=>({dataset:{action:'back'}})}});
+root.handlers.click({target:{closest:selector=>selector==='button'?{dataset:{action:'back'}}:null}});
 assert.match(root.innerHTML,/Team Command/);
 const unauthorized=makeEl();mount(unauthorized,fixture,{rosterVerified:true,roster:[{cohort_id:'other',full_name:'Private Person'}]});
 assert.doesNotMatch(unauthorized.children[1].innerHTML,/Private Person/);
@@ -60,7 +60,7 @@ const schoolFixture={...fixture,programme:{...fixture.programme,sessions:[{
   {code:'ANK01',title:'Calf Raise',videoUrl:'https://www.youtube.com/shorts/C3BmRILCdK8'}
 ]};
 const schoolHost=makeEl();mount(schoolHost,schoolFixture);const schoolRoot=schoolHost.children[1];
-schoolRoot.handlers.click({target:{closest:()=>({dataset:{day:'0'}})}});
+schoolRoot.handlers.click({target:{closest:selector=>selector==='button'?{dataset:{day:'0'}}:null}});
 assert.match(schoolRoot.innerHTML,/Form 2 — 2 x 6 split squat; 2 x 8 single-leg glute bridge; 2 x 10 calf raise/);
 assert.doesNotMatch(schoolRoot.innerHTML,/<iframe|movement-list|tier-label/);
 assert.match(schoolRoot.innerHTML,/Play Single-Leg Glute Bridge demonstration/);
