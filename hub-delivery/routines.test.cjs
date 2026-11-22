@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const app=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).find(s=>s.includes('function renderSession('));
-const cleanup = html.match(/^  function isAndriaCoachInstructionsCleanup\(\).*$/m)[0];
+const guidanceSource=html.slice(html.indexOf('  function isParentManagedWorkout('),html.indexOf('  function athleteDemo('));
 function fixture(audience='parent',role='athlete'){
  const start=app.indexOf('  function assignedRoutines('),end=app.indexOf('  function renderSchoolAthleteCompact(',start);
  assert.ok(start>=0&&end>start,'dedicated routine navigation exists');
@@ -13,7 +13,7 @@ function fixture(audience='parent',role='athlete'){
   isSchoolReferenceViewer:()=>audience==='school',schoolGroup:()=> 'Form 2',groupPicker:()=>'<select>Form 2</select>',
   routineTrainingReturn:()=>'',assignedAirZim:()=>null,renderNotFound:()=>{ctx.root.innerHTML='Not found';},airZimTool:()=>''};
  ctx.p={sessions:[{id:'warm',day:'Game Warm-Up',title:'Standard Warm-Up',watch:'Keep comfortable',prescriptions:[{exerciseCode:'WU01',dosage:'2 x 8'}]},{id:'d1',day:'Day 1',title:'Core + Mobility'}]};
- vm.createContext(ctx);vm.runInContext(cleanup+'\n'+app.slice(start,end)+';globalThis.api={assignedRoutines,trainingSessions,routinesShortcut,renderRoutines,renderRoutine};',ctx);
+ vm.createContext(ctx);vm.runInContext(guidanceSource+app.slice(start,end)+';globalThis.api={assignedRoutines,trainingSessions,routinesShortcut,renderRoutines,renderRoutine};',ctx);
  return ctx;
 }
 test('all Hub roles enter a separate routines list containing only assigned routines',()=>{
