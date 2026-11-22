@@ -105,3 +105,26 @@ body:has(.hub-private-presentation[open]){overflow:hidden}
 .hub-parent-presentation .hub-parent-demo-options{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}
 .hub-parent-presentation .hub-parent-demo-options [aria-pressed="true"]{border-color:#e7c787;color:#e7c787}
 .hub-parent-presentation footer button{padding-inline:clamp(.4rem,2vw,1rem);min-width:0}
+
+/* Compact workout rows mirror the Coach Command disclosure. */
+#hub-root .hub-compact-movement{position:relative}
+#hub-root .hub-compact-movement-heading{display:grid;gap:.15rem;min-width:0;overflow-wrap:anywhere}
+#hub-root .hub-compact-movement-heading>span{font-weight:700}
+#hub-root .hub-compact-movement-heading>strong{color:#ebca8b}
+#hub-root .hub-compact-movement-heading>small{color:var(--hub-text-muted,#cbc4bb)}
+#hub-root .hub-compact-movement-details>summary{display:grid;grid-template-columns:minmax(0,1fr) 20px;align-items:center;gap:.5rem;min-height:44px;list-style:none;cursor:pointer}
+#hub-root .hub-compact-movement-details>summary::-webkit-details-marker{display:none}
+#hub-root .hub-compact-movement-details>summary::after{content:"";justify-self:center;width:8px;height:8px;border:solid #ebca8b;border-width:0 2px 2px 0;transform:rotate(45deg)}
+#hub-root .hub-compact-movement-details[open]>summary::after{transform:rotate(225deg)}
+#hub-root .hub-compact-movement.has-completion> .hub-compact-movement-heading,
+#hub-root .hub-compact-movement.has-completion .hub-compact-movement-details>summary{padding-inline-end:52px}
+#hub-root .hub-compact-complete{position:absolute;inset-block-start:0;inset-inline-end:0;width:44px;height:44px;display:grid;place-items:center;padding:0;background:transparent;border:1px solid var(--hub-line,#77623c);border-radius:8px;color:var(--hub-text-muted,#cbc4bb);font:700 1.15rem/1 system-ui;cursor:pointer}
+#hub-root .hub-compact-complete[aria-pressed="true"]{background:#ebca8b;color:#142017;border-color:#ebca8b}
+#hub-root .hub-compact-movement-body{padding:.5rem 0 .25rem;max-width:68ch}
+#hub-root .hub-compact-demo-media{max-width:min(100%,560px);margin-bottom:.6rem}
+#hub-root .hub-compact-demo-stage{border-color:#ebca8b;max-height:315px;background:#0b0b0b}
+#hub-root .hub-compact-demo-stage [data-athlete-inline-play]{position:absolute;inset:0;width:100%;height:100%;display:grid;place-items:center;padding:0;border:0;background:transparent;color:#fff8e9;cursor:pointer}
+#hub-root .hub-compact-demo-stage [data-athlete-inline-play][hidden]{display:none}
+#hub-root .hub-compact-demo-stage [data-athlete-inline-play] span{display:grid;place-items:center;width:48px;height:48px;border:2px solid #ebca8b;border-radius:50%;background:#071611e8}
+#hub-root .hub-compact-demo-stage:not(:has(iframe))+.hub-compact-demo-fallback{display:none}
+#hub-root .hub-compact-movement :is(button,summary):focus-visible{outline:2px solid #ebca8b;outline-offset:2px}
