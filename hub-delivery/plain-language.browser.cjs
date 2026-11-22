@@ -20,8 +20,18 @@ const {chromium}=require('playwright');
   const text=await sheet.innerText();
   ok(text.indexOf('4 × 20m')<text.indexOf('Split Squat'),`${audience}/${width}: running comes first`);
   ok(text.indexOf('Record any pain')>text.indexOf('Split Squat'),`${audience}/${width}: final instruction stays last`);
-  ok(await sheet.locator('.hub-visible-coach-note').filter({hasText:'Only if pain-free'}).isVisible(),`${audience}/${width}: condition visible`);
-  ok(text.includes('8 repetitions on each leg')&&text.includes('2 times'),`${audience}/${width}: clear dose`);
+  if(audience==='parent'){
+   const dropdown=sheet.locator('.hub-parent-quick-row').filter({hasText:'Split Squat'}).locator('details[data-parent-inline-demo]');
+   const cue=dropdown.locator('.hub-parent-technique-cue').filter({hasText:'Only if pain-free'});
+   ok(!(await cue.isVisible()),`${audience}/${width}: collapsed row stays compact`);
+   await dropdown.locator('summary').click();
+   ok(await cue.isVisible(),`${audience}/${width}: assigned condition accessible`);
+   await dropdown.locator('iframe').waitFor();
+   ok((await dropdown.locator('iframe').getAttribute('src')).includes('/embed/fq72qz8JHtU'),`${audience}/${width}: exact inline demo retained`);
+  }else{
+   ok(await sheet.locator('.hub-visible-coach-note').filter({hasText:'Only if pain-free'}).isVisible(),`${audience}/${width}: condition visible`);
+  }
+  ok(audience==='parent'?text.includes('2 × 8/leg')&&!text.includes('8 repetitions on each leg'):text.includes('8 repetitions on each leg')&&text.includes('2 times'),`${audience}/${width}: clear dose`);
   ok(text.includes('2 minutes')&&text.includes('percentage shows effort'),`${audience}/${width}: rest and effort clear`);
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${audience}/${width}: no horizontal overflow`);
   if(audience==='school'||audience==='private-athlete'){
@@ -30,7 +40,7 @@ const {chromium}=require('playwright');
    await presenter.getByRole('button',{name:'Play demo'}).click();
    ok((await presenter.locator('iframe').getAttribute('src')).includes('/embed/fq72qz8JHtU'),`${audience}/${width}: exact demo retained`);
    await presenter.getByRole('button',{name:'Close',exact:true}).click();
-  }else{
+  }else if(audience!=='parent'){
    ok(await sheet.locator('a[href="https://www.youtube.com/shorts/fq72qz8JHtU"]').count()===1,`${audience}/${width}: exact demo retained`);
   }
   if(audience==='parent'){
