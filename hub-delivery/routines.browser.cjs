@@ -117,7 +117,9 @@ const {chromium}=require('playwright');
    }
    await page.goto(base+'/#/hub/session/d3');await page.getByRole('link',{name:'← Back to Week',exact:true}).waitFor();
    ok(await page.locator('[aria-label="Training stages"]').count()===0,'rehabilitation day receives no inferred standard warm-up');
-   ok((await page.locator('.hub-objective').innerText()).includes('No running or jumping.'),'rehabilitation restrictions retained');
+   const notes=page.locator(audience==='parent'?'.hub-parent-session-notes':'.hub-objective');
+   ok((await notes.innerText()).includes('No running or jumping.'),'rehabilitation restrictions retained');
+   if(audience==='parent')ok(await page.getByText('Coach instructions',{exact:true}).count()===0,'parent rehabilitation day uses compact notes');
    await page.goto(base+'/#/hub/routines/day/someone-else/0');await page.getByRole('heading',{name:'Page not found',exact:true}).waitFor();
    ok(await page.locator('[data-completion-toggle]').count()===0,'foreign routine route reveals no prescription or progress');
   }
