@@ -4898,24 +4898,28 @@ document.addEventListener('click',function(e){
   function renderParentQuickView(sections,sessionData){
     const phases=deliverySections(sections);
     const isReference=section=>/Additional movement references/i.test(section.title);
-    const notesLine=([label,value])=>'<p class="hub-visible-coach-note"><strong>'+escapeHtml(label)+'</strong> '+escapeHtml(value)+'</p>';
-    const restriction=/\b(?:stop|pain|hurt\w*|injur\w*|safety|unsafe|never|only if|hours between|do not|don['’]t|should not|must not|no running|no jumping|no sprint(?:ing)?|before progressing)\b/i;
     const card=section=>{
       const rows=section.items.map(item=>{
         const key=escapeHtml(item.key),sessionKey=escapeHtml(sessionData.id);
         const completed=isWorkoutComplete(sessionData.id,item.key);
-        const coaching=DuHubDelivery.coachingRows(item);
-        const essential=coaching.filter(([label,value])=>label==='For this session'||label==='Coach alternative'||restriction.test(value));
-        const technique=coaching.find(([label])=>label==='How to do it')||coaching.find(([label])=>label==='Coach cue');
-        const how=technique&&!essential.some(([,value])=>simpleText(value)===simpleText(technique[1]))?notesLine(['How to do it',technique[1]]):'';
-        const demos=athleteWorkoutDemos(item).map(clip=>'<a class="hub-athlete-demo" href="'+escapeHtml(clip.original)+'" target="_blank" rel="noopener noreferrer">Watch '+escapeHtml(clip.title)+' demo</a>').join('');
-        const details=how||demos?'<details class="hub-private-demo-details"><summary>'+(demos?'Demo &amp; technique':'Technique')+' <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary>'+how+(demos?'<div class="hub-media-actions">'+demos+'</div>':'')+'</details>':'';
+        const notes=DuHubDelivery.coachingRows(item);
+        const cue=notes.find(([label])=>label==='For this session')||
+          notes.find(([label])=>label==='Coach cue')||notes.find(([label])=>label==='How to do it')||
+          notes.find(([label])=>label==='Watch for');
+        const guidance=[cue?.[1],item.substitutionNote].filter(Boolean);
+        const videos=athleteWorkoutDemos(item).map(clip=>{
+          const embed=new URL(clip.embed);
+          embed.searchParams.delete('autoplay');
+          return '<iframe title="'+escapeHtml(clip.title)+' demo" src="'+escapeHtml(embed.href)+'" style="width:100%;height:auto;aspect-ratio:'+(clip.vertical?'9/16;max-height:60svh':'16/9')+';border:0" allow="encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+        }).join('');
+        const details=guidance.length||videos?'<details class="hub-private-demo-details" data-parent-inline-demo><summary>'+(videos?'Demo &amp; technique':'Technique')+' <span class="hub-private-sr-only">for '+escapeHtml(item.title)+'</span></summary><div class="hub-private-demo-content">'+
+          (videos?'<div data-parent-demo-players></div><template>'+videos+'</template>':'')+
+          (guidance.length?'<p class="hub-parent-technique-cue">'+guidance.map(escapeHtml).join(' ')+'</p>':'')+'</div></details>':'';
         const dose=item.dosage?'<strong>'+escapeHtml(item.dosage)+'</strong>':'';
-        const doseHelp=DuHubDelivery.explainDose(item.dosage);
         const effortHelp=DuHubDelivery.trainingHelp([item.title,item.dosage,item.cue].join(' '));
         const rest=item.rest?'<small>Rest: '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</small>':'';
         const complete='<button type="button" class="hub-quick-toggle" data-completion-toggle data-session-key="'+sessionKey+'" data-item-key="'+key+'" data-completed="'+completed+'" aria-pressed="'+completed+'">'+(completed?'Undo':'Complete')+'</button>';
-        return '<article class="hub-athlete-movement hub-parent-quick-row"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+dose+'</div>'+(doseHelp?'<p class="hub-dose-help">'+escapeHtml(doseHelp)+'</p>':'')+rest+(effortHelp.length?'<p class="hub-term-help">'+effortHelp.map(escapeHtml).join(' ')+'</p>':'')+essential.map(notesLine).join('')+complete+details+'</article>';
+        return '<article class="hub-athlete-movement hub-parent-quick-row"><div class="hub-athlete-movement-line"><span>'+escapeHtml(item.title)+'</span>'+dose+'</div>'+rest+(effortHelp.length?'<p class="hub-term-help">'+effortHelp.map(escapeHtml).join(' ')+'</p>':'')+complete+details+'</article>';
       }).join('');
       let playlist='';
       if(isSchoolWarmupSection(section)){
@@ -5762,6 +5766,13 @@ document.addEventListener('click',function(e){
     const schoolGroupButton=event.target.closest('[data-school-group]');if(schoolGroupButton){localStorage.setItem(schoolGroupStorageKey(),schoolGroupButton.dataset.schoolGroup||'');const route=location.hash.replace('#/hub','')||'/';if(route.startsWith('/session/'))renderSession(route.split('/')[2]);else render();return;}
     const choice=event.target.closest('.hub-choice');if(choice){const group=choice.closest('[data-choice-group]');const multi=group?.dataset.multi==='true';if(multi){const label=choice.textContent.trim();if(label==='Nothing noticeable yet'||label==='No noticeable change'){group.querySelectorAll('.hub-choice').forEach(x=>x.classList.remove('selected'));choice.classList.add('selected');}else{group.querySelectorAll('.hub-choice').forEach(x=>{if(['Nothing noticeable yet','No noticeable change'].includes(x.textContent.trim()))x.classList.remove('selected');});choice.classList.toggle('selected');}}else{group.querySelectorAll('.hub-choice').forEach(x=>x.classList.remove('selected'));choice.classList.add('selected');}return;}
   });
+  root.addEventListener('toggle',event=>{
+    const details=event.target;
+    if(!details.matches('details[data-parent-inline-demo]'))return;
+    const players=details.querySelector('[data-parent-demo-players]');
+    if(players)players.replaceChildren(...(details.open?[details.querySelector('template').content.cloneNode(true)]:[]));
+  },true);
+
   document.addEventListener('submit',async function(event){
     if(event.target.id==='hubLoginForm'){event.preventDefault();const role=event.target.dataset.role,input=document.getElementById('hubCode'),error=document.getElementById('hubLoginError'),button=event.target.querySelector('button[type="submit"]');error.textContent='';button.disabled=true;const original=button.textContent;button.textContent='Checking access…';let attemptStamp=sessionStamp();try{const result=await edgePost(HUB_CONFIG.verifyFunction,{code:input.value||'',view:role});if(attemptStamp!==sessionStamp())return;const next={role:result.role,token:result.token,expiresAt:result.expiresAt};setSession(next);resetHubState();attemptStamp=sessionStamp();await loadHubData(next);if(attemptStamp!==sessionStamp())return;location.hash=role==='staff'?'#/hub/staff':'#/hub/athlete';}catch(err){if(attemptStamp!==sessionStamp())return;setSession(null);resetHubState();error.textContent=err.message||'Access code not recognized. Please contact Coach Du.';input.select();}finally{button.disabled=false;button.textContent=original;}return;}
     if(event.target.id==='hubPasswordResetForm'){

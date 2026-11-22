@@ -176,6 +176,7 @@ const withoutHubRepair=source=>source
  .replace(/  function staffAllGroupsExperience\([\s\S]*?(?=  function privateSelfServeViewer\()/,'  STAFF_DELIVERY\n')
  // Parent workout and warm-up behavior is covered by guided-training.browser.cjs.
  .replace(/  function isParentManagedWorkout\(\)\{return HUB_STATE\.audience==='parent'&&session\(\)\?\.role==='athlete';\}\r?\n  function renderParentSessionNotes\(notes,demoOpen=null\)\{[\s\S]*?^  \}\r?\n/m,'')
+ .replace(/  root\.addEventListener\('toggle',event=>\{\r?\n    const details=event.target;\r?\n    if\(!details.matches\('details\[data-parent-inline-demo\]'\)\)return;[\s\S]*?^  \},true\);\r?\n\r?\n/m,'')
  .replace(/  function renderSession\([^\n]+\n/,'  SESSION_DELIVERY\n')
  .replace(/  function renderSchoolAthleteCompact\([\s\S]*?(?=  function renderPrivateAthleteCompact\()/,'  SCHOOL_ATHLETE_DASHBOARD\n')
  .replace(/  function renderPrivateAthleteCompact\([\s\S]*?(?=  function parentSessionLabel\()/,'  PRIVATE_DASHBOARD\n')
