@@ -13,7 +13,7 @@ function setup({warmupCue='Quiet feet',libraryCue='Keep your heel down.'}={}){
    {day:'Day 3',title:'Unreleased workout',locked:true,prescriptions:[{...warmup,dosage:'Secret dose'}]},
  ]},exercises:[{code:'WU01',title:'Ankle Rock',videoId:'6Dlac5mxD6k',description:'Move your knee forward.',coachingCues:libraryCue+' Avoid: Forcing the range.'},{code:'ALT',title:'Supported Ankle Rock'}]},{rosterVerified:true,roster:[{cohort_id:'test',display_name:'Private athlete'}]});
  const root=host.children[1];
- const click=dataset=>root.click({target:{closest:()=>({dataset:typeof dataset==='string'?{action:dataset}:dataset})}});
+ const click=dataset=>root.click({stopPropagation(){},target:{closest:()=>({dataset:typeof dataset==='string'?{action:dataset}:dataset})}});
  return {root,click,copied:()=>copied,printed:()=>printed};
 }
 test('coach copy contains only workout identification, blocks and prescriptions',async()=>{

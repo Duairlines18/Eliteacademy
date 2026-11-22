@@ -558,7 +558,7 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
       view='workout';openLearnRows.clear();
     }
     root.addEventListener('click',async e=>{
-      if(e.target.closest('.presentation'))e.stopPropagation();
+      if(view==='present')e.stopPropagation();
       const b=e.target.closest('button');if(!b)return;
       if(b.dataset.day!==undefined){
         const next=Number(b.dataset.day);
