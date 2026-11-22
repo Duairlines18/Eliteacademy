@@ -25,3 +25,13 @@ jobs:
         run: node coach-command/saved-video-links.test.mjs
       - name: Principal QA school athlete sheet
         run: node athlete-qa/athlete-sheet.test.cjs
+
+      - name: Install WebKit for mobile print QA
+        run: |
+          npm install --prefix /tmp/du-coach-qa --no-save playwright@1.62.1
+          node /tmp/du-coach-qa/node_modules/playwright/cli.js install --with-deps webkit
+      - name: Verify coach print preview in WebKit
+        run: node coach-command/route-parity.browser.cjs
+        env:
+          NODE_PATH: /tmp/du-coach-qa/node_modules
+          DU_COACH_PRINT_WEBKIT: '1'

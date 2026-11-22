@@ -34,9 +34,12 @@ test('the Ankle Rock briefing uses the movement cue and retains the assigned ran
 });
 test('day and week print preserve prescriptions and exclude coaching material, locked sessions and rosters',async()=>{
  const h=setup();await h.click({day:'1'});await h.click('print');
+ assert.equal(h.printed(),'');
+ assert.match(h.root.children.find(x=>x.className==='print-sheet').innerHTML,/Print or save PDF/);
+ await h.click('print-now');
  assert.match(h.printed(),/DU AIRLINES ELITE ACADEMY.*Day 2.*1 × 5/);
  assert.doesNotMatch(h.printed(),/Foundations/);
- await h.click('print-week');
+ await h.click('print-week');await h.click('print-now');
  assert.match(h.printed(),/Day 1.*Day 2/);
  assert.match(h.printed(),/Ankle Rock — <strong>2 × 8 · Rest: 30 seconds<\/strong>.*6 × 100 m at 75% — <strong>6 × 100 m · Rest: 1 minute/);
  assert.doesNotMatch(h.printed(),/Private athlete|Unreleased workout|Secret dose|Coach-approved|How to do it|Quiet feet|Stop for pain|Forcing the range|https:|iframe/);
@@ -88,9 +91,9 @@ test('copy, day print and week print match across Workout and Present Workout',a
  await h.click('workout');
  assert.match(h.root.innerHTML,/For this session.*Do not force the range.*Watch for.*Painful positions/);
  async function exportWorkout(){
-  await h.click('copy');await h.click('print');
+  await h.click('copy');await h.click('print');await h.click('print-now');
   const day=h.printed();
-  await h.click('print-week');
+  await h.click('print-week');await h.click('print-now');
   return {copy:h.copied(),day,week:h.printed()};
  }
  const expected=await exportWorkout();
