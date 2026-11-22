@@ -139,7 +139,7 @@ assert.match(app,/function parentSessionLabel\(/,'game warm-up has a parent-spec
 assert.match(app,/\?'Game Warm-Up'/,'game warm-up remains clearly labeled');
 assert.doesNotMatch(extract('  function renderSession(', '  function renderProgress('),/parentTrainingDays\(p,s\.id\)|compactAthleteWeek\(p,s\.id\)/,'selected workout contains no sibling day cards');
 assert.match(app,/← Back to Week/,'selected workout returns to week');
-assert.match(app,/if\(mode!=='guided'\)return .*schoolAthleteDelivery\(sections,sessionData,privateDay\?mode:''\)/,'parent quick view retains compact workout and demos');
+assert.match(app,/isParentManagedWorkout\(\)\?renderParentQuickView\(sections,sessionData\):schoolAthleteDelivery\(sections,sessionData,privateDay\?mode:''\)/,'parent quick view uses its single-row renderer');
 assert.match(app,/Guided Workout<\/button>/,'parent guided toggle is present');
 assert.match(app,/guidedCard\(items\[cursor\]/,'parent guided mode uses original step-by-step card');
 assert.match(app,/data-completion-toggle/,'guided completion control remains present');
