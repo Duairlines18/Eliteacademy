@@ -4905,10 +4905,11 @@ document.addEventListener('click',function(e){
     const rest=item.rest?'<small>Rest: '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</small>':'';
     const heading='<span class="hub-compact-movement-heading">'+(techniqueOnly?'Technique':('<span>'+escapeHtml(item.title)+'</span>'+dose+rest))+'</span>';
     const rows=DuHubDelivery.coachingRows(item);
+    const privateAthlete=HUB_STATE.audience==='private-athlete';
     const restriction=/\b(?:stop|pain|injur\w*|safety|unsafe|never|only if|hours between|do not|don['’]t|should not|must not|no running|no sprint(?:ing)?|before progressing)\b/i;
-    const visible=completion?[]:rows.filter(([label,value])=>label==='Coach alternative'||restriction.test(value)||/confirm the movement sequence/i.test(value));
+    const visible=completion||privateAthlete?[]:rows.filter(([label,value])=>label==='Coach alternative'||restriction.test(value)||/confirm the movement sequence/i.test(value));
     const note=([label,value])=>'<p class="hub-visible-coach-note"><strong>'+escapeHtml(label)+'</strong> '+escapeHtml(value)+'</p>';
-    const coaching=rows.filter(row=>!visible.includes(row)).map(note).join('');
+    const coaching=rows.filter(row=>!visible.includes(row)).map(note).join('')+(privateAthlete?extras:'');
     const clips=athleteWorkoutDemos(item);
     const videos=clips.map(clip=>{
       const id=new URL(clip.embed).pathname.split('/').pop();
@@ -4922,7 +4923,7 @@ document.addEventListener('click',function(e){
     const disclosure=videos||coaching?'<details class="hub-compact-movement-details" data-athlete-inline-demo><summary>'+heading+
       '<span class="hub-private-sr-only">Technique'+(videos?' and demo':'')+' for '+escapeHtml(item.title)+'</span>'+
       '</summary><div class="hub-compact-movement-body">'+videos+coaching+'</div></details>':heading;
-    return '<div class="hub-compact-movement'+(completion?' has-completion':'')+'">'+disclosure+completion+visible.map(note).join('')+extras+'</div>';
+    return '<div class="hub-compact-movement'+(completion?' has-completion':'')+'">'+disclosure+completion+visible.map(note).join('')+(privateAthlete?'':extras)+'</div>';
   }
 
   function renderParentQuickView(sections,sessionData){

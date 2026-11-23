@@ -6,7 +6,7 @@ const {chromium}=require('playwright');
  const server=http.createServer((req,res)=>{try{let name=decodeURIComponent(req.url.split('?')[0]);if(name.endsWith('/'))name+='index.html';res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html');res.end(fs.readFileSync(path.join(process.cwd(),name)));}catch{res.writeHead(404);res.end();}});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch({headless:true});
- const exercises=[{id:'test',code:'TST01',title:'Test March',name:'Test March',category:['warm-up'],videoId:'abcdefghijk',videoUrl:'https://www.youtube.com/watch?v=abcdefghijk',active:true}];
+ const exercises=[{id:'test',code:'TST01',title:'Test March',name:'Test March',description:'Ask Coach Du to confirm the movement sequence before you start. Use the order and positions your coach gives you.',coachingCues:'Avoid: Reaching too far. Stop if it hurts or you lose control.',category:['warm-up'],videoId:'abcdefghijk',videoUrl:'https://www.youtube.com/watch?v=abcdefghijk',active:true}];
  const sessions=[{id:'warm',day:'Game Warm-Up',title:'Standard Warm-Up',duration:'5 minutes',watch:'Follow the assigned prescription.',prescriptions:[{sectionTitle:'Routine movements',exerciseCode:'TST01',dosage:'2 x 8'}]},{id:'core',day:'Core Routine',title:'Core Control',prescriptions:[{sectionTitle:'Core',exerciseCode:'TST01',dosage:'2 x 6'}]},{id:'d1',day:'Day 1',title:'Scheduled Strength',prescriptions:[{sectionTitle:'Strength',exerciseCode:'TST01',dosage:'3 x 8'}]}];
  sessions.push({id:'d2',day:'Day 2',title:'Assigned Air Zim day',prescriptions:[{sectionTitle:'Air Zim Warm-Up',exerciseCode:'TST01',dosage:'1 x 3'},{sectionTitle:'Main',sectionOrder:1,exerciseCode:'TST01',dosage:'4 x 5'}]}, {id:'d3',day:'Day 3',title:'Modified rehabilitation',watch:'No running or jumping.',prescriptions:[{sectionTitle:'Core',exerciseCode:'TST01',dosage:'1 x 2'}]});
  let checks=0;const ok=(v,msg)=>{assert.ok(v,msg);checks++;};
@@ -60,12 +60,23 @@ const {chromium}=require('playwright');
   const routineDisclosure=page.locator('[data-athlete-inline-demo]');
   ok(await routineDisclosure.count()===1,`${audience}/${role}: the standalone routine uses a compact movement dropdown`);
   ok(await routineDisclosure.evaluate(el=>!el.open),'routine technique is collapsed by default');
+  const technique=routineDisclosure.getByText(/confirm the movement sequence/);
+  const caution=routineDisclosure.getByText(/Stop if it hurts/);
+  if(audience==='private-athlete'){
+   ok(await routineDisclosure.locator('..').locator(':scope > .hub-visible-coach-note, :scope > .hub-dose-help').count()===0,'collapsed warm-up row has no trailing guidance or dose explanation');
+   ok(!(await technique.isVisible())&&!(await caution.isVisible()),'private warm-up hides the full guidance in its collapsed row');
+  }
+
   if(role==='staff'){
    const phase=page.locator('.hub-school-coach-phase');
    await phase.locator(':scope > summary').click();
   }
   await routineDisclosure.locator('summary').click();
   ok(await routineDisclosure.getByRole('button',{name:'Play Test March demonstration'}).isVisible(),'the assigned play control is inside the dropdown');
+  if(audience==='private-athlete'){
+   ok(await technique.isVisible()&&await caution.isVisible(),'expanded warm-up retains the complete movement guidance and safety cue');
+  }
+
   await routineDisclosure.locator('summary').click();
 
   if(audience==='parent'){
