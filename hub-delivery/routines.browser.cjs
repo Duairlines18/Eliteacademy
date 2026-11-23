@@ -79,8 +79,25 @@ const {chromium}=require('playwright');
    await page.getByText('1/1 complete',{exact:true}).waitFor();
    ok(completionWrites===1,'routine completion uses existing persistence');
    ok(await page.locator('[aria-label="Choose training day"]').count()===0,'completion keeps routine navigation');
+  }else if(role==='athlete'){
+   const launch=page.getByRole('button',{name:'Full-screen demos',exact:true});
+   await launch.click();
+   const demo=page.getByRole('dialog',{name:'Exercise demos'});
+   await demo.getByRole('heading',{name:'Test March',exact:true}).waitFor();
+   ok((await demo.innerText()).includes('2 x 8'),'standalone presentation uses the assigned routine dose');
+   await demo.getByRole('button',{name:'Close',exact:true}).click();
+   ok(await launch.evaluate(el=>el===document.activeElement),'closing returns focus to the routine control');
   }
   await page.getByRole('link',{name:'← Your Routines',exact:true}).click();await page.locator('.hub-card').first().waitFor();
+  if(audience==='parent'){
+   await page.locator('.hub-card').filter({hasText:'Core Control'}).click();
+   await page.getByRole('button',{name:'Full-screen demos',exact:true}).click();
+   const demo=page.getByRole('dialog',{name:'Exercise demos'});
+   await demo.getByText('2 x 6',{exact:true}).waitFor();
+   await demo.getByRole('button',{name:'Close',exact:true}).click();
+   ok(await page.getByRole('heading',{name:'Core Control',exact:true}).isVisible(),'closing presentation keeps the parent in the selected core routine');
+   await page.goBack();await page.locator('.hub-card').first().waitFor();
+  }
   await page.goBack();await page.locator('.hub-main h1').filter({hasText:'Standard Warm-Up'}).waitFor();
   await page.reload();await page.getByRole('link',{name:'← Your Routines',exact:true}).waitFor();
   await page.goto(base+(role==='staff'?'/#/hub/current-week':'/#/hub/session/d1'));

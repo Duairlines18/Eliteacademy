@@ -4739,13 +4739,12 @@ document.addEventListener('click',function(e){
 
   function openAthleteWorkoutDemos(trigger){
     if(session()?.role!=='athlete')return;
-    const parent=HUB_STATE.audience==='parent';
-    const routine=parent?routineCardSelection():null;
+    const parentDay=HUB_STATE.audience==='parent';
+    const routine=parentDay?routineCardSelection():null;
     const day=routine?.day||programme()?.sessions?.find(item=>item.id===currentWorkoutSessionId());
     if(!day)return;
     const standalone=assignedRoutines().includes(day);
-    const parentDay=parent&&(routine?isWarmUpCard(routine.card):!standalone||isWarmUpSession(day));
-    if(!parentDay&&HUB_STATE.audience!=='private-athlete'&&!isSchoolReferenceViewer())return;
+    if(!parentDay&&!privateSelfServeViewer()&&!isSchoolReferenceViewer())return;
     const workout=normalizeWorkoutSession(day,EXERCISES,{...programme(),separateWarmups:true});
     if(!routine&&requiresGroupSelection(workout))return;
     const visible=visibleNormalizedSections(workout);
@@ -4864,7 +4863,7 @@ document.addEventListener('click',function(e){
     },{once:true});
     dialog.addEventListener('error',event=>{if(event.target.tagName==='IMG')event.target.hidden=true;},true);
     render();
-    trigger.closest('.hub-private-workout,.hub-parent-day').append(dialog);
+    trigger.closest('.hub-field-session').append(dialog);
     dialog.showModal();
   }
 
@@ -5801,11 +5800,11 @@ document.addEventListener('click',function(e){
     const menu=event.target.closest('.hub-menu-button');if(menu){const navEl=document.getElementById('hubNav');const open=navEl.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));return;}
     if(event.target.closest('.hub-logout')){logout();return;}
     if(handleRoutineCardAction(event))return;
-    const presentButton=event.target.closest(':is(.hub-private-workout,.hub-parent-day) [data-private-present]');if(presentButton){openAthleteWorkoutDemos(presentButton);return;}
+    const presentButton=event.target.closest('#hub-root [data-private-present]');if(presentButton){openAthleteWorkoutDemos(presentButton);return;}
     const modeButton=event.target.closest('[data-workout-mode]');
     if(modeButton){
       const mode=modeButton.dataset.workoutMode,route=location.hash.replace('#/hub','')||'/';
-      if(modeButton.closest('.hub-school-workout,.hub-parent-day'))return;
+      if(modeButton.getAttribute('aria-pressed')==='true'||modeButton.closest('.hub-school-workout,.hub-parent-day'))return;
       const athleteWorkout=modeButton.closest('.hub-private-workout');
       if(athleteWorkout)ATHLETE_WORKOUT_VIEW.mode=mode;
       else WORKOUT_MODE=mode==='quick'?'quick':'guided';
