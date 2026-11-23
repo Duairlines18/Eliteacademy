@@ -62,9 +62,9 @@ const {chromium}=require('playwright');
   ok(await routineDisclosure.evaluate(el=>!el.open),'routine technique is collapsed by default');
   const technique=routineDisclosure.getByText(/confirm the movement sequence/);
   const caution=routineDisclosure.getByText(/Stop if it hurts/);
-  if(audience==='private-athlete'){
+  if(role==='athlete'){
    ok(await routineDisclosure.locator('..').locator(':scope > .hub-visible-coach-note, :scope > .hub-dose-help').count()===0,'collapsed warm-up row has no trailing guidance or dose explanation');
-   ok(!(await technique.isVisible())&&!(await caution.isVisible()),'private warm-up hides the full guidance in its collapsed row');
+   ok(!(await technique.isVisible())&&!(await caution.isVisible()),'warm-up hides the full guidance in its collapsed row');
   }
 
   if(role==='staff'){
@@ -73,7 +73,7 @@ const {chromium}=require('playwright');
   }
   await routineDisclosure.locator('summary').click();
   ok(await routineDisclosure.getByRole('button',{name:'Play Test March demonstration'}).isVisible(),'the assigned play control is inside the dropdown');
-  if(audience==='private-athlete'){
+  if(role==='athlete'){
    ok(await technique.isVisible()&&await caution.isVisible(),'expanded warm-up retains the complete movement guidance and safety cue');
   }
 
