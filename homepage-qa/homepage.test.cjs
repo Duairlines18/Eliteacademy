@@ -75,7 +75,7 @@ function withoutWorkoutNavigation(source){
  }
  return source
   .replace("      } else if (!isHub) {\n        window.scrollTo({top:0, behavior:'instant'});","      } else {\r\n        window.scrollTo({top:0, behavior:'instant'});")
-  .replace('coach-command.js?v=20261122-workout-navigation','coach-command.js?v=20261122-weekly-standard');
+  .replace(/coach-command\.js\?v=20261122-(?:workout-navigation|compact-workout)/,'coach-command.js?v=20261122-weekly-standard');
 }
 const html=restoreTitles(withoutPrivateSetup(withoutDashboardRefresh(withoutMandatoryCheckins(withoutHubVisits(withoutWorkoutNavigation(currentHtml)))))).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
 // These checks catch the duplicated homepage fragments and their stale controllers.

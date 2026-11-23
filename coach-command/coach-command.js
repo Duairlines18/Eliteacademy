@@ -6,7 +6,6 @@
   'use strict';
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const txt=v=>typeof v==='string'?v.trim():'';
-  const restriction=/\b(?:stop|pain|injur\w*|safety|unsafe|never|avoid|only if|hours between|do not|don.t|must(?: not)?|no running|no sprint(?:ing)?|before progressing)\b/i;
   const styles=`
 .ducc{--ink:var(--hub-bg,#090909);--gold:var(--hub-gold,#c7a25a);--line:var(--hub-line,rgba(199,162,90,.18));font:14px/1.45 system-ui,Arial,sans-serif;color:var(--hub-text,#f5f1e8);max-width:1080px;margin:auto;background:var(--hub-bg,#090909);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .ducc *{box-sizing:border-box}.ducc header{background:var(--hub-panel,#111111);color:var(--hub-text,#f5f1e8);padding:22px}.ducc header small{color:var(--gold);font-weight:800;letter-spacing:.12em}.ducc h1{font-size:24px;margin:5px 0}.ducc h2{font-size:19px;margin:4px 0}.ducc h3{font-size:14px;margin:0 0 10px}.ducc p{margin:4px 0}.ducc .muted{color:var(--hub-muted,#aaa69f);font-size:12px}.ducc main{padding:18px;display:grid;gap:14px}.ducc .stats,.ducc .days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.ducc .days{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}.ducc a.button{text-decoration:none;display:inline-flex;align-items:center}.ducc .tile,.ducc .panel{border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--hub-panel,#111111)}.ducc .tile b{display:block;font-size:24px}.ducc .day{color:var(--hub-text,#f5f1e8);text-align:left;cursor:pointer;font:inherit}.ducc .day strong,.ducc .day span{display:block}.ducc .day strong{font-size:16px}.ducc .day span{font-size:11px;margin-top:5px}.ducc .selected{border:2px solid var(--gold)}.ducc button{cursor:pointer;font:inherit}.ducc .button{background:var(--hub-maroon,#6e1726);color:var(--hub-text,#f5f1e8);border:0;border-radius:9px;padding:11px 13px;font-weight:750}.ducc .secondary{background:var(--hub-panel-2,#171717);color:var(--hub-text,#f5f1e8);border:1px solid var(--line)}.ducc .actions{display:flex;flex-wrap:wrap;gap:8px}.ducc button:focus-visible,.ducc summary:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.ducc .roster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.ducc .roster button{border:1px solid var(--line);border-radius:9px;padding:10px;background:var(--hub-panel-2,#171717);color:var(--hub-text,#f5f1e8);text-align:left}.ducc [hidden]{display:none!important}
@@ -46,9 +45,9 @@
 .ducc .row-name,.ducc .row-dose{white-space:pre-line}
 .ducc .row-name{font-size:1rem;font-weight:700}
 .ducc .row-dose{color:#ebca8b;font-size:1rem;font-weight:700}
-.ducc .row-instructions,.ducc .learn-guidance{font-size:.9rem}
-.ducc .row-instructions p,.ducc .learn-guidance p{margin:4px 0}
-.ducc .row-instructions strong,.ducc .learn-guidance strong{color:#ebca8b;margin-right:.25em}
+.ducc .learn-guidance{font-size:.9rem}
+.ducc .learn-guidance p{margin:4px 0}
+.ducc .learn-guidance strong{color:#ebca8b;margin-right:.25em}
 .ducc .learn-card > summary{
  display:grid;grid-template-columns:minmax(0,1fr) 20px;align-items:center;gap:8px;
  padding:4px 2px;list-style:none;
@@ -328,15 +327,6 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
     function renderRows(rows){
       return rows.map(([label,value])=>'<p><strong>'+esc(label)+'</strong> '+esc(value)+'</p>').join('');
     }
-    function prescriptionNotes(row,saved){
-      const cautions=[
-        ['For this session',restriction.test(saved.cue)?saved.cue:''],
-        ['Watch for',saved.avoid],
-        ...assignedContext(row),
-        ['Coach alternative',row.substitutionNote],
-      ].filter(([,value])=>txt(value));
-      return cautions.length?'<div class="row-instructions">'+renderRows(cautions)+'</div>':'';
-    }
     function demoPlayer(demos,lazy=false){
       const options=demos.length>1?'<div class="presentation-demo-options" aria-label="Exercise demonstrations">'+
         demos.map((demo,index)=>'<button type="button" class="button'+(lazy?' secondary':'')+'" data-demo-url="'+esc(demo.url)+'" data-demo-title="'+esc(demo.title)+
@@ -356,13 +346,12 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
       const demos=matchingDemos(row).filter(demo=>safeVideo(demo.url));
       const guidance=renderRows([...movementCoaching(row,ex),...assignedContext(row)])+
         reviewedMovementCoaching(row,demos).map(({title,rows})=>'<div><h4>'+esc(title)+'</h4>'+renderRows(rows)+'</div>').join('');
-      const cautions=prescriptionNotes(row,saved);
-      if(!demos.length&&!guidance)return '<li class="workout-row">'+heading+summary+cautions+'</li>';
+      if(!demos.length&&!guidance)return '<li class="workout-row">'+heading+summary+'</li>';
       const key=sectionIndex+'-'+rowIndex;
       return '<li class="workout-row">'+heading+'<details class="learn-card" data-learn-row="'+key+'"'+
         (openLearnRows.has(key)?' open':'')+'><summary>'+summary+'</summary><div class="learn-body">'+
         (demos.length?'<div class="learn-media">'+demoPlayer(demos,true)+'</div>':'')+
-        (guidance?'<div class="learn-guidance">'+guidance+'</div>':'')+'</div></details>'+cautions+'</li>';
+        (guidance?'<div class="learn-guidance">'+guidance+'</div>':'')+'</div></details></li>';
     }
     function viewSelector(hasBlocks){
       return '<div class="coaching-views" role="group" aria-label="Coaching view">'+
