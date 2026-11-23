@@ -126,6 +126,7 @@ export function shapeBootstrap(input: {
   blocks: any[];
   exercises: any[];
   personalNote?: string;
+  assignedWarmUpAthleteId?: string;
 }) {
   const { role, cohort, programme, week } = input;
   const cohortPayload = {
@@ -177,7 +178,16 @@ export function shapeBootstrap(input: {
     return {...block,itemSourceOrders:[...original.map(() => null),...instructions.map(({sourceOrder}: any) => sourceOrder),...rootInstruction.map(() => null)],content:{...(block.content || {}),items:[...original,...instructions.map(({row}: any) => row.instruction),...rootInstruction]}};
   });
 
-  const sessions = trainingDays.map((day, index) => {
+  const markedBlocks = allBlocks.filter(block => block.content.routineKind === 'warm-up'
+    && block.content.assignedWarmUpProgrammeId && block.content.assignedWarmUpAthleteId);
+  const markedDays = new Set(markedBlocks.map(block => block.training_day_id));
+  const matches = markedBlocks.filter(block => input.assignedWarmUpAthleteId
+    && block.content.assignedWarmUpAthleteId === input.assignedWarmUpAthleteId
+    && block.content.assignedWarmUpProgrammeId === programme.id);
+  const assignedWarmUp = matches.length === 1
+    ? trainingDays.find(day => day.id === matches[0].training_day_id) : null;
+
+  const sessions = trainingDays.flatMap((day, index) => {
     const blocks = allBlocks
       .filter(block => block.training_day_id === day.id)
       .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
@@ -191,7 +201,7 @@ export function shapeBootstrap(input: {
         sourceOrders: block.itemSourceOrders.filter((_: unknown, index: number) => typeof block.content.items[index] === 'string'),
         // Keep the database's reviewed movement selection and original row scope.
         // URLs come from the current authorized library, never stale JSON URLs.
-        videoLinks: (Array.isArray(block.content.video_links) ? block.content.video_links : [])
+        videoLinks: (!block.content.writtenOnly && Array.isArray(block.content.video_links) ? block.content.video_links : [])
           .flatMap((link: any) => {
             if (!Number.isInteger(link?.item_index) || link.item_index < 0
               || typeof block.content.items[link.item_index] !== 'string') return [];
@@ -229,6 +239,17 @@ export function shapeBootstrap(input: {
     };
     const kind = firstText(blocks, 'routineKind');
     if (['mobility', 'warm-up'].includes(kind)) session.routineKind = kind;
+    const standardWarmUp = [day.day_key, day.title].some(label =>
+      /^standard (?:volleyball )?warm[ -]?up\b/i.test(label || ''));
+    if (assignedWarmUp?.id === day.id) session.assignedWarmUpOverview = day.objective || '';
+    else if (assignedWarmUp && !kind && !standardWarmUp && !/\broutine\b|\bwarm[ -]?up\b/i.test(day.day_key || '')) {
+      const replacedSections = blocks
+        .filter(block => /^warm[ -]?up$/i.test(block.block_type || ''))
+        .map(block => ({order: block.sort_order, title: typeof block.title === 'string' ? block.title.trim() : ''}))
+        .filter(section => Number.isInteger(section.order) && section.title
+          && blocks.filter(block => block.sort_order === section.order).length === 1);
+      session.assignedWarmUp = {routineId: assignedWarmUp.id, replacedSections};
+    }
     const preparation = blocks.map(block => block?.content?.preparation).find(Boolean);
     const ids = preparation?.routineIds;
     if (Array.isArray(ids) && ids.length === 2 && new Set(ids).size === 2
@@ -242,7 +263,8 @@ export function shapeBootstrap(input: {
       session.preparation = {routineIds: [...ids], replacedSectionOrders: [0]};
     }
     if (role === 'staff') session.staffNote = staffNotes.join('\n');
-    return session;
+    if (day.id !== assignedWarmUp?.id && (markedDays.has(day.id) || (assignedWarmUp && standardWarmUp))) return [];
+    return [session];
   });
 
   const referencedCodes = new Set(allBlocks.flatMap(block => {

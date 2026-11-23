@@ -38,9 +38,19 @@
     if(!Array.isArray(spec.replacedSectionOrders)||spec.replacedSectionOrders.length!==1||spec.replacedSectionOrders[0]!==0)return empty;
     return {routines:found,replacedSectionOrders:[0]};
   }
+  function assignedWarmUpFor(programme,session){
+    const assignment=session.assignedWarmUp;
+    if(!assignment||!Array.isArray(assignment.replacedSections)||assignment.routineId===session.id)return null;
+    const matches=(programme.sessions||[]).filter(s=>s.id===assignment.routineId&&s.routineKind==='warm-up'
+      &&typeof s.assignedWarmUpOverview==='string');
+    return matches.length===1?matches[0]:null;
+  }
   function trainingSections(programme,session,sections){
     const prep=preparationFor(programme,session);
-    const visible=prep.routines.length?sections.filter(s=>!prep.replacedSectionOrders.includes(s.order)):sections;
+    const warmUp=assignedWarmUpFor(programme,session);
+    const visible=warmUp
+      ? sections.filter(section=>!session.assignedWarmUp.replacedSections.some(old=>old.order===section.order&&old.title===section.title))
+      : prep.routines.length?sections.filter(s=>!prep.replacedSectionOrders.includes(s.order)):sections;
     return programme.separateWarmups===true&&(session.prescriptions||[]).some(rx=>rx.sectionTitle==='Air Zim Warm-Up')?visible.filter(s=>s.title!=='Air Zim Warm-Up'):visible;
   }
   function explainDose(value){
@@ -112,6 +122,8 @@
   // Presentation-only routine groups. Keep the original session IDs and completion keys.
   function routineCards(programme={},session={}){
     const sessions=Array.isArray(programme.sessions)?programme.sessions:[];
+    const warmUp=assignedWarmUpFor(programme,session);
+    if(warmUp)return [{id:'routine:'+warmUp.id,title:'My Warm-Up',kind:'assigned-warm-up',sessions:[warmUp]}];
     const preparation=preparationFor(programme,session);
     if(preparation.routines.length===2){
       return [{id:'combined:'+preparation.routines.map(r=>r.id).join(':'),title:'My Warm-Up',kind:'combined',sessions:preparation.routines}];
