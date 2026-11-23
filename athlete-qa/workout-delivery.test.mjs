@@ -21,12 +21,13 @@ test('structured running, strength and final instructions keep their approved in
  const payload=shapeBootstrap(input),w=ctx.api.normalizeWorkoutSession(payload.programme.sessions[0],payload.exercises);
  assert.deepEqual(Array.from(w.sections[0].items,i=>i.code||i.title),['4 × 20m at 80%','STR01','Walk back and check how you feel.','CORE02','Record any pain after the session.']);
 });
-test('safety and positioning conditions are visible without opening technique tips',()=>{
+test('private rows place safety and positioning guidance inside the compact disclosure',()=>{
  const w=ctx.api.normalizeWorkoutSession({prescriptions:[{sectionTitle:'Core',sectionOrder:1,exerciseCode:'CORE02',dosage:'2 × 6/side',cues:'Only if pain-free. Keep legs supported.'}]},clientLibrary);
  const output=ctx.api.schoolAthleteDelivery(w.sections,{});
- assert.match(output,/Only if pain-free/);
+ assert.match(output,/<summary>[\s\S]*?2 × 6\/side[\s\S]*?<\/summary>/);
+ assert.match(output,/<div class="hub-compact-movement-body">[\s\S]*?Only if pain-free. Keep legs supported/);
  const visible=output.replace(/<details\b[\s\S]*?<\/details>/g,'');
- assert.match(visible,/Only if pain-free/);assert.match(visible,/Keep legs supported/);
+ assert.doesNotMatch(visible,/Only if pain-free|Keep legs supported/);
 });
 test('workout sheet explains a dose without changing its prescribed numbers or inventing rest',()=>{
  const w=ctx.api.normalizeWorkoutSession({prescriptions:[{sectionTitle:'Strength',sectionOrder:1,exerciseCode:'STR01',dosage:'2 × 8/leg',rest:''}]},clientLibrary);
