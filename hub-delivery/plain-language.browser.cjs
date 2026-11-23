@@ -21,10 +21,9 @@ const {chromium}=require('playwright');
   ok(text.indexOf('4 × 20m')<text.indexOf('Split Squat'),`${audience}/${width}: running comes first`);
   ok(text.indexOf('Record any pain')>text.indexOf('Split Squat'),`${audience}/${width}: final instruction stays last`);
   const dropdown=sheet.locator('details[data-athlete-inline-demo]').filter({hasText:'Split Squat'});
-  const compact=audience==='parent'||audience==='private-athlete';
-  const cue=(compact?dropdown:sheet).locator('.hub-visible-coach-note').filter({hasText:'Only if pain-free'});
-  if(compact)ok(!(await cue.isVisible()),`${audience}/${width}: collapsed row stays compact`);
-  else ok(await cue.isVisible(),`${audience}/${width}: safety condition remains visible`);
+  const cue=dropdown.locator('.hub-visible-coach-note').filter({hasText:'Only if pain-free'});
+  ok(await sheet.locator('.hub-compact-movement > :is(.hub-visible-coach-note,.hub-dose-help,.hub-term-help)').count()===0,`${audience}/${width}: movement guidance stays inside the dropdown`);
+  ok(!(await cue.isVisible()),`${audience}/${width}: collapsed row stays compact`);
   await dropdown.locator('summary').click();
   ok(await cue.isVisible(),`${audience}/${width}: assigned condition accessible`);
   await dropdown.getByRole('button',{name:'Play Split Squat demonstration'}).click();
@@ -32,14 +31,12 @@ const {chromium}=require('playwright');
   ok((await dropdown.locator('iframe').getAttribute('src')).includes('/embed/fq72qz8JHtU'),`${audience}/${width}: exact inline demo retained`);
   await dropdown.locator('summary').click();
   await dropdown.locator('iframe').waitFor({state:'detached'});
-  ok(compact?text.includes('2 × 8/leg')&&!text.includes('8 repetitions on each leg'):text.includes('8 repetitions on each leg')&&text.includes('2 times'),`${audience}/${width}: clear dose`);
+  ok(text.includes('2 × 8/leg')&&!text.includes('8 repetitions on each leg'),`${audience}/${width}: collapsed row shows the prescribed dose`);
   ok(text.includes('2 minutes'),`${audience}/${width}: rest is visible`);
   const effort=sheet.getByText(/percentage shows effort/);
-  if(audience==='private-athlete'){
-   ok(!(await effort.isVisible()),'private strength and running rows keep help inside the disclosure');
-   const run=sheet.locator('details[data-athlete-inline-demo]').filter({hasText:'4 × 20m'});
-   await run.locator('summary').click();
-  }
+  ok(!(await effort.isVisible()),`${audience}/${width}: collapsed running row keeps effort help inside`);
+  const run=sheet.locator('details[data-athlete-inline-demo]').filter({hasText:'4 × 20m'});
+  await run.locator('summary').click();
   ok(await effort.isVisible(),`${audience}/${width}: effort guidance remains available`);
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${audience}/${width}: no horizontal overflow`);
   if(audience==='school'||audience==='private-athlete'){
