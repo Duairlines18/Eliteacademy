@@ -57,6 +57,17 @@ const {chromium}=require('playwright');
   ok(await page.locator('[aria-label="Choose training day"]').count()===0,`${audience}/${role}: no Day picker in routine`);
   ok(await page.locator('.hub-main').innerText().then(t=>t.includes('2 x 8')),`${audience}/${role}: assigned dose preserved`);
   ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${audience}/${role}/${width}: fits viewport`);
+  const routineDisclosure=page.locator('[data-athlete-inline-demo]');
+  ok(await routineDisclosure.count()===1,`${audience}/${role}: the standalone routine uses a compact movement dropdown`);
+  ok(await routineDisclosure.evaluate(el=>!el.open),'routine technique is collapsed by default');
+  if(role==='staff'){
+   const phase=page.locator('.hub-school-coach-phase');
+   await phase.locator(':scope > summary').click();
+  }
+  await routineDisclosure.locator('summary').click();
+  ok(await routineDisclosure.getByRole('button',{name:'Play Test March demonstration'}).isVisible(),'the assigned play control is inside the dropdown');
+  await routineDisclosure.locator('summary').click();
+
   if(audience==='parent'){
    ok(await page.getByRole('button',{name:'Guided Workout',exact:true}).count()===0,'standalone parent warm-up offers full-screen demos');
    await page.getByRole('button',{name:'Full-screen demos',exact:true}).click();

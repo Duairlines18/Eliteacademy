@@ -88,13 +88,13 @@ test('Story CTA opens pathways at the correct header offset and preserves other 
  const vm=require('node:vm');
  const home=fs.readFileSync('index.html','utf8');
  const html=fs.readFileSync('my-journey/index.html','utf8');
- const arrival=home.match(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/)[0];
+ const arrival=home.match(/      if \(activeView === homeView && location.hash === '#sports'\) \{[\s\S]*?      \} else if \(!isHub\) \{\r?\n        window.scrollTo\(\{top:0, behavior:'instant'\}\);\r?\n      \}/)[0];
  for(const height of [54,84])for(const hash of ['#sports','#/','#/hub/login']){
   const details={open:false};let scroll;
   const homeView={querySelector:()=>({offsetHeight:height})};
-  const context={activeView:homeView,homeView,location:{hash},document:{getElementById:id=>{assert.equal(id,'sports');return {querySelector:()=>details,getBoundingClientRect:()=>({top:900})};}},window:{scrollY:100,scrollTo:options=>{scroll=options;}}};
+  const context={activeView:hash.startsWith('#/hub')?null:homeView,homeView,isHub:hash.startsWith('#/hub'),location:{hash},document:{getElementById:id=>{assert.equal(id,'sports');return {querySelector:()=>details,getBoundingClientRect:()=>({top:900})};}},window:{scrollY:100,scrollTo:options=>{scroll=options;}}};
   vm.runInNewContext(arrival,context);
-  assert.equal(details.open,hash==='#sports');assert.equal(scroll.top,hash==='#sports'?1000-height-16:0);
+  assert.equal(details.open,hash==='#sports');assert.equal(scroll?.top,hash==='#sports'?1000-height-16:hash==='#/hub/login'?undefined:0);
  }
  assert.ok(html.includes('Partner with Du Airlines'));
  assert.ok(!html.includes('Bring Du Airlines to your school'));

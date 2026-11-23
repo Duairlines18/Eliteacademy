@@ -237,7 +237,7 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
     const roster=opts.rosterVerified===true&&Array.isArray(opts.roster)&&opts.roster.every(a=>a&&a.cohort_id===data.cohort.id)?opts.roster:null;
     const initialDay=opts.initialSessionId?sessions.findIndex(s=>String(s.id)===String(opts.initialSessionId)):-1;
     let day=initialDay>=0?initialDay:0,view=initialDay>=0?'workout':'overview';
-    let athlete=null,slide=0,sequence=[],detailsOpen=false,openLearnRows=new Set();
+    let athlete=null,slide=0,sequence=[],detailsOpen=false,openLearnRows=new Set(),workoutScroll=0;
     const style=document.createElement('style');style.textContent=styles;host.replaceChildren(style);
     const root=document.createElement('div');root.className='ducc';host.append(root);
     const session=()=>sessions[day]||{};
@@ -440,7 +440,7 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
       help.className='presentation-video-help';
       help.innerHTML='If the video won’t play, <a href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">open it on YouTube</a>.';
       stage.after(help);
-      frame.focus();
+      frame.focus({preventScroll:true});
     }
     function presentation(s){
       const {title, row}=sequence[slide];
@@ -499,11 +499,12 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
         '<progress max="'+sequence.length+'" value="'+(slide+1)+'" aria-label="Workout progress"></progress>'+
         '<button type="button" class="button primary" data-action="next-slide"'+(slide+1<sequence.length?'':' disabled')+'>Next</button></nav></section>';
     }
-    function moveSlide(next){
+    function moveSlide(next,action){
       if(next<0||next>=sequence.length)return;
       detailsOpen=root.querySelector?.('.presentation-details')?.open??detailsOpen;
       slide=next;
       render();
+      if(action)(root.querySelector?.('[data-action="'+action+'"]:enabled')||root.querySelector?.('.presentation button[data-action$="-slide"]:enabled'))?.focus({preventScroll:true});
     }
     function copyText(){
       const s=session();
@@ -519,10 +520,11 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
       return lines.join('\n').trimEnd();
     }
     function render(){
+      root.dataset.activeView=view;
       const s=session(),active=roster?.filter(a=>a.access_status==='active').length;
       if(view==='present'){
         root.innerHTML=presentation(s);
-        root.querySelector?.('.presentation')?.focus();
+        root.querySelector?.('.presentation')?.focus({preventScroll:true});
         return;
       }
       const heading=view==='overview'?'Team Command':view==='workout'?'Full Workout':'Athlete Snapshot';
@@ -554,6 +556,12 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
       }
       root.innerHTML=header+'<main>'+body+'</main>';
     }
+    function exitPresentation(){
+      view='workout';
+      render();
+      root.querySelector?.('[data-action="present"]')?.focus({preventScroll:true});
+      window.scrollTo?.({top:workoutScroll,behavior:'instant'});
+    }
     function openWorkout(){
       view='workout';openLearnRows.clear();
     }
@@ -573,7 +581,7 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
           {url:b.dataset.demoUrl,title:b.dataset.demoTitle},!!b.closest('.learn-card')
         );
         picker.querySelectorAll('[data-demo-url]').forEach(option=>option.setAttribute('aria-pressed',String(option===b)));
-        picker.querySelector('.presentation-play').focus();
+        picker.querySelector('.presentation-play')?.focus({preventScroll:true});
         return;
       }
       switch(b.dataset.action){
@@ -584,10 +592,11 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
           sequence=sections(session(),true).flatMap(([title,rows])=>rows.map(row=>({title,row})));
           if(!sequence.length)return;
           openLearnRows=new Set(Array.from(root.querySelectorAll?.('.learn-card[open]')||[],card=>card.dataset.learnRow));
+          workoutScroll=window.scrollY;
           view='present';slide=0;detailsOpen=false;break;
-        case 'exit-present':view='workout';break;
-        case 'prev-slide':moveSlide(slide-1);return;
-        case 'next-slide':moveSlide(slide+1);return;
+        case 'exit-present':exitPresentation();return;
+        case 'prev-slide':moveSlide(slide-1,'prev-slide');return;
+        case 'next-slide':moveSlide(slide+1,'next-slide');return;
         case 'copy':{
           if(session().locked)return;
           const text=copyText();
@@ -617,8 +626,7 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
         case 'close-print':closePrint();return;
       }
       render();
-      if(b.dataset.day!==undefined)root.querySelector?.('[data-day="'+day+'"]')?.focus();
-      if(b.dataset.action==='exit-present')root.querySelector?.('[data-action="present"]')?.focus();
+      if(b.dataset.day!==undefined)root.querySelector?.('[data-day="'+day+'"]')?.focus({preventScroll:true});
     });
     root.addEventListener('error',event=>{
       if(event.target.matches?.('.presentation-stage img'))event.target.hidden=true;
@@ -627,10 +635,11 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
       const card=event.target;
       if(!card.matches?.('.learn-card')||card.open)return;
       const player=card.querySelector('.presentation-player');
-      const frame=player.querySelector('iframe');
+      const frame=player?.querySelector('iframe');
       if(!frame)return;
       const demo=frame.dataset;
       player.innerHTML=presentMedia({url:demo.url,title:demo.title},true);
+      card.querySelector('.presentation-video-help')?.remove();
     },true);
     root.addEventListener('keydown',event=>{
       if(root.querySelector('.print-sheet')){
@@ -639,7 +648,7 @@ body:has(.ducc .presentation):not(:has(.ducc .print-sheet)){overflow:hidden}
       }
       if(view!=='present'||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
       if(event.key==='Escape'){
-        event.preventDefault();view='workout';render();root.querySelector('[data-action="present"]')?.focus();
+        event.preventDefault();exitPresentation();
       }else if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
         event.preventDefault();
         moveSlide(slide+(event.key==='ArrowRight'?1:-1));

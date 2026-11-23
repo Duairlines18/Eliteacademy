@@ -13,7 +13,7 @@ const sections=data.programme.sessions[0].itemSections;
 assert.equal(sections[0].videoLinks?.length,8,'Bootstrap must preserve all saved tissue links');
 assert.equal(sections[1].videoLinks?.length,4,'Links remain scoped to their original block');
 assert.ok(sections[0].videoLinks.every(x=>x.url.startsWith('https://www.youtube.com/shorts/')),'Resolve fresh URLs from the authorized library');
-const el=()=>({innerHTML:'',children:[],append(...x){this.children.push(...x)},replaceChildren(...x){this.children=x},addEventListener(k,f){this[k]=f}});
+const el=()=>({innerHTML:'',dataset:{},children:[],append(...x){this.children.push(...x)},replaceChildren(...x){this.children=x},addEventListener(k,f){this[k]=f}});
 const ctx={window:{DuHubDelivery:delivery},document:{createElement:el},URL};
 vm.runInNewContext(fs.readFileSync(new URL('./coach-command.js',import.meta.url),'utf8'),ctx);
 const host=el();ctx.window.DuCoachCommand.mount(host,data);const root=host.children[1];
