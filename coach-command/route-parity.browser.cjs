@@ -104,7 +104,7 @@ const {chromium,webkit}=require('playwright');
     const detail=cards.last(),firstCard=cards.first();
     assert.equal(await cards.evaluateAll(nodes=>nodes.every(el=>!el.open)),true);checks++;
     assert.equal(await detail.locator('.learn-guidance').isVisible(),false);checks++;
-    assert.doesNotMatch(await sections.innerText(),/Stop if pain increases/,'collapsed Workout keeps drill guidance inside the row');checks++;
+    assert.doesNotMatch((await sections.allInnerTexts()).join(' '),/Stop if pain increases/,'collapsed Workout keeps drill guidance inside the row');checks++;
     await detail.locator('summary').focus();
     await page.keyboard.press('Enter');
     assert.equal(await detail.evaluate(el=>el.open),true);checks++;
