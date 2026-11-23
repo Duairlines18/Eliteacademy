@@ -50,7 +50,7 @@ test('presenter shows one exercise and returns to the selected day',async()=>{
  assert.doesNotMatch(h.root.innerHTML,/Stop for pain\.|Session instructions/);
  assert.doesNotMatch(h.root.innerHTML,/Coach-approved readiness/);
  assert.match(h.root.innerHTML,/aria-current="true">Workout<.*data-action="present">Present Workout</);
- assert.match(h.root.innerHTML,/Support(?:ed Ankle Rock).*Use support if balance is limited/);
+ assert.match(h.root.innerHTML,/<div class="learn-guidance">.*Coach alternative.*Use support if balance is limited.*Supported Ankle Rock.*<\/details>/);
  assert.doesNotMatch(h.root.innerHTML,/data-action="learn"|<iframe/);
  assert.match(h.root.innerHTML,/<details class="learn-card" data-learn-row="0-0"><summary>.*Ankle Rock.*2 × 8 · Rest: 30 seconds.*Play Ankle Rock demonstration.*How to do it.*Keep your heel down.*Quiet feet/);
  assert.match(h.root.innerHTML,/Use the prescribed space first.*6 × 100 m at 75%.*Rest: 1 minute/);
@@ -89,7 +89,7 @@ test('long exercise guidance shows the existing first instruction and retains th
 test('copy, day print and week print match across Workout and Present Workout',async()=>{
  const h=setup({warmupCue:'Do not force the range. Avoid: Painful positions.'});
  await h.click('workout');
- assert.match(h.root.innerHTML,/For this session.*Do not force the range.*Watch for.*Painful positions/);
+ assert.match(h.root.innerHTML,/<div class="learn-guidance">.*For this session.*Do not force the range.*Avoid: Painful positions.*<\/details>/);
  async function exportWorkout(){
   await h.click('copy');await h.click('print');await h.click('print-now');
   const day=h.printed();
