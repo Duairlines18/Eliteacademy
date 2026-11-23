@@ -115,6 +115,25 @@ const {chromium,webkit}=require('playwright');
     if(evidence&&route==='staff')await page.locator('.ducc').screenshot({path:path.join(evidence,'exercise-details-'+width+'.png')});
     await playDemo.click();
     assert.match(await detail.locator('iframe').getAttribute('src'),/Dv6blgFNo28/);checks++;
+    if(route==='staff'){
+     await detail.frameLocator('iframe').getByRole('button',{name:'Full screen'}).waitFor();
+     await page.waitForLoadState('networkidle');
+     const state=await detail.evaluate(el=>({hash:location.hash,top:window.scrollY}));
+     await page.evaluate(()=>{
+      const originalNow=Date.now;
+      Date.now=()=>originalNow()+61_000;
+      window.dispatchEvent(new Event('focus'));
+      document.dispatchEvent(new Event('visibilitychange'));
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      Date.now=originalNow;
+     });
+     await page.waitForLoadState('networkidle');
+     assert.equal(await detail.locator('iframe').count(),1,'returning focus keeps the selected coach workout and playing demo');
+     assert.equal(new URL(page.url()).hash,state.hash);
+     const afterFocus=await page.evaluate(()=>window.scrollY);
+     assert.ok(Math.abs(afterFocus-state.top)<=2,`returning focus keeps the coach workout scroll (${state.top} → ${afterFocus})`);
+     checks+=3;
+    }
     await firstCard.locator('summary').click();
     assert.equal(await detail.evaluate(el=>el.open),true);checks++;
     await detail.locator('summary').click();

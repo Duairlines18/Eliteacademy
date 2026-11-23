@@ -6,11 +6,24 @@ function context(){const c={CHECKIN_UI:{eligible:()=>false,enabled:false},setInt
 test('pending dashboard refresh cannot replace a workout opened during the request',async()=>{const c=context();let resolve;c.authEdgePost=()=>new Promise(r=>resolve=r);vm.runInContext(presentation+extract('  async function loadAccountHubData(', '  async function loadHubData(')+extract('  async function refreshVisibleProgramme(', "  document.addEventListener('visibilitychange'")+';globalThis.run=refreshVisibleProgramme',c);const request=c.run();c.location.hash='#/hub/session/day-1';resolve({programme:{week:8},exercises:[]});await request;assert.equal(c.HUB_STATE.programme.week,7);});
 test('dashboard revalidation loads Week 8 and coalesces simultaneous focus events',async()=>{const c=context();let resolve,calls=0;c.authEdgePost=()=>{calls++;return new Promise(r=>resolve=r)};vm.runInContext(presentation+extract('  async function loadAccountHubData(', '  async function loadHubData(')+extract('  async function refreshVisibleProgramme(', "  document.addEventListener('visibilitychange'")+';globalThis.run=refreshVisibleProgramme',c);const first=c.run();await c.run();resolve({programme:{week:8},exercises:[]});await first;assert.equal(calls,1);assert.equal(c.HUB_STATE.programme.week,8);await c.run();assert.equal(calls,1);});
 test('failed refresh preserves current programme and does not interrupt feedback',async()=>{const c=context();let calls=0;c.authEdgePost=async()=>{calls++;throw Error('offline')};vm.runInContext(presentation+extract('  async function loadAccountHubData(', '  async function loadHubData(')+extract('  async function refreshVisibleProgramme(', "  document.addEventListener('visibilitychange'")+';globalThis.run=refreshVisibleProgramme',c);await c.run();assert.equal(c.HUB_STATE.programme.week,7);c.location.hash='#/hub/feedback';await c.run();assert.equal(calls,1);assert.equal(c.HUB_REVALIDATING,false);});
-test('eligible foreground checks retain the programme and coalesce focus/visibility refreshes',async()=>{
- const c=context();let resolve,renders=0;c.CHECKIN_UI={eligible:()=>true,enabled:true};c.root={querySelector:()=>null};c.isHubRoute=()=>true;
- c.HUB_LAST_LOADED_AT=Date.now();c.render=()=>{renders++;assert.equal(c.HUB_STATE.programme.week,7);return new Promise(r=>resolve=r)};
+test('eligible foreground checks coalesce without replacing the open workout',async()=>{
+ const c=context();let resolve,guards=0,renders=0;
+ c.location.hash='#/hub/session/day-1';
+ c.CHECKIN_UI={eligible:()=>true,enabled:true,guard:route=>{
+  guards++;assert.equal(route,'/session/day-1');
+  return new Promise(r=>resolve=r);
+ }};
+ c.isHubRoute=()=>true;
+ c.render=()=>{renders++;};
  vm.runInContext(presentation+extract('  async function refreshVisibleProgramme(',"  document.addEventListener('visibilitychange'")+';globalThis.run=refreshVisibleProgramme',c);
- const first=c.run();assert.equal(c.HUB_STATE.programme.week,7);await c.run();assert.equal(renders,1);resolve();await first;assert.equal(c.HUB_REVALIDATING,false);
+ const pending=c.run();
+ await c.run();
+ assert.equal(guards,1);
+ resolve(false);
+ await pending;
+ assert.equal(renders,0);
+ assert.equal(c.HUB_STATE.programme.week,7);
+ assert.equal(c.HUB_REVALIDATING,false);
 });
 
 test('school coach focus keeps the open slide and resumes refresh after Exit',async()=>{

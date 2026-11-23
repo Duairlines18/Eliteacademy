@@ -2,6 +2,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
+const {execFileSync}=require('node:child_process');
 // The owner authorized My Journey navigation only. Exact removal is separately
 // verified by my-journey/story.test.cjs against the branch starting commit.
 const currentHtml=fs.readFileSync('index.html','utf8');
@@ -51,7 +52,32 @@ const withoutHubVisits=source=>source
  .replace('async function authEdgePost(functionName,body,expectedVisitSession)','async function authEdgePost(functionName,body)')
  .replace(/    if \(expectedVisitSession && expectedVisitSession !== sessionStamp\(\)\) return;\r?\n/,'')
  .replace(/    if \(renderStamp === sessionStamp\(\)\) observeHubVisit\?\.\(\);\r?\n/,'');
-const html=restoreTitles(withoutPrivateSetup(withoutDashboardRefresh(withoutMandatoryCheckins(withoutHubVisits(currentHtml))))).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
+// Workout navigation and compact rows are verified in the Hub browser suites.
+const preWorkoutNavigation=execFileSync('git',['show','c354d75:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
+function withoutWorkoutNavigation(source){
+ const scopes=[
+  /  let HUB_REVALIDATING=false;[\s\S]*?(?=  const CHECKIN_UI=)/,
+  /  function accountWarmupReference\([\s\S]*?(?=  function hubPhases\()/,
+  /  function openAthleteWorkoutDemos\([\s\S]*?(?=  function schoolAthleteDelivery\()/,
+  /  function schoolAthleteDelivery\([\s\S]*?(?=  function renderWorkoutExperience\()/,
+  /  function closeHubVideo\([\s\S]*?(?=  function pageHead\()/,
+  /  function handleRoutineCardAction\([\s\S]*?(?=  function routineTrainingReturn\()/,
+  /  async function renderHistoryWeek\([\s\S]*?(?=    \/\/ Performance Journey reads its own authorized endpoint)/,
+  /    \/\/ School coach Technique Review:[\s\S]*?(?=  document.addEventListener\('keydown',function\(event\)\{const modal)/,
+  /    const completionButton=[^\n]+\n/,
+  /  root.addEventListener\('click',event=>\{\r?\n    const button=event.target.closest\('\[data-athlete-inline-play\]'\);[\s\S]*?(?=  document.addEventListener\('submit')/,
+  /  \/\/ Refresh published assignments when returning to the dashboard, never during a workout\.[\s\S]*?(?=\n}\)\(\);)/,
+ ];
+ for(const scope of scopes){
+  const previous=preWorkoutNavigation.match(scope);
+  assert.ok(previous&&scope.test(source),String(scope));
+  source=source.replace(scope,()=>previous[0]);
+ }
+ return source
+  .replace("      } else if (!isHub) {\n        window.scrollTo({top:0, behavior:'instant'});","      } else {\r\n        window.scrollTo({top:0, behavior:'instant'});")
+  .replace('coach-command.js?v=20261122-workout-navigation','coach-command.js?v=20261122-weekly-standard');
+}
+const html=restoreTitles(withoutPrivateSetup(withoutDashboardRefresh(withoutMandatoryCheckins(withoutHubVisits(withoutWorkoutNavigation(currentHtml)))))).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
 // These checks catch the duplicated homepage fragments and their stale controllers.
 for(const id of ['sports','performance-hub','credentials','premium-story-grid']){
   assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,`${id} must identify one section`);
@@ -65,7 +91,6 @@ for(const match of currentHtml.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g
 console.log('Homepage structure and inline JavaScript syntax passed.');
 // Treat the last production main as an immutable integration baseline. This
 // catches accidental changes to registration, payments, routing and Hub code.
-const {execFileSync}=require('node:child_process');
 let baseline=execFileSync('git',['show','86794de:index.html'],{encoding:'utf8',maxBuffer:10*1024*1024});
 // Approved social-preview correction; exact metadata is checked before normalization.
 const oldShareMetadata="<meta content=\"Developing faster, more explosive and more confident athletes through specialist coaching, structured programming and performance development \u2014 in person and remotely.\" name=\"description\"/><meta content=\"website\" property=\"og:type\"/><meta content=\"Du Airlines\" property=\"og:site_name\"/><meta content=\"Fever United | Soccer Performance Registration\" property=\"og:title\"/><meta content=\"Register for Du Airlines \u00d7 Fever United soccer performance sessions. Every Friday, 5:45\u20136:45 PM in Southlake, TX.\" property=\"og:description\"/><meta content=\"https://duairlineseliteacademy.com/#/club-registration\" property=\"og:url\"/><meta content=\"summary\" name=\"twitter:card\"/><meta content=\"Fever United | Soccer Performance Registration\" name=\"twitter:title\"/><meta content=\"Register for Du Airlines \u00d7 Fever United soccer performance sessions. Every Friday, 5:45\u20136:45 PM in Southlake, TX.\" name=\"twitter:description\"/>";

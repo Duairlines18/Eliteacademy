@@ -3275,7 +3275,7 @@ He is patient, supportive and brings an energy that makes athletics enjoyable. H
         const topbar = homeView.querySelector('.topbar');
         const offset = topbar ? topbar.offsetHeight + 16 : 72;
         window.scrollTo({top:pathways.getBoundingClientRect().top + window.scrollY - offset, behavior:'instant'});
-      } else {
+      } else if (!isHub) {
         window.scrollTo({top:0, behavior:'instant'});
       }
       document.body.classList.remove('route-transitioning');
@@ -4277,7 +4277,7 @@ document.addEventListener('click',function(e){
 #hub-root .hub-private-view-options{background:var(--ink)}
 /* SCHOOL_THEME_END */
 </style>
-<script src="/coach-command/coach-command.js?v=20261122-weekly-standard"></script>
+<script src="/coach-command/coach-command.js?v=20261122-workout-navigation"></script>
 <link rel="stylesheet" href="/hub-delivery/school.css">
 <script src="/hub-delivery/school-attendance.js?v=20261104-compact"></script>
 <script id="performance-hub-app">
@@ -4365,8 +4365,27 @@ document.addEventListener('click',function(e){
   let HUB_REQUEST_EPOCH=0;
   let HUB_LAST_LOADED_AT=0;
   let HUB_REVALIDATING=false;
+  let hubRenderedRoute='',hubScrollIdentity='';
+  const initialScrollRestoration=history.scrollRestoration;
+  const hubScrollPositions=new Map();
+  const hubWorkoutDisclosures=new Map();
+  const workoutDetails=()=>Array.from(root.querySelectorAll('.hub-field-session details,.hub-history-session details,details.hub-parent-session-notes'));
+  const openDisclosures=()=>workoutDetails().map(details=>({
+    label:details.firstElementChild?.textContent,open:details.open
+  }));
+  function restoreDisclosures(state){
+    workoutDetails().forEach((details,index)=>{
+      const previous=state?.[index];
+      if(previous&&details.firstElementChild?.textContent===previous.label)details.open=previous.open;
+    });
+  }
+  window.addEventListener('scroll',()=>{
+    if(!root.hidden&&location.hash===hubRenderedRoute&&hubScrollIdentity===sessionStamp()){
+      hubScrollPositions.set(hubRenderedRoute,window.scrollY);
+    }
+  },{passive:true});
   function sessionStamp(){return HUB_REQUEST_EPOCH+'|'+JSON.stringify(session());}
-  function resetHubState(){HUB_REQUEST_EPOCH++;WORKOUT_COMPLETIONS=new Map();Object.keys(GUIDED_CURSOR).forEach(key=>delete GUIDED_CURSOR[key]);WORKOUT_MODE='quick';ATHLETE_WORKOUT_VIEW={id:null,mode:'quick'};HUB_STATE={programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};}
+  function resetHubState(){HUB_REQUEST_EPOCH++;hubScrollPositions.clear();hubWorkoutDisclosures.clear();hubRenderedRoute='';WORKOUT_COMPLETIONS=new Map();Object.keys(GUIDED_CURSOR).forEach(key=>delete GUIDED_CURSOR[key]);WORKOUT_MODE='quick';ATHLETE_WORKOUT_VIEW={id:null,mode:'quick'};HUB_STATE={programme:null,cohort:null,contentStatus:null,viewer:null,athlete:null,pathway:null,audience:null,historyWeeks:[],upcomingWeeks:[],programmeSchedule:[]};}
   const CHECKIN_UI=DuWeeklyCheckins.create({root,getSession:session,getIdentity:sessionStamp,post:body=>authEdgePost(HUB_CONFIG.accountFunctions[session()?.audience],body),clearTraining:()=>{HUB_STATE.programme=null;WORKOUT_COMPLETIONS=new Map();},onReady:()=>scheduleHubRender(),onLogout:()=>logout()});
   const observeHubVisit = window.DuHubVisits?.create({
     entry() {
@@ -4613,17 +4632,29 @@ document.addEventListener('click',function(e){
   function schoolWarmupReference(section,sessionData){const sourceSections=Array.isArray(sessionData?.itemSections)?sessionData.itemSections:[],sourceIndex=sourceSections.findIndex(block=>normalizedTitle(block?.title)===normalizedTitle(section?.title)),sourceSection=sourceIndex>=0?sourceSections[sourceIndex]:null,links=sourceSection?sectionPlaylistLinks(sessionData,sourceSection,sourceIndex):[],rawItems=Array.isArray(sourceSection?.items)&&sourceSection.items.length?sourceSection.items:(Array.isArray(section?.items)?section.items.map(item=>[item.title,item.dosage].filter(Boolean).join(' — ')):[]);const prescription='<div class="hub-school-prescription-card hub-school-warmup-prescription"><div class="hub-school-prescription-head"><span>Warm-Up Prescription</span><h3>'+escapeHtml(schoolWarmupTitle(section?.title))+'</h3></div><div class="hub-school-warmup-grid">'+rawItems.map((item,index)=>'<div class="hub-school-warmup-step"><span class="hub-school-warmup-step-num">'+(index+1)+'</span><div class="hub-school-warmup-step-text">'+escapeHtml(item)+'</div></div>').join('')+'</div></div>';const guidance=links.length?'<div class="hub-school-demo-wrap"><div class="hub-school-demo-head"><div><span>Need a visual?</span><p>The full warm-up playlist covers the complete sequence above.</p></div></div><div class="hub-media-actions">'+links.map(link=>'<a class="hub-button secondary hub-guided-demo" href="'+escapeHtml(link.url)+'" target="_blank" rel="noopener noreferrer">Watch Full Warm-Up</a>').join('')+'</div></div>':'';return '<section class="hub-quick-section hub-school-warmup-section">'+prescription+guidance+'</section>'; }
     function schoolPrescriptionSection(section){const items=Array.isArray(section?.items)?section.items:[];const demos=items.filter(item=>schoolReferenceDemoEligible(item,section.title));const prescription='<div class="hub-school-prescription-card"><div class="hub-school-prescription-head"><span>Exercise Prescription</span><h3>'+escapeHtml(section.title)+'</h3></div><div class="hub-school-prescription-list">'+items.map(item=>{const dosage=item.dosage||'',rest=item.rest||'';return '<div class="hub-school-prescription-row"><div class="hub-school-prescription-name">'+escapeHtml(item.title)+'</div><div class="hub-school-dosage">'+escapeHtml(dosage||'Follow coach instruction')+(rest?'<small>Rest: '+escapeHtml(rest.replace(/^Rest\s*/i,''))+'</small>':'')+'</div></div>';}).join('')+'</div></div>';const demoSection=demos.length?'<div class="hub-school-demo-wrap"><div class="hub-school-demo-head"><div><span>Exercise guide</span></div></div><div class="hub-school-demo-list">'+demos.map(item=>{const dosage=item.dosage||'Follow coach instruction',rest=item.rest||'';return '<article class="hub-school-demo-item"><div><strong>'+escapeHtml(item.title)+'</strong><div class="hub-school-demo-dosage">'+escapeHtml(dosage)+(rest?'<small>Rest: '+escapeHtml(rest.replace(/^Rest\s*/i,''))+'</small>':'')+'</div>'+workoutCoaching(item)+'</div><div class="hub-quick-actions"><a class="hub-button secondary hub-guided-demo" href="'+escapeHtml(item.videoUrl)+'" target="_blank" rel="noopener noreferrer">Watch Demo</a></div></article>';}).join('')+'</div></div>':'';return '<section class="hub-quick-section hub-school-prescription-section">'+prescription+demoSection+'</section>';}
   function schoolReferenceView(sections,sessionData){const visible=schoolReferenceSections(sections);return '<div class="hub-quick-view hub-school-reference-view">'+visible.map(section=>isSchoolWarmupSection(section)?schoolWarmupReference(section,sessionData):schoolPrescriptionSection(section)).join('')+'</div>';}
-  function accountWarmupReference(section,sessionData,sessionId,readOnly){const sourceSections=Array.isArray(sessionData?.itemSections)?sessionData.itemSections:[],sourceIndex=sourceSections.findIndex(block=>normalizedTitle(block?.title)===normalizedTitle(section?.title)),sourceSection=sourceIndex>=0?sourceSections[sourceIndex]:null,links=sectionPlaylistLinks(sessionData,sourceSection||{title:section?.title},Math.max(0,sourceIndex)),items=Array.isArray(section?.items)?section.items:[];const prescription='<div class="hub-school-prescription-card hub-school-warmup-prescription hub-account-warmup-prescription"><div class="hub-school-prescription-head"><span>Warm-Up Prescription</span><h3>'+escapeHtml(schoolWarmupTitle(section?.title))+'</h3></div><div class="hub-school-warmup-grid">'+items.map((item,index)=>{const done=isWorkoutComplete(sessionId,item.key),text=[item.title,item.dosage].filter(Boolean).join(' — '),demo=DuHubDelivery.safeVideo(item.videoUrl,item.videoId);return '<div class="hub-school-warmup-step hub-account-warmup-step'+(done?' completed':'')+'"><span class="hub-school-warmup-step-num">'+(index+1)+'</span><div class="hub-school-warmup-step-text">'+escapeHtml(text)+workoutCoaching(item)+(demo?'<a class="hub-athlete-demo" href="'+escapeHtml(demo)+'" target="_blank" rel="noopener noreferrer">▶ Watch demo</a>':'')+'</div>'+(!readOnly?'<button type="button" class="hub-quick-toggle hub-account-warmup-complete" data-completion-toggle data-session-key="'+escapeHtml(sessionId)+'" data-item-key="'+escapeHtml(item.key)+'" data-completed="'+(done?'true':'false')+'" aria-label="'+(done?'Undo warm-up step':'Complete warm-up step')+'">'+(done?'✓':'○')+'</button>':'')+'</div>';}).join('')+'</div></div>';const guidance=links.length?'<div class="hub-school-demo-wrap hub-account-demo-wrap"><div class="hub-school-demo-head"><div><span>Full warm-up video</span></div></div><div class="hub-media-actions"><a class="hub-button secondary hub-guided-demo hub-quick-demo-link" href="'+escapeHtml(links[0].url)+'" target="_blank" rel="noopener noreferrer">Watch Full Warm-Up</a></div></div>':'';return '<section class="hub-quick-section hub-school-warmup-section hub-account-warmup-section">'+prescription+guidance+'</section>'; }
+  function accountWarmupReference(section,sessionData,sessionId,readOnly){
+    const sourceSections=Array.isArray(sessionData?.itemSections)?sessionData.itemSections:[];
+    const index=sourceSections.findIndex(block=>normalizedTitle(block?.title)===normalizedTitle(section.title));
+    const [playlist]=sectionPlaylistLinks(sessionData,sourceSections[index]||{title:section.title},Math.max(0,index));
+    const link=playlist?'<div class="hub-media-actions"><a class="hub-button secondary" href="'+escapeHtml(playlist.url)+'" target="_blank" rel="noopener noreferrer">Watch Full Warm-Up</a></div>':'';
+    return compactWorkoutSection(section, sessionId, readOnly, schoolWarmupTitle(section.title), link);
+  }
   function guidedCard(item,sectionTitle,index,total,sessionId){const completed=isWorkoutComplete(sessionId,item.key),meta=(item.dosage?'<span>'+escapeHtml(item.dosage)+'</span>':'')+(item.rest?'<span><strong>Rest:</strong> '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</span>':''),coaching=DuHubDelivery.coachingRows(item),teaching=coaching.length?'<div class="hub-guided-teach-grid">'+coaching.map(([label,value])=>'<div class="hub-guided-teach'+(label==='Watch for'?' avoid':'')+'"><strong>'+escapeHtml(label)+'</strong><p>'+escapeHtml(value)+'</p></div>').join('')+'</div>':'',video=item.videoUrl?'<a class="hub-button secondary hub-guided-demo" href="'+escapeHtml(item.videoUrl)+'" target="_blank" rel="noopener noreferrer">Watch Demo</a>':'';return '<article class="hub-guided-card'+(completed?' completed':'')+'"><div class="hub-guided-card-top"><div><span class="hub-guided-section">'+escapeHtml(sectionTitle)+'</span><span class="hub-guided-step">'+(index+1)+' of '+total+'</span></div><span class="hub-guided-status">'+(completed?'Completed ✓':'In progress')+'</span></div><h3>'+escapeHtml(item.title)+'</h3>'+(meta?'<div class="hub-guided-meta">'+meta+'</div>':'')+(typeof DuHubDelivery!=='undefined'&&DuHubDelivery.explainDose?.(item.dosage)?'<p class="hub-dose-help">'+escapeHtml(DuHubDelivery.explainDose(item.dosage))+'</p>':'')+(typeof DuHubDelivery!=='undefined'&&DuHubDelivery.trainingHelp?.([item.title,item.dosage,item.cue].join(' ')).length?'<p class="hub-term-help">'+DuHubDelivery.trainingHelp([item.title,item.dosage,item.cue].join(' ')).map(escapeHtml).join(' ')+'</p>':'')+teaching+video+'<div class="hub-guided-actions"><button class="hub-button secondary" type="button" data-guided-prev '+(index>0?'':'disabled')+'>Previous</button>'+(session()?.role==='staff'?'':'<button class="hub-button" type="button" data-completion-toggle data-session-key="'+escapeHtml(sessionId)+'" data-item-key="'+escapeHtml(item.key)+'" data-completed="'+(completed?'true':'false')+'">'+(completed?'Undo Complete':'Mark Complete')+'</button>')+'<button class="hub-button secondary" type="button" data-guided-next '+(index<total-1?'':'disabled')+'>Next</button></div></article>';}
-  function quickView(sessionId,sections,readOnly,rail,sessionData){if(rail)return '<div class="hub-quick-view">'+sections.map(section=>'<section class="hub-quick-section"><div class="hub-quick-section-head"><h3>'+escapeHtml(section.title)+'</h3></div><div class="hub-quick-items">'+section.items.map(item=>{const done=isWorkoutComplete(sessionId,item.key),meta=(item.dosage?escapeHtml(item.dosage):'')+(item.rest?' · Rest: '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,'')):'');return '<div class="hub-quick-item'+(done?' completed':'')+'"><div class="hub-quick-item-main"><span class="hub-quick-check">'+(done?'✓':'○')+'</span><div><strong>'+escapeHtml(item.title)+'</strong>'+(meta?'<span>'+meta+'</span>':'')+'</div></div><div class="hub-quick-actions"><button type="button" class="hub-quick-open" data-quick-open="'+escapeHtml(item.key)+'">View</button></div></div>';}).join('')+'</div></section>').join('')+'</div>';return '<div class="hub-quick-view hub-account-reference-view">'+sections.map(section=>{if(isSchoolWarmupSection(section))return accountWarmupReference(section,sessionData,sessionId,readOnly);const items=Array.isArray(section.items)?section.items:[],demos=items.filter(item=>item.type==='exercise'&&(item.videoUrl||DuHubDelivery.coachingRows(item).length)),prescription='<div class="hub-school-prescription-card hub-account-prescription-card"><div class="hub-school-prescription-head"><span>Prescription</span><h3>'+escapeHtml(section.title)+'</h3></div><div class="hub-school-prescription-list">'+items.map(item=>{const done=isWorkoutComplete(sessionId,item.key),dosage=item.dosage||'',rest=item.rest||'';return '<div class="hub-school-prescription-row'+(done?' completed':'')+'"><div class="hub-school-prescription-name">'+escapeHtml(item.title)+'</div><div class="hub-account-prescription-actions"><div class="hub-school-dosage">'+escapeHtml(dosage||'Follow programme instruction')+(rest?'<small><strong>Rest:</strong> '+escapeHtml(rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</small>':'')+'</div>'+(!readOnly?'<button type="button" class="hub-quick-toggle" data-completion-toggle data-session-key="'+escapeHtml(sessionId)+'" data-item-key="'+escapeHtml(item.key)+'" data-completed="'+(done?'true':'false')+'">'+(done?'Undo':'Complete')+'</button>':'')+'</div></div>';}).join('')+'</div></div>',guidance=demos.length?'<div class="hub-school-demo-wrap hub-account-demo-wrap"><div class="hub-school-demo-head"><div><span>Exercise guide</span></div></div><div class="hub-school-demo-list">'+demos.map(item=>{const dosage=item.dosage||'Follow programme instruction',rest=item.rest||'';return '<article class="hub-school-demo-item hub-account-demo-item"><div><strong>'+escapeHtml(item.title)+'</strong><div class="hub-school-demo-dosage">'+escapeHtml(dosage)+(rest?'<small><strong>Rest:</strong> '+escapeHtml(rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</small>':'')+'</div>'+workoutCoaching(item)+'</div>'+(item.videoUrl?'<div class="hub-quick-actions"><a class="hub-button secondary hub-guided-demo hub-quick-demo-link" href="'+escapeHtml(item.videoUrl)+'" target="_blank" rel="noopener noreferrer">Watch Demo</a></div>':'')+'</article>';}).join('')+'</div></div>':'';return '<section class="hub-quick-section">'+prescription+guidance+'</section>';}).join('')+'</div>';}
+  function quickView(sessionId,sections,readOnly,rail,sessionData){if(rail)return '<div class="hub-quick-view">'+sections.map(section=>'<section class="hub-quick-section"><div class="hub-quick-section-head"><h3>'+escapeHtml(section.title)+'</h3></div><div class="hub-quick-items">'+section.items.map(item=>{const done=isWorkoutComplete(sessionId,item.key),meta=(item.dosage?escapeHtml(item.dosage):'')+(item.rest?' · Rest: '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,'')):'');return '<div class="hub-quick-item'+(done?' completed':'')+'"><div class="hub-quick-item-main"><span class="hub-quick-check">'+(done?'✓':'○')+'</span><div><strong>'+escapeHtml(item.title)+'</strong>'+(meta?'<span>'+meta+'</span>':'')+'</div></div><div class="hub-quick-actions"><button type="button" class="hub-quick-open" data-quick-open="'+escapeHtml(item.key)+'">View</button></div></div>';}).join('')+'</div></section>').join('')+'</div>';
+    return '<div class="hub-quick-view hub-account-reference-view">'+sections.map(section=>isSchoolWarmupSection(section)
+      ?accountWarmupReference(section,sessionData,sessionId,readOnly)
+      :compactWorkoutSection(section,sessionId,readOnly)).join('')+'</div>';
+  }
+  function compactWorkoutSection(section,sessionId,readOnly,title=section.title,footer=''){
+    const rows=(section.items||[]).map(item=>'<div class="hub-athlete-movement">'+compactAthleteMovement(item,'',
+      readOnly?'':compactCompletionButton(sessionId,item))+'</div>').join('');
+    return '<section class="hub-athlete-phase"><div class="hub-athlete-phase-heading"><h3>'+escapeHtml(title)+'</h3></div><div class="hub-athlete-phase-list">'+rows+'</div>'+footer+'</section>';
+  }
   // School staff only: read-only, all-group delivery sheet using the published session.
   // No new prescription model, group selector, or completion state is introduced.
-  function hubPhaseRows(items){return items.map(item=>{
-    const dose=[item.dosage,item.rest?'Rest '+String(item.rest).replace(/^Rest\s*[:—-]?\s*/i,''):''].filter(Boolean).join(' · ');
-    const hasHelp=!!(item.videoUrl||item.videoId||item.description||item.cue||item.avoid||item.purpose);
-    const detail=hasHelp?'<details class="hub-field-tech"><summary>Technique</summary>'+workoutCoaching(item)+((item.videoUrl||item.videoId)?'<a href="'+escapeHtml(item.videoUrl||('https://www.youtube.com/shorts/'+encodeURIComponent(item.videoId)))+'" target="_blank" rel="noopener noreferrer">Watch demonstration ↗</a>':'')+'</details>':'';
-    return '<div class="hub-field-movement"><div class="hub-field-movement-main"><span>'+escapeHtml(item.title)+'</span><strong>'+escapeHtml(dose||'Dose not specified')+'</strong></div>'+detail+'</div>';
-  }).join('');}
+  function hubPhaseRows(items){
+    return items.map(item=>'<div class="hub-field-movement">'+compactAthleteMovement(item)+'</div>').join('');
+  }
   function hubPhases(sections,group,scope){
     return sections.map(section=>{
       const items=(section.items||[]).filter(item=>scope==='shared'?!item.group:scope==='cohort'?String(item.group||'').toLowerCase()===String(group).toLowerCase():!group||!item.group||String(item.group).toLowerCase()===String(group).toLowerCase());
@@ -4669,7 +4700,7 @@ document.addEventListener('click',function(e){
           const item=row.items.find(i=>norm(i.group)===norm(group));
           return '<div class="hub-unified-dose-cell"><small>'+escapeHtml(group)+'</small><strong>'+escapeHtml(item?(item.dosage||item.dose||'See prescription'):'—')+'</strong></div>';
         }).join('');
-        const demo=hubPhaseRows([row.items[0]]);
+        const demo=compactAthleteMovement(row.items[0],'','',true);
         return '<div class="hub-unified-movement"><div class="hub-unified-movement-name">'+escapeHtml(row.title)+'</div><div class="hub-unified-doses">'+doses+'</div><div class="hub-unified-help">'+demo+'</div></div>';
       }).join('')+'</div>':'';
       if(!sharedHtml&&!cohortHtml)return '';
@@ -4708,13 +4739,12 @@ document.addEventListener('click',function(e){
 
   function openAthleteWorkoutDemos(trigger){
     if(session()?.role!=='athlete')return;
-    const parent=HUB_STATE.audience==='parent';
-    const routine=parent?routineCardSelection():null;
+    const parentDay=HUB_STATE.audience==='parent';
+    const routine=parentDay?routineCardSelection():null;
     const day=routine?.day||programme()?.sessions?.find(item=>item.id===currentWorkoutSessionId());
     if(!day)return;
     const standalone=assignedRoutines().includes(day);
-    const parentDay=parent&&(routine?isWarmUpCard(routine.card):!standalone||isWarmUpSession(day));
-    if(!parentDay&&HUB_STATE.audience!=='private-athlete'&&!isSchoolReferenceViewer())return;
+    if(!parentDay&&!privateSelfServeViewer()&&!isSchoolReferenceViewer())return;
     const workout=normalizeWorkoutSession(day,EXERCISES,{...programme(),separateWarmups:true});
     if(!routine&&requiresGroupSelection(workout))return;
     const visible=visibleNormalizedSections(workout);
@@ -4774,7 +4804,7 @@ document.addEventListener('click',function(e){
         button.disabled=true;
         button.textContent='Saving…';
         saveWorkoutCompletion(entry.item.sessionKey,entry.item.key,next).then(row=>{
-          if(!row||location.hash!==route)return;
+          if(!row||!HUB_STATE.programme||location.hash!==route)return;
           changed=true;
           if(dialog.open){
             if(next&&index<items.length-1)index++;
@@ -4811,7 +4841,7 @@ document.addEventListener('click',function(e){
         link.rel='noopener noreferrer';
         link.textContent='Open on YouTube';
         stage.after(link);
-        frame.focus();
+        frame.focus({preventScroll:true});
         return;
       }
       if(!button.hasAttribute('data-presentation-step'))return;
@@ -4828,14 +4858,12 @@ document.addEventListener('click',function(e){
       dialog.remove();
       if(location.hash!==route)return;
       if(changed&&trigger.isConnected){
-        if(routine)renderRoutineCard();
-        else renderSession(day.id);
-        root.querySelector('.hub-parent-day [data-private-present]')?.focus({preventScroll:true});
+        rerenderWorkout(routine?renderRoutineCard:()=>renderSession(day.id),'[data-private-present]');
       }else if(trigger.isConnected)trigger.focus({preventScroll:true});
     },{once:true});
     dialog.addEventListener('error',event=>{if(event.target.tagName==='IMG')event.target.hidden=true;},true);
     render();
-    trigger.closest('.hub-private-workout,.hub-parent-day').append(dialog);
+    trigger.closest('.hub-field-session').append(dialog);
     dialog.showModal();
   }
 
@@ -4867,10 +4895,15 @@ document.addEventListener('click',function(e){
     return '<div class="hub-field-delivery hub-athlete-one-sheet"><div class="hub-athlete-sheet-actions"><strong>Today’s workout</strong>'+ (copyWorkoutAllowed()?'<button type="button" data-athlete-copy>Copy workout</button><span data-athlete-copy-status role="status" aria-live="polite"></span>':'')+'</div>'+phases+(prescribed.some(section=>!isSchoolWarmupSection(section)&&(section.items||[]).some(item=>item.type==='exercise'&&!String(item.rest||'').trim()))?'<p class="hub-rest-help">Rest time not shown? Check with Coach Du. Do not rush to finish.</p>':'')+library+'</div>';
   }
 
-  function compactAthleteMovement(item,extras,completion=''){
+  function compactCompletionButton(sessionId,item){
+    const completed=isWorkoutComplete(sessionId,item.key);
+    return '<button type="button" class="hub-compact-complete" data-completion-toggle data-session-key="'+escapeHtml(sessionId)+'" data-item-key="'+escapeHtml(item.key)+'" data-completed="'+completed+'" aria-pressed="'+completed+'" aria-label="Complete '+escapeHtml(item.title)+'">✓</button>';
+  }
+
+  function compactAthleteMovement(item,extras='',completion='',techniqueOnly=false){
     const dose=item.dosage?'<strong>'+escapeHtml(item.dosage)+'</strong>':'';
     const rest=item.rest?'<small>Rest: '+escapeHtml(item.rest.replace(/^Rest\s*[:—-]?\s*/i,''))+'</small>':'';
-    const heading='<span class="hub-compact-movement-heading"><span>'+escapeHtml(item.title)+'</span>'+dose+rest+'</span>';
+    const heading='<span class="hub-compact-movement-heading">'+(techniqueOnly?'Technique':('<span>'+escapeHtml(item.title)+'</span>'+dose+rest))+'</span>';
     const rows=DuHubDelivery.coachingRows(item);
     const restriction=/\b(?:stop|pain|injur\w*|safety|unsafe|never|only if|hours between|do not|don['’]t|should not|must not|no running|no sprint(?:ing)?|before progressing)\b/i;
     const visible=completion?[]:rows.filter(([label,value])=>label==='Coach alternative'||restriction.test(value)||/confirm the movement sequence/i.test(value));
@@ -4885,6 +4918,7 @@ document.addEventListener('click',function(e){
         '<template><iframe title="'+escapeHtml(clip.title)+' demonstration" src="'+escapeHtml(clip.embed)+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></template>'+
         '</div><a class="hub-compact-demo-fallback hub-athlete-demo" href="'+escapeHtml(clip.original)+'" target="_blank" rel="noopener noreferrer" data-hub-video-external>Open '+escapeHtml(clip.title)+' on YouTube ↗</a></div>';
     }).join('');
+    if(techniqueOnly&&!videos&&!rows.length)return '';
     const disclosure=videos||coaching?'<details class="hub-compact-movement-details" data-athlete-inline-demo><summary>'+heading+
       '<span class="hub-private-sr-only">Technique'+(videos?' and demo':'')+' for '+escapeHtml(item.title)+'</span>'+
       '</summary><div class="hub-compact-movement-body">'+videos+coaching+'</div></details>':heading;
@@ -4896,12 +4930,9 @@ document.addEventListener('click',function(e){
     const isReference=section=>/Additional movement references/i.test(section.title);
     const card=section=>{
       const rows=section.items.map(item=>{
-        const key=escapeHtml(item.key),sessionKey=escapeHtml(sessionData.id);
-        const completed=isWorkoutComplete(sessionData.id,item.key);
         const effortHelp=DuHubDelivery.trainingHelp([item.title,item.dosage,item.cue].join(' '));
-        const complete='<button type="button" class="hub-compact-complete" data-completion-toggle data-session-key="'+sessionKey+'" data-item-key="'+key+'" data-completed="'+completed+'" aria-pressed="'+completed+'" aria-label="Complete '+escapeHtml(item.title)+'">✓</button>';
         return '<article class="hub-athlete-movement hub-parent-quick-row">'+compactAthleteMovement(item,
-          effortHelp.length?'<p class="hub-term-help">'+effortHelp.map(escapeHtml).join(' ')+'</p>':'',complete)+'</article>';
+          effortHelp.length?'<p class="hub-term-help">'+effortHelp.map(escapeHtml).join(' ')+'</p>':'',compactCompletionButton(sessionData.id,item))+'</article>';
       }).join('');
       let playlist='';
       if(isSchoolWarmupSection(section)){
@@ -5046,7 +5077,9 @@ document.addEventListener('click',function(e){
     document.body.style.overflow=HUB_VIDEO_BODY_OVERFLOW;
     const target=HUB_VIDEO_LAST_FOCUS;HUB_VIDEO_LAST_FOCUS=null;
     if(target&&target.isConnected&&typeof target.focus==='function')target.focus({preventScroll:true});
-    window.requestAnimationFrame(()=>window.scrollTo({top:HUB_VIDEO_SCROLL_Y,behavior:'instant'}));
+    if(location.hash===HUB_VIDEO_OPEN_HASH)window.requestAnimationFrame(()=>{
+      if(location.hash===HUB_VIDEO_OPEN_HASH)window.scrollTo({top:HUB_VIDEO_SCROLL_Y,behavior:'instant'});
+    });
     if(fromHistory){HUB_VIDEO_HISTORY_PUSHED=false;}
     else if(HUB_VIDEO_HISTORY_PUSHED&&history&&typeof history.back==='function'){
       // Keep the flag until popstate so the global router cannot rerender.
@@ -5393,7 +5426,8 @@ document.addEventListener('click',function(e){
       const index=items.findIndex(item=>item.sessionKey===button.dataset.sessionKey&&item.key===button.dataset.itemKey);
       if(index<0||session()?.role==='staff'||isSchoolReferenceViewer())return true;
       const item=items[index],next=button.dataset.completed!=='true';button.disabled=true;button.textContent=button.matches('.hub-compact-complete')?'…':'Saving…';
-      saveWorkoutCompletion(item.sessionKey,item.key,next).then(row=>{if(!row||location.hash!==route)return;if(next)GUIDED_CURSOR[route]=Math.min(items.length-1,index+1);renderRoutineCard();}).catch(()=>{if(location.hash===route&&button.isConnected){button.disabled=false;button.textContent=button.matches('.hub-compact-complete')?'↻':'Try again';}});
+      saveWorkoutCompletion(item.sessionKey,item.key,next).then(row=>{if(!row||!HUB_STATE.programme||location.hash!==route)return;if(next)GUIDED_CURSOR[route]=Math.min(items.length-1,index+1);
+        rerenderWorkout(renderRoutineCard,button);}).catch(()=>{if(location.hash===route&&button.isConnected){button.disabled=false;button.textContent=button.matches('.hub-compact-complete')?'↻':'Try again';}});
       return true;
     }
     renderRoutineCard();return true;
@@ -5539,9 +5573,23 @@ document.addEventListener('click',function(e){
 
   function renderAdmin(){const schoolRows=MOCK.schools.map(s=>'<div class="hub-school-row"><div><h3>'+escapeHtml(s.name)+'</h3><p>'+escapeHtml(s.programme)+' · Week '+s.week+'</p></div><a class="hub-link" href="#/hub/staff">View School →</a></div>').join('');const flags=MOCK.flags.map(x=>'<div class="hub-progress-row"><div><strong>'+escapeHtml(x.athlete)+'</strong><p>'+escapeHtml(x.note)+'</p></div><span class="hub-status flag">Flag</span></div>').join('');root.innerHTML=shell(pageHead('DU AIRLINES PERFORMANCE ADMIN','Programme Overview','What do I need to know today?','#/hub/staff')+'<div class="hub-summary-grid"><div class="hub-summary-card"><strong>3</strong><span>Active Schools</span></div><div class="hub-summary-card"><strong>30</strong><span>Active Athletes</span></div><div class="hub-summary-card"><strong>5</strong><span>Active Coaches</span></div></div>'+section('Active Programmes','One Hub, different school start dates.','<div class="hub-note-card">'+schoolRows+'</div>')+section('Needs Attention','Keep the admin view focused on coaching decisions.','<div class="hub-note-card">'+flags+'<div class="hub-progress-row"><div><strong>3 upcoming programme reviews</strong><p>Week 6 review window approaching</p></div><span class="hub-status">Upcoming</span></div><div class="hub-progress-row"><div><strong>1 coach review due</strong><p>Mock programme review</p></div><span class="hub-status">Upcoming</span></div></div>')+'<div class="hub-dashboard-actions"><a class="hub-action-card" href="#/hub/staff"><h3>View School</h3><p>Open the St. George’s staff experience.</p><span class="hub-action-arrow">Open →</span></a><a class="hub-action-card" href="#/hub/athletes"><h3>View Athlete</h3><p>Open the mock athlete roster.</p><span class="hub-action-arrow">Open →</span></a><a class="hub-action-card" href="#/hub/progress"><h3>View Reviews</h3><p>Open reviews and flags.</p><span class="hub-action-arrow">Open →</span></a></div>','admin');}
   function renderReadOnlyPrescriptionExperience(sessionData){const workout=normalizeWorkoutSession(sessionData,EXERCISES,programme());if(requiresGroupSelection(workout))return groupPicker()+'<div class="hub-empty-state"><strong>Choose your training group first.</strong><br>Your group controls the dosage shown in this workout.</div>';const sections=visibleNormalizedSections(workout);if(!sections.length)return groupPicker()+'<div class="hub-empty-state">This session is being prepared.</div>';if(isSchoolReferenceViewer())return groupPicker()+'<div class="hub-workout-experience school-reference">'+schoolReferenceView(sections,sessionData)+'</div>';return '<div class="hub-workout-experience quick">'+quickView(workout.id||('readonly-'+String(sessionData?.day||'session')),sections,true,false)+'</div>';}
-  async function renderHistoryWeek(weekNumber){root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">PREVIOUS WEEKS</p><h1 class="hub-login-heading">Loading Week '+escapeHtml(weekNumber)+'…</h1></section></div>';try{const data=await loadHistoryWeek(Number(weekNumber));mergeExercises(data.exercises);const p=data.programme||{};const sessions=Array.isArray(p.sessions)?p.sessions:[];const sessionHtml=sessions.map(s=>'<div class="hub-note-card hub-history-session"><div class="hub-section-head"><div><span class="hub-chip">'+escapeHtml(s.day||'Session')+'</span><h3 style="margin-top:.65rem">'+escapeHtml(s.title||'Training Session')+'</h3><p>'+escapeHtml(s.focus||s.objective||'')+'</p></div><span class="hub-session-meta">'+escapeHtml(s.duration||'')+'</span></div>'+renderReadOnlyPrescriptionExperience(s)+'</div>').join('');const body=pageHead('Previous Weeks','Week '+p.week+(p.phase?' — '+p.phase:''),'Read-only training history. Your current programme has not changed.','#/hub/athlete')+'<div class="hub-objective"><strong>Week Focus</strong><span>'+escapeHtml(p.weeklyObjective||'Published programme week')+'</span></div>'+sessionHtml;root.innerHTML=shell(body,'dashboard');}catch(err){root.innerHTML=shell(pageHead('Previous Weeks','Week unavailable',err.message||'That previous week is not available.','#/hub/athlete'),'dashboard');}}
-  async function renderPrivateProgrammeWeek(weekNumber,dayIndex){root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><h1>Loading Week '+escapeHtml(weekNumber)+'…</h1></section></div>';try{const data=await loadPrivateProgrammeWeek(Number(weekNumber));mergeExercises(data.exercises);const p=data.programme||{};const sessions=Array.isArray(p.sessions)?p.sessions:[];const base='#/hub/programme-week/'+encodeURIComponent(p.week);const preview=Number(p.week)>Number(programme()?.week||0);const subtitle=preview?'Preview only — follow this programme when Week '+p.week+' begins.':'Published programme week.';let body;if(dayIndex!==undefined){const i=Number(dayIndex);if(!Number.isInteger(i)||i<0||i>=sessions.length)throw Error('Training day not found');const workout=sessions[i];body=pageHead('Week '+p.week+' · Day '+(i+1),workout.title||'Training Session',subtitle,base)+'<div class="hub-athlete-session-nav"><a href="'+base+'">← All days</a><span>Week '+escapeHtml(p.week)+'</span></div><section class="hub-section hub-field-session">'+schoolAthleteDelivery(visibleNormalizedSections(normalizeWorkoutSession(workout,EXERCISES,programme())),workout)+'</section>';}else{const cards=sessions.map((w,i)=>'<a class="hub-preview-day" href="'+base+'/day/'+i+'"><span>DAY '+(i+1)+'</span><i class="hub-preview-day-icon" aria-hidden="true">'+trainingDayIcon(w.title,w.day)+'</i><strong>'+escapeHtml(w.title||w.day||'Training Session')+'</strong><small>'+escapeHtml(w.duration||'')+'</small><b>↗</b></a>').join('');body=pageHead('Programme Week','Week '+p.week+(p.phase?' — '+p.phase:''),subtitle,'#/hub/athlete')+'<div class="hub-objective"><strong>Week Focus</strong><span>'+escapeHtml(p.weeklyObjective||'Published programme week')+'</span></div><div class="hub-preview-grid">'+cards+'</div>';}root.innerHTML=shell(body+airZimTool(),'dashboard');}catch(err){root.innerHTML=shell(pageHead('Programme Week','Week unavailable',err.message||'That week is not available.','#/hub/athlete'),'dashboard');}}
+  async function renderHistoryWeek(weekNumber,isCurrent){root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">PREVIOUS WEEKS</p><h1 class="hub-login-heading">Loading Week '+escapeHtml(weekNumber)+'…</h1></section></div>';try{const data=await loadHistoryWeek(Number(weekNumber));if(!isCurrent())return;mergeExercises(data.exercises);const p=data.programme||{};const sessions=Array.isArray(p.sessions)?p.sessions:[];const sessionHtml=sessions.map(s=>'<div class="hub-note-card hub-history-session"><div class="hub-section-head"><div><span class="hub-chip">'+escapeHtml(s.day||'Session')+'</span><h3 style="margin-top:.65rem">'+escapeHtml(s.title||'Training Session')+'</h3><p>'+escapeHtml(s.focus||s.objective||'')+'</p></div><span class="hub-session-meta">'+escapeHtml(s.duration||'')+'</span></div>'+renderReadOnlyPrescriptionExperience(s)+'</div>').join('');const body=pageHead('Previous Weeks','Week '+p.week+(p.phase?' — '+p.phase:''),'Read-only training history. Your current programme has not changed.','#/hub/athlete')+'<div class="hub-objective"><strong>Week Focus</strong><span>'+escapeHtml(p.weeklyObjective||'Published programme week')+'</span></div>'+sessionHtml;root.innerHTML=shell(body,'dashboard');}catch(err){if(!isCurrent())return;root.innerHTML=shell(pageHead('Previous Weeks','Week unavailable',err.message||'That previous week is not available.','#/hub/athlete'),'dashboard');}}
+  async function renderPrivateProgrammeWeek(weekNumber,dayIndex,isCurrent){root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><h1>Loading Week '+escapeHtml(weekNumber)+'…</h1></section></div>';try{const data=await loadPrivateProgrammeWeek(Number(weekNumber));if(!isCurrent())return;mergeExercises(data.exercises);const p=data.programme||{};const sessions=Array.isArray(p.sessions)?p.sessions:[];const base='#/hub/programme-week/'+encodeURIComponent(p.week);const preview=Number(p.week)>Number(programme()?.week||0);const subtitle=preview?'Preview only — follow this programme when Week '+p.week+' begins.':'Published programme week.';let body;if(dayIndex!==undefined){const i=Number(dayIndex);if(!Number.isInteger(i)||i<0||i>=sessions.length)throw Error('Training day not found');const workout=sessions[i];body=pageHead('Week '+p.week+' · Day '+(i+1),workout.title||'Training Session',subtitle,base)+'<div class="hub-athlete-session-nav"><a href="'+base+'">← All days</a><span>Week '+escapeHtml(p.week)+'</span></div><section class="hub-section hub-field-session">'+schoolAthleteDelivery(visibleNormalizedSections(normalizeWorkoutSession(workout,EXERCISES,programme())),workout)+'</section>';}else{const cards=sessions.map((w,i)=>'<a class="hub-preview-day" href="'+base+'/day/'+i+'"><span>DAY '+(i+1)+'</span><i class="hub-preview-day-icon" aria-hidden="true">'+trainingDayIcon(w.title,w.day)+'</i><strong>'+escapeHtml(w.title||w.day||'Training Session')+'</strong><small>'+escapeHtml(w.duration||'')+'</small><b>↗</b></a>').join('');body=pageHead('Programme Week','Week '+p.week+(p.phase?' — '+p.phase:''),subtitle,'#/hub/athlete')+'<div class="hub-objective"><strong>Week Focus</strong><span>'+escapeHtml(p.weeklyObjective||'Published programme week')+'</span></div><div class="hub-preview-grid">'+cards+'</div>';}root.innerHTML=shell(body+airZimTool(),'dashboard');}catch(err){if(!isCurrent())return;root.innerHTML=shell(pageHead('Programme Week','Week unavailable',err.message||'That week is not available.','#/hub/athlete'),'dashboard');}}
   function renderNotFound(){root.innerHTML=shell(pageHead('Performance Hub','Page not found','Return to your dashboard.',session()?.role==='staff'?'#/hub/staff':'#/hub/athlete'),'');}
+
+  // Completion changes the toolbar and checkmarks. Keep the same disclosures
+  // and restore focus without having the browser scroll to the replacement button.
+  function rerenderWorkout(update,trigger){
+    const top=window.scrollY;
+    const disclosed=openDisclosures();
+    const controls=Array.from(root.querySelectorAll('[data-completion-toggle]'));
+    const focused=controls.indexOf(trigger);
+    update();
+    restoreDisclosures(disclosed);
+    const replacement=typeof trigger==='string'?root.querySelector(trigger):root.querySelectorAll('[data-completion-toggle]')[focused];
+    replacement?.focus({preventScroll:true});
+    window.scrollTo({top,behavior:'instant'});
+  }
 
   function workoutPresentationOpen(route){
     const coach=root.querySelector('#du-coach-command-root:has(.presentation)');
@@ -5550,8 +5598,23 @@ document.addEventListener('click',function(e){
   }
 
   async function render(){
-    if(!isHubRoute()){root.hidden=true;return;} publicViews.forEach(v=>v.hidden=true); root.hidden=false;
-    const route=location.hash.replace('#/hub','')||'/'; const s=session(),renderStamp=sessionStamp();
+    if(!isHubRoute()){
+      hubRenderedRoute='';root.hidden=true;
+      if(initialScrollRestoration)history.scrollRestoration=initialScrollRestoration;
+      return;
+    }
+    if(initialScrollRestoration)history.scrollRestoration='manual';
+    publicViews.forEach(v=>v.hidden=true); root.hidden=false;
+    const hash=location.hash,route=hash.replace('#/hub','')||'/';
+    const s=session(),renderStamp=sessionStamp();
+    const stillCurrent=()=>renderStamp===sessionStamp()&&hash===location.hash;
+    if(hubScrollIdentity!==renderStamp){
+      hubScrollIdentity=renderStamp;hubRenderedRoute='';hubScrollPositions.clear();hubWorkoutDisclosures.clear();
+    }
+    const finishNavigation=()=>{
+      hubRenderedRoute=hash;
+      window.scrollTo({top:hubScrollPositions.get(hash)||0,behavior:'instant'});
+    };
     if(route==='/login'){renderRoleSelect();window.scrollTo(0,0);return;}
     if(route==='/login/staff'){renderCodeLogin('staff');window.scrollTo(0,0);return;}
     if(route==='/login/athlete'){renderCodeLogin('athlete');window.scrollTo(0,0);return;}
@@ -5561,18 +5624,18 @@ document.addEventListener('click',function(e){
     if(route==='/reset-password'){renderPasswordReset();window.scrollTo(0,0);return;}
     if(!s){location.hash='#/hub/login';return;}
     if(route==='/setup'&&s.mode==='account'&&s.audience==='private-athlete'){
-      try{const profile=await accountProfile(s.audience);if(renderStamp!==sessionStamp())return;renderAccountOnboarding(s.audience,profile);}
-      catch(error){if(renderStamp!==sessionStamp())return;renderAccountAccess(s.audience,error.message||'Unable to load your setup. Please sign in again.');}
+      try{const profile=await accountProfile(s.audience);if(!stillCurrent())return;renderAccountOnboarding(s.audience,profile);}
+      catch(error){if(!stillCurrent())return;renderAccountAccess(s.audience,error.message||'Unable to load your setup. Please sign in again.');}
       return;
     }
     if(CHECKIN_UI.eligible()){
       if(['/checkin-safety','/checkin-issue'].includes(route)){await CHECKIN_UI.guard(route);return;}
       if(!HUB_STATE.programme){
-        try{const profile=await accountProfile(s.audience);if(renderStamp!==sessionStamp())return;if(accountNeedsOnboarding(s.audience,profile)){renderAccountOnboarding(s.audience,profile);return;}}
-        catch(error){if(renderStamp===sessionStamp())renderAccountAccess(s.audience,error.message||'Please sign in again.');return;}
+        try{const profile=await accountProfile(s.audience);if(!stillCurrent())return;if(accountNeedsOnboarding(s.audience,profile)){renderAccountOnboarding(s.audience,profile);return;}}
+        catch(error){if(stillCurrent())renderAccountAccess(s.audience,error.message||'Please sign in again.');return;}
       }
       if(await CHECKIN_UI.guard(route))return;
-      if(renderStamp!==sessionStamp()||(location.hash.replace('#/hub','')||'/')!==route)return;
+      if(!stillCurrent())return;
     }
     if(workoutPresentationOpen(location.hash))return;
     if(!HUB_STATE.programme){
@@ -5580,7 +5643,7 @@ document.addEventListener('click',function(e){
       try{
         if(s.mode==='account'){
           const profile=await accountProfile(s.audience);
-          if(renderStamp!==sessionStamp())return;
+          if(!stillCurrent())return;
           if(accountNeedsOnboarding(s.audience,profile)){renderAccountOnboarding(s.audience,profile);return;}
           await loadAccountHubData(s.audience);
         }else{
@@ -5588,19 +5651,21 @@ document.addEventListener('click',function(e){
           await loadHubData(s);
         }
       }catch(error){
-        if(renderStamp!==sessionStamp())return;
+        if(!stillCurrent())return;
         if(s.mode==='account'&&['PENDING_ACTIVATION','ACCESS_PAUSED','NO_ASSIGNMENT','PROGRAMME_PENDING'].includes(error?.code)){renderAccountStatus(s.audience,error);return;}
         if(!session()||error?.code==='SESSION_EXPIRED'||error?.status===401){setSession(null);location.hash='#/hub/login';return;}
         root.innerHTML='<div class="hub-shell hub-access"><section class="hub-access-card"><p class="hub-eyebrow">PERFORMANCE HUB</p><h1 class="hub-login-heading">Programme unavailable</h1><p class="hub-login-sub">'+escapeHtml(error.message||'The Performance Hub is temporarily unavailable.')+'</p><button class="hub-button hub-logout" type="button">Return to Login</button></section></div>';return;
       }
     }
-    if(renderStamp!==sessionStamp())return;
+    if(!stillCurrent())return;
     const active=session(); if(!active||!programme()){location.hash='#/hub/login';return;}
+    if(hubRenderedRoute&&hubRenderedRoute!==hash)hubWorkoutDisclosures.set(hubRenderedRoute,openDisclosures());
+    const canShowProgramme=()=>stillCurrent()&&Boolean(HUB_STATE.programme);
     if(HUB_STATE.staff?.accessProfile==='sports_director'&&!['/','/staff','/athlete','/routines','/library','/current-week'].includes(route)&&!route.startsWith('/session/')&&!route.startsWith('/library/')){renderDirectorOverview();return;}
     if(route==='/'||route==='/staff'||route==='/athlete'){active.role==='staff'?renderStaffDashboard():renderAthleteDashboard();}
     else if(route==='/current-week'&&active.role==='staff')renderCurrentWeek();
-    else if(route.startsWith('/history/'))await renderHistoryWeek(decodeURIComponent(route.split('/')[2]||''));
-    else if(route.startsWith('/programme-week/'))await renderPrivateProgrammeWeek(decodeURIComponent(route.split('/')[2]||''),route.split('/')[3]==='day'?route.split('/')[4]:undefined);
+    else if(route.startsWith('/history/'))await renderHistoryWeek(decodeURIComponent(route.split('/')[2]||''),canShowProgramme);
+    else if(route.startsWith('/programme-week/'))await renderPrivateProgrammeWeek(decodeURIComponent(route.split('/')[2]||''),route.split('/')[3]==='day'?route.split('/')[4]:undefined,canShowProgramme);
     else if(route.startsWith('/upcoming-week/'))renderUpcomingWeek(decodeURIComponent(route.split('/')[2]||''));
     else if(route==='/routines')renderRoutines();
     else if(route.startsWith('/routines/day/'))renderRoutineCard();
@@ -5616,7 +5681,9 @@ document.addEventListener('click',function(e){
     else if(route==='/library/air-zim')renderAssignedAirZim();
     else if(route.startsWith('/library/'))renderCategory(route.split('/')[2]);
     else renderNotFound();
-    if (renderStamp === sessionStamp()) observeHubVisit?.();
+    if(!stillCurrent())return;
+    restoreDisclosures(hubWorkoutDisclosures.get(hash));
+    observeHubVisit?.();
     // Performance Journey reads its own authorized endpoint; workout/video flows stay independent.
     if(HUB_STATE.audience!=='professional' && HUB_STATE.staff?.accessProfile!=='sports_director' && ['/', '/staff', '/athlete', '/journey'].includes(route)){
       const wrap=root.querySelector('.hub-main > .hub-wrap');
@@ -5680,7 +5747,7 @@ document.addEventListener('click',function(e){
       };
       runParent().catch(error=>{console.warn('Parent Technique Review unavailable',error);panel.remove();});
     }
-    window.scrollTo(0,0);
+    finishNavigation();
   }
 
   document.addEventListener('keydown',function(event){const modal=document.getElementById('hubVideoModal');if(event.key==='Escape'){closeHubVideo();return;}if(event.key==='Tab'&&modal&&!modal.hidden){const focusable=Array.from(modal.querySelectorAll('button:not([disabled]),a[href],iframe'));if(!focusable.length)return;const first=focusable[0],last=focusable[focusable.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}});
@@ -5733,11 +5800,11 @@ document.addEventListener('click',function(e){
     const menu=event.target.closest('.hub-menu-button');if(menu){const navEl=document.getElementById('hubNav');const open=navEl.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));return;}
     if(event.target.closest('.hub-logout')){logout();return;}
     if(handleRoutineCardAction(event))return;
-    const presentButton=event.target.closest(':is(.hub-private-workout,.hub-parent-day) [data-private-present]');if(presentButton){openAthleteWorkoutDemos(presentButton);return;}
+    const presentButton=event.target.closest('#hub-root [data-private-present]');if(presentButton){openAthleteWorkoutDemos(presentButton);return;}
     const modeButton=event.target.closest('[data-workout-mode]');
     if(modeButton){
       const mode=modeButton.dataset.workoutMode,route=location.hash.replace('#/hub','')||'/';
-      if(modeButton.closest('.hub-school-workout,.hub-parent-day'))return;
+      if(modeButton.getAttribute('aria-pressed')==='true'||modeButton.closest('.hub-school-workout,.hub-parent-day'))return;
       const athleteWorkout=modeButton.closest('.hub-private-workout');
       if(athleteWorkout)ATHLETE_WORKOUT_VIEW.mode=mode;
       else WORKOUT_MODE=mode==='quick'?'quick':'guided';
@@ -5750,7 +5817,7 @@ document.addEventListener('click',function(e){
     const guidedPrev=event.target.closest('[data-guided-prev]');if(guidedPrev){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout));GUIDED_CURSOR[s.id]=Math.max(0,(GUIDED_CURSOR[s.id]||0)-1);renderSession(s.id);}return;}
     const guidedNext=event.target.closest('[data-guided-next]');if(guidedNext){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout));GUIDED_CURSOR[s.id]=Math.min(Math.max(0,items.length-1),(GUIDED_CURSOR[s.id]||0)+1);renderSession(s.id);}return;}
     const quickOpen=event.target.closest('[data-quick-open]');if(quickOpen){const route=currentWorkoutSessionId(),s=programme()?.sessions?.find(x=>x.id===route);if(s){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===quickOpen.dataset.quickOpen);if(index>=0){GUIDED_CURSOR[s.id]=index;WORKOUT_MODE='guided';renderSession(s.id);}}return;}
-    const completionButton=event.target.closest('[data-completion-toggle]');if(completionButton){if(isSchoolReferenceViewer())return;const completionRoute=location.hash;const sessionKey=completionButton.dataset.sessionKey||location.hash.replace('#/hub/session/',''),itemKey=completionButton.dataset.itemKey||'',next=completionButton.dataset.completed!=='true';if(!sessionKey||!itemKey)return;completionButton.disabled=true;const original=completionButton.textContent;completionButton.textContent=completionButton.matches('.hub-compact-complete')?'…':'Saving…';saveWorkoutCompletion(sessionKey,itemKey,next).then(row=>{if(!row||location.hash!==completionRoute)return;const s=programme()?.sessions?.find(x=>x.id===sessionKey);if(s&&next){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===itemKey);if(index>=0&&index<items.length-1)GUIDED_CURSOR[s.id]=index+1;}renderSession(sessionKey);maybeOpenWorkoutEndCheckin();}).catch(error=>{console.warn('Unable to save completion',error);completionButton.disabled=false;completionButton.textContent=completionButton.matches('.hub-compact-complete')?'↻':'Try again';setTimeout(()=>{if(completionButton.isConnected)completionButton.textContent=original;},1600);});return;}
+    const completionButton=event.target.closest('[data-completion-toggle]');if(completionButton){if(isSchoolReferenceViewer())return;const completionRoute=location.hash;const sessionKey=completionButton.dataset.sessionKey||location.hash.replace('#/hub/session/',''),itemKey=completionButton.dataset.itemKey||'',next=completionButton.dataset.completed!=='true';if(!sessionKey||!itemKey)return;completionButton.disabled=true;const original=completionButton.textContent;completionButton.textContent=completionButton.matches('.hub-compact-complete')?'…':'Saving…';saveWorkoutCompletion(sessionKey,itemKey,next).then(row=>{if(!row||!HUB_STATE.programme||location.hash!==completionRoute)return;const s=programme()?.sessions?.find(x=>x.id===sessionKey);if(s&&next){const workout=normalizeWorkoutSession(s,EXERCISES,{...programme(),separateWarmups:true}),items=flattenedWorkoutItems(visibleNormalizedSections(workout)),index=items.findIndex(item=>item.key===itemKey);if(index>=0&&index<items.length-1)GUIDED_CURSOR[s.id]=index+1;}rerenderWorkout(()=>renderSession(sessionKey),completionButton);maybeOpenWorkoutEndCheckin();}).catch(error=>{console.warn('Unable to save completion',error);completionButton.disabled=false;completionButton.textContent=completionButton.matches('.hub-compact-complete')?'↻':'Try again';setTimeout(()=>{if(completionButton.isConnected)completionButton.textContent=original;},1600);});return;}
     const schoolGroupButton=event.target.closest('[data-school-group]');if(schoolGroupButton){localStorage.setItem(schoolGroupStorageKey(),schoolGroupButton.dataset.schoolGroup||'');const route=location.hash.replace('#/hub','')||'/';if(route.startsWith('/session/'))renderSession(route.split('/')[2]);else render();return;}
     const choice=event.target.closest('.hub-choice');if(choice){const group=choice.closest('[data-choice-group]');const multi=group?.dataset.multi==='true';if(multi){const label=choice.textContent.trim();if(label==='Nothing noticeable yet'||label==='No noticeable change'){group.querySelectorAll('.hub-choice').forEach(x=>x.classList.remove('selected'));choice.classList.add('selected');}else{group.querySelectorAll('.hub-choice').forEach(x=>{if(['Nothing noticeable yet','No noticeable change'].includes(x.textContent.trim()))x.classList.remove('selected');});choice.classList.toggle('selected');}}else{group.querySelectorAll('.hub-choice').forEach(x=>x.classList.remove('selected'));choice.classList.add('selected');}return;}
   });
@@ -5761,7 +5828,7 @@ document.addEventListener('click',function(e){
     const frame=stage.querySelector('template').content.cloneNode(true);
     button.hidden=true;
     stage.append(frame);
-    stage.querySelector('iframe').focus();
+    stage.querySelector('iframe').focus({preventScroll:true});
   });
   root.addEventListener('toggle',event=>{
     const details=event.target;
@@ -5855,7 +5922,8 @@ document.addEventListener('click',function(e){
     if(document.hidden||HUB_REVALIDATING)return;
     const checkins=CHECKIN_UI.eligible()&&CHECKIN_UI.enabled&&isHubRoute()&&!route.includes('/login')&&!route.includes('/setup');
     if(checkins&&root.querySelector('form'))return;
-    if(!checkins&&workoutPresentationOpen(route))return;
+    const coachEngaged=()=>root.querySelector('#du-coach-command-root:has(.ducc[data-active-view]:not([data-active-view="overview"]))')?.dataset.workoutRoute===route;
+    if(!checkins&&(workoutPresentationOpen(route)||coachEngaged()))return;
     const dashboard=['#/hub','#/hub/athlete','#/hub/staff'].includes(route);
     if(!checkins&&!dashboard)return;
     const active=session();
@@ -5867,8 +5935,11 @@ document.addEventListener('click',function(e){
     try{
       // Keep the loaded programme while verifying: due reports and holds still
       // clear training through the check-in guard. Never discard it on focus.
-      if(checkins){await render();if(!canApply()||!HUB_STATE.programme)return;}
-      const canRefresh=()=>canApply()&&!workoutPresentationOpen(route);
+      if(checkins){
+        if(!HUB_STATE.programme){await render();return;}
+        if(await CHECKIN_UI.guard(route.replace('#/hub','')||'/')||!canApply()||!HUB_STATE.programme)return;
+      }
+      const canRefresh=()=>canApply()&&!workoutPresentationOpen(route)&&!coachEngaged();
       if(!dashboard||!stale||!canRefresh())return;
       if(active.mode==='account')await loadAccountHubData(active.audience,canRefresh);
       else await loadHubData(active,canRefresh);
@@ -5890,8 +5961,12 @@ document.addEventListener('click',function(e){
     },50);
   }
   window.addEventListener('hashchange',scheduleHubRender);
-  window.addEventListener('popstate',scheduleHubRender);
-  initializePasswordRecovery().then(recovery=>{if(!recovery&&isHubRoute())setTimeout(render,60);});
+  window.addEventListener('popstate',()=>{
+    if(location.hash!==hubRenderedRoute)scheduleHubRender();
+  });
+  initializePasswordRecovery().then(recovery=>{
+    if(!recovery&&isHubRoute()&&!HUB_RENDER_TIMER)scheduleHubRender();
+  });
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

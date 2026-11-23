@@ -1,7 +1,7 @@
 // Coach copy, presenter and print contracts against an authorized synthetic week.
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 function setup({warmupCue='Quiet feet',libraryCue='Keep your heel down.'}={}){
- const el=()=>({children:[],innerHTML:'',replaceChildren(...x){this.children=x},append(x){x.remove=()=>{this.children=this.children.filter(child=>child!==x)};this.children.push(x)},addEventListener(n,f){this[n]=f},querySelectorAll(s){return this.children.filter(c=>'.'+c.className===s)}});
+ const el=()=>({children:[],innerHTML:'',dataset:{},replaceChildren(...x){this.children=x},append(x){x.remove=()=>{this.children=this.children.filter(child=>child!==x)};this.children.push(x)},addEventListener(n,f){this[n]=f},querySelectorAll(s){return this.children.filter(c=>'.'+c.className===s)}});
  let copied='',printed='';
  const ctx={window:{DuHubDelivery:require('../hub-delivery/delivery.js'),print(){printed=root.children.find(x=>x.className==='print-sheet').innerHTML}},document:{createElement:el},URL,navigator:{clipboard:{async writeText(x){copied=x}}},alert(){throw Error('copy failed')}};
  vm.runInNewContext(fs.readFileSync('coach-command/coach-command.js','utf8'),ctx);
