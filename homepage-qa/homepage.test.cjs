@@ -11,7 +11,7 @@ assert.equal((currentHtml.match(/Kutama College Sports Captain/g)||[]).length,2)
 assert.doesNotMatch(currentHtml,/Future Loughborough|800m Athlete[ ·,]+Kutama College/);
 const restoreTitles=source=>source.replace(/Loughborough University Student-Athlete/g,'Future Loughborough University Student-Athlete').replace('<p>Kutama College Sports Captain</p>','<p>800m Athlete · Kutama College</p>').replace('— Kutama College Sports Captain</div>','— 800m Athlete, Kutama College</div>');
 // Owner-approved credentials copy is the only additional homepage exception.
-const approvedCredentials="<div class=\"premium-more-grid\"><span>9× All-American</span><span>5× Big 12 Champion</span><span>TCU Co-Male Athlete of the Year · 2018–19</span><span>African U20 Champion · 2017</span><span>African U20 Championships Meet Record Holder · 16.30m, 2017</span><span>TCU Triple Jump Record Holder · Indoor &amp; Outdoor</span><span>The Bowerman Preseason Watch List · 2020</span></div>";
+const approvedCredentials="<div class=\"premium-more-grid\"><span>7th at World Indoor Championships · Nanjing 2025</span><span>9× All-American</span><span>Zimbabwe Sportsman of the Year · Runner-up, 2019</span><span>TCU Co-Male Athlete of the Year · 2018–19</span><span>African U20 Champion &amp; Championship Record Holder · 16.30m, 2017</span><span>TCU Triple Jump Record Holder · Indoor &amp; Outdoor</span><span>World Top 10 · Senior Triple Jump, June 2022 (TCU report)</span></div>";
 const previousCredentials="<div class=\"premium-more-grid\"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div>";
 assert.ok(currentHtml.includes(approvedCredentials),'approved seven credentials remain intact');
 // Approved private setup repair is behavior-tested in qa/private-onboarding tests.
@@ -95,7 +95,8 @@ let baseline=execFileSync('git',['show','86794de:index.html'],{encoding:'utf8',m
 // Approved social-preview correction; exact metadata is checked before normalization.
 const oldShareMetadata="<meta content=\"Developing faster, more explosive and more confident athletes through specialist coaching, structured programming and performance development \u2014 in person and remotely.\" name=\"description\"/><meta content=\"website\" property=\"og:type\"/><meta content=\"Du Airlines\" property=\"og:site_name\"/><meta content=\"Fever United | Soccer Performance Registration\" property=\"og:title\"/><meta content=\"Register for Du Airlines \u00d7 Fever United soccer performance sessions. Every Friday, 5:45\u20136:45 PM in Southlake, TX.\" property=\"og:description\"/><meta content=\"https://duairlineseliteacademy.com/#/club-registration\" property=\"og:url\"/><meta content=\"summary\" name=\"twitter:card\"/><meta content=\"Fever United | Soccer Performance Registration\" name=\"twitter:title\"/><meta content=\"Register for Du Airlines \u00d7 Fever United soccer performance sessions. Every Friday, 5:45\u20136:45 PM in Southlake, TX.\" name=\"twitter:description\"/>";
 const approvedShareMetadata="<meta content=\"Developing faster, more explosive and more confident athletes through specialist coaching, structured programming and performance development \u2014 in person and remotely.\" name=\"description\"/><link href=\"https://duairlineseliteacademy.com/\" rel=\"canonical\"/><meta content=\"website\" property=\"og:type\"/><meta content=\"Du Airlines Elite Academy\" property=\"og:site_name\"/><meta content=\"Du Airlines Elite Academy | Elite Athletic Performance &amp; Development\" property=\"og:title\"/><meta content=\"Specialist coaching and structured development for athletes, schools and clubs \u2014 from emerging talent to elite competition.\" property=\"og:description\"/><meta content=\"https://duairlineseliteacademy.com/\" property=\"og:url\"/><meta content=\"summary\" name=\"twitter:card\"/><meta content=\"Du Airlines Elite Academy | Elite Athletic Performance &amp; Development\" name=\"twitter:title\"/><meta content=\"Specialist coaching and structured development for athletes, schools and clubs \u2014 from emerging talent to elite competition.\" name=\"twitter:description\"/>";
-assert.ok(currentHtml.includes(approvedShareMetadata),"approved Academy preview metadata");
+const commercialShareMetadata=approvedShareMetadata.replace("Developing faster, more explosive and more confident athletes through specialist coaching, structured programming and performance development — in person and remotely.","Specialist performance consultancy and athletic development for schools, clubs and individual athletes.").replaceAll("Specialist coaching and structured development for athletes, schools and clubs — from emerging talent to elite competition.","Specialist performance consultancy and athletic development for schools, clubs and individual athletes.");
+assert.ok(currentHtml.includes(commercialShareMetadata),"approved commercial Academy preview metadata");
 assert.ok(baseline.includes(oldShareMetadata),"immutable sharing baseline located");
 baseline=baseline.replace(oldShareMetadata,approvedShareMetadata);
 // Apply the owner's permanent retirement of the promotional pathway to the baseline.
@@ -154,16 +155,32 @@ const beforeSchoolAthleteLabels=source=>source
  .replace('data-premium-role="athlete">School Athlete</button>','data-premium-role="athlete">Athlete</button>')
  .replace('id="premium-role-eyebrow">SCHOOL ATHLETE ACCESS','id="premium-role-eyebrow">ATHLETE ACCESS')
  .replace('Access School Athlete Hub <span','Access Athlete Hub <span');
-const actualHomepage=beforeSchoolAthleteLabels(withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart)))))));
-const expectedHomepage=currentProduction.slice(0,currentProduction.indexOf(routeStart)).replace(oldShareMetadata,approvedShareMetadata);
-if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')){
- const actualNormalized=actualHomepage.replace(/\r\n/g,'\n'),expectedNormalized=expectedHomepage.replace(/\r\n/g,'\n');
- const offset=[...actualNormalized].findIndex((ch,i)=>ch!==expectedNormalized[i]);
- const at=offset<0?Math.min(actualNormalized.length,expectedNormalized.length):offset;
- const around=s=>JSON.stringify(s.slice(Math.max(0,at-120),at+220));
- console.error('Homepage preservation normalized mismatch at character',at,'actual:',around(actualNormalized),'expected:',around(expectedNormalized));
+// Commercial changes are authorized only in metadata, two named styles, the public
+// homepage container and the additional anchor controller. Compare all other
+// bytes with the immutable pre-commercial main commit, not a moving branch.
+const commercialBase=execFileSync('git',['show','9fb5065613bfc96c480e09c2dcc43374cda22a98:index.html'],{encoding:'utf8',maxBuffer:12e6});
+const normalize=s=>s.replace(/\r\n/g,'\n');
+function protectedPage(source){
+ const start=source.indexOf('<div class="site-view" id="home-view">');
+ const end=source.indexOf(routeStart);
+ assert.ok(start>=0&&end>start,'public homepage boundaries');
+ return normalize((source.slice(0,start)+source.slice(end))
+  .replace(/<title>[^<]*<\/title>/,'<title>APPROVED COMMERCIAL TITLE</title>')
+  .replace(commercialShareMetadata,approvedShareMetadata)
+  .replace(/<style id="commercial-homepage-css">[^]*?<\/style>/,'')
+  .replace(/<style id="commercial-final-polish">[^]*?<\/style>/,'')
+  .replace(/<script id="commercial-anchor-navigation">[^]*?<\/script>/,''));
 }
-assert.equal(actualHomepage.replace(/\r\n/g,'\n'),expectedHomepage.replace(/\r\n/g,'\n'),'locked homepage remains unchanged apart from isolated Hub asset links (line endings ignored)');
+assert.equal(protectedPage(currentHtml),protectedPage(commercialBase),'all non-commercial HTML, integration scripts and shared assets remain byte-identical to pre-commercial main');
+assert.ok(currentHtml.includes('<title>Du Airlines Elite Academy — Specialist Performance Consultancy</title>'));
+const publicHome=currentHtml.slice(currentHtml.indexOf('<div class="site-view" id="home-view">'),currentHtml.indexOf(routeStart));
+assert.equal((publicHome.match(/<details class="commercial-service"/g)||[]).length,4);
+for(const title of ['Schools &amp; Clubs','Private Athlete Development','Technical Clinics &amp; Education','Corporate Partnerships'])assert.ok(publicHome.includes('<strong>'+title+'</strong>'),title);
+assert.equal((publicHome.match(/href="mailto:coachdu@duairlineseliteacademy\.com\?subject=/g)||[]).length,5,'four service enquiries and general enquiry');
+assert.doesNotMatch(publicHome,/class="premium-path-links"|id="partnershipForm"/);
+assert.ok(publicHome.includes('href="/school-services/"'));
+assert.ok(publicHome.includes('href="/my-journey/"'));
+for(const role of ['athlete','coach','parent','private'])assert.ok(publicHome.includes('data-premium-role="'+role+'"'));
 // Private workout view routing has its own authenticated browser coverage.
 const withoutPrivateWorkoutViews=source=>source
  .replace(/  function workoutPresentationOpen\(route\)\{[^}]+\}\r?\n\r?\n/,'')
@@ -269,6 +286,5 @@ if(actualIntegration!==expectedIntegration){
  console.error('Integration mismatch at normalized offset',at,'actual',JSON.stringify(a.slice(Math.max(0,at-140),at+220)),'expected',JSON.stringify(b.slice(Math.max(0,at-140),at+220)));
 }
 assert.equal(actualIntegration.replace(/\r\n/g,'\n'),expectedIntegration.replace(/\r\n/g,'\n'),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged (line endings ignored)');
-const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
-assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
+assert.ok(!publicHome.includes('id="partnershipForm"'),'approved mailto replaces public partnership form');
 console.log('Production integration preservation passed.');

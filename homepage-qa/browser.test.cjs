@@ -13,6 +13,8 @@ const {chromium}=require('playwright');
  for(const width of [375,390,430,768,1440]){
  await page.setViewportSize({width,height:900});errors.length=0;
  await page.goto(base,{waitUntil:'load'});
+ await page.waitForFunction(()=>!document.body.classList.contains('route-transitioning')&&getComputedStyle(document.getElementById('home-view')).opacity==='1');
+ ok(await page.locator('#home-view').evaluate(e=>getComputedStyle(e).opacity==='1'),`${width}: homepage fully visible after route transition`);
  ok(await page.locator('#home-view').isVisible(),`${width}: homepage visible`);
  ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}: no horizontal overflow`);
  ok(await page.locator('#home-view > #performance-hub').count()===1,`${width}: Hub section inside homepage`);
@@ -22,24 +24,39 @@ const {chromium}=require('playwright');
  ok(!broken.length,`${width}: all homepage section links resolve: ${broken}`);
  const hero=await page.locator('.premium-hero').boundingBox(),title=await page.locator('.premium-hero h1').boundingBox();
  ok(title.y+title.height<=hero.y+hero.height,`${width}: hero heading fits`);
+ await page.locator('#performance-hub details > summary').click();
  const roleRows=await page.locator('[data-premium-role]').evaluateAll(items=>items.map(e=>Math.round(e.getBoundingClientRect().top)));
- ok(new Set(roleRows).size===1,`${width}: Hub roles stay in one horizontal row`);
+ ok(new Set(roleRows).size===(width<=480?2:1),`${width}: Hub roles use approved responsive grid`);
+ ok(await page.locator('[data-premium-role]').count()===4,`${width}: four public role tabs`);
+ ok(await page.locator('[data-premium-role]').evaluateAll(items=>items.every(e=>{const b=e.getBoundingClientRect();return b.width>0&&b.left>=0&&b.right<=innerWidth+1})),`${width}: role tabs fit viewport`);
  ok(await page.getByRole('tab',{name:'School Athlete',exact:true}).count()===1,`${width}: school athlete tab is distinct from private athlete`);
  ok(await page.getByRole('link',{name:'Access School Athlete Hub',exact:true}).isVisible(),`${width}: school athlete link is clear`);
  ok(await page.locator('.premium-story-avatar').count()===3,`${width}: existing athlete photos reused`);
  ok(await page.locator('.premium-story-avatar').evaluateAll(images=>images.every(e=>(e.getAttribute('src')||'').startsWith('data:image/'))),`${width}: every athlete photo has its original source`);
  const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: credentials expanded`);ok(await page.locator('.premium-more-grid span').count()===7,`${width}: seven additional credentials`);
- await page.locator('.premium-path-details summary').click();
- for(const sport of ['soccer','track']){
- await page.locator(`.premium-path-links [data-route="${sport}"]`).click();
- await page.locator(`#${sport}-view`).waitFor({state:'visible'});
- ok(await page.locator(`#${sport}-view`).isVisible(),`${width}: ${sport} route opens`);
- ok(!await page.locator('#home-view').isVisible(),`${width}: homepage hidden on ${sport}`);
- ok(!await page.locator('.premium-hub').isVisible(),`${width}: homepage Hub hidden on ${sport}`);
- await page.goto(base);
- await page.locator('.premium-path-details summary').click();
+ const services=page.locator('#sports details.commercial-service');
+ const pillars=['Schools & Clubs','Private Athlete Development','Technical Clinics & Education','Corporate Partnerships'];
+ const subjects=['School & Club Partnership Enquiry','Private Athlete Development Enquiry','Technical Clinic & Education Enquiry','Corporate Partnership Enquiry'];
+ ok(await services.count()===4,`${width}: four commercial services`);
+ for(let i=0;i<4;i++){
+ const service=services.nth(i),summary=service.locator('summary');
+ ok((await summary.innerText()).includes(pillars[i]),`${width}: service ${pillars[i]}`);
+ await summary.click();ok(await service.evaluate(e=>e.open),`${width}: service expands`);
+ const link=service.locator('a[href^="mailto:"]');
+ ok(await link.isVisible(),`${width}: enquiry visible`);
+ const mail=new URL(await link.getAttribute('href'));
+ ok(mail.pathname==='coachdu@duairlineseliteacademy.com'&&mail.searchParams.get('subject')===subjects[i],`${width}: exact enquiry destination and subject`);
+ if(i===0)ok(await service.locator('a[href="/school-services/"]').isVisible(),`${width}: school services link visible`);
+ await summary.click();ok(!await service.evaluate(e=>e.open),`${width}: service collapses`);
  }
+ ok(await page.locator('#home-view .premium-path-links').count()===0,`${width}: obsolete promotion removed`);
+ for(const sport of ['soccer','track']){
+ await page.goto(base+'/#/'+sport);await page.locator('#'+sport+'-view').waitFor({state:'visible'});
+ ok(!await page.locator('#home-view').isVisible(),`${width}: legacy ${sport} direct route works`);
+ }
+ await page.goto(base);
  for(const [role,route] of Object.entries({athlete:'athlete',coach:'staff',parent:'parent',private:'private-athlete'})){
+ await page.locator('#performance-hub details > summary').click();
  await page.locator(`[data-premium-role="${role}"]`).click();
  ok(await page.locator('#premium-role-link').getAttribute('href')===`#/hub/login/${route}`,`${width}: ${role} role link`);
  await page.locator('#premium-role-link').click();
@@ -57,8 +74,12 @@ const {chromium}=require('playwright');
  await page.locator('#hubAccountLoginForm input[type="email"]').waitFor({state:'visible'});
  ok(await page.getByRole('heading',{name:'Professional Performance',exact:true}).isVisible(),`${width}: saved professional sign-in link still works`);
  await page.goto(base);
+ await page.locator('#performance-hub details > summary').click();
  await page.locator('[data-premium-role="athlete"]').focus();await page.keyboard.press('End');ok(await page.locator('[data-premium-role="private"]').getAttribute('aria-selected')==='true',`${width}: keyboard End selects private athlete`);
  await page.keyboard.press('Home');ok(await page.locator('[data-premium-role="athlete"]').getAttribute('aria-selected')==='true',`${width}: keyboard Home selects athlete`);
+ const story=page.locator('.commercial-editorial details').filter({has:page.locator('a.du-story-entry')});
+ await story.locator('summary').click();ok(await story.locator('a[href="/my-journey/"]').isVisible(),`${width}: founder biography accessible`);
+ await page.locator('#stories > summary').click();
  if(width<=899){
  const track=page.locator('#premium-story-grid');
  await page.evaluate(()=>document.fonts.ready);
@@ -87,17 +108,11 @@ const {chromium}=require('playwright');
  ok(await page.locator('.premium-story-avatar').nth(i-1).evaluate(e=>e.complete&&e.naturalWidth>0),`${width}: athlete ${i} photo loads`);
  await page.locator(`#premium-story-grid [data-story="story${i}"]`).click();ok(await page.locator(`#story${i}`).isVisible(),`${width}: story ${i} opens`);await page.keyboard.press('Escape');ok(!await page.locator(`#story${i}`).isVisible(),`${width}: story ${i} closes`);
  }
- await page.locator('#openPartnershipForm').scrollIntoViewIfNeeded();const beforeDialog=await page.evaluate(()=>scrollY);
- await page.locator('#openPartnershipForm').click();ok(await page.locator('#partnershipForm').isVisible(),`${width}: original inquiry form opens`);
- ok(await page.locator('#partnershipForm').getAttribute('action')==='https://formsubmit.co/coachdu@duairlineseliteacademy.com',`${width}: original inquiry destination`);
- ok(await page.locator('#partnershipInquiry').evaluate(e=>e.tagName==='DIALOG'&&e.open),`${width}: partnership opens in a contained dialog`);
- ok(Math.abs((await page.evaluate(()=>scrollY))-beforeDialog)<2,`${width}: partnership does not scroll the page`);
- const dialog=await page.locator('#partnershipInquiry').boundingBox();ok(dialog.y>=0&&dialog.y+dialog.height<=902,`${width}: dialog stays inside viewport`);
- await page.locator('#partner-message').scrollIntoViewIfNeeded();
- ok(await page.locator('#partner-message').evaluate(e=>getComputedStyle(e).backgroundColor!=='rgb(255, 255, 255)'),`${width}: message field matches green theme`);
- await page.keyboard.press('Escape');ok(!await page.locator('#partnershipInquiry').isVisible(),`${width}: partnership closes with Escape`);
- ok(await page.locator('#openPartnershipForm').evaluate(e=>document.activeElement===e),`${width}: focus returns to partnership button`);
- await page.locator('#openPartnershipForm').click();await page.locator('#closePartnershipForm').click();ok(!await page.locator('#partnershipInquiry').isVisible(),`${width}: visible close button works`);
+ const finalLink=page.locator('#partnerships a[href^="mailto:"]');
+ ok(await finalLink.isVisible(),`${width}: general enquiry visible`);
+ const finalMail=new URL(await finalLink.getAttribute('href'));
+ ok(finalMail.pathname==='coachdu@duairlineseliteacademy.com'&&finalMail.searchParams.get('subject')==='General Performance Enquiry',`${width}: general enquiry destination`);
+ ok(await page.locator('#home-view #partnershipForm').count()===0,`${width}: obsolete enquiry presentation removed`);
  for(const [route,view] of Object.entries({'club-registration':'club-registration-view','registration-complete':'registration-complete-view','track/register':'track-view','track/evaluation':'track-view'})){
  await page.goto(base+'/#/'+route);await page.locator('#'+view).waitFor({state:'visible'});
  ok(await page.locator('#'+view).isVisible(),`${width}: existing ${route} route renders`);
@@ -114,7 +129,7 @@ const {chromium}=require('playwright');
  }
  await page.goto(base);
  ok(errors.length===0,`${width}: no uncaught JavaScript errors: ${errors.join('; ')}`);
- if(process.env.HOMEPAGE_SCREENSHOT_DIR){await page.goto(base);await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(process.env.HOMEPAGE_SCREENSHOT_DIR,`homepage-${width}.png`),fullPage:true});}
+ if(process.env.HOMEPAGE_SCREENSHOT_DIR){await page.goto(base);await page.waitForFunction(()=>!document.body.classList.contains('route-transitioning')&&getComputedStyle(document.getElementById('home-view')).opacity==='1');await page.evaluate(()=>document.fonts.ready);await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(process.env.HOMEPAGE_SCREENSHOT_DIR,`homepage-${width}.png`),fullPage:true});}
  console.log(`${width}px viewport checks passed`);
  }
  console.log(`Homepage browser QA passed: ${checks} assertions across five viewport widths.`);
