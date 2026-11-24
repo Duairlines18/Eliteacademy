@@ -69,9 +69,9 @@ test('a curious visitor can scan the entire trajectory before opening any chapte
  assert.ok(ids.indexOf('coaching-myself')<ids.indexOf('carrying-zimbabwe'));
  assert.match(html,/Chengetayi “Du Airlines” Mapaya/);
 });
-test('homepage biography entry sits immediately beneath expandable credentials',()=>{
+test('homepage biography entry is accessible in the expandable founder story',()=>{
  const html=fs.readFileSync('index.html','utf8');
- assert.ok(/<\/details><!-- DU STORY NAV START --><a class="du-story-entry"/.test(html));
+ assert.match(html, /<summary>The Du Airlines Story[^<]*<span[^>]*>[^<]*<\/span><\/summary><!-- DU STORY NAV START --><a class="du-story-entry" href="\/my-journey\/"/);
  assert.ok(!html.includes('class="du-story-mobile-nav"'));
 });
 
