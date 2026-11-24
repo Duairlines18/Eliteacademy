@@ -37,4 +37,15 @@ jobs:
           npm install --no-save playwright@1.62.1
           npx playwright install --with-deps chromium
       - name: Check mobile and desktop flows
-        run: node homepage-qa/browser.test.cjs
+        env:
+          HOMEPAGE_SCREENSHOT_DIR: ${{ runner.temp }}/founder-homepage
+        run: |
+          mkdir -p "$HOMEPAGE_SCREENSHOT_DIR"
+          node homepage-qa/browser.test.cjs
+      - name: Upload founder homepage screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: founder-homepage-screenshots
+          path: ${{ runner.temp }}/founder-homepage/*.png
+          if-no-files-found: error
+          retention-days: 14
