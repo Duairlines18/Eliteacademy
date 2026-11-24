@@ -155,16 +155,32 @@ const beforeSchoolAthleteLabels=source=>source
  .replace('data-premium-role="athlete">School Athlete</button>','data-premium-role="athlete">Athlete</button>')
  .replace('id="premium-role-eyebrow">SCHOOL ATHLETE ACCESS','id="premium-role-eyebrow">ATHLETE ACCESS')
  .replace('Access School Athlete Hub <span','Access Athlete Hub <span');
-const actualHomepage=beforeSchoolAthleteLabels(withoutHubAssets(withoutJourneyPresentation(withoutCompactVideo(withoutDeploymentAdditions(html.slice(0,html.indexOf(routeStart)))))));
-const expectedHomepage=currentProduction.slice(0,currentProduction.indexOf(routeStart)).replace(oldShareMetadata,approvedShareMetadata);
-if(actualHomepage.replace(/\r\n/g,'\n')!==expectedHomepage.replace(/\r\n/g,'\n')){
- const actualNormalized=actualHomepage.replace(/\r\n/g,'\n'),expectedNormalized=expectedHomepage.replace(/\r\n/g,'\n');
- const offset=[...actualNormalized].findIndex((ch,i)=>ch!==expectedNormalized[i]);
- const at=offset<0?Math.min(actualNormalized.length,expectedNormalized.length):offset;
- const around=s=>JSON.stringify(s.slice(Math.max(0,at-120),at+220));
- console.error('Homepage preservation normalized mismatch at character',at,'actual:',around(actualNormalized),'expected:',around(expectedNormalized));
+// Commercial changes are authorized only in metadata, two named styles, the public
+// homepage container and the additional anchor controller. Compare all other
+// bytes with the immutable pre-commercial main commit, not a moving branch.
+const commercialBase=execFileSync('git',['show','9fb5065613bfc96c480e09c2dcc43374cda22a98:index.html'],{encoding:'utf8',maxBuffer:12e6});
+const normalize=s=>s.replace(/\r\n/g,'\n');
+function protectedPage(source){
+ const start=source.indexOf('<div class="site-view" id="home-view">');
+ const end=source.indexOf(routeStart);
+ assert.ok(start>=0&&end>start,'public homepage boundaries');
+ return normalize((source.slice(0,start)+source.slice(end))
+  .replace(/<title>[^<]*<\/title>/,'<title>APPROVED COMMERCIAL TITLE</title>')
+  .replace(commercialShareMetadata,approvedShareMetadata)
+  .replace(/<style id="commercial-homepage-css">[^]*?<\/style>/,'')
+  .replace(/<style id="commercial-final-polish">[^]*?<\/style>/,'')
+  .replace(/<script id="commercial-anchor-navigation">[^]*?<\/script>/,''));
 }
-assert.equal(actualHomepage.replace(/\r\n/g,'\n'),expectedHomepage.replace(/\r\n/g,'\n'),'locked homepage remains unchanged apart from isolated Hub asset links (line endings ignored)');
+assert.equal(protectedPage(currentHtml),protectedPage(commercialBase),'all non-commercial HTML, integration scripts and shared assets remain byte-identical to pre-commercial main');
+assert.ok(currentHtml.includes('<title>Du Airlines Elite Academy — Specialist Performance Consultancy</title>'));
+const publicHome=currentHtml.slice(currentHtml.indexOf('<div class="site-view" id="home-view">'),currentHtml.indexOf(routeStart));
+assert.equal((publicHome.match(/<details class="commercial-service"/g)||[]).length,4);
+for(const title of ['Schools &amp; Clubs','Private Athlete Development','Technical Clinics &amp; Education','Corporate Partnerships'])assert.ok(publicHome.includes('<strong>'+title+'</strong>'),title);
+assert.equal((publicHome.match(/href="mailto:coachdu@duairlineseliteacademy\.com\?subject=/g)||[]).length,5,'four service enquiries and general enquiry');
+assert.doesNotMatch(publicHome,/class="premium-path-links"|id="partnershipForm"/);
+assert.ok(publicHome.includes('href="/school-services/"'));
+assert.ok(publicHome.includes('href="/my-journey/"'));
+for(const role of ['athlete','coach','parent','private'])assert.ok(publicHome.includes('data-premium-role="'+role+'"'));
 // Private workout view routing has its own authenticated browser coverage.
 const withoutPrivateWorkoutViews=source=>source
  .replace(/  function workoutPresentationOpen\(route\)\{[^}]+\}\r?\n\r?\n/,'')
@@ -270,6 +286,5 @@ if(actualIntegration!==expectedIntegration){
  console.error('Integration mismatch at normalized offset',at,'actual',JSON.stringify(a.slice(Math.max(0,at-140),at+220)),'expected',JSON.stringify(b.slice(Math.max(0,at-140),at+220)));
 }
 assert.equal(actualIntegration.replace(/\r\n/g,'\n'),expectedIntegration.replace(/\r\n/g,'\n'),'registration/payment forms, routes and unrelated Hub implementation remain byte-for-byte unchanged (line endings ignored)');
-const form=source=>source.match(/<form[^>]*id="partnershipForm"[\s\S]*?<\/form>/)[0];
-assert.equal(form(html),form(baseline),'partnership form fields and submission destination preserved');
+assert.ok(!publicHome.includes('id="partnershipForm"'),'approved mailto replaces public partnership form');
 console.log('Production integration preservation passed.');
