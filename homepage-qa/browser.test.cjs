@@ -13,6 +13,8 @@ const {chromium}=require('playwright');
  for(const width of [375,390,430,768,1440]){
  await page.setViewportSize({width,height:900});errors.length=0;
  await page.goto(base,{waitUntil:'load'});
+ await page.waitForFunction(()=>!document.body.classList.contains('route-transitioning')&&getComputedStyle(document.getElementById('home-view')).opacity==='1');
+ ok(await page.locator('#home-view').evaluate(e=>getComputedStyle(e).opacity==='1'),`${width}: homepage fully visible after route transition`);
  ok(await page.locator('#home-view').isVisible(),`${width}: homepage visible`);
  ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${width}: no horizontal overflow`);
  ok(await page.locator('#home-view > #performance-hub').count()===1,`${width}: Hub section inside homepage`);
@@ -127,7 +129,7 @@ const {chromium}=require('playwright');
  }
  await page.goto(base);
  ok(errors.length===0,`${width}: no uncaught JavaScript errors: ${errors.join('; ')}`);
- if(process.env.HOMEPAGE_SCREENSHOT_DIR){await page.goto(base);await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(process.env.HOMEPAGE_SCREENSHOT_DIR,`homepage-${width}.png`),fullPage:true});}
+ if(process.env.HOMEPAGE_SCREENSHOT_DIR){await page.goto(base);await page.waitForFunction(()=>!document.body.classList.contains('route-transitioning')&&getComputedStyle(document.getElementById('home-view')).opacity==='1');await page.evaluate(()=>document.fonts.ready);await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(process.env.HOMEPAGE_SCREENSHOT_DIR,`homepage-${width}.png`),fullPage:true});}
  console.log(`${width}px viewport checks passed`);
  }
  console.log(`Homepage browser QA passed: ${checks} assertions across five viewport widths.`);
