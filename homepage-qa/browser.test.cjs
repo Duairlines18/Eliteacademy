@@ -48,6 +48,11 @@ const {chromium}=require('playwright');
  await photo.evaluate(async img=>{await img.decode();});
  ok(await photo.evaluate(img=>img.complete&&img.naturalWidth>0&&img.naturalHeight>0&&img.alt.trim().length>0),`${width}: service photograph decodes and has alt text`);
  ok(await photo.evaluate(img=>{const b=img.getBoundingClientRect();return b.width>0&&b.height>0&&b.left>=0&&b.right<=innerWidth+1&&getComputedStyle(img).objectFit==='cover';}),`${width}: service photograph fits viewport`);
+ const panelFit=await service.evaluate(e=>{const f=e.querySelector('.commercial-photo'),c=e.querySelector('.commercial-copy'),b=e.querySelector('.commercial-body'),a=c.querySelector('.btn');const F=f.getBoundingClientRect(),C=c.getBoundingClientRect(),B=b.getBoundingClientRect(),A=a.getBoundingClientRect();return {ratio:F.width/F.height,sideBySide:F.right<=C.left+1&&Math.abs(F.top-C.top)<5,stacked:F.bottom<=C.top+1,contained:F.left>=B.left-1&&C.right<=B.right+1&&A.left>=C.left-1&&A.right<=C.right+1&&e.scrollWidth<=e.clientWidth+2&&c.scrollWidth<=c.clientWidth+2,viewport:document.documentElement.scrollWidth<=innerWidth+1};});
+ ok(Math.abs(panelFit.ratio-16/9)<.04,`${width}: photograph keeps editorial 16:9 aspect ratio`);
+ ok(width>=900?panelFit.sideBySide:panelFit.stacked,`${width}: correct responsive image-and-copy layout`);
+ ok(panelFit.contained&&panelFit.viewport,`${width}: panel copy and CTA fit without clipping or horizontal overflow`);
+
  if(process.env.HOMEPAGE_SCREENSHOT_DIR){await page.evaluate(()=>document.fonts.ready);await service.screenshot({path:path.join(process.env.HOMEPAGE_SCREENSHOT_DIR,`service-${i+1}-${width}.png`)});}
  const link=service.locator('a[href^="mailto:"]');
  ok(await link.isVisible(),`${width}: enquiry visible`);
