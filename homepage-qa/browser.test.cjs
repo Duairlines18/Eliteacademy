@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require('playwright');
 (async()=>{
- const server=http.createServer((req,res)=>{try{let name=decodeURIComponent(req.url.split('?')[0]);if(name.endsWith('/'))name+='index.html';const file=path.join(process.cwd(),name);res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html');res.end(fs.readFileSync(file));}catch{res.writeHead(404);res.end();}});
+ const server=http.createServer((req,res)=>{try{let name=decodeURIComponent(req.url.split('?')[0]);if(name.endsWith('/'))name+='index.html';const file=path.join(process.cwd(),name);res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':name.endsWith('.webp')?'image/webp':'text/html');res.end(fs.readFileSync(file));}catch{res.writeHead(404);res.end();}});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base=process.env.HOMEPAGE_BASE_URL||`http://127.0.0.1:${server.address().port}`;
  const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage','--no-zygote','--single-process']}: {})});
@@ -42,6 +42,18 @@ const {chromium}=require('playwright');
  const service=services.nth(i),summary=service.locator('summary');
  ok((await summary.innerText()).includes(pillars[i]),`${width}: service ${pillars[i]}`);
  await summary.click();ok(await service.evaluate(e=>e.open),`${width}: service expands`);
+ const photo=service.locator('figure.commercial-photo img');
+ ok(await photo.count()===1,`${width}: exactly one service photograph`);
+ await photo.scrollIntoViewIfNeeded();
+ await photo.evaluate(async img=>{await img.decode();});
+ ok(await photo.evaluate(img=>img.complete&&img.naturalWidth>0&&img.naturalHeight>0&&img.alt.trim().length>0),`${width}: service photograph decodes and has alt text`);
+ ok(await photo.evaluate(img=>{const b=img.getBoundingClientRect();return b.width>0&&b.height>0&&b.left>=0&&b.right<=innerWidth+1&&getComputedStyle(img).objectFit==='cover';}),`${width}: service photograph fits viewport`);
+ const panelFit=await service.evaluate(e=>{const f=e.querySelector('.commercial-photo'),c=e.querySelector('.commercial-copy'),b=e.querySelector('.commercial-body'),a=c.querySelector('.btn');const F=f.getBoundingClientRect(),C=c.getBoundingClientRect(),B=b.getBoundingClientRect(),A=a.getBoundingClientRect();return {ratio:F.width/F.height,sideBySide:F.right<=C.left+1&&Math.abs(F.top-C.top)<5,stacked:F.bottom<=C.top+1,contained:F.left>=B.left-1&&C.right<=B.right+1&&A.left>=C.left-1&&A.right<=C.right+1&&e.scrollWidth<=e.clientWidth+2&&c.scrollWidth<=c.clientWidth+2,viewport:document.documentElement.scrollWidth<=innerWidth+1};});
+ ok(Math.abs(panelFit.ratio-16/9)<.04,`${width}: photograph keeps editorial 16:9 aspect ratio`);
+ ok(width>=900?panelFit.sideBySide:panelFit.stacked,`${width}: correct responsive image-and-copy layout`);
+ ok(panelFit.contained&&panelFit.viewport,`${width}: panel copy and CTA fit without clipping or horizontal overflow`);
+
+ if(process.env.HOMEPAGE_SCREENSHOT_DIR){await page.evaluate(()=>document.fonts.ready);await service.screenshot({path:path.join(process.env.HOMEPAGE_SCREENSHOT_DIR,`service-${i+1}-${width}.png`)});}
  const link=service.locator('a[href^="mailto:"]');
  ok(await link.isVisible(),`${width}: enquiry visible`);
  const mail=new URL(await link.getAttribute('href'));
