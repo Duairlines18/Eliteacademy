@@ -11,9 +11,13 @@ assert.equal((currentHtml.match(/Kutama College Sports Captain/g)||[]).length,2)
 assert.doesNotMatch(currentHtml,/Future Loughborough|800m Athlete[ ·,]+Kutama College/);
 const restoreTitles=source=>source.replace(/Loughborough University Student-Athlete/g,'Future Loughborough University Student-Athlete').replace('<p>Kutama College Sports Captain</p>','<p>800m Athlete · Kutama College</p>').replace('— Kutama College Sports Captain</div>','— 800m Athlete, Kutama College</div>');
 // Owner-approved credentials copy is the only additional homepage exception.
-const approvedCredentials="<div class=\"premium-more-grid\"><span>7th at World Indoor Championships · Nanjing 2025</span><span>9× All-American</span><span>Zimbabwe Sportsman of the Year · Runner-up, 2019</span><span>TCU Co-Male Athlete of the Year · 2018–19</span><span>African U20 Champion &amp; Championship Record Holder · 16.30m, 2017</span><span>TCU Triple Jump Record Holder · Indoor &amp; Outdoor</span><span>World Top 10 · Senior Triple Jump, June 2022 (TCU report)</span></div>";
+const approvedCredentials="<div class=\"premium-more-grid\"><span>7th at World Indoor Championships · Nanjing 2025</span><span>9× All-American</span><span>3× Zimbabwe Sportsman of the Year Runner-up · Junior 2016 &amp; 2017 · Senior 2019</span><span>International championship representation for Zimbabwe</span><span>African U20 Champion &amp; Championship Record Holder · 16.30m, 2017</span><span>17.26m Triple Jump Personal Best · TCU Outdoor Record</span><span>No. 4 on the World Triple Jump Season Performance List · 11 June 2022 (TCU Athletics)</span></div>";
 const previousCredentials="<div class=\"premium-more-grid\"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div>";
 assert.ok(currentHtml.includes(approvedCredentials),'approved seven credentials remain intact');
+const guidedLinks=[...currentHtml.matchAll(/href="mailto:coachdu@duairlineseliteacademy\.com\?subject=([^"&]+)&amp;body=([^"]+)"/g)];
+assert.equal(guidedLinks.length,5,'five service-specific email drafts');
+for(const [,subject,body] of guidedLinks){assert.ok(decodeURIComponent(subject).includes('Enquiry'));assert.ok(decodeURIComponent(body).includes('Good day Coach Du,'));assert.ok(decodeURIComponent(body).split('\r\n').filter(line=>line.endsWith(':')).length>=4,'four guided prompts');}
+
 // Approved private setup repair is behavior-tested in qa/private-onboarding tests.
 // Reverse only this release's scoped edits for the existing byte-preservation check.
 const withoutPrivateSetup=source=>source
