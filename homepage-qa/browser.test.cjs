@@ -33,7 +33,7 @@ const {chromium}=require('playwright');
  ok(await page.getByRole('link',{name:'Access School Athlete Hub',exact:true}).isVisible(),`${width}: school athlete link is clear`);
  ok(await page.locator('.premium-story-avatar').count()===3,`${width}: existing athlete photos reused`);
  ok(await page.locator('.premium-story-avatar').evaluateAll(images=>images.every(e=>(e.getAttribute('src')||'').startsWith('data:image/'))),`${width}: every athlete photo has its original source`);
- const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: credentials expanded`);ok(await page.locator('.premium-more-grid span').count()===7,`${width}: four credential groups`);
+ const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: credentials expanded`);ok(await page.locator('.premium-more-grid > div').count()===4,`${width}: four credential groups`);ok((await page.locator('.premium-more-grid > div > strong').allTextContents()).join('|')==='International championships|National recognition|NCAA & conference honours|University honours & records',`${width}: approved credential headings`);ok(await page.locator('.premium-more-grid li').count()===12,`${width}: twelve approved career achievements`);
  const services=page.locator('#sports details.commercial-service');
  const pillars=['Schools & Clubs','Private Athlete Development','Technical Clinics & Education','Speaking & Leadership','Corporate Partnerships'];
  const subjects=['School & Club Partnership Enquiry','Private Athlete Development Enquiry','Technical Clinic & Education Enquiry','Speaking and Leadership Enquiry','Corporate Partnership Enquiry'];
@@ -54,6 +54,7 @@ const {chromium}=require('playwright');
  ok(width>=900?panelFit.sideBySide:panelFit.stacked,`${width}: correct responsive image-and-copy layout`);
  ok(panelFit.contained&&panelFit.viewport,`${width}: panel copy and CTA fit without clipping or horizontal overflow`);
 
+ if(i===4){const rank=service.locator('#rank-collaboration');ok(await rank.isVisible(),`${width}: Rank collaboration visible`);const covers=rank.locator('figure img');ok(await covers.count()===2,`${width}: two book covers`);for(const img of await covers.all()){await img.scrollIntoViewIfNeeded();await img.evaluate(e=>e.decode());ok(await img.evaluate(e=>{const b=e.getBoundingClientRect();return e.naturalWidth>0&&e.alt.length>0&&b.left>=0&&b.right<=innerWidth+1}),`${width}: Rank cover loads and fits`);}await rank.locator('details > summary').click();const artwork=rank.locator('details img');await artwork.scrollIntoViewIfNeeded();await artwork.evaluate(e=>e.decode());ok(await artwork.evaluate(e=>{const b=e.getBoundingClientRect();return e.naturalWidth>0&&e.alt.length>0&&b.left>=0&&b.right<=innerWidth+1}),`${width}: Rank campaign artwork loads and fits`);await rank.locator('details > summary').click();ok(!await artwork.isVisible(),`${width}: Rank artwork collapses`);}
  if(process.env.HOMEPAGE_SCREENSHOT_DIR){await page.evaluate(()=>document.fonts.ready);await service.screenshot({path:path.join(process.env.HOMEPAGE_SCREENSHOT_DIR,`service-${i+1}-${width}.png`)});}
  const link=service.locator('a[href^="/enquire/#"]');
  ok(await link.isVisible(),`${width}: enquiry visible`);
