@@ -4185,6 +4185,10 @@ document.addEventListener('click',function(e){
 .hub-school-themed .ducc :is(h1,h2){color:var(--school-paper)}
 /* The academy palette is shared by every Performance Hub account. */
 #hub-root{
+  --green:#204735;
+  --green-2:#28513e;
+  --green-3:#315c47;
+  --ink:#183a2b;
   --hub-bg:var(--green);
   --hub-panel:var(--green-2);
   --hub-panel-2:var(--green-3);
@@ -4247,6 +4251,11 @@ document.addEventListener('click',function(e){
 #hub-root .hub-private-presentation::backdrop{background:var(--green)}
 #hub-root .hub-private-video-stage{background:var(--ink);border-color:var(--gold)}
 #hub-root .hub-private-view-options{background:var(--ink)}
+#hub-root .hub-access-card{background:var(--hub-panel)}
+#hub-root .hub-field input{background:var(--ink)}
+#hub-root :is(.hub-session,.hub-mode-toggle){background:var(--hub-panel)}
+#hub-root .hub-current-week{background:linear-gradient(170deg,var(--green-3),var(--green-2))}
+#hub-root :is(.hub-dashboard-head h1,.hub-page-head h1,.hub-current-week h2,.hub-section-title,.hub-role-card strong,.hub-session h3){font-family:var(--sans);font-weight:600}
 /* SCHOOL_THEME_END */
 </style>
 <script src="/coach-command/coach-command.js?v=20261122-compact-workout"></script>

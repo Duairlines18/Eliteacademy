@@ -40,13 +40,13 @@ const {chromium}=require('playwright');
    const styles=getComputedStyle(el);
    return {background:styles.backgroundColor,body:styles.fontFamily};
   });
-  ok(brand.background==='rgb(15, 39, 28)'&&brand.body.includes('Inter'),`${audience}/${role}: inherits academy green and Inter`);
+  ok(brand.background==='rgb(32, 71, 53)'&&brand.body.includes('Inter'),`${audience}/${role}: inherits academy green and Inter`);
   if(audience==='parent'||audience==='private-athlete'){
    const day=page.getByRole('navigation',{name:'Choose training day'}).locator('a[href="#/hub/session/d1"]');
    await day.waitFor();
-   ok(await day.evaluate(el=>getComputedStyle(el).backgroundColor==='rgb(20, 50, 34)'),`${audience}: workout card uses the academy panel green`);
+   ok(await day.evaluate(el=>getComputedStyle(el).backgroundColor==='rgb(40, 81, 62)'),`${audience}: workout card uses the academy panel green`);
    await day.hover();
-   if(audience==='parent')ok(await day.evaluate(el=>getComputedStyle(el).backgroundColor==='rgb(26, 61, 42)'&&getComputedStyle(el).borderTopColor==='rgb(199, 162, 90)'),'parent workout card uses academy green and gold on hover');
+   if(audience==='parent')ok(await day.evaluate(el=>getComputedStyle(el).backgroundColor==='rgb(49, 92, 71)'&&getComputedStyle(el).borderTopColor==='rgb(199, 162, 90)'),'parent workout card uses academy green and gold on hover');
   }
   await shortcut.click();
   await page.locator('.hub-main h1').filter({hasText:'Your Routines'}).waitFor();

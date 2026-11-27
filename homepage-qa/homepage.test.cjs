@@ -175,7 +175,13 @@ function protectedPage(source){
   .replace(/<style id="commercial-final-polish">[^]*?<\/style>/,'')
   .replace(/<script id="commercial-anchor-navigation">[^]*?<\/script>/,''));
 }
-assert.equal(protectedPage(currentHtml),protectedPage(commercialBase),'all non-commercial HTML, integration scripts and shared assets remain byte-identical to pre-commercial main');
+ // Permit only the nine founder-approved Hub CSS lines; retain the immutable integration baseline.
+let hubPaletteNormalized=normalize(currentHtml);
+for(const approved of ["  --green:#204735;\n  --green-2:#28513e;\n  --green-3:#315c47;\n  --ink:#183a2b;","#hub-root .hub-access-card{background:var(--hub-panel)}\n#hub-root .hub-field input{background:var(--ink)}\n#hub-root :is(.hub-session,.hub-mode-toggle){background:var(--hub-panel)}\n#hub-root .hub-current-week{background:linear-gradient(170deg,var(--green-3),var(--green-2))}\n#hub-root :is(.hub-dashboard-head h1,.hub-page-head h1,.hub-current-week h2,.hub-section-title,.hub-role-card strong,.hub-session h3){font-family:var(--sans);font-weight:600}"]){
+ assert.equal(hubPaletteNormalized.split(approved+'\n').length,2,'exact approved Hub CSS block occurs once');
+ hubPaletteNormalized=hubPaletteNormalized.replace(approved+'\n','');
+}
+assert.equal(protectedPage(hubPaletteNormalized),protectedPage(commercialBase),'all non-commercial HTML, integration scripts and shared assets remain byte-identical to pre-commercial main');
 assert.ok(currentHtml.includes('<title>Du Airlines Elite Academy — Specialist Performance Consultancy</title>'));
 const publicHome=currentHtml.slice(currentHtml.indexOf('<div class="site-view" id="home-view">'),currentHtml.indexOf(routeStart));
 assert.equal((publicHome.match(/<details class="commercial-service"/g)||[]).length,5);

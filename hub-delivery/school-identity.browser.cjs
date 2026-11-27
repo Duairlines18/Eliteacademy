@@ -21,7 +21,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
    await page.getByRole('heading',{name:'Hi, St. George’s Athlete '+slot,exact:true}).waitFor();checks++;
    assert.deepEqual(await page.locator('.hub-main').locator('h1, .hub-premium-standard, .hub-parent-week-focus, .hub-school-day-picker').evaluateAll(nodes=>nodes.map(node=>node.tagName==='H1'?'greeting':node.classList.contains('hub-premium-standard')?'standard':node.classList.contains('hub-parent-week-focus')?'focus':'days')),['greeting','standard','focus','days']);
    ok(await page.locator('.hub-school-day-picker a').count()===3,'two coached days and optional home day');
-   ok(await page.locator('.hub-school-day-picker a').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('26, 61, 42')),'school athlete day cards use the academy green gradient');
+   ok(await page.locator('.hub-school-day-picker a').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('49, 92, 71')),'school athlete day cards use the academy green gradient');
    ok(await page.locator('.hub-school-day-picker').innerText().then(t=>t.includes('Movement foundations')&&t.includes('Capacity and control')&&t.includes('Optional home day')),'school cards show session purpose');
    await page.getByRole('navigation',{name:'Choose training day'}).getByRole('link',{name:/^Day 1\b/}).click();
    await page.getByRole('heading',{name:'Day 1 · Movement foundations',exact:true}).waitFor();
@@ -106,7 +106,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   ok(athleteCompletionCalls.length===0,'school athlete views neither load nor save completion');
   await page.goto('http://127.0.0.1:4173/qa/director#/hub/staff');
   await page.getByRole('heading',{name:'Programme Overview',exact:true}).waitFor();checks++;
-  ok(await page.locator('.saints-director-hero').evaluate(el=>getComputedStyle(el).backgroundImage.includes('26, 61, 42')),'director overview uses the academy forest-green panel');
+  ok(await page.locator('.saints-director-hero').evaluate(el=>getComputedStyle(el).backgroundImage.includes('49, 92, 71')),'director overview uses the academy forest-green panel');
   ok(await page.locator('.saints-director-kicker').evaluate(el=>getComputedStyle(el).color==='rgb(220, 195, 140)'),'director overview uses the academy gold accent');
   await page.locator('.saints-director-attendance summary').click();
   ok(await page.locator('.hub-main').innerText().then(t=>t.includes('St. George’s')&&t.includes('St. George’s Athlete 06')),'director school identity and roster');
@@ -116,7 +116,7 @@ const assert=require('node:assert/strict'),{spawn}=require('node:child_process')
   ok(await page.locator('.ducc [data-athlete]').count()===6,'coach sees exactly six assigned athletes');
   ok(await page.locator('.ducc [data-day]').first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('linear-gradient')),'coach day cards render gradient');
   const coachDays=page.locator('.ducc [data-day]');
-  ok(await coachDays.first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('26, 61, 42')),'coach day cards use the academy forest-green gradient');
+  ok(await coachDays.first().evaluate(el=>getComputedStyle(el).backgroundImage.includes('49, 92, 71')),'coach day cards use the academy forest-green gradient');
   ok(await page.locator('.ducc [data-day].selected').first().evaluate(el=>getComputedStyle(el).borderTopColor==='rgb(199, 162, 90)'),'selected coach day has the website gold outline');
   ok(await page.getByRole('heading',{name:'Team Command',exact:true}).evaluate(el=>getComputedStyle(el).fontFamily.includes('Playfair Display')),'coach heading uses the website display font');
   await page.locator('[data-att-week]').waitFor();
