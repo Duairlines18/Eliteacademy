@@ -12,6 +12,7 @@ on:
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -98,6 +99,21 @@ jobs:
           name: github-pages-${{ github.run_attempt }}
           # Upload entire repository
           path: '.'
+      - name: Wait for exact uploaded Pages artifact to be visible
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_NAME: github-pages-${{ github.run_attempt }}
+        run: |
+          for attempt in $(seq 1 20); do
+            count=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?per_page=100" --jq '[.artifacts[] | select(.name == env.ARTIFACT_NAME and .expired == false)] | length') || count=0
+            if [ "$count" = "1" ]; then
+              echo "Exact deployment artifact available"
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "Pages artifact not visible to deployment API" >&2
+          exit 1
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
