@@ -25,5 +25,9 @@ def change(m):
 out=pattern.sub(change,s)
 assert out!=s
 assert pattern.sub('',out)==pattern.sub('',s), "Changes outside commercial cards"
+old_footer="Founded and led by Chengetayi Mapaya, Du Airlines Elite Academy brings together specialist athletic development, institutional consultancy and leadership engagements, supported by the Du Airlines Performance Hub."
+new_footer="Du Airlines Elite Academy brings together Chengetayi Mapaya’s international sporting experience, specialist athletic development, institutional consultancy and leadership engagements, supported by the Du Airlines Performance Hub."
+assert out.count(old_footer)==1, "Expected original footer wording"
+out=out.replace(old_footer,new_footer,1)
 p.write_text(out,encoding="utf-8")
 print("Five commercial cards updated; all other homepage content preserved.")
