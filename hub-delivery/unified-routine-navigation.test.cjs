@@ -43,3 +43,18 @@ test('inline Air Zim moves out of main view after keys are allocated',()=>{
  const sections=[{title:'Air Zim Warm-Up',items:[{key:'p:0:0:WU01'}]},{title:'Main',items:[{key:'p:1:1:STR02'}]}];
  assert.deepEqual(require('./delivery.js').trainingSections({...p,separateWarmups:true},s,sections),[sections[1]]);
 });
+
+test('standalone warm-up shares one card and removes only exact declared sections',()=>{
+ const {routineCards,trainingSections}=require('./delivery.js');
+ const routine={id:'garage',routineKind:'warm-up',assignedWarmUpOverview:'Use a mat.'};
+ const days=['day-1','day-2','day-3'].map(id=>({id,assignedWarmUp:{
+  routineId:routine.id,replacedSections:[{order:1,title:'Retired warm-up'}],
+ }}));
+ const programme={sessions:[...days,routine]};
+ for(const day of days){
+  assert.deepEqual(routineCards(programme,day),[{id:'routine:garage',title:'My Warm-Up',kind:'assigned-warm-up',sessions:[routine]}]);
+  const sections=[{order:1,title:'Retired warm-up'},{order:1,title:'Strength'},{order:2,title:'Core'}];
+  assert.deepEqual(trainingSections(programme,day,sections),sections.slice(1));
+  assert.deepEqual(trainingSections({sessions:days},day,sections),sections);
+ }
+});

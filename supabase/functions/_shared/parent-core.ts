@@ -119,7 +119,7 @@ export function shapeParentProfile(athlete: any) {
 }
 
 export function shapeParentBootstrap(athlete: any, bundle: any): Record<string, unknown> {
-  const { role: _role, ...programmePayload } = shapeBootstrap({ role: 'athlete', ...bundle });
+  const { role: _role, ...programmePayload } = shapeBootstrap({ role: 'athlete', ...bundle, assignedWarmUpAthleteId: athlete.id });
   return {
     accessMode: 'account',
     audience: 'parent',
