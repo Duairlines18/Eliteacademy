@@ -90,6 +90,8 @@ jobs:
           assert rewritten == 1, 'Expected exactly one Coach Command script'
           path.write_text(html, encoding="utf-8")
           PY
+      - name: Apply approved commercial homepage copy
+        run: python3 homepage-qa/apply-commercial-copy.py
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
