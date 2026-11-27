@@ -39,7 +39,7 @@ const {chromium}=require('playwright');
  const subjects=['School & Club Partnership Enquiry','Private Athlete Development Enquiry','Technical Clinic & Education Enquiry','Speaking and Leadership Enquiry','Corporate Partnership Enquiry'];
  ok(await services.count()===5,`${width}: five commercial services`);
  for(let i=0;i<pillars.length;i++){
- const service=services.nth(i),summary=service.locator('summary');
+ const service=services.nth(i),summary=service.locator(':scope > summary');
  ok((await summary.innerText()).includes(pillars[i]),`${width}: service ${pillars[i]}`);
  await summary.click();ok(await service.evaluate(e=>e.open),`${width}: service expands`);
  const photo=service.locator('figure.commercial-photo img');
