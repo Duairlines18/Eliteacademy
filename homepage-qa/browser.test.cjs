@@ -35,10 +35,10 @@ const {chromium}=require('playwright');
  ok(await page.locator('.premium-story-avatar').evaluateAll(images=>images.every(e=>(e.getAttribute('src')||'').startsWith('data:image/'))),`${width}: every athlete photo has its original source`);
  const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: credentials expanded`);ok(await page.locator('.premium-more-grid span').count()===7,`${width}: seven additional credentials`);
  const services=page.locator('#sports details.commercial-service');
- const pillars=['Schools & Clubs','Private Athlete Development','Technical Clinics & Education','Corporate Partnerships'];
- const subjects=['School & Club Partnership Enquiry','Private Athlete Development Enquiry','Technical Clinic & Education Enquiry','Corporate Partnership Enquiry'];
- ok(await services.count()===4,`${width}: four commercial services`);
- for(let i=0;i<4;i++){
+ const pillars=['Schools & Clubs','Private Athlete Development','Technical Clinics & Education','Speaking & Leadership','Corporate Partnerships'];
+ const subjects=['School & Club Partnership Enquiry','Private Athlete Development Enquiry','Technical Clinic & Education Enquiry','Speaking and Leadership Enquiry','Corporate Partnership Enquiry'];
+ ok(await services.count()===5,`${width}: five commercial services`);
+ for(let i=0;i<pillars.length;i++){
  const service=services.nth(i),summary=service.locator('summary');
  ok((await summary.innerText()).includes(pillars[i]),`${width}: service ${pillars[i]}`);
  await summary.click();ok(await service.evaluate(e=>e.open),`${width}: service expands`);
@@ -59,6 +59,7 @@ const {chromium}=require('playwright');
  const mail=new URL(await link.getAttribute('href'));
  ok(mail.pathname==='coachdu@duairlineseliteacademy.com'&&mail.searchParams.get('subject')===subjects[i],`${width}: exact enquiry destination and subject`);
  if(i===0)ok(await service.locator('a[href="/school-services/"]').isVisible(),`${width}: school services link visible`);
+ if(i===3)ok(await service.locator('a[href="/school-booking/"]').isVisible(),`${width}: school engagement booking link visible`);
  await summary.click();ok(!await service.evaluate(e=>e.open),`${width}: service collapses`);
  }
  ok(await page.locator('#home-view .premium-path-links').count()===0,`${width}: obsolete promotion removed`);
