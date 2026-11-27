@@ -45,13 +45,13 @@ const {chromium}=require('playwright');
  if(i!==4){
  const photo=service.locator('figure.commercial-photo img');
  ok(await photo.count()===1,`${width}: exactly one service photograph`);
- if(i===0||i===3){const stem=i===0?'technical-clinics-education':'speaking-leadership';ok(await photo.getAttribute('src')===`/assets/services/${stem}-640.webp`,`${width}: approved service image source`);ok((await photo.getAttribute('srcset')).includes(`/assets/services/${stem}-1024.webp 1024w`),`${width}: high-resolution approved service source`);ok((await photo.getAttribute('alt')).includes(i===0?'red blazers':'large audience'),`${width}: approved image description`);}
+ if(i===0||i===2||i===3){const stem=i===0?'technical-clinics-education':i===2?'clinic-pointing':'speaking-leadership';ok(await photo.getAttribute('src')===`/assets/services/${stem}-640.webp`,`${width}: approved service image source`);ok((await photo.getAttribute('srcset')).includes(`/assets/services/${stem}-1024.webp 1024w`),`${width}: high-resolution approved service source`);ok((await photo.getAttribute('alt')).includes(i===0?'red blazers':i===2?'demonstrating technique':'large audience'),`${width}: approved image description`);}
  await photo.scrollIntoViewIfNeeded();
  await photo.evaluate(async img=>{await img.decode();});
  ok(await photo.evaluate(img=>img.complete&&img.naturalWidth>0&&img.naturalHeight>0&&img.alt.trim().length>0),`${width}: service photograph decodes and has alt text`);
  ok(await photo.evaluate(img=>{const b=img.getBoundingClientRect();return b.width>0&&b.height>0&&b.left>=0&&b.right<=innerWidth+1&&getComputedStyle(img).objectFit===(img.closest('.clinic-photo')?'contain':'cover');}),`${width}: service photograph fits viewport`);
  const panelFit=await service.evaluate(e=>{const f=e.querySelector('.commercial-photo'),c=e.querySelector('.commercial-copy'),b=e.querySelector('.commercial-body'),a=c.querySelector('.btn');const F=f.getBoundingClientRect(),C=c.getBoundingClientRect(),B=b.getBoundingClientRect(),A=a.getBoundingClientRect();return {ratio:F.width/F.height,sideBySide:F.right<=C.left+1&&Math.abs(F.top-C.top)<5,stacked:F.bottom<=C.top+1,contained:F.left>=B.left-1&&C.right<=B.right+1&&A.left>=C.left-1&&A.right<=C.right+1&&e.scrollWidth<=e.clientWidth+2&&c.scrollWidth<=c.clientWidth+2,viewport:document.documentElement.scrollWidth<=innerWidth+1};});
- ok(Math.abs(panelFit.ratio-(i===2?4/3:16/9))<.04,`${width}: photograph keeps approved editorial aspect ratio`);
+ ok(Math.abs(panelFit.ratio-(16/9))<.04,`${width}: photograph keeps approved editorial aspect ratio`);
  ok(await photo.evaluate(img=>img.closest('.clinic-photo')?getComputedStyle(img).objectPosition==='50% 0%':true),`${width}: clinic photograph retains top alignment`);
  ok(width>=900?panelFit.sideBySide:panelFit.stacked,`${width}: correct responsive image-and-copy layout`);
  ok(panelFit.contained&&panelFit.viewport,`${width}: panel copy and CTA fit without clipping or horizontal overflow`);
