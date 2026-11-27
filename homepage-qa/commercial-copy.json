@@ -2,14 +2,13 @@
   {
     "title": "Schools & Clubs",
     "subtitle": "Stronger programmes. Better-prepared athletes.",
-    "description": "Specialist performance partnerships that strengthen existing sports programmes, develop athletes and equip coaches to sustain progress. We complement existing coaches across athletics, rugby, football, basketball, volleyball, hockey and netball.",
+    "description": "Specialist performance partnerships that develop athletes and strengthen existing coaching programmes across sports.",
     "services": [
-      "School & club performance programmes",
-      "Sport-specific speed, movement & explosive power",
+      "Structured school & club programmes",
+      "Speed, movement & explosive power",
       "Specialist sprint & jumps development",
       "Warm-ups, mobility, recovery & load planning",
-      "Coach education & technical consultation",
-      "Competition preparation & athlete progression",
+      "Coach education & competition preparation",
       "Digital programming & Performance Hub support"
     ],
     "route": "/enquire/#school"
@@ -17,14 +16,13 @@
   {
     "title": "Private Athlete Development",
     "subtitle": "Personalised guidance. Purposeful progression.",
-    "description": "Individualised performance programming and technical guidance from Coach Du, in person or remotely, to develop physical abilities, technical skills and performance mindset.",
+    "description": "Personalised programming and technical guidance from Coach Du, supporting athletic development in person and remotely.",
     "services": [
-      "Personalised training programmes & progression",
-      "Speed, acceleration & movement mechanics",
-      "Explosive power & athletic strength development",
-      "Long jump & triple jump technical development",
-      "Video analysis & personalised technical feedback",
-      "Mobility, stability, recovery & physical resilience",
+      "Individual training programmes & progression",
+      "Speed, movement & explosive strength",
+      "Long jump & triple jump development",
+      "Video analysis & technical feedback",
+      "Mobility, recovery & physical resilience",
       "Competition preparation & performance mindset",
       "Digital coaching & Performance Hub access"
     ],
@@ -33,43 +31,39 @@
   {
     "title": "Technical Clinics & Education",
     "subtitle": "Elite knowledge. Practical application.",
-    "description": "Specialist clinics and practical workshops that translate international sporting experience into actionable skills for athletes, teams and coaches.",
+    "description": "Practical clinics and workshops informed by international sporting experience, tailored to athletes, teams and coaches.",
     "services": [
       "Speed & acceleration clinics",
       "Long jump & triple jump masterclasses",
-      "Explosive power & movement workshops",
-      "Multisport athletic development clinics",
-      "Warm-up, mobility & recovery workshops",
-      "Coach education & technical demonstrations",
-      "Practical assessment, feedback & recommendations"
+      "Movement & explosive power workshops",
+      "Warm-up, mobility & recovery education",
+      "Coach education & practical technical feedback"
     ],
     "route": "/enquire/#clinic"
   },
   {
     "title": "Speaking & Leadership",
     "subtitle": "Inspire ambition. Develop character. Elevate standards.",
-    "description": "Drawing on international sport, a Communication degree from Texas Christian University and US corporate experience, Chengetayi Mapaya turns lived experience into practical lessons for students, teams and organisations.",
+    "description": "Chengetayi Mapaya draws on international sport, a TCU Communication degree and US corporate experience to deliver meaningful lessons in leadership and performance.",
     "services": [
-      "Primary & secondary school leadership addresses",
-      "Student leadership & prefect development",
+      "School addresses & student leadership",
       "Resilience, confidence & personal discipline",
-      "Performing under pressure & embracing opportunity",
-      "Team culture & high-performance masterclasses",
+      "Performing under pressure",
+      "Team culture & performance masterclasses",
       "Corporate keynotes & leadership workshops",
-      "Interactive Q&A & practical action planning"
+      "Interactive Q&A & action planning"
     ],
     "route": "/enquire/#speaking"
   },
   {
     "title": "Corporate Partnerships",
     "subtitle": "Performance. Opportunity. Impact.",
-    "description": "Partner with Chengetayi Mapaya through international sport, strategic brand collaboration and structured youth development initiatives that connect commercial objectives with meaningful impact.",
+    "description": "Partner with Chengetayi Mapaya through international sport, brand collaboration and meaningful youth development.",
     "services": [
       "International athlete sponsorship",
-      "Corporate-funded school development programmes",
-      "Youth education & sporting opportunity initiatives",
+      "Corporate-funded school & youth development",
       "Brand ambassadorship & campaign collaboration",
-      "Corporate social responsibility partnerships",
+      "CSR partnerships & community impact",
       "Corporate speaking & employee engagement",
       "Community activation & impact reporting"
     ],
