@@ -33,7 +33,7 @@ const {chromium}=require('playwright');
  ok(await page.getByRole('link',{name:'Access School Athlete Hub',exact:true}).isVisible(),`${width}: school athlete link is clear`);
  ok(await page.locator('.premium-story-avatar').count()===3,`${width}: existing athlete photos reused`);
  ok(await page.locator('.premium-story-avatar').evaluateAll(images=>images.every(e=>(e.getAttribute('src')||'').startsWith('data:image/'))),`${width}: every athlete photo has its original source`);
- const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: credentials expanded`);ok(await page.locator('.premium-more-grid span').count()===7,`${width}: seven additional credentials`);
+ const more=page.locator('.premium-more');await more.locator('summary').click();ok(await more.getAttribute('open')!==null,`${width}: credentials expanded`);ok(await page.locator('.premium-more-grid span').count()===7,`${width}: four credential groups`);
  const services=page.locator('#sports details.commercial-service');
  const pillars=['Schools & Clubs','Private Athlete Development','Technical Clinics & Education','Speaking & Leadership','Corporate Partnerships'];
  const subjects=['School & Club Partnership Enquiry','Private Athlete Development Enquiry','Technical Clinic & Education Enquiry','Speaking and Leadership Enquiry','Corporate Partnership Enquiry'];
@@ -55,10 +55,9 @@ const {chromium}=require('playwright');
  ok(panelFit.contained&&panelFit.viewport,`${width}: panel copy and CTA fit without clipping or horizontal overflow`);
 
  if(process.env.HOMEPAGE_SCREENSHOT_DIR){await page.evaluate(()=>document.fonts.ready);await service.screenshot({path:path.join(process.env.HOMEPAGE_SCREENSHOT_DIR,`service-${i+1}-${width}.png`)});}
- const link=service.locator('a[href^="mailto:"]');
+ const link=service.locator('a[href^="/enquire/#"]');
  ok(await link.isVisible(),`${width}: enquiry visible`);
- const mail=new URL(await link.getAttribute('href'));
- ok(mail.pathname==='coachdu@duairlineseliteacademy.com'&&mail.searchParams.get('subject')===subjects[i],`${width}: exact enquiry destination and subject`);
+ ok(await link.getAttribute('href')==='/enquire/#'+['school','athlete','clinic','speaking','corporate'][i],`${width}: exact guided enquiry destination`);
  if(i===0)ok(await service.locator('a[href="/school-services/"]').isVisible(),`${width}: school services link visible`);
  if(i===3)ok(await service.locator('a[href="/school-booking/"]').isVisible(),`${width}: school engagement booking link visible`);
  await summary.click();ok(!await service.evaluate(e=>e.open),`${width}: service collapses`);

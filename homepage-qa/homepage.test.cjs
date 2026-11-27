@@ -13,9 +13,11 @@ const restoreTitles=source=>source.replace(/Loughborough University Student-Athl
 // Owner-approved credentials copy is the only additional homepage exception.
 const approvedCredentials="<div class=\"premium-more-grid\"><span>7th at World Indoor Championships · Nanjing 2025</span><span>9× All-American</span><span>3× Zimbabwe Sportsman of the Year Runner-up · Junior 2016 &amp; 2017 · Senior 2019</span><span>International championship representation for Zimbabwe</span><span>African U20 Champion &amp; Championship Record Holder · 16.30m, 2017</span><span>17.26m Triple Jump Personal Best · TCU Outdoor Record</span><span>No. 4 on the World Triple Jump Season Performance List · 11 June 2022 (TCU Athletics)</span></div>";
 const previousCredentials="<div class=\"premium-more-grid\"><span>TCU Record Holder</span><span>7× World Championships Qualifier</span><span>African Junior Champion</span><span>African Junior Championships Record Holder</span></div>";
-assert.ok(currentHtml.includes(approvedCredentials),'approved seven credentials remain intact');
+assert.ok(currentHtml.includes('Career Honours &amp; International Achievements'),'approved heading');
+assert.equal((currentHtml.match(/<div class="premium-more-grid" style="[^"]+">/g)||[]).length,1);
+for(const label of ['International championships','National recognition','NCAA &amp; conference honours','University honours &amp; records'])assert.ok(currentHtml.includes(label));
 const guidedLinks=[...currentHtml.matchAll(/href="mailto:coachdu@duairlineseliteacademy\.com\?subject=([^"&]+)&amp;body=([^"]+)"/g)];
-assert.equal(guidedLinks.length,5,'five service-specific email drafts');
+assert.equal(guidedLinks.length,0,'service enquiries use guided routes');
 for(const [,subject,body] of guidedLinks){assert.ok(decodeURIComponent(subject).includes('Enquiry'));assert.ok(decodeURIComponent(body).includes('Good day Coach Du,'));assert.ok(decodeURIComponent(body).split('\r\n').filter(line=>line.endsWith(':')).length>=4,'four guided prompts');}
 
 // Approved private setup repair is behavior-tested in qa/private-onboarding tests.
@@ -81,7 +83,7 @@ function withoutWorkoutNavigation(source){
   .replace("      } else if (!isHub) {\n        window.scrollTo({top:0, behavior:'instant'});","      } else {\r\n        window.scrollTo({top:0, behavior:'instant'});")
   .replace(/coach-command\.js\?v=20261122-(?:workout-navigation|compact-workout)/,'coach-command.js?v=20261122-weekly-standard');
 }
-const html=restoreTitles(withoutPrivateSetup(withoutDashboardRefresh(withoutMandatoryCheckins(withoutHubVisits(withoutWorkoutNavigation(currentHtml)))))).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(approvedCredentials,previousCredentials);
+const html=restoreTitles(withoutPrivateSetup(withoutDashboardRefresh(withoutMandatoryCheckins(withoutHubVisits(withoutWorkoutNavigation(currentHtml)))))).replace(/<!-- DU STORY NAV START -->[\s\S]*?<!-- DU STORY NAV END -->/g,'').replace(/<div class="premium-more-grid" style="[^"]+">[\s\S]*?<\/ul><\/div><\/div>/,previousCredentials);
 // These checks catch the duplicated homepage fragments and their stale controllers.
 for(const id of ['sports','performance-hub','credentials','premium-story-grid']){
   assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,`${id} must identify one section`);
@@ -192,7 +194,7 @@ assert.ok(publicHome.includes('class="commercial-art commercial-photo clinic-pho
 assert.ok(currentHtml.includes('.clinic-photo img{object-fit:contain;object-position:center top;}'));
 
 for(const title of ['Schools &amp; Clubs','Private Athlete Development','Technical Clinics &amp; Education','Speaking &amp; Leadership','Corporate Partnerships'])assert.ok(publicHome.includes('<strong>'+title+'</strong>'),title);
-assert.equal((publicHome.match(/href="mailto:coachdu@duairlineseliteacademy\.com\?subject=/g)||[]).length,6,'five service enquiries and general enquiry');
+for(const key of ['school','athlete','clinic','speaking','corporate'])assert.ok(publicHome.includes('href="/enquire/#'+key+'"'));
 assert.doesNotMatch(publicHome,/class="premium-path-links"|id="partnershipForm"/);
 assert.ok(publicHome.includes('href="/school-services/"'));
 assert.ok(publicHome.includes('href="/school-booking/"'));
