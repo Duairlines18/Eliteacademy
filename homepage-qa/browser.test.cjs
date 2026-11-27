@@ -45,6 +45,7 @@ const {chromium}=require('playwright');
  if(i!==4){
  const photo=service.locator('figure.commercial-photo img');
  ok(await photo.count()===1,`${width}: exactly one service photograph`);
+ if(i===0||i===3){const stem=i===0?'technical-clinics-education':'speaking-leadership';ok(await photo.getAttribute('src')===`/assets/services/${stem}-640.webp`,`${width}: approved service image source`);ok((await photo.getAttribute('srcset')).includes(`/assets/services/${stem}-1024.webp 1024w`),`${width}: high-resolution approved service source`);ok((await photo.getAttribute('alt')).includes(i===0?'red blazers':'large audience'),`${width}: approved image description`);}
  await photo.scrollIntoViewIfNeeded();
  await photo.evaluate(async img=>{await img.decode();});
  ok(await photo.evaluate(img=>img.complete&&img.naturalWidth>0&&img.naturalHeight>0&&img.alt.trim().length>0),`${width}: service photograph decodes and has alt text`);
