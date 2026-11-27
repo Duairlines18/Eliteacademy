@@ -179,6 +179,12 @@ assert.equal(protectedPage(currentHtml),protectedPage(commercialBase),'all non-c
 assert.ok(currentHtml.includes('<title>Du Airlines Elite Academy — Specialist Performance Consultancy</title>'));
 const publicHome=currentHtml.slice(currentHtml.indexOf('<div class="site-view" id="home-view">'),currentHtml.indexOf(routeStart));
 assert.equal((publicHome.match(/<details class="commercial-service"/g)||[]).length,5);
+assert.ok(publicHome.includes('Drawing on world-class experience, Chengetayi Mapaya helps individuals, teams and organisations unlock potential, elevate performance and develop a mindset for excellence.'));
+assert.ok(publicHome.includes('href="#sports">Explore Services</a>'));
+assert.equal((publicHome.match(/class="commercial-art commercial-photo clinic-photo"/g)||[]).length,1);
+assert.ok(publicHome.includes('class="commercial-art commercial-photo clinic-photo"><img src="/my-journey/assets/zimbabwe-runway-480.webp"'));
+assert.ok(currentHtml.includes('.clinic-photo img{object-fit:contain;object-position:center top;}'));
+
 for(const title of ['Schools &amp; Clubs','Private Athlete Development','Technical Clinics &amp; Education','Speaking &amp; Leadership','Corporate Partnerships'])assert.ok(publicHome.includes('<strong>'+title+'</strong>'),title);
 assert.equal((publicHome.match(/href="mailto:coachdu@duairlineseliteacademy\.com\?subject=/g)||[]).length,6,'five service enquiries and general enquiry');
 assert.doesNotMatch(publicHome,/class="premium-path-links"|id="partnershipForm"/);
