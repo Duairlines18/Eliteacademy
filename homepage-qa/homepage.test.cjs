@@ -174,11 +174,13 @@ function protectedPage(source){
 assert.equal(protectedPage(currentHtml),protectedPage(commercialBase),'all non-commercial HTML, integration scripts and shared assets remain byte-identical to pre-commercial main');
 assert.ok(currentHtml.includes('<title>Du Airlines Elite Academy — Specialist Performance Consultancy</title>'));
 const publicHome=currentHtml.slice(currentHtml.indexOf('<div class="site-view" id="home-view">'),currentHtml.indexOf(routeStart));
-assert.equal((publicHome.match(/<details class="commercial-service"/g)||[]).length,4);
-for(const title of ['Schools &amp; Clubs','Private Athlete Development','Technical Clinics &amp; Education','Corporate Partnerships'])assert.ok(publicHome.includes('<strong>'+title+'</strong>'),title);
-assert.equal((publicHome.match(/href="mailto:coachdu@duairlineseliteacademy\.com\?subject=/g)||[]).length,5,'four service enquiries and general enquiry');
+assert.equal((publicHome.match(/<details class="commercial-service"/g)||[]).length,5);
+for(const title of ['Schools &amp; Clubs','Private Athlete Development','Technical Clinics &amp; Education','Speaking &amp; Leadership','Corporate Partnerships'])assert.ok(publicHome.includes('<strong>'+title+'</strong>'),title);
+assert.equal((publicHome.match(/href="mailto:coachdu@duairlineseliteacademy\.com\?subject=/g)||[]).length,6,'five service enquiries and general enquiry');
 assert.doesNotMatch(publicHome,/class="premium-path-links"|id="partnershipForm"/);
 assert.ok(publicHome.includes('href="/school-services/"'));
+assert.ok(publicHome.includes('href="/school-booking/"'));
+assert.ok(publicHome.includes('id="speaking-leadership"'));
 assert.ok(publicHome.includes('href="/my-journey/"'));
 for(const role of ['athlete','coach','parent','private'])assert.ok(publicHome.includes('data-premium-role="'+role+'"'));
 // Private workout view routing has its own authenticated browser coverage.
